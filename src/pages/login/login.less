@@ -1,0 +1,109 @@
+@import '~antd/lib/style/themes/default.less';
+.bossMain {
+  .title {
+    position: fixed;
+    top: 50%;
+    left: 0;
+    padding: 0 40px;
+    width: 30%;
+    margin-top: -65px;
+    .content1 {
+      font-size: 40px;
+      color: #fff;
+      line-height: 62px;
+    }
+    .content2 {
+      text-align: left;
+      padding-left: 42px;
+      font-size: 32px;
+      line-height: 44px;
+      color: #fff;
+
+      .rightQuo {
+        position: absolute;
+        right: 40px;
+        bottom: 0;
+      }
+    }
+  }
+  .main {
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    margin: -235px -224px 0 0;
+    width: 468px;
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 15px;
+    @media screen and (max-width: @screen-sm) {
+      width: 95%;
+    }
+
+    .icon {
+      font-size: 24px;
+      color: rgba(0, 0, 0, 0.2);
+      margin-left: 16px;
+      vertical-align: middle;
+      cursor: pointer;
+      transition: color 0.3s;
+
+      &:hover {
+        color: @primary-color;
+      }
+    }
+
+    .desc {
+      text-align: center;
+      margin: 0 0 50px 0;
+      font-size: 26px;
+      color: #858585;
+    }
+
+    .labelStyle {
+      font-size: 16px;
+      height: 16px;
+      font-weight: 600;
+      line-height: 16px;
+      margin-bottom: 16px;
+    }
+
+    .other {
+      text-align: left;
+      margin-top: 24px;
+      line-height: 22px;
+
+      .register {
+        float: right;
+      }
+    }
+
+    .submitBtn {
+      border-radius: 20px;
+      // box-shadow: 3px 3px 3px #888;
+    }
+
+    :global {
+      .ant-tabs-tab {
+        font-size: 26px;
+      }
+      .ant-tabs-tab-active {
+        color: #1f1f1f;
+        font-size: 40px;
+        font-weight: bold;
+        line-height: 42px;
+      }
+
+      .ant-tabs .ant-tabs-bar {
+        margin-bottom: 24px;
+      }
+
+      .ant-tabs-ink-bar {
+        display: none !important;
+      }
+
+      .ant-input {
+        border-color: rgba(237, 239, 244, 1);
+      }
+    }
+  }
+}

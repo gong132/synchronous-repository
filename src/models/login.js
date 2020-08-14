@@ -15,7 +15,9 @@ const Model = {
       yield put({
         type: 'changeLoginStatus',
         payload: response,
-      }); // Login successfully
+      }); // login successfully
+
+      console.log(response, 'response')
 
       if (response.status === 'ok') {
         const urlParams = new URL(window.location.href);

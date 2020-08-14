@@ -1,5 +1,5 @@
-import { Icon } from 'antd';
 import React from 'react';
+import { Icon } from 'antd';
 import styles from './index.less';
 
 export default {
@@ -13,7 +13,7 @@ export default {
     rules: [
       {
         required: true,
-        message: 'Please enter username!',
+        message: '请输入用户名!',
       },
     ],
   },
@@ -28,7 +28,7 @@ export default {
     rules: [
       {
         required: true,
-        message: 'Please enter password!',
+        message: '请输入密码!',
       },
     ],
   },

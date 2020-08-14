@@ -1,60 +1,38 @@
-import { DefaultFooter, getMenuData, getPageTitle } from '@ant-design/pro-layout';
-import { Helmet } from 'react-helmet';
-import { Link } from 'umi';
-import React from 'react';
-import { connect } from 'dva';
-import { formatMessage } from 'umi-plugin-react/locale';
-import SelectLang from '@/components/SelectLang';
-import logo from '../assets/logo.svg';
+import React, { Fragment } from 'react';
+import { Icon } from 'antd';
 import styles from './UserLayout.less';
+import bg from '../assets/bg.jpg';
+import logo from '../assets/logo.svg';
+// import GlobalFooter from "@/components/GlobalFooter";
 
-const UserLayout = props => {
-  const {
-    route = {
-      routes: [],
-    },
-  } = props;
-  const { routes = [] } = route;
-  const {
-    children,
-    location = {
-      pathname: '',
-    },
-  } = props;
-  const { breadcrumb } = getMenuData(routes);
-  const title = getPageTitle({
-    pathname: location.pathname,
-    breadcrumb,
-    formatMessage,
-    ...props,
-  });
-  return (
-    <>
-      <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={title} />
-      </Helmet>
+const copyright = (
+  <Fragment>
+    <div className={styles.footer}>
+      Copyright <Icon type="copyright" /> 2020 光大证券
+    </div>
+  </Fragment>
+);
 
-      <div className={styles.container}>
-        <div className={styles.lang}>
-          <SelectLang />
-        </div>
-        <div className={styles.content}>
-          <div className={styles.top}>
-            <div className={styles.header}>
-              <Link to="/">
-                <img alt="logo" className={styles.logo} src={logo} />
-                <span className={styles.title}>Ant Design</span>
-              </Link>
-            </div>
-            <div className={styles.desc}>Ant Design 是西湖区最具影响力的 Web 设计规范</div>
+class UserLayout extends React.PureComponent {
+  render() {
+    const { children } = this.props;
+    return (
+      <div className={styles.container} id="layout">
+        <div className={styles.background}>
+          <img alt="logo" className={styles.logo} src={logo} />
+          <img alt="gd-bg" className={styles.bg} src={bg} />
+          <div className={styles.footer}>
+            Copyright <Icon type="copyright" /> 2020 光大证券
+            {/* 晨腾科技提供技术支持 */}
           </div>
-          {children}
         </div>
-        <DefaultFooter />
+        <div className={styles.content}>{children}</div>
+        {/*<div className={styles.copyright}>*/}
+        {/*  <GlobalFooter copyright={copyright} />*/}
+        {/*</div>*/}
       </div>
-    </>
-  );
-};
+    );
+  }
+}
 
-export default connect(({ settings }) => ({ ...settings }))(UserLayout);
+export default UserLayout;
