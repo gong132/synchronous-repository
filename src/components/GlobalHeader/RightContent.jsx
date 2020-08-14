@@ -23,40 +23,40 @@ const GlobalHeaderRight = props => {
 
   return (
     <div className={className}>
-      <HeaderSearch
-        className={`${styles.action} ${styles.search}`}
-        placeholder={formatMessage({
-          id: 'component.globalHeader.search',
-        })}
-        defaultValue="umi ui"
-        dataSource={[
-          formatMessage({
-            id: 'component.globalHeader.search.example1',
-          }),
-          formatMessage({
-            id: 'component.globalHeader.search.example2',
-          }),
-          formatMessage({
-            id: 'component.globalHeader.search.example3',
-          }),
-        ]}
-        onSearch={() => {}}
-        onPressEnter={() => {}}
-      />
-      <Tooltip
-        title={formatMessage({
-          id: 'component.globalHeader.help',
-        })}
-      >
-        <a
-          target="_blank"
-          href="https://pro.ant.design/docs/getting-started"
-          rel="noopener noreferrer"
-          className={styles.action}
-        >
-          <Icon type="question-circle-o" />
-        </a>
-      </Tooltip>
+      {/*<HeaderSearch*/}
+      {/*  className={`${styles.action} ${styles.search}`}*/}
+      {/*  placeholder={formatMessage({*/}
+      {/*    id: 'component.globalHeader.search',*/}
+      {/*  })}*/}
+      {/*  defaultValue="umi ui"*/}
+      {/*  dataSource={[*/}
+      {/*    formatMessage({*/}
+      {/*      id: 'component.globalHeader.search.example1',*/}
+      {/*    }),*/}
+      {/*    formatMessage({*/}
+      {/*      id: 'component.globalHeader.search.example2',*/}
+      {/*    }),*/}
+      {/*    formatMessage({*/}
+      {/*      id: 'component.globalHeader.search.example3',*/}
+      {/*    }),*/}
+      {/*  ]}*/}
+      {/*  onSearch={() => {}}*/}
+      {/*  onPressEnter={() => {}}*/}
+      {/*/>*/}
+      {/*<Tooltip*/}
+      {/*  title={formatMessage({*/}
+      {/*    id: 'component.globalHeader.help',*/}
+      {/*  })}*/}
+      {/*>*/}
+      {/*  <a*/}
+      {/*    target="_blank"*/}
+      {/*    href="https://pro.ant.design/docs/getting-started"*/}
+      {/*    rel="noopener noreferrer"*/}
+      {/*    className={styles.action}*/}
+      {/*  >*/}
+      {/*    <Icon type="question-circle-o" />*/}
+      {/*  </a>*/}
+      {/*</Tooltip>*/}
       <Avatar />
       {REACT_APP_ENV && <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>}
       <SelectLang className={styles.action} />
