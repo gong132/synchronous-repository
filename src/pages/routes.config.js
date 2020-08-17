@@ -5,7 +5,7 @@ module.exports = {
       {
         path: '/',
         component: '../layouts/BasicLayout',
-        authority: ['admin', 'user'],
+        // authority: ['admin', 'user'],
         routes: [
           // 路由页面 start
           {
@@ -21,23 +21,18 @@ module.exports = {
           {
             path: '/table',
             name: 'table',
-            icon: 'crown',
+            icon: 'TableOutlined',
             redirect: '/table/userTable',
-            authority: ['admin'],
             routes: [
               {
                 path: '/table/userTable',
                 name: 'userTable',
-                icon: 'smile',
                 component: './table/userTable/index',
-                authority: ['admin'],
               },
               {
                 path: '/table/orderTable',
                 name: 'orderTable',
-                icon: 'smile',
                 component: './table/orderTable/index',
-                authority: ['admin'],
               },
             ],
           },

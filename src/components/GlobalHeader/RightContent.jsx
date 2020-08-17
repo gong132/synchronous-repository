@@ -59,7 +59,7 @@ const GlobalHeaderRight = props => {
       {/*</Tooltip>*/}
       <Avatar />
       {REACT_APP_ENV && <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>}
-      <SelectLang className={styles.action} />
+      {/*<SelectLang className={styles.action} />*/}
     </div>
   );
 };

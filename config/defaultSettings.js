@@ -11,7 +11,7 @@ export default {
   menu: {
     locale: true,
   },
-  title: 'Ant Design Pro',
+  title: '光大证券',
   pwa: false,
   iconfontUrl: '',
 };
