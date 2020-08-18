@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import { connect } from 'dva'
 import {DefaultPage, TableColumnHelper} from '@/utils/helper'
 import StandardTable from "@/components/StandardTable";

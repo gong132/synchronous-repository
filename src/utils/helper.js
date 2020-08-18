@@ -331,13 +331,11 @@ function resolveListState(payload) {
   };
 }
 
-function filterResolver(filter, key, sub1, sub2, format = 'YYYY-MM-DD') {
+function filterResolver(filter = {}, key, sub1, sub2, format = 'YYYY-MM-DD') {
   const resItem = filter[key];
   delete filter[key];
-  const finalFilter = Object.assign({}, filter, {
-    [sub1]: (resItem && !isEmpty(resItem) && moment(resItem[0]).format(format)) || '',
-    [sub2]: (resItem && !isEmpty(resItem) && moment(resItem[1]).format(format)) || '',
-  });
+  const finalFilter = { ...filter, [sub1]: (resItem && !isEmpty(resItem) && moment(resItem[0]).format(format)) || '',
+    [sub2]: (resItem && !isEmpty(resItem) && moment(resItem[1]).format(format)) || '', };
   return finalFilter;
 }
 
@@ -483,7 +481,6 @@ const NumberHelper = {
     if (Number.isNaN(num)) {
       return '';
     }
-
     num = String(num);
     const numArray = num.split('.');
     return numArray[0];
