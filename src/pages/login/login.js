@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Alert, message, Button, Checkbox } from 'antd';
+import { Alert, message, Checkbox } from 'antd';
 import Login from '@/components/Login';
-import styles from './Login.less';
 import { LOGIN_ENTRY_TYPE } from '@/utils/constant';
+import styles from './login.less';
 
 const { Tab, UserName, Password, Submit } = Login;
 
@@ -45,12 +45,6 @@ class LoginPage extends Component {
     }
   };
 
-  // changeAutoLogin = e => {
-  //   this.setState({
-  //     autoLogin: e.target.checked,
-  //   });
-  // };
-
   renderMessage = content => (
     <Alert style={{ marginBottom: 24 }} message={content} type="error" showIcon />
   );
@@ -58,9 +52,6 @@ class LoginPage extends Component {
   render() {
     const { login, submitting } = this.props;
     const { type, autoLogin } = this.state;
-
-    console.log(login, "login")
-
     return (
       <div className={styles.bossMain}>
         <div className={styles.main}>

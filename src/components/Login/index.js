@@ -90,7 +90,6 @@ class Login extends Component {
       if (!item) {
         return;
       }
-      // eslint-disable-next-line
       if (item.type.typeName === 'LoginTab') {
         TabChildren.push(item);
       } else {
