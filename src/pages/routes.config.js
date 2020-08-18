@@ -19,11 +19,11 @@ module.exports = {
             component: './home/home',
           },
           {
-            path: '/table',
+            path: 'table',
             name: 'table',
             icon: 'TableOutlined',
-            redirect: '/table/userTable',
             routes: [
+              { path: '/table', redirect: '/table/userTable' },
               {
                 path: '/table/userTable',
                 name: 'userTable',

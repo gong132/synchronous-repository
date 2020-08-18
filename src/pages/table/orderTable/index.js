@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { connect } from 'dva'
 import {DefaultPage, TableColumnHelper} from '@/utils/helper'
 import StandardTable from "@/components/StandardTable";
@@ -6,7 +6,7 @@ import StandardTable from "@/components/StandardTable";
 import styles from './index.less'
 
 const Index = props => {
-  const { dispatch, order: { orderList } } = props
+  const { dispatch, order: { orderList }, loading } = props
 
   const handleQueryOrderList = params => {
     dispatch({
@@ -16,6 +16,10 @@ const Index = props => {
       },
     })
   }
+
+  useEffect(() => {
+    handleQueryOrderList()
+  }, [])
 
   const columns = [
     TableColumnHelper.genPlanColumn('id', 'ID'),
@@ -47,5 +51,5 @@ export default connect(
     loading,
   }) => ({
     order,
-    loading
+    loading: loading.models.order
   }))(Index)
