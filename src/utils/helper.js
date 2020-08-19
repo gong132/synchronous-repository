@@ -117,25 +117,27 @@ const MenuActionHelper = { Buttons, CRUDButtons, ALLButtons, getMenuData, getFla
 
 // ===========================> Table Column <=========================== //
 function genPlanColumn(key, title, extend) {
-  return { ...extend, key, title, dataIndex: key };
+  return { key, title, dataIndex: key, align: 'center', ...extend, };
 }
 
 function getAvatarColumn(key, title, extend, props) {
   return {
-    ...extend,
     key,
     title,
+    align: 'center',
     dataIndex: key,
+    ...extend,
     render: text => <Avatar src={text} alt="" {...props} />,
   };
 }
 
 function genLangColumn(key, title, extend, len = 20) {
   return {
-    ...extend,
     key,
     title,
+    align: 'center',
     dataIndex: key,
+    ...extend,
     render: text => {
       if (text.length <= len) {
         return <span>{text}</span>;
@@ -151,10 +153,11 @@ function genLangColumn(key, title, extend, len = 20) {
 
 function genPopoverColumn(key, title, len = 12, extend) {
   return {
-    ...extend,
     key,
     title,
+    align: 'center',
     dataIndex: key,
+    ...extend,
     render: text => {
       if (text.length <= len) {
         return <span>{text}</span>;
@@ -170,9 +173,10 @@ function genPopoverColumn(key, title, len = 12, extend) {
 
 function genEllipsisColumn(key, title, len = 12, extend) {
   return {
-    ...extend,
     key,
     title,
+    align: 'center',
+    ...extend,
     dataIndex: key,
     render: text => (
       <Ellipsis length={len} tooltip="true">
@@ -181,12 +185,38 @@ function genEllipsisColumn(key, title, len = 12, extend) {
     ),
   };
 }
+function genNewlineColumn(key, title, len = 12, extend) {
+  return {
+    key,
+    title,
+    align: 'center',
+    dataIndex: key,
+    ...extend,
+    render: text => {
+      if (!text) return '';
+      const arr = [];
+      for (let i = 0; i < Math.ceil(text.length / len); i += 1) {
+        arr.push(text.substr(i * len, (i + 1) * len))
+      }
+      return (
+        <div>
+          {
+            arr.map((v, i)=> (
+              <div key={v+i.toString()}>{v}</div>
+            ))
+          }
+        </div>
+      )
+    },
+  };
+}
 
 function genSelectColumn(key, title, options, extend) {
   return {
-    ...extend,
     title,
     key,
+    align: 'center',
+    ...extend,
     dataIndex: key,
     render: text => {
       if (isEmpty(options)) return text;
@@ -206,50 +236,55 @@ function genSelectColumn(key, title, options, extend) {
 
 function genDateTimeColumn(key, title, format = 'YYYY-MM-DD HH:mm', extend) {
   return {
-    ...extend,
     title,
     key,
+    align: 'center',
     dataIndex: key,
+    ...extend,
     render: text => (text && moment(text).format(format)) || '',
   };
 }
 
 function genMoneyColumn(key, title, extend, prefix = '￥') {
   return {
-    ...extend,
     title,
     key,
+    align: 'center',
     dataIndex: key,
+    ...extend,
     render: text => moneyFormat(text, prefix),
   };
 }
 
 function genPercentColumn(key, title, extend) {
   return {
-    ...extend,
     title,
     key,
+    align: 'center',
     dataIndex: key,
+    ...extend,
     render: text => (text === null ? '--' : `${numeral(text).format('0,0.00')} %`),
   };
 }
 
 function genDiscountMoneyColumn(key, title, extend, prefix = '￥') {
   return {
-    ...extend,
     title,
     key,
+    align: 'center',
     dataIndex: key,
+    ...extend,
     render: text => (text === null ? '--' : `- ${prefix} ${numeral(text).format('0,0.00')}`),
   };
 }
 
 function genBadgeColumn(key, title, status, extend) {
   return {
-    ...extend,
     title,
     key,
+    align: 'center',
     dataIndex: key,
+    ...extend,
     render: text => <Badge text={text} status={status || 'default'} />,
   };
 }
@@ -259,6 +294,7 @@ function unshiftIndexColumn(old, page, cProps = {}) {
     {
       key: 'index',
       title: '序号',
+      align: 'center',
       ...cProps,
       render: (text, record, index) =>
         page
@@ -271,6 +307,7 @@ function unshiftIndexColumn(old, page, cProps = {}) {
 const TableColumnHelper = {
   genPlanColumn,
   genLangColumn,
+  genNewlineColumn,
   genPopoverColumn,
   genEllipsisColumn,
   genSelectColumn,
@@ -286,12 +323,12 @@ const TableColumnHelper = {
 
 // ===========================> Page <=========================== //
 const DefaultPage = {
-  currentPage: 0,
+  currentPage: 1,
   pageSize: 10,
 };
 
 const MaxPage = {
-  currentPage: 0,
+  currentPage: 1,
   pageSize: 9999,
 };
 
@@ -324,7 +361,7 @@ function resolveListState(payload) {
     filter,
     list: data || [],
     pagination: {
-      current: filter.currentPage + 1,
+      current: filter.currentPage,
       pageSize: filter.pageSize,
       total: page.total,
     },

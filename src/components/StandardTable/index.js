@@ -78,9 +78,9 @@ class StandardTable extends PureComponent {
     const paginationProps = rest.hidePagination
       ? false
       : {
-          // showSizeChanger: true,
+          showSizeChanger: true,
           showQuickJumper: true,
-          showTotal: total => `共 ${total} 项`,
+          showTotal: total => `共 ${total} 页`,
           ...pagination,
         };
 
@@ -125,8 +125,9 @@ class StandardTable extends PureComponent {
           </div>
         )}
 
+
         <Table
-          rowKey={rowKey || 'key'}
+          rowKey={rowKey || 'id'}
           dataSource={list}
           pagination={paginationProps}
           onChange={this.handleTableChange}

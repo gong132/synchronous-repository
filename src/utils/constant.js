@@ -1,3 +1,10 @@
+const formLayoutItem = {
+  labelCol: { span: 7 },
+  wrapperCol: { span: 13 },
+}
+
+export { formLayoutItem }
+
 // 登陆入口
 export const LOGIN_ENTRY_TYPE = {
   BOSS: 'BOSS', // 运营管理

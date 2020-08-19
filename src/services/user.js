@@ -6,6 +6,9 @@ export async function query() {
 export async function queryCurrent() {
   return request('/api/currentUser');
 }
-export async function queryNotices() {
-  return request('/api/notices');
+export async function queryNotices(params) {
+  return request('/api/notices', {
+    method: 'POST',
+    params,
+  });
 }
