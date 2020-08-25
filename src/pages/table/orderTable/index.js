@@ -142,7 +142,7 @@ const Index = props => {
 
 
   return (
-    <div className={styles.main}>
+    <div className="main">
       <div className={styles.tableList}>
         <div className={styles.tableListForm}>{renderForm()}</div>
         <StandardTable

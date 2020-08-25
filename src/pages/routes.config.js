@@ -36,6 +36,19 @@ module.exports = {
               },
             ],
           },
+          {
+            path: '/test',
+            name: 'test',
+            icon: 'smile',
+            routes: [
+              { path: '/test', redirect: '/testRoute' },
+              {
+                path: '/testRoute',
+                name: 'test',
+                component: './testRoute/index',
+              },
+            ]
+          },
 
           // 路由页面 end
 

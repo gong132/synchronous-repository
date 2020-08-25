@@ -98,6 +98,9 @@ const BasicLayout = props => {
   return (
     <ProLayout
       logo={logo}
+      siderWidth={188}
+      navTheme="light"
+      contentStyle={{ backgroundColor: '#fff' }}
       menuHeaderRender={(logoDom, titleDom) => (
         <Link to="/">
           {logoDom}
@@ -109,9 +112,9 @@ const BasicLayout = props => {
         if (menuItemProps.isUrl || menuItemProps.children || !menuItemProps.path) {
           return defaultDom;
         }
-
         return <Link to={menuItemProps.path}>{defaultDom}</Link>;
       }}
+      onPageChange={props => console.log(props, 'props')}
       breadcrumbRender={(routers = []) => [
         {
           path: '/',

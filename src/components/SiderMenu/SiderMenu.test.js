@@ -26,7 +26,7 @@ const menu = [
 
 const flatMenuKeys = getFlatMenuKeys(menu);
 
-describe('test convert nested menu to flat menu', () => {
+describe('testRoute convert nested menu to flat menu', () => {
   it('simple menu', () => {
     expect(flatMenuKeys).toEqual([
       '/dashboard',

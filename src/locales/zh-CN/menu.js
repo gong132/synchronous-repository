@@ -53,5 +53,7 @@ export default {
   'menu.table': '表格',
   'menu.table.userTable': '人员表格',
   'menu.table.orderTable': '订单表格',
+  'menu.test': '测试',
+  'menu.test.test': '测试',
 
 };

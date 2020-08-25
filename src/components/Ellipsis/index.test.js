@@ -1,6 +1,6 @@
 import { getStrFullLength, cutStrByFullLength } from './index';
 
-describe('test calculateShowLength', () => {
+describe('testRoute calculateShowLength', () => {
   it('get full length', () => {
     expect(getStrFullLength('一二，a,')).toEqual(8);
   });

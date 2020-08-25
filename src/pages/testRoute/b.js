@@ -1,8 +1,7 @@
 import React from "react";
 
-
 const Index = props => {
-  return <div className="main">11111</div>
+  return <div>这是页面B</div>
 }
 
 export default Index
