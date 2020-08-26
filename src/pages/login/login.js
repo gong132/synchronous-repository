@@ -15,8 +15,14 @@ const { Tab, UserName, Password, Submit } = Login;
 class LoginPage extends Component {
   state = {
     type: LOGIN_ENTRY_TYPE.SUPER,
-    autoLogin: true,
+    autoLogin: false,
   };
+
+  changeAutoLogin = (e) => {
+    this.setState({
+      autoLogin: e.target.checked
+    })
+  }
 
   onTabChange = type => {
     this.setState({ type });
@@ -61,15 +67,15 @@ class LoginPage extends Component {
             onSubmit={this.handleSubmit}
             ref={form => {
               this.loginForm = form;
-            }}
+            }} 
           >
-            <Tab key={LOGIN_ENTRY_TYPE.SUPER} tab="光大证券管理系统">
-              <div className={styles.desc}>Management System</div>
+            <Tab key={LOGIN_ENTRY_TYPE.SUPER}>
+              <div className={styles.cusTabTitle}>欢迎登录需求管理平台</div>
               {login.status === 'error' &&
               login.type === LOGIN_ENTRY_TYPE.SUPER &&
               !submitting &&
               this.renderMessage('请输入账号')}
-              <div className={styles.labelStyle}>用户名</div>
+              <div className={styles.labelStyle}>账号</div>
               <UserName name="username" placeholder="登录账号" />
               <div className={styles.labelStyle}>密码</div>
               <Password
@@ -78,14 +84,15 @@ class LoginPage extends Component {
                 onPressEnter={() => this.loginForm.validateFields(this.handleSubmit)}
               />
             </Tab>
-            <div>
+           
+            <Submit loading={submitting} className={styles.submitBtn}>
+              登录
+            </Submit>
+            <div className={styles.cusAutoLogin}>
               <Checkbox checked={autoLogin} onChange={this.changeAutoLogin}>
                 自动登录
               </Checkbox>
             </div>
-            <Submit loading={submitting} className={styles.submitBtn}>
-              登录
-            </Submit>
           </Login>
         </div>
       </div>

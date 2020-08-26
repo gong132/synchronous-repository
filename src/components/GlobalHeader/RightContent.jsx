@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { Tag } from 'antd';
 import React from 'react';
 import { connect } from 'dva';

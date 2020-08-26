@@ -1,40 +1,26 @@
 @import '~antd/lib/style/themes/default.less';
-.bossMain {
-  .title {
-    position: fixed;
-    top: 50%;
-    left: 0;
-    padding: 0 40px;
-    width: 30%;
-    margin-top: -65px;
-    .content1 {
-      font-size: 40px;
-      color: #fff;
-      line-height: 62px;
-    }
-    .content2 {
-      text-align: left;
-      padding-left: 42px;
-      font-size: 32px;
-      line-height: 44px;
-      color: #fff;
 
-      .rightQuo {
-        position: absolute;
-        right: 40px;
-        bottom: 0;
-      }
-    }
-  }
+.bossMain {
   .main {
     position: absolute;
-    top: 50%;
-    right: 50%;
-    margin: -235px -224px 0 0;
-    width: 468px;
+    top: 35vh;
+    width: 32.75%;
+    height: 45.82%;
+    right: 17.86%;
     background-color: #fff;
     border-radius: 5px;
-    padding: 15px;
+    padding: 5vh 3vw;
+
+    .cusTabTitle {
+      // width: 17.9%;
+      height: 24px;
+      font-size: 1.2rem;
+      text-align: center;
+      font-family: Source Han Sans CN;
+      font-weight: 500;
+      color: rgba(214, 21, 24, 1);
+    }
+
     @media screen and (max-width: @screen-sm) {
       width: 95%;
     }
@@ -60,11 +46,13 @@
     }
 
     .labelStyle {
-      font-size: 16px;
-      height: 16px;
-      font-weight: 600;
-      line-height: 16px;
-      margin-bottom: 16px;
+      width: 32px;
+      margin-bottom: 1.2%;
+      font-size: .9rem;
+      font-family: Source Han Sans CN;
+      font-weight: 400;
+      line-height: 28px;
+      color: rgba(96, 98, 101, 1);
     }
 
     .other {
@@ -78,31 +66,47 @@
     }
 
     .submitBtn {
-      border-radius: 20px;
+      // border-radius: 20px;
       // box-shadow: 3px 3px 3px #888;
+      height: 12.8%;
+      font-size: .9rem;
+      padding-bottom: 3px;
+      padding-top: 3px;
+      margin-top: 4.2%;
+      border: none;
+      background:linear-gradient(153deg,rgba(214,21,24,1) 0%,rgba(234,155,57,1) 100%);
+    }
+
+    .cusAutoLogin {
+      float: right;
+      font-size: .8rem;
     }
 
     :global {
-      .ant-tabs-tab {
-        font-size: 26px;
-      }
-      .ant-tabs-tab-active {
-        color: #1f1f1f;
-        font-size: 40px;
-        font-weight: bold;
-        line-height: 42px;
-      }
 
-      .ant-tabs .ant-tabs-bar {
-        margin-bottom: 24px;
+      .ant-tabs-tab-active {
+        color: rgba(214, 21, 24, 1);
       }
 
       .ant-tabs-ink-bar {
         display: none !important;
       }
 
-      .ant-input {
-        border-color: rgba(237, 239, 244, 1);
+      .ant-tabs-top-bar {
+        margin-bottom: 0;
+
+        .ant-tabs-nav-scroll {
+          display: none;
+        }
+      }
+
+      .ant-form-item {
+        margin-bottom: 1.8%;
+
+        .ant-input-lg {
+          height: 12.8%;
+          font-size: .8rem;
+        }
       }
     }
   }

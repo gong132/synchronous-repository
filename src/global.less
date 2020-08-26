@@ -28,17 +28,17 @@ body {
       margin: 12px;
     }
     .ant-layout-header{
-      height: 46px;
-      line-height: 46px;
+      height: 56px;
+      line-height: 56px;
     }
     .ant-pro-global-header-trigger {
       padding: 0 12px;
     }
     .ant-pro-global-header, .antd-pro-components-global-header-index-right, .ant-pro-global-header-trigger{
-      height: 46px;
+      height: 56px;
     }
     .antd-pro-components-global-header-index-right .antd-pro-components-global-header-index-account .antd-pro-components-global-header-index-avatar{
-      margin: calc((46px - 24px) / 2) 0;
+      margin: calc((56px - 24px) / 2) 0;
     }
     .ant-layout.ant-layout-has-sider > .ant-layout {
       background-color: #f2f2f2;
@@ -95,4 +95,28 @@ ol {
 .main {
   padding: 12px;
   min-height: 87.5vh;
+}
+
+// 修改侧边栏演示
+:global {
+  .ant-menu-item-selected > a, .ant-menu-submenu-selected, .ant-menu-item-selected > a:hover, .ant-menu-item > a:hover {
+    color: #FF9716;
+  }
+  .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    background-color: rgba(255,151,22,0.11);
+  }
+  .ant-menu-item:hover, .ant-menu-item-active, .ant-menu:not(.ant-menu-inline) .ant-menu-submenu-open, .ant-menu-submenu-active, .ant-menu-submenu-title:hover {
+    color: #FF9716;
+  }
+  .ant-menu-vertical .ant-menu-item::after, .ant-menu-vertical-left .ant-menu-item::after, .ant-menu-vertical-right .ant-menu-item::after, .ant-menu-inline .ant-menu-item::after {
+    border-right: 3px solid #FF9716;
+  }
+  .ant-menu-submenu-inline > .ant-menu-submenu-title:hover .ant-menu-submenu-arrow::after {
+    background: linear-gradient(to right, #FF9716, #FF9716);
+    // background-color: #FF9716;
+  }
+  .ant-menu-submenu-inline > .ant-menu-submenu-title:hover .ant-menu-submenu-arrow::before {
+    background: linear-gradient(to right, #FF9716, #FF9716);
+    // background-color: #FF9716;
+  }
 }
