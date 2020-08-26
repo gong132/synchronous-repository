@@ -100,7 +100,7 @@ const BasicLayout = props => {
       logo={logo}
       siderWidth={188}
       navTheme="light"
-      contentStyle={{ backgroundColor: '#fff' }}
+      contentStyle={{ backgroundColor: '#f0f2f5' }}
       menuHeaderRender={(logoDom, titleDom) => (
         <Link to="/">
           {logoDom}

@@ -12,3 +12,9 @@ export async function queryNotices(params) {
     params,
   });
 }
+export async function queryBudget(params) {
+  return request('/api/budget', {
+    method: 'POST',
+    params,
+  });
+}

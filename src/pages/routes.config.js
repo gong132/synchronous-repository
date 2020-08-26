@@ -37,15 +37,20 @@ module.exports = {
             ],
           },
           {
-            path: '/test',
-            name: 'test',
+            path: '/contract-budget',
+            name: 'contract-budget',
             icon: 'smile',
             routes: [
-              { path: '/test', redirect: '/testRoute' },
+              { path: '/contract-budget', redirect: '/contract' },
               {
-                path: '/testRoute',
-                name: 'test',
-                component: './testRoute/index',
+                path: '/contract-budget/contract',
+                name: 'contractManage',
+                component: './contractBudget/contractManage/index',
+              },
+              {
+                path: '/contract-budget/budget',
+                name: 'budgetManage',
+                component: './contractBudget/budgetManage/index',
               },
             ]
           },

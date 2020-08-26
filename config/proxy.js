@@ -5,10 +5,12 @@
  * For details, please see
  * https://pro.ant.design/docs/deploy
  */
+
+const apiUrl = 'http://10.90.48.22:80'; // yaowei
 export default {
   dev: {
-    '/api/': {
-      target: 'https://preview.pro.ant.design',
+    '/budget/': {
+      target: apiUrl,
       changeOrigin: true,
       pathRewrite: {
         '^': '',

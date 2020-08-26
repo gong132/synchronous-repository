@@ -140,4 +140,192 @@ export default {
       res.json(transformList());
     }, 1000)
   },
+
+  'POST /api/budget': (req, res) => {
+    const { pageSize, currentPage } = req.query;
+    const list = [
+      {
+        budgetId: '92077415863214785410',
+        budgetName: '智能运维平台智能运维平台',
+        reporter: '李易峰',
+        reportTime: '2019-7-26 23:12:09',
+        deptName: '李易峰',
+        gather: '光大临售需求开发集群',
+        expectStartTime: '2019-7-26 23:12:09',
+        expectTotalAmount: 125527,
+        expectHardwareAmount: 125527,
+      },
+      {
+        budgetId: '92077415863214785411',
+        budgetName: '智能运维平台智能运维平台',
+        reporter: '李易峰',
+        reportTime: '2019-7-26 23:12:09',
+        deptName: '李易峰',
+        gather: '光大临售需求开发集群',
+        expectStartTime: '2019-7-26 23:12:09',
+        expectTotalAmount: 125527,
+        expectHardwareAmount: 125527,
+      },
+      {
+        budgetId: '92077415863214785412',
+        budgetName: '智能运维平台智能运维平台',
+        reporter: '李易峰',
+        reportTime: '2019-7-26 23:12:09',
+        deptName: '李易峰',
+        gather: '光大临售需求开发集群',
+        expectStartTime: '2019-7-26 23:12:09',
+        expectTotalAmount: 125527,
+        expectHardwareAmount: 125527,
+      },
+      {
+        budgetId: '92077415863214785413',
+        budgetName: '智能运维平台智能运维平台',
+        reporter: '李易峰',
+        reportTime: '2019-7-26 23:12:09',
+        deptName: '李易峰',
+        gather: '光大临售需求开发集群',
+        expectStartTime: '2019-7-26 23:12:09',
+        expectTotalAmount: 125527,
+        expectHardwareAmount: 125527,
+      },
+      {
+        budgetId: '92077415863214785414',
+        budgetName: '智能运维平台智能运维平台',
+        reporter: '李易峰',
+        reportTime: '2019-7-26 23:12:09',
+        deptName: '李易峰',
+        gather: '光大临售需求开发集群',
+        expectStartTime: '2019-7-26 23:12:09',
+        expectTotalAmount: 125527,
+        expectHardwareAmount: 125527,
+      },
+      {
+        budgetId: '92077415863214785415',
+        budgetName: '智能运维平台智能运维平台',
+        reporter: '李易峰',
+        reportTime: '2019-7-26 23:12:09',
+        deptName: '李易峰',
+        gather: '光大临售需求开发集群',
+        expectStartTime: '2019-7-26 23:12:09',
+        expectTotalAmount: 125527,
+        expectHardwareAmount: 125527,
+      },
+      {
+        budgetId: '92077415863214785416',
+        budgetName: '智能运维平台智能运维平台',
+        reporter: '李易峰',
+        reportTime: '2019-7-26 23:12:09',
+        deptName: '李易峰',
+        gather: '光大临售需求开发集群',
+        expectStartTime: '2019-7-26 23:12:09',
+        expectTotalAmount: 125527,
+        expectHardwareAmount: 125527,
+      },
+      {
+        budgetId: '92077415863214785417',
+        budgetName: '智能运维平台智能运维平台',
+        reporter: '李易峰',
+        reportTime: '2019-7-26 23:12:09',
+        deptName: '李易峰',
+        gather: '光大临售需求开发集群',
+        expectStartTime: '2019-7-26 23:12:09',
+        expectTotalAmount: 125527,
+        expectHardwareAmount: 125527,
+      },
+      {
+        budgetId: '92077415863214785418',
+        budgetName: '智能运维平台智能运维平台',
+        reporter: '李易峰',
+        reportTime: '2019-7-26 23:12:09',
+        deptName: '李易峰',
+        gather: '光大临售需求开发集群',
+        expectStartTime: '2019-7-26 23:12:09',
+        expectTotalAmount: 125527,
+        expectHardwareAmount: 125527,
+      },
+      {
+        budgetId: '92077415863214785419',
+        budgetName: '智能运维平台智能运维平台',
+        reporter: '李易峰',
+        reportTime: '2019-7-26 23:12:09',
+        deptName: '李易峰',
+        gather: '光大临售需求开发集群',
+        expectStartTime: '2019-7-26 23:12:09',
+        expectTotalAmount: 125527,
+        expectHardwareAmount: 125527,
+      },
+      {
+        budgetId: '92077415863214785420',
+        budgetName: '智能运维平台智能运维平台',
+        reporter: '李易峰',
+        reportTime: '2019-7-26 23:12:09',
+        deptName: '李易峰',
+        gather: '光大临售需求开发集群',
+        expectStartTime: '2019-7-26 23:12:09',
+        expectTotalAmount: 125527,
+        expectHardwareAmount: 125527,
+      },
+      {
+        budgetId: '92077415863214785421',
+        budgetName: '智能运维平台智能运维平台',
+        reporter: '李易峰',
+        reportTime: '2019-7-26 23:12:09',
+        deptName: '李易峰',
+        gather: '光大临售需求开发集群',
+        expectStartTime: '2019-7-26 23:12:09',
+        expectTotalAmount: 125527,
+        expectHardwareAmount: 125527,
+      },
+      {
+        budgetId: '92077415863214785422',
+        budgetName: '智能运维平台智能运维平台',
+        reporter: '李易峰',
+        reportTime: '2019-7-26 23:12:09',
+        deptName: '李易峰',
+        gather: '光大临售需求开发集群',
+        expectStartTime: '2019-7-26 23:12:09',
+        expectTotalAmount: 125527,
+        expectHardwareAmount: 125527,
+      },
+      {
+        budgetId: '92077415863214785423',
+        budgetName: '智能运维平台智能运维平台',
+        reporter: '李易峰',
+        reportTime: '2019-7-26 23:12:09',
+        deptName: '李易峰',
+        gather: '光大临售需求开发集群',
+        expectStartTime: '2019-7-26 23:12:09',
+        expectTotalAmount: 125527,
+        expectHardwareAmount: 125527,
+      },
+    ]
+    const resErrData = {
+      code: 500,
+      msg: '请求失败',
+      data: null,
+    }
+    if (!__.isNumber(pageSize * 1) || !__.isNumber(currentPage * 1)) {
+      res.json(resErrData);
+      return
+    }
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = currentPage * pageSize > list.length ? list.length : currentPage * pageSize
+    const transformList = () => {
+      return {
+        code: 200,
+        msg: '请求成功',
+        data: {
+          datas: list.slice(startIndex,  endIndex),
+          pageSize: pageSize,
+          currentPage: currentPage - 1,
+          total: list.length,
+        }
+      }
+    }
+    setTimeout(() => {
+      res.json(transformList());
+    }, 1000)
+  },
 };
+
+

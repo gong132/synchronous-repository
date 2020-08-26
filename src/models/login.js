@@ -3,6 +3,7 @@ import { router } from 'umi';
 import { fakeAccountLogin, getFakeCaptcha } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
 import { getPageQuery } from '@/utils/utils';
+import {message} from "antd";
 
 const Model = {
   namespace: 'login',
@@ -11,17 +12,28 @@ const Model = {
   },
   effects: {
     *login({ payload }, { call, put }) {
-      const response = yield call(fakeAccountLogin, payload);
+      const { code } = yield call(fakeAccountLogin, payload);
+
+      if ( !code || code !== 200) {
+        message.error('登录失败')
+        return
+      }
+      const  response = {
+        status: 'ok',
+        type: 'SUPER',
+        currentAuthority: 'admin',
+      };
+
       yield put({
         type: 'changeLoginStatus',
         payload: response,
       }); // login successfully
 
-      console.log(response, 'response')
-
       if (response.status === 'ok') {
         const urlParams = new URL(window.location.href);
+        console.log(urlParams, 'urlParams')
         const params = getPageQuery();
+        console.log(params, 'params')
         let { redirect } = params;
 
         if (redirect) {
