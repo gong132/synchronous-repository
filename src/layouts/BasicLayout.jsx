@@ -3,8 +3,8 @@
  * You can view component api by:
  * https://github.com/ant-design/ant-design-pro-layout
  */
-import ProLayout, { DefaultFooter } from '@ant-design/pro-layout';
-import React, { useEffect } from 'react';
+import ProLayout, { DefaultFooter, getMenuData } from '@ant-design/pro-layout';
+import React, { useEffect, Fragment } from 'react';
 import { Link } from 'umi';
 import { connect } from 'dva';
 import { Icon, Result, Button } from 'antd';
@@ -12,7 +12,8 @@ import { formatMessage } from 'umi-plugin-react/locale';
 import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
 import { isAntDesignPro, getAuthorityFromRouter } from '@/utils/utils';
-import logo from '../assets/logo.svg';
+import logo from '../assets/logoImg.png';
+import logoBg from '../assets/logo.png'
 
 const noMatch = (
   <Result
@@ -37,28 +38,6 @@ const menuDataRender = menuList =>
   });
 
 
-const footerRender = () => {
-
-  return (
-    <>
-      <div
-        style={{
-          padding: '0px 24px 24px',
-          textAlign: 'center',
-        }}
-      >
-        {/*<a href="https://www.netlify.com" target="_blank" rel="noopener noreferrer">*/}
-        {/*  <img*/}
-        {/*    src="https://www.netlify.com/img/global/badges/netlify-color-bg.svg"*/}
-        {/*    width="82px"*/}
-        {/*    alt="netlify logo"*/}
-        {/*  />*/}
-        {/*</a>*/}
-      </div>
-    </>
-  );
-};
-
 const BasicLayout = props => {
   const {
     dispatch,
@@ -79,6 +58,25 @@ const BasicLayout = props => {
       });
     }
   }, []);
+  useEffect(() => {
+    const {
+      routes,
+      menu,
+      formatMessage,
+      menuDataRender,
+    } = props
+    const { breadcrumb, menuData } = getMenuData(
+      routes,
+      menu,
+      formatMessage,
+      menuDataRender,
+    );
+    console.log(props)
+    console.log(routes,
+      menu,
+      formatMessage,
+      menuDataRender,)
+  }, [props])
   /**
    * init variables
    */
@@ -95,18 +93,22 @@ const BasicLayout = props => {
   const authorized = getAuthorityFromRouter(props.route.routes, location.pathname || '/') || {
     authority: undefined,
   };
+
+  const renderHeader = logo => <div
+    style={{
+      lineHeight: '56px'
+    }}
+  >
+    {logo}
+  </div>
   return (
     <ProLayout
-      logo={logo}
+      logo={props.collapsed ? logo : logoBg}
+      title='光大证券'
       siderWidth={188}
-      navTheme="light"
-      contentStyle={{ backgroundColor: '#f0f2f5' }}
-      menuHeaderRender={(logoDom, titleDom) => (
-        <Link to="/">
-          {logoDom}
-          {titleDom}
-        </Link>
-      )}
+      contentStyle={{ backgroundColor: '#fff' }}
+      menuHeaderRender={(logo, title) => renderHeader(logo, title, props.collapsed)}
+      onMenuHeaderClick={(e) => console.log(e)} // logo和title的位置
       onCollapse={handleMenuCollapse}
       menuItemRender={(menuItemProps, defaultDom) => {
         if (menuItemProps.isUrl || menuItemProps.children || !menuItemProps.path) {
@@ -130,11 +132,9 @@ const BasicLayout = props => {
         return first ? (
           <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
         ) : (
-          <span>{route.breadcrumbName}</span>
-        );
+            <span>{route.breadcrumbName}</span>
+          );
       }}
-      // 去掉copyright
-      // footerRender={footerRender}
       menuDataRender={menuDataRender}
       formatMessage={formatMessage}
       rightContentRender={() => <RightContent />}
