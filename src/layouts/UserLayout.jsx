@@ -29,13 +29,13 @@ class UserLayout extends React.PureComponent {
                 满足各行业各场景的个性化办公管理需求
               </span>
             </p>
+            <div className={styles.footer}>
+              <span>
+                Copyright <Icon type="copyright" /> 版权2020光大证券股份有限公司
+            </span>
+            </div>
           </div>
           <img alt="gd-bg-right" className={styles.bgRight} src={bgRight} />
-          <div className={styles.footer}>
-            <span>
-            Copyright <Icon type="copyright" /> 版权2020光大证券股份有限公司
-            </span>
-          </div>
         </div>
         <div className={styles.content}>{children}</div>
       </div>
