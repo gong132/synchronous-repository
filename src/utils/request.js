@@ -51,8 +51,9 @@ const errorHandler = error => {
 
 const request = extend({
   errorHandler,
+  timeout: 5000,
   // 默认错误处理
-  // credentials: 'include', // 默认请求是否带上cookie
+  credentials: 'include', // 默认请求是否带上cookie
 });
 
 
@@ -64,6 +65,27 @@ request.interceptors.request.use(async (url, options) => {
     Accept: 'application/json',
   }
 
+  let newOptions = { ...options, ...header };
+
+  console.log(newOptions, 'newOptions')
+  if (newOptions.method === 'post') {
+    newOptions = { ...newOptions, body: newOptions.params };
+    console.log(newOptions.body instanceof FormData, 'newOptions.body instanceof FormData')
+    if (!(newOptions.body instanceof FormData)) {
+      newOptions.headers = {
+        Accept: 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
+        ...newOptions.headers,
+      };
+      newOptions.body = JSON.stringify(newOptions.body);
+    } else {
+      newOptions.headers = {
+        Accept: 'application/json',
+        ...newOptions.headers,
+      };
+    }
+  }
+
   // if (token) {
   //   header['token'] = token
   // }
@@ -72,8 +94,7 @@ request.interceptors.request.use(async (url, options) => {
     {
       url: url,
       options: {
-        ...options,
-        header: header,
+        ...newOptions,
       },
     }
   );

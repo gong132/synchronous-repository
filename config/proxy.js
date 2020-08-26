@@ -7,9 +7,17 @@
  */
 
 const apiUrl = 'http://10.90.48.22:80'; // yaowei
+const apiUrl1 = 'http://10.90.48.40:80'; // yaowei
 export default {
   dev: {
     '/budget/': {
+      target: apiUrl,
+      changeOrigin: true,
+      pathRewrite: {
+        '^': '',
+      },
+    },
+    '/user/': {
       target: apiUrl,
       changeOrigin: true,
       pathRewrite: {

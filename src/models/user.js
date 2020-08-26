@@ -1,4 +1,5 @@
 import { queryCurrent, query as queryUsers } from '@/services/user';
+import storage from "@/utils/storage";
 
 const UserModel = {
   namespace: 'user',
@@ -15,16 +16,16 @@ const UserModel = {
     },
 
     *fetchCurrent(_, { call, put }) {
-      const response = yield call(queryCurrent);
+      const response = storage.get('gd-user')
       yield put({
         type: 'saveCurrentUser',
-        payload: response,
+        payload: response && response.currentUser || {},
       });
     },
   },
   reducers: {
     saveCurrentUser(state, action) {
-      return { ...state, currentUser: action.payload || {} };
+      return { ...state, currentUser: action.payload };
     },
 
     changeNotifyCount(

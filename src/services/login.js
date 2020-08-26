@@ -1,8 +1,8 @@
 import request from '@/utils/request';
 
 export async function fakeAccountLogin(params) {
-  return request('/budget/login', {
-    method: 'GET',
+  return request('/user/login', {
+    method: 'post',
     params: params,
   });
 }

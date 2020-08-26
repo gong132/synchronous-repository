@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Alert, message, Checkbox } from 'antd';
 import Login from '@/components/Login';
-import { LOGIN_ENTRY_TYPE } from '@/utils/constant';
 import styles from './login.less';
 
-const { Tab, UserName, Password, Submit } = Login;
+const { UserName, Password, Submit } = Login;
 
 @connect(({ login, global, loading }) => ({
   login,
@@ -14,7 +13,6 @@ const { Tab, UserName, Password, Submit } = Login;
 }))
 class LoginPage extends Component {
   state = {
-    type: LOGIN_ENTRY_TYPE.SUPER,
     autoLogin: false,
   };
 
@@ -24,12 +22,7 @@ class LoginPage extends Component {
     })
   }
 
-  onTabChange = type => {
-    this.setState({ type });
-  };
-
   handleSubmit = (err, values) => {
-    const { type } = this.state;
     if (!err) {
       if (!values.username) {
         message.error('请输入用户名');
@@ -44,8 +37,8 @@ class LoginPage extends Component {
       dispatch({
         type: 'login/login',
         payload: {
-          ...values,
-          type,
+          loginName: values.username,
+          passWord: values.password,
         },
       });
     }
@@ -57,34 +50,29 @@ class LoginPage extends Component {
 
   render() {
     const { login, submitting } = this.props;
-    const { type, autoLogin } = this.state;
+    const { autoLogin } = this.state;
     return (
       <div className={styles.bossMain}>
         <div className={styles.main}>
           <Login
-            defaultActiveKey={type}
-            onTabChange={this.onTabChange}
             onSubmit={this.handleSubmit}
             ref={form => {
               this.loginForm = form;
-            }} 
+            }}
           >
-            <Tab key={LOGIN_ENTRY_TYPE.SUPER}>
-              <div className={styles.cusTabTitle}>欢迎登录需求管理平台</div>
-              {login.status === 'error' &&
-              login.type === LOGIN_ENTRY_TYPE.SUPER &&
-              !submitting &&
-              this.renderMessage('请输入账号')}
-              <div className={styles.labelStyle}>账号</div>
-              <UserName name="username" placeholder="登录账号" />
-              <div className={styles.labelStyle}>密码</div>
-              <Password
-                name="password"
-                placeholder="登录密码"
-                onPressEnter={() => this.loginForm.validateFields(this.handleSubmit)}
-              />
-            </Tab>
-           
+            <div className={styles.cusTabTitle}>欢迎登录需求管理平台</div>
+            {login.status === 'error' &&
+            !submitting &&
+            this.renderMessage('请输入账号')}
+            <div className={styles.labelStyle}>账号</div>
+            <UserName name="username" placeholder="登录账号" />
+            <div className={styles.labelStyle}>密码</div>
+            <Password
+              name="password"
+              placeholder="登录密码"
+              onPressEnter={() => this.loginForm.validateFields(this.handleSubmit)}
+            />
+
             <Submit loading={submitting} className={styles.submitBtn}>
               登录
             </Submit>
