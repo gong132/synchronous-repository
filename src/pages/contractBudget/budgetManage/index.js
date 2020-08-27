@@ -1,20 +1,28 @@
 import React, {Fragment, useEffect, useState} from "react";
-import {withRouter} from "umi";
 import { connect } from 'dva'
+import classNames from "classnames";
 import {DefaultPage, TableColumnHelper} from "@/utils/helper";
 import StandardTable from "@/components/StandardTable";
-import {Button, Col, Divider, Form, Input, Popover, Row, Tooltip} from "antd";
+import {Button, Col, Divider, Form, Input, Popover, Row, Select, Tooltip, DatePicker} from "antd";
 import {isEmpty} from "@/utils/lang";
 import styles from "../index.less";
 import {formLayoutItem, formLayoutItem1} from "@/utils/constant";
+import {BUDGET_TYPE, PROJECT_TYPE} from "@/pages/contractBudget/util/constant";
+
+import AddForm from './addForm'
 
 const FormItem = Form.Item;
-const Index = props => {
+const { Option } = Select;
 
-  const { dispatch, budgetManage:{ budgetList }, loading, form } = props;
+const Index = props => {
+  const { dispatch, budgetManage:{ budgetList }, orderListLoading, form } = props;
 
   // 查询更多
-  const [searchMore, setSearchMore] = useState(false)
+  const [searchMore, setSearchMore] = useState(false);
+  // 新增/编辑
+  const [addModalVisible, setAddModalVisible] = useState(false);
+  // 选中行
+  const [selectedRows, setSelectedRows] = useState({});
 
   const handleQueryBudgetData = params => {
     dispatch({
@@ -30,30 +38,36 @@ const Index = props => {
   const columns = [
     {
       title: '预算编号',
-      key: 'budgetId',
+      key: 'number',
       render: rows =>{
-        if (isEmpty(rows.budgetId, true)) return ''
+        if (isEmpty(rows.number, true)) return '';
         return (
-          <Tooltip placement="top" title={rows.budgetId}>
-            <a style={{ color: '#FF9716' }}>{`${rows.budgetId.substring(0, 5)}...`}</a>
+          <Tooltip placement="top" title={rows.number}>
+            <a style={{ color: '#FF9716' }}>
+              {rows.number.length > 10 ? `${rows.number.substring(0, 10)}...` : rows.number.substring(0, 10)}
+            </a>
           </Tooltip>
         )
       },
     },
-    TableColumnHelper.genLangColumn('budgetName', '项目名称', {}, 4),
-    TableColumnHelper.genPlanColumn('reporter', '录入人'),
-    TableColumnHelper.genDateTimeColumn('reportTime', '录入时间', "YYYY-MM-DD"),
+    TableColumnHelper.genSelectColumn('type', '项目类型', PROJECT_TYPE),
+    TableColumnHelper.genLangColumn('name', '项目名称', {}, 4),
+    TableColumnHelper.genPlanColumn('userName', '录入人'),
+    TableColumnHelper.genDateTimeColumn('createTime', '录入时间', "YYYY-MM-DD"),
     TableColumnHelper.genPlanColumn('deptName', '需求部门'),
-    TableColumnHelper.genLangColumn('gather', '所属集群或板块', {}, 4),
-    TableColumnHelper.genDateTimeColumn('expectStartTime', '预计立项时间', "YYYY-MM-DD"),
+    TableColumnHelper.genLangColumn('clusterName', '所属集群或板块', {}, 4),
+    TableColumnHelper.genDateTimeColumn('expectSetTime', '预计立项时间', "YYYY-MM-DD"),
     TableColumnHelper.genMoneyColumn('expectTotalAmount', '预算总金额'),
-    TableColumnHelper.genMoneyColumn('expectHardwareAmount', '硬件预算金额'),
+    TableColumnHelper.genMoneyColumn('hardwareExpectAmount', '硬件预算金额'),
     {
       title: '操作',
       align: 'center',
       render: rows => (
         <Fragment>
-          <a>编辑</a>
+          <a onClick={() => {
+            setAddModalVisible(true);
+            setSelectedRows(rows)
+          }}>编辑</a>
           <Divider type="vertical" />
           <a>查看</a>
         </Fragment>
@@ -77,9 +91,17 @@ const Index = props => {
     setSearchMore(false);
     handleQueryBudgetData()
   };
+
+  // 获取搜索条件,转换成数组
+  const getSearchValuesToList = () => {
+    const formValues = form.getFieldsValue()
+
+  };
+
   useEffect(() => {
     handleQueryBudgetData()
   }, []);
+
   const renderForm = () => {
     const { getFieldDecorator } = form;
     const content = (
@@ -87,37 +109,55 @@ const Index = props => {
         <Row>
           <Col span={24}>
             <FormItem {...formLayoutItem1} label="项目类型">
-              {getFieldDecorator('budgetName', {
-              })(<Input placeholder="请选择项目类型" />)}
+              {getFieldDecorator('type', {
+              })(<Select
+                placeholder="请选择项目类型"
+              >
+                {
+                  PROJECT_TYPE.map(v => (
+                    <Option value={v.key} key={v.key.toString()}>{v.value}</Option>
+                  ))
+                }
+              </Select>)}
             </FormItem>
           </Col>
           <Col span={24}>
             <FormItem {...formLayoutItem1} label="预算总金额">
-              {getFieldDecorator('budgetName', {
+              {getFieldDecorator('expectTotalAmount', {
               })(<Input placeholder="请输入预算总金额" />)}
             </FormItem>
           </Col>
           <Col span={24}>
             <FormItem {...formLayoutItem1} label="预算类型">
-              {getFieldDecorator('budgetName', {
-              })(<Input placeholder="请输入预算类型" />)}
+              {getFieldDecorator('budgetType', {
+              })(<Select
+                placeholder="请选择预算类型"
+              >
+                {
+                  BUDGET_TYPE.map(v => (
+                    <Option value={v.key} key={v.key.toString()}>{v.value}</Option>
+                  ))
+                }
+              </Select>)}
             </FormItem>
           </Col>
           <Col span={24}>
             <FormItem {...formLayoutItem1} label="预计立项时间">
-              {getFieldDecorator('budgetName', {
-              })(<Input placeholder="请输入预计立项时间" />)}
+              {getFieldDecorator('expectSetTime', {
+              })(<DatePicker
+                format="YYYY-MM-DD"
+              />)}
             </FormItem>
           </Col>
           <Col span={24}>
             <FormItem {...formLayoutItem1} label="承建团队">
-              {getFieldDecorator('budgetName', {
+              {getFieldDecorator('receiveGroupId', {
               })(<Input placeholder="请输入承建团队" />)}
             </FormItem>
           </Col>
           <Col span={24}>
             <FormItem {...formLayoutItem1} label="所属集群或板块">
-              {getFieldDecorator('budgetName', {
+              {getFieldDecorator('clusterId', {
               })(<Input placeholder="请输入所属集群或板块" />)}
             </FormItem>
           </Col>
@@ -133,46 +173,33 @@ const Index = props => {
         <Row>
           <Col span={6}>
             <FormItem {...formLayoutItem} label="预算编号">
-              {getFieldDecorator('budgetName', {
+              {getFieldDecorator('number', {
               })(<Input placeholder="请输入预算编号" />)}
             </FormItem>
           </Col>
           <Col span={6}>
             <FormItem {...formLayoutItem} label="项目名称">
-              {getFieldDecorator('budgetName', {
+              {getFieldDecorator('name', {
               })(<Input placeholder="请输入项目名称" />)}
             </FormItem>
           </Col>
           <Col span={6}>
             <FormItem {...formLayoutItem} label="需求部门">
-              {getFieldDecorator('budgetName', {
+              {getFieldDecorator('deptName', {
               })(<Input placeholder="请输入需求部门" />)}
             </FormItem>
           </Col>
           <Col span={6}>
             <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-              <div>
-                <Button
-                  // className={styles.addForm}
-                  ghost
-                  type="primary"
-                  style={{ marginRight: 6 }}
-                  icon="plus"
-                >新建</Button>
-                <Button
-                  ghost
-                  type="danger"
-                  className="margin-right-6"
-                  onClick={handleResetForm}
-                >重置</Button>
-                <Button
-                  type="default"
-                >导出</Button>
-              </div>
+              <Button
+                ghost
+                className={classNames('margin-right-6',styles.orangeForm)}
+                onClick={handleResetForm}
+              >重置</Button>
               <Popover visible={searchMore} placement="bottomRight" content={content} trigger="click">
                 {
-                  !searchMore ? <a className="margin-right-6" onClick={() => setSearchMore(true)}>更多</a> :
-                    <a className="margin-right-6" onClick={() => setSearchMore(false)}>隐藏</a>
+                  !searchMore ? <span className="activeColor" onClick={() => setSearchMore(true)}>更多</span> :
+                    <span className="activeColor" onClick={() => setSearchMore(false)}>隐藏</span>
                 }
               </Popover>
             </div>
@@ -180,19 +207,37 @@ const Index = props => {
         </Row>
       </Form>
     )
-  }
+  };
   return (
     <div className="main">
+      <div className="yCenter-between">
+        <Button
+          className={styles.addForm}
+          icon="plus"
+          onClick={() => setAddModalVisible(true)}
+        >新建</Button>
+        <Button
+          type="default"
+        >导出</Button>
+      </div>
       <div className={styles.tableList}>
         <div className={styles.tableListForm}>
           {renderForm()}
         </div>
         <StandardTable
           rowKey="budgetId"
-          loading={loading}
+          loading={orderListLoading}
           data={budgetList}
           columns={columns}
           onChange={handleStandardTableChange}
+        />
+        <AddForm
+          modalVisible={addModalVisible}
+          handleModalVisible={() => {
+            setAddModalVisible(false);
+            setSelectedRows({})
+          }}
+          values={selectedRows}
         />
       </div>
     </div>
@@ -202,7 +247,6 @@ const Index = props => {
 export default connect(
   ({ budgetManage, loading }) => ({
     budgetManage,
-    // fetchOrderDataLoading: loading.effects['budgetManage/fetchOrderData'],
-    loading: loading.models.budgetManage
+    orderListLoading: loading.effects['budgetManage/fetchOrderData'],
   })
 )(Form.create()(Index))

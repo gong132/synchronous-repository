@@ -2,12 +2,16 @@ const formLayoutItem = {
   labelCol: { span: 6 },
   wrapperCol: { span: 13 },
 }
+const formLayoutItemAddDouble = {
+  labelCol: { span: 8 },
+  wrapperCol: { span: 14 },
+}
 const formLayoutItem1 = {
   labelCol: { span: 10 },
   wrapperCol: { span: 13 },
 }
 
-export { formLayoutItem, formLayoutItem1 }
+export { formLayoutItem, formLayoutItem1, formLayoutItemAddDouble }
 
 export const COLOR_TYPY = {
   activeColor: '#FF9716'

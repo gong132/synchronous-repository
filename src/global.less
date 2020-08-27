@@ -25,14 +25,14 @@ body {
 
   :global {
     .ant-pro-basicLayout-content {
-      margin: 12px;
+      margin: 16px;
     }
     .ant-layout-header{
       height: 56px;
       line-height: 56px;
     }
     .ant-pro-global-header-trigger {
-      padding: 0 12px;
+      padding: 0 16px;
     }
     .ant-pro-global-header, .antd-pro-components-global-header-index-right, .ant-pro-global-header-trigger{
       height: 56px;
@@ -41,7 +41,10 @@ body {
       margin: calc((56px - 24px) / 2) 0;
     }
     .ant-layout.ant-layout-has-sider > .ant-layout {
-      background-color: #f2f2f2;
+      background-color: #F4F6FC;
+    }
+    .ant-calendar-picker {
+      width: 100%;
     }
     //section {
     //  .ant-pro-sider-menu-sider {
@@ -85,7 +88,8 @@ ol {
 
 // 全局颜色样式
 .activeColor {
-  color: #FF9716
+  color: #FF9716;
+  cursor: pointer;
 }
 
 // 全局定义的引用样式集
@@ -102,10 +106,10 @@ ol {
 .main {
   padding: 0;
   min-height: 87.5vh;
+  background-color: #F4F6FC;
 }
 
 // 超出隐藏省略号
-
 .overHide {
   display: block;
   overflow: hidden;
@@ -113,7 +117,31 @@ ol {
   white-space: nowrap;
 }
 
-// 修改侧边栏演示
+// 常用布局
+// 水平居中
+.xCenter {
+  display: flex;
+  justify-content: center;
+}
+// 垂直居中
+.yCenter {
+  display: flex;
+  align-items: center;
+}
+// 水平垂直居中
+.xyCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+// 垂直居中, 两端对齐
+.yCenter-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// 修改侧边栏样式
 :global {
   .ant-menu-item-selected > a, .ant-menu-submenu-selected, .ant-menu-item-selected > a:hover, .ant-menu-item > a:hover {
     color: #FF9716;

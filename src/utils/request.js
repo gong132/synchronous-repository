@@ -22,6 +22,17 @@ const codeMessage = {
   503: '服务不可用，服务器暂时过载或维护。',
   504: '网关超时。',
 };
+
+
+/**
+ * 登出
+ */
+const logout = () => {
+  window.g_app._store.dispatch({
+    type: 'type/logout'
+  })
+};
+
 /**
  * 异常处理程序
  */
@@ -98,5 +109,18 @@ request.interceptors.request.use(async (url, options) => {
       },
     }
   );
+});
+
+request.interceptors.response.use(async (response, options) => {
+  const data = await response.clone().json()
+  console.log(data, 'data')
+  if (data.code === 5203) {
+    notification.error({
+      description: data.message || '登陆超时,请重新登陆',
+      message: '登陆超时',
+    });
+    return
+  }
+  return  response;
 });
 export default request;

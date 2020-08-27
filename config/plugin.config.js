@@ -63,6 +63,21 @@ const webpackPlugin = config => {
         },
       },
     });
+
+  config.module.rule('svg')
+    .test(/\.svg(\?v=\d+\.\d+\.\d+)?$/)
+    .use([
+      {
+        loader: 'babel-loader',
+      },
+      {
+        loader: '@svgr/webpack',
+        options: {
+          babel: false,
+          icon: true,
+        },
+      },
+    ]).loader(require.resolve('@svgr/webpack'));
 };
 
 export default webpackPlugin;

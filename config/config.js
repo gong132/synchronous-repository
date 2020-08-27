@@ -122,5 +122,6 @@ export default {
     basePath: '/',
   },
   proxy: proxy[REACT_APP_ENV || 'dev'],
+  urlLoaderExcludes: [/.svg$/],
   chainWebpack: webpackPlugin,
 };

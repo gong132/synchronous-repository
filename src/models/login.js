@@ -106,7 +106,7 @@ const Model = {
       yield call(getFakeCaptcha, payload);
     },
 
-    logout() {
+    *logout() {
       const { redirect } = getPageQuery(); // Note: There may be security issues, please note
 
       storage.remove('gd-user');
