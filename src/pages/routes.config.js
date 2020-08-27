@@ -15,7 +15,7 @@ module.exports = {
           {
             path: '/home',
             name: 'home',
-            icon: 'smile',
+            icon: 'home',
             component: './home/home',
           },
           {

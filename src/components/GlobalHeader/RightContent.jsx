@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import { Tag } from 'antd';
+import { Tag, Icon, Badge } from 'antd';
 import React from 'react';
 import { connect } from 'dva';
 import Avatar from './AvatarDropdown';
@@ -21,6 +21,13 @@ const GlobalHeaderRight = props => {
 
   return (
     <div className={className}>
+      <div className={styles.rContent}>
+        <Badge count={1}>
+          <span className={styles.rContent_mail}>
+            <Icon type='mail' />
+          </span>
+        </Badge>
+      </div>
       <Avatar />
       {REACT_APP_ENV && <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>}
     </div>

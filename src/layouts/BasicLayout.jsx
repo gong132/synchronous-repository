@@ -71,11 +71,6 @@ const BasicLayout = props => {
       formatMessage,
       menuDataRender,
     );
-    console.log(props)
-    console.log(routes,
-      menu,
-      formatMessage,
-      menuDataRender,)
   }, [props])
   /**
    * init variables
@@ -99,7 +94,7 @@ const BasicLayout = props => {
       lineHeight: '56px'
     }}
   >
-    {logo}
+    {logo}  
   </div>
   return (
     <ProLayout
@@ -112,7 +107,7 @@ const BasicLayout = props => {
       onCollapse={handleMenuCollapse}
       menuItemRender={(menuItemProps, defaultDom) => {
         if (menuItemProps.isUrl || menuItemProps.children || !menuItemProps.path) {
-          return defaultDom;
+          return defaultDom;    
         }
         return <Link to={menuItemProps.path}>{defaultDom}</Link>;
       }}

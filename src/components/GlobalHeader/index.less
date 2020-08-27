@@ -13,6 +13,7 @@
 
 .right {
   float: right;
+  display: flex;
   height: @layout-header-height;
   margin-left: auto;
   overflow: hidden;
@@ -46,6 +47,14 @@
       color: @primary-color;
       vertical-align: top;
       background: rgba(255, 255, 255, 0.85);
+    }
+  }
+  .rContent {
+    height: 56px;
+    line-height: 68px;
+    &_mail {
+      font-size: 1.7rem;
+      color: #BFC5D2;
     }
   }
 }
