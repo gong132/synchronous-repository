@@ -71,11 +71,6 @@ const BasicLayout = props => {
       formatMessage,
       menuDataRender,
     );
-    console.log(props)
-    console.log(routes,
-      menu,
-      formatMessage,
-      menuDataRender,)
   }, [props])
   /**
    * init variables
@@ -101,12 +96,13 @@ const BasicLayout = props => {
   >
     {logo}
   </div>
+
   return (
     <ProLayout
       logo={props.collapsed ? logo : logoBg}
       title='光大证券'
       siderWidth={188}
-      contentStyle={{ backgroundColor: '#F4F6FC' }}
+      // contentStyle={{ backgroundColor: '#fff' }}
       menuHeaderRender={(logo, title) => renderHeader(logo, title, props.collapsed)}
       onMenuHeaderClick={(e) => console.log(e)} // logo和title的位置
       onCollapse={handleMenuCollapse}
@@ -137,7 +133,7 @@ const BasicLayout = props => {
       }}
       menuDataRender={menuDataRender}
       formatMessage={formatMessage}
-      rightContentRender={() => <RightContent />}
+      rightContentRender={(props) => <RightContent {...props} />}
       {...props}
       {...settings}
     >
