@@ -33,8 +33,11 @@ function isString(value) {
 function moneyFormat(text, prefix = '¥') {
   return text === null ? '--' : `${prefix} ${numeral(text).format('0,0.00')}`;
 }
+function moneyFormatAfter(text, prefix = '元') {
+  return text === null ? '--' : `${numeral(text).format('0,0.00')} ${prefix}`;
+}
 
-const CheckInstanceHelper = { isObject, isArray, isEmpty, isString };
+const CheckInstanceHelper = { isObject, isArray, isEmpty, isString, moneyFormat };
 // ===========================> Check Instance <=========================== //
 
 // ===========================> Menu Actions <=========================== //
@@ -551,6 +554,15 @@ const SelectHelper = {
   },
 };
 
+// 根据参数查找数组中的符合条件的name值
+function findValueByArray(arr, preId, cruId, name) {
+  const findObj = arr.find(v => v[preId] === cruId);
+  if (isEmpty(findObj)) return false;
+  const findName = findObj[name];
+  if (!findName) return false;
+  return findName
+}
+
 export {
   DefaultPage,
   MenuActionHelper,
@@ -565,4 +577,6 @@ export {
   TimeHelper,
   NumberHelper,
   SelectHelper,
+  findValueByArray,
+  moneyFormatAfter
 };

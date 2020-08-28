@@ -45,7 +45,17 @@ const Index = props => {
         if (isEmpty(rows.number, true)) return '';
         return (
           <Tooltip placement="top" title={rows.number}>
-            <a style={{ color: '#FF9716' }}>
+            <a
+              style={{ color: '#FF9716' }}
+              onClick={() => {
+                props.history.push({
+                  pathname: '/contract-budget/budget/detail',
+                  query: {
+                    id: rows.id,
+                  }
+                })
+              }}
+            >
               {rows.number.length > 10 ? `${rows.number.substring(0, 10)}...` : rows.number.substring(0, 10)}
             </a>
           </Tooltip>
@@ -78,8 +88,12 @@ const Index = props => {
             icon="eye"
             text="查看"
             onClick={() => {
-              setAddModalVisible(true);
-              setSelectedRows(rows)
+              props.history.push({
+                pathname: '/contract-budget/budget/detail',
+                query: {
+                  id: rows.id,
+                }
+              })
             }}
           />
         </Fragment>

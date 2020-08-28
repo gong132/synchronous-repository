@@ -31,6 +31,13 @@ export default {
         '^': '',
       },
     },
+    '/log/': {
+      target: apiUrl,
+      changeOrigin: true,
+      pathRewrite: {
+        '^': '',
+      },
+    },
     '/temp/': {
       target: apiUrl,
       changeOrigin: true,
