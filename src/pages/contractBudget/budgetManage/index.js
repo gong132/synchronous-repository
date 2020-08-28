@@ -3,13 +3,15 @@ import { connect } from 'dva'
 import classNames from "classnames";
 import {DefaultPage, TableColumnHelper} from "@/utils/helper";
 import StandardTable from "@/components/StandardTable";
-import {Button, Col, Divider, Form, Input, Popover, Row, Select, Tooltip, DatePicker} from "antd";
+import {Button, Col, Divider, Form, Input, Popover, Row, Select, Tooltip, DatePicker, Icon } from "antd";
 import {isEmpty} from "@/utils/lang";
 import styles from "../index.less";
 import {formLayoutItem, formLayoutItem1} from "@/utils/constant";
 import {BUDGET_TYPE, PROJECT_TYPE} from "@/pages/contractBudget/util/constant";
+import edit from '@/assets/icon/Button_bj.svg'
 
 import AddForm from './addForm'
+import OptButton from "@/components/commonUseModule/optButton";
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -64,12 +66,22 @@ const Index = props => {
       align: 'center',
       render: rows => (
         <Fragment>
-          <a onClick={() => {
-            setAddModalVisible(true);
-            setSelectedRows(rows)
-          }}>编辑</a>
-          <Divider type="vertical" />
-          <a>查看</a>
+          <OptButton
+            img={edit}
+            text="编辑"
+            onClick={() => {
+              setAddModalVisible(true);
+              setSelectedRows(rows)
+            }}
+          />
+          <OptButton
+            img={edit}
+            text="查看"
+            onClick={() => {
+              setAddModalVisible(true);
+              setSelectedRows(rows)
+            }}
+          />
         </Fragment>
       )
     },

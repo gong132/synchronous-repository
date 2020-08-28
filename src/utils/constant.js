@@ -10,7 +10,10 @@ const formLayoutItem1 = {
   labelCol: { span: 10 },
   wrapperCol: { span: 13 },
 }
-
+const formLayoutItemAddEdit = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 19 },
+}
 const formLayout = {
   labelCol: {
     span: 8
@@ -39,11 +42,13 @@ const searchItemLayout = {
   },
 };
 
-export { 
-  formLayoutItem, 
+export {
+  formLayoutItem,
   formLayoutItem1,
   formLayout,
-  searchItemLayout
+  searchItemLayout,
+  formLayoutItemAddDouble,
+  formLayoutItemAddEdit
  }
 
 export const COLOR_TYPY = {

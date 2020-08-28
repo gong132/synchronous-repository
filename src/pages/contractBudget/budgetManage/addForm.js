@@ -3,7 +3,7 @@ import { connect } from "dva";
 import moment from "moment";
 import {Col, DatePicker, Form, Input, message, Modal, Row, Select} from "antd";
 import {isEmpty} from "@/utils/lang";
-import { formLayoutItemAddDouble } from "@/utils/constant";
+import { formLayoutItemAddDouble, formLayoutItemAddEdit } from "@/utils/constant";
 import {BUDGET_TYPE, PROJECT_TYPE} from "@/pages/contractBudget/util/constant";
 
 import Editor from "@/components/TinyEditor"
@@ -11,10 +11,6 @@ import Editor from "@/components/TinyEditor"
 const FormItem = Form.Item;
 const { Option } = Select;
 
-const formLayoutItem = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 19 },
-}
 const Index = props => {
   const { dispatch, modalVisible, handleModalVisible,
     values, addLoading, updateLoading, form,
@@ -183,7 +179,7 @@ const Index = props => {
           </FormItem>
         </Col>
         <Col span={24}>
-          <FormItem {...formLayoutItem} label="描述">
+          <FormItem {...formLayoutItemAddEdit} label="描述">
             <Editor
               height={300}
               content={description}

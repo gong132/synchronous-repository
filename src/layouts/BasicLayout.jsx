@@ -102,7 +102,6 @@ const BasicLayout = props => {
       logo={props.collapsed ? logo : logoBg}
       title='光大证券'
       siderWidth={188}
-      contentStyle={{ backgroundColor: '#F4F6FC' }}
       menuHeaderRender={(logo, title) => renderHeader(logo, title, props.collapsed)}
       onMenuHeaderClick={(e) => console.log(e)} // logo和title的位置
       onCollapse={handleMenuCollapse}
