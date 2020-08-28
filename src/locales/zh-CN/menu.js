@@ -60,4 +60,9 @@ export default {
   'menu.contract-budget.budgetManage': '预算管理',
   'menu.contract-budget.budgetDetail': '预算管理详情',
 
+  'menu.systemManage': '系统管理',
+  'menu.systemManage.userManage': '人员管理',
+  'menu.systemManage.teamManage': '团队管理',
+  'menu.systemManage.authorManage': '角色权限',
+  'menu.systemManage.sectorManage': '集群或板块管理',
 };

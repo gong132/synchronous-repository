@@ -479,3 +479,23 @@ export const flatArrayByChildKey = (array, childKey) => {
   return ret;
 };
 
+/**
+ * @desc 分页
+ * @param {Number} current = 1
+ * @param {Number} total = 10
+ * @param {Function} callback
+ * @param {Number} pageSize
+ * @param {Boolean} bool = true
+ * @todo
+*/
+export const paginationProps = (current, total, callback, pageSize = 10, bool) => {
+  return {
+    defaultPageSize: pageSize,
+    showQuickJumper: bool,
+    total: total,
+    current: current,
+    showTotal: () => `共${total}条数据， 每页${pageSize}条`,
+    onChange: page => callback(page)
+  }
+}
+

@@ -15,7 +15,7 @@ module.exports = {
           {
             path: '/home',
             name: 'home',
-            icon: 'smile',
+            icon: 'home',
             component: './home/home',
           },
           {
@@ -57,6 +57,34 @@ module.exports = {
                 name: 'budgetDetail',
                 hideInMenu: true,
                 component: './contractBudget/budgetManage/details',
+              },
+            ]
+          },
+          {
+            path: '/systemManage',
+            name: 'systemManage',
+            icon: 'setting',
+            routes: [
+              { path: '/systemManage', redirect: '/systemManage/userManage' },
+              {
+                path: '/systemManage/userManage',
+                name: 'userManage',
+                component: './systemManage/userManage',
+              },
+              {
+                path: '/systemManage/teamManage',
+                name: 'teamManage',
+                component: './systemManage/teamManage',
+              },
+              {
+                path: '/systemManage/authorManage',
+                name: 'authorManage',
+                component: './systemManage/authorManage',
+              },
+              {
+                path: '/systemManage/sectorManage',
+                name: 'sectorManage',
+                component: './systemManage/sectorManage',
               },
             ]
           },

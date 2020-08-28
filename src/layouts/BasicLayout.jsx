@@ -71,11 +71,6 @@ const BasicLayout = props => {
       formatMessage,
       menuDataRender,
     );
-    // console.log(props)
-    // console.log(routes,
-    //   menu,
-    //   formatMessage,
-    //   menuDataRender,)
   }, [props])
   /**
    * init variables
@@ -101,6 +96,7 @@ const BasicLayout = props => {
   >
     {logo}
   </div>
+
   return (
     <ProLayout
       logo={props.collapsed ? logo : logoBg}
@@ -116,9 +112,7 @@ const BasicLayout = props => {
         }
         return <Link to={menuItemProps.path}>{defaultDom}</Link>;
       }}
-      onPageChange={props => {
-        //console.log(props, 'props')
-      }}
+      onPageChange={props => console.log(props, 'props')}
       breadcrumbRender={(routers = []) => [
         {
           path: '/',
@@ -139,7 +133,7 @@ const BasicLayout = props => {
       }}
       menuDataRender={menuDataRender}
       formatMessage={formatMessage}
-      rightContentRender={() => <RightContent />}
+      rightContentRender={(props) => <RightContent {...props} />}
       {...props}
       {...settings}
     >
