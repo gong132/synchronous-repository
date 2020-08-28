@@ -75,7 +75,7 @@ const Index = props => {
             }}
           />
           <OptButton
-            img={edit}
+            icon="eye"
             text="查看"
             onClick={() => {
               setAddModalVisible(true);

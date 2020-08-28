@@ -12,15 +12,16 @@ const Index = props => {
     </div>
   );
   return (
-    <Button
-      onClick={onClick}
-      className={styles.operateBtn}
-      style={style}
-      icon={icon}
-    >
-      <Icon component={img} style={{ fontSize: 14 }}/>
-      {text}
-    </Button>
+    <div className={styles.operateBtnBox}>
+      <Button
+        onClick={onClick}
+        className={styles.operateBtn}
+        style={style}
+      >
+        <Icon type={icon} component={img} style={{ fontSize: 14 }}/>
+        {text}
+      </Button>
+    </div>
   )
 };
 export default Index
