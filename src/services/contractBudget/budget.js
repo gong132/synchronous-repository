@@ -21,3 +21,24 @@ export async function updateBudget(params) {
     params,
   });
 }
+// 获取所有集成模块
+export async function fetchClusterList(params) {
+  return request('/cluster/all', {
+    method: 'get',
+    params,
+  });
+}
+// 集群版块查询部门信息
+export async function fetchDeptListByCluster(params) {
+  return request('/cluster/bindDept', {
+    method: 'get',
+    params,
+  });
+}
+// 集团  暂用
+export async function fetchGroupList(params) {
+  return request('/temp/group', {
+    method: 'get',
+    params,
+  });
+}

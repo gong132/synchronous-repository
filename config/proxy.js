@@ -24,6 +24,20 @@ export default {
         '^': '',
       },
     },
+    '/cluster/': {
+      target: apiUrl,
+      changeOrigin: true,
+      pathRewrite: {
+        '^': '',
+      },
+    },
+    '/temp/': {
+      target: apiUrl,
+      changeOrigin: true,
+      pathRewrite: {
+        '^': '',
+      },
+    },
   },
   test: {
     '/api/': {

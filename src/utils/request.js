@@ -74,14 +74,13 @@ request.interceptors.request.use(async (url, options) => {
   const header = {
     'Content-Type': 'application/json; charset=utf-8',
     Accept: 'application/json',
-  }
+  };
 
   let newOptions = { ...options, ...header };
 
-  console.log(newOptions, 'newOptions')
   if (newOptions.method === 'post') {
     newOptions = { ...newOptions, body: newOptions.params };
-    console.log(newOptions.body instanceof FormData, 'newOptions.body instanceof FormData')
+    // console.log(newOptions.body instanceof FormData, 'newOptions.body instanceof FormData')
     if (!(newOptions.body instanceof FormData)) {
       newOptions.headers = {
         Accept: 'application/json',
@@ -113,7 +112,6 @@ request.interceptors.request.use(async (url, options) => {
 
 request.interceptors.response.use(async (response, options) => {
   const data = await response.clone().json()
-  console.log(data, 'data')
   if (data.code === 5203) {
     notification.error({
       description: data.message || '登陆超时,请重新登陆',

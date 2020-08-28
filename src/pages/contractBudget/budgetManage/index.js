@@ -15,7 +15,7 @@ const FormItem = Form.Item;
 const { Option } = Select;
 
 const Index = props => {
-  const { dispatch, budgetManage:{ budgetList }, orderListLoading, form } = props;
+  const { dispatch, budgetManage:{ budgetList, clusterList, deptList, groupList }, loading, form } = props;
 
   // 查询更多
   const [searchMore, setSearchMore] = useState(false);
@@ -28,8 +28,8 @@ const Index = props => {
     dispatch({
       type: 'budgetManage/fetchBudgetData',
       payload: {
-        // ...DefaultPage,
-        // ...params,
+        ...DefaultPage,
+        ...params,
         id: 1,
       }
     })
@@ -92,14 +92,37 @@ const Index = props => {
     handleQueryBudgetData()
   };
 
+  const handleSearchForm = () => {
+    const formValues = form.getFieldsValue();
+    console.log(formValues, 'formValues')
+    handleQueryBudgetData(formValues)
+  }
+
   // 获取搜索条件,转换成数组
   const getSearchValuesToList = () => {
     const formValues = form.getFieldsValue()
 
   };
 
+  const handleQueryClusterList = () => {
+    dispatch({
+      type: 'budgetManage/queryClusterList',
+      payload: {
+      }
+    })
+  };
+  const handleQueryGroupList = () => {
+    dispatch({
+      type: 'budgetManage/queryGroupList',
+      payload: {
+      }
+    })
+  };
+
   useEffect(() => {
-    handleQueryBudgetData()
+    handleQueryBudgetData();
+    handleQueryClusterList();
+    handleQueryGroupList();
   }, []);
 
   const renderForm = () => {
@@ -112,6 +135,7 @@ const Index = props => {
               {getFieldDecorator('type', {
               })(<Select
                 placeholder="请选择项目类型"
+                allowClear
               >
                 {
                   PROJECT_TYPE.map(v => (
@@ -124,7 +148,9 @@ const Index = props => {
           <Col span={24}>
             <FormItem {...formLayoutItem1} label="预算总金额">
               {getFieldDecorator('expectTotalAmount', {
-              })(<Input placeholder="请输入预算总金额" />)}
+              })(<Input
+                allowClear
+                placeholder="请输入预算总金额" />)}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -132,6 +158,7 @@ const Index = props => {
               {getFieldDecorator('budgetType', {
               })(<Select
                 placeholder="请选择预算类型"
+                allowClear
               >
                 {
                   BUDGET_TYPE.map(v => (
@@ -145,6 +172,7 @@ const Index = props => {
             <FormItem {...formLayoutItem1} label="预计立项时间">
               {getFieldDecorator('expectSetTime', {
               })(<DatePicker
+                allowClear
                 format="YYYY-MM-DD"
               />)}
             </FormItem>
@@ -152,18 +180,22 @@ const Index = props => {
           <Col span={24}>
             <FormItem {...formLayoutItem1} label="承建团队">
               {getFieldDecorator('receiveGroupId', {
-              })(<Input placeholder="请输入承建团队" />)}
+              })(<Input
+                allowClear
+                placeholder="请输入承建团队" />)}
             </FormItem>
           </Col>
           <Col span={24}>
             <FormItem {...formLayoutItem1} label="所属集群或板块">
               {getFieldDecorator('clusterId', {
-              })(<Input placeholder="请输入所属集群或板块" />)}
+              })(<Input
+                allowClear
+                placeholder="请输入所属集群或板块" />)}
             </FormItem>
           </Col>
         </Row>
         <div className={styles.moreSearchButton}>
-          <Button>查询</Button>
+          <Button onClick={handleSearchForm}>查询</Button>
           <Button onClick={() => setSearchMore(false)}>取消</Button>
         </div>
       </div>
@@ -174,19 +206,28 @@ const Index = props => {
           <Col span={6}>
             <FormItem {...formLayoutItem} label="预算编号">
               {getFieldDecorator('number', {
-              })(<Input placeholder="请输入预算编号" />)}
+              })(<Input
+                allowClear
+                onBlur={handleSearchForm}
+                placeholder="请输入预算编号" />)}
             </FormItem>
           </Col>
           <Col span={6}>
             <FormItem {...formLayoutItem} label="项目名称">
               {getFieldDecorator('name', {
-              })(<Input placeholder="请输入项目名称" />)}
+              })(<Input
+                allowClear
+                onBlur={handleSearchForm}
+                placeholder="请输入项目名称" />)}
             </FormItem>
           </Col>
           <Col span={6}>
             <FormItem {...formLayoutItem} label="需求部门">
               {getFieldDecorator('deptName', {
-              })(<Input placeholder="请输入需求部门" />)}
+              })(<Input
+                allowClear
+                onBlur={handleSearchForm}
+                placeholder="请输入需求部门" />)}
             </FormItem>
           </Col>
           <Col span={6}>
@@ -225,20 +266,23 @@ const Index = props => {
           {renderForm()}
         </div>
         <StandardTable
-          rowKey="budgetId"
-          loading={orderListLoading}
+          rowKey="id"
+          loading={loading}
           data={budgetList}
           columns={columns}
           onChange={handleStandardTableChange}
         />
-        <AddForm
-          modalVisible={addModalVisible}
-          handleModalVisible={() => {
-            setAddModalVisible(false);
-            setSelectedRows({})
-          }}
-          values={selectedRows}
-        />
+        { addModalVisible && (
+          <AddForm
+            modalVisible={addModalVisible}
+            handleModalVisible={() => {
+              setAddModalVisible(false);
+              setSelectedRows({})
+            }}
+            handleQueryBudgetData={handleQueryBudgetData}
+            values={selectedRows}
+          />
+        )}
       </div>
     </div>
   )
@@ -247,6 +291,6 @@ const Index = props => {
 export default connect(
   ({ budgetManage, loading }) => ({
     budgetManage,
-    orderListLoading: loading.effects['budgetManage/fetchOrderData'],
+    loading: loading.models.budgetManage
   })
 )(Form.create()(Index))

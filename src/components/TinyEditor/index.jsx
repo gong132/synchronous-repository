@@ -8,7 +8,7 @@
       content, // 内容
       disabled = false, // 控制文本框是否可编辑
       uploadUrl // 上传url
- *    
+ *
  */
 import React, { Component } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
@@ -84,7 +84,6 @@ class App extends Component {
         onEditorChange={this.handleEditorChange}
         init={{
           height: height,
-          menubar: false,
           plugins,
           toolbar: cusToolbar,
           language: 'zh_CN',

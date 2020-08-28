@@ -52,6 +52,12 @@ module.exports = {
                 name: 'budgetManage',
                 component: './contractBudget/budgetManage/index',
               },
+              {
+                path: '/contract-budget/budget/detail',
+                name: 'budgetDetail',
+                hideInMenu: true,
+                component: './contractBudget/budgetManage/details',
+              },
             ]
           },
 
