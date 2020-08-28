@@ -94,20 +94,21 @@ const BasicLayout = props => {
       lineHeight: '56px'
     }}
   >
-    {logo}  
+    {logo}
   </div>
+
   return (
     <ProLayout
       logo={props.collapsed ? logo : logoBg}
       title='光大证券'
       siderWidth={188}
-      contentStyle={{ backgroundColor: '#fff' }}
+      // contentStyle={{ backgroundColor: '#fff' }}
       menuHeaderRender={(logo, title) => renderHeader(logo, title, props.collapsed)}
       onMenuHeaderClick={(e) => console.log(e)} // logo和title的位置
       onCollapse={handleMenuCollapse}
       menuItemRender={(menuItemProps, defaultDom) => {
         if (menuItemProps.isUrl || menuItemProps.children || !menuItemProps.path) {
-          return defaultDom;    
+          return defaultDom;
         }
         return <Link to={menuItemProps.path}>{defaultDom}</Link>;
       }}
@@ -132,7 +133,7 @@ const BasicLayout = props => {
       }}
       menuDataRender={menuDataRender}
       formatMessage={formatMessage}
-      rightContentRender={() => <RightContent />}
+      rightContentRender={(props) => <RightContent {...props} />}
       {...props}
       {...settings}
     >
