@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'dva'
 import styles from './index.less'
 import CustomBtn from '@/components/commonUseModule/customBtn'
+import editIcon from '@/assets/Button_bj.svg'
 import {
   Table,
   Button,
@@ -9,13 +10,10 @@ import {
   Form,
   Input,
   Select,
-  Card
+  Card,
+  Checkbox,
+  Icon
 } from 'antd'
-import {
-  formLayout,
-  searchItemLayout
-} from '@/utils/utils'
-const FormItem = Form.Item
 const { Option } = Select
 
 @Form.create()
@@ -70,8 +68,6 @@ class SectorManage extends Component {
   handleViewDetail = () => { }
 
   renderSearchForm = () => {
-    const { form } = this.props
-    const searchCol = { span: 8 }
     return (
       <div className={styles.customSearchRow}>
         <div className={styles.customSearchFormPer}>
@@ -119,7 +115,18 @@ class SectorManage extends Component {
       {
         title: '集群/模块名称',
         dataIndex: 'name',
-        key: 'name'
+        key: 'name',
+        render: (text, record) => {
+          return (
+            <span
+              onClick={
+                () => this.handleViewDetail(record)
+              }
+              className={'globalStyle'}>
+              {text}
+            </span>
+          )
+        }
       },
       {
         title: '所属部门',
@@ -151,15 +158,19 @@ class SectorManage extends Component {
         align: 'left',
         render: (text, record) => {
           return (
-            <div>
+            <div className={styles.customActBtn}>
               <Button
-                icon='edit'
+                style={{
+                  marginRight: '12px'
+                }}
                 onClick={
                   () => this.handleEdit()
                 }
-              >编辑</Button>
+              >
+                <Icon component={editIcon} />
+                编辑</Button>
               <Button
-                icon='edit'
+                icon='eye'
                 onClick={
                   () => this.handleViewDetail(record)
                 }
@@ -175,11 +186,18 @@ class SectorManage extends Component {
   render() {
     const { modalVisible, modalTitle } = this.state
     const { form, data } = this.props
-
+    const options = [
+      { label: 'Apple', value: 'Apple' },
+      { label: 'Pear', value: 'Pear' },
+      { label: 'Orange', value: 'Orange' },
+    ];
     return (
       <Fragment>
         <div
           onClick={() => this.handleViewModal(true, '新建')}
+          style={{
+            display: 'inline-block'
+          }}
         >
           <CustomBtn type='create' />
         </div>
@@ -191,30 +209,48 @@ class SectorManage extends Component {
           <Modal
             title={modalTitle}
             visible={modalVisible}
+            maskClosable={false}
+            width='794px'
             onCancel={() => this.handleViewModal(false)}
-            onOk={() => this.handleSubmit()}
-            footer={<div style={{display: 'flex', justifyContent: 'flex-end'}}>
-               <CustomBtn type='cancel' style={{marginRight: '18px'}} />
-               <CustomBtn type='save'/>
-            </div>}
+            footer={
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
+                <div
+                  onClick={() => this.handleViewModal(false)}
+                >
+                  <CustomBtn
+                    type='cancel'
+                    style={{ marginRight: '18px' }}
+                  />
+                </div>
+                <div
+                  onClick={() => this.handleSubmit()}
+                >
+                  <CustomBtn type='save' />
+                </div>
+              </div>}
           >
-            <Form {...formLayout}>
-              <FormItem
-                label='集群/板块名称'
-              >
-                {form.getFieldDecorator('name', {
-                  rules: [{ required: true, message: '请补全姓名' }],
-                  initialValue: ''
-                })(
-                  <Input />
-                )}
-              </FormItem>
-            </Form>
+            <div className={styles.customModalForm}>
+              <span className={styles.customModalForm__label}>集群/板块名称：</span>
+              <div className={styles.customModalForm__wrapper}>
+                <Input placeholder='请输入集群/板块名称' />
+              </div>
+            </div>
+            <div className={styles.customModalForm}>
+              <span className={styles.customModalForm__label}>所属部门：</span>
+              <div className={styles.customModalForm__wrapperUnique}>
+                <Input placeholder='请输入集群/板块名称' />
+              </div>
+            </div>
           </Modal>
           {this.renderSearchForm()}
           <Table
             columns={this.genColumns()}
-            dataSource={data}
+            // dataSource={data}
+            dataSource={[
+              {name: 'gong'},
+              {name: 'gong2'},
+              {name: 'gong3'}
+            ]}
           // loading={loadingQueryData}
           />
         </Card>
