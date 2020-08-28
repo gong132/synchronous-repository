@@ -18,14 +18,23 @@
 }
 
 // 操作按钮
-.operateBtn, .operateBtn:hover, .operateBtn:active {
-  height: 28px;
+
+.operateBtnBox {
   display: inline-block;
-  color: #FF9716;
-  background-color: rgba(255,151,22,0.06);
-  border: 1px solid rgba(255,151,22,0.5);
-  border-radius: 2px;
-  font-size: 12px;
-  padding: 0 8px;
-  margin: 2px;
+  .operateBtn, .operateBtn:hover, .operateBtn:active {
+    height: 28px;
+    color: #FF9716;
+    background-color: rgba(255,151,22,0.06);
+    border: 1px solid rgba(255,151,22,0.5);
+    border-radius: 2px;
+    font-size: 12px;
+    padding: 0 8px;
+    margin: 2px;
+  }
+
+  :global {
+    .ant-btn > .anticon + span, .ant-btn > span + .anticon {
+      margin-left: 6px;
+    }
+  }
 }
