@@ -21,6 +21,7 @@ const GlobalHeaderRight = props => {
   const createBreadcrumb = () => {
     const { location: { pathname }, breadcrumb } = props
     const breadPath = breadcrumb[pathname] || {}
+    console.log(breadcrumb, location)
     if (breadPath && breadPath.parentKeys && breadPath.parentKeys.length === 2) {
       const fB = breadcrumb[breadPath.parentKeys[1]]
       return (

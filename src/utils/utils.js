@@ -488,7 +488,8 @@ export const flatArrayByChildKey = (array, childKey) => {
  * @param {Boolean} bool = true
  * @todo
 */
-export const paginationProps = (current, total, callback, pageSize = 10, bool) => {
+export const paginationProps = (props) => {
+  const {current, pageSize, total, changePage, handleShowSizeChanger, showQuickJumper} = props
   return {
     defaultPageSize: pageSize,
     showQuickJumper: bool,

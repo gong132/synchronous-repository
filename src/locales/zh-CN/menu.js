@@ -65,4 +65,5 @@ export default {
   'menu.systemManage.teamManage': '团队管理',
   'menu.systemManage.authorManage': '角色权限',
   'menu.systemManage.sectorManage': '集群或板块管理',
+  'menu.systemManage.detail': '详情'
 };

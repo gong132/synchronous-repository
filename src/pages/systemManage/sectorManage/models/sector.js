@@ -12,12 +12,11 @@ const Sector = {
   effects: {
     *queryData({payload}, {call, put}) {
       const res = yield call(fetchData, payload)
-      console.log(res)
-      if(res && res.data) {
+      if(res && res.code === 200) {
         yield put({
           type: 'saveData',
           payload: {
-            data: res.data
+            data: res.data.records || []
           }
         })
         return res

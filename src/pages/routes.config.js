@@ -86,6 +86,12 @@ module.exports = {
                 name: 'sectorManage',
                 component: './systemManage/sectorManage',
               },
+              {
+                path: '/systemManage/sectorManage/detail',
+                name: 'detail',
+                hideInMenu: true,
+                component: './systemManage/sectorManage/components/detail',
+              },
             ]
           },
 

@@ -1,7 +1,11 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'dva'
+import { router } from 'umi'
 import styles from './index.less'
+import * as _ from 'lodash'
 import CustomBtn from '@/components/commonUseModule/customBtn'
+import OptButton from "@/components/commonUseModule/optButton";
+import SearchForm from '@/components/commonUseModule/searchForm'
 import editIcon from '@/assets/Button_bj.svg'
 import {
   Table,
@@ -14,6 +18,7 @@ import {
   Checkbox,
   Icon
 } from 'antd'
+import { paginationProps } from '@/utils/utils'
 const { Option } = Select
 
 @Form.create()
@@ -29,6 +34,7 @@ class SectorManage extends Component {
     this.state = {
       modalVisible: false,
       modalTitle: '新建',
+      total: 0,
       searchParams: {
         current: 1,
         pageSize: 10,
@@ -54,6 +60,20 @@ class SectorManage extends Component {
 
   handleResetSearch = () => { }
 
+  changePage = (page, pageSize) => {
+    this.setState({
+      current: page,
+      pageSize,
+    }, () => console.log(this.state.current, this.state.pageSize))
+  }
+
+  handleShowSizeChanger = (current, size) => {
+    this.setState({
+      current,
+      pageSize: size,
+    }, () => console.log(this.state.current, this.state.pageSize))
+  }
+
   handleEdit = () => { }
 
   handleViewModal = (bool, title) => {
@@ -65,39 +85,39 @@ class SectorManage extends Component {
 
   handleSubmit = () => { }
 
-  handleViewDetail = () => { }
+  handleViewDetail = () => {
+    router.push('/systemManage/sectorManage/detail')
+  }
 
   renderSearchForm = () => {
     return (
-      <div className={styles.customSearchRow}>
-        <div className={styles.customSearchFormPer}>
-          <span className={styles.customSearchFormPer__lablePer}>集群/板块名称</span>
-          <div className={styles.customSearchFormPer__wrapperPer}>
-            <Select
-              allowClear
-              placeholder='请输入集群/板块名称'
-              style={{
-                width: '100%'
-              }}
-            >
-              <Option key={1} value={1}>1</Option>
-            </Select>
-          </div>
-        </div>
-        <div className={styles.customSearchFormPer}>
-          <span className={styles.customSearchFormPer__lablePer}>所属部门</span>
-          <div className={styles.customSearchFormPer__wrapperPer}>
-            <Select
-              allowClear
-              placeholder='请输入所属部门'
-              style={{
-                width: '100%'
-              }}
-            >
-              <Option key={1} value={1}>1</Option>
-            </Select>
-          </div>
-        </div>
+      <div style={{display: 'flex'}}>
+        <SearchForm
+          labelName="集群/板块名称"
+        >
+          <Select
+            allowClear
+            placeholder='请输入集群/板块名称'
+            style={{
+              width: '100%'
+            }}
+          >
+            <Option key={1} value={1}>1</Option>
+          </Select>
+        </SearchForm>
+        <SearchForm
+          labelName="所属部门"
+        >
+          <Select
+            allowClear
+            placeholder='请输入所属部门'
+            style={{
+              width: '100%'
+            }}
+          >
+            <Option key={1} value={1}>1</Option>
+          </Select>
+        </SearchForm>
         <div
           onClick={() => this.handleResetSearch()}
           style={{
@@ -122,7 +142,7 @@ class SectorManage extends Component {
               onClick={
                 () => this.handleViewDetail(record)
               }
-              className={'globalStyle'}>
+              className='globalStyle'>
               {text}
             </span>
           )
@@ -131,7 +151,21 @@ class SectorManage extends Component {
       {
         title: '所属部门',
         dataIndex: 'deptName',
-        key: 'deptName'
+        key: 'deptName',
+        render: (text, record) => {
+          if (!_.isArray(record.clusterLinkDepts) || _.isEmpty(record.clusterLinkDepts)) return
+          let str = ''
+          record.clusterLinkDepts.map((d, index) => {
+            if (record.clusterLinkDepts.length > index + 1) {
+              str += `${d.deptName}, `
+              return
+            }
+            str += d.deptName
+          })
+          return <Fragment>
+            {str}
+          </Fragment>
+        }
       },
       {
         title: '创建人',
@@ -159,22 +193,23 @@ class SectorManage extends Component {
         render: (text, record) => {
           return (
             <div className={styles.customActBtn}>
-              <Button
+              <OptButton
                 style={{
                   marginRight: '12px'
                 }}
                 onClick={
                   () => this.handleEdit()
                 }
-              >
-                <Icon component={editIcon} />
-                编辑</Button>
-              <Button
+                img={editIcon}
+                text="编辑"
+              />
+              <OptButton
                 icon='eye'
                 onClick={
                   () => this.handleViewDetail(record)
                 }
-              >查看</Button>
+                text="查看"
+              />
             </div>
           );
         }
@@ -184,8 +219,8 @@ class SectorManage extends Component {
   }
 
   render() {
-    const { modalVisible, modalTitle } = this.state
-    const { form, data } = this.props
+    const { modalVisible, modalTitle, current, pageSize, total } = this.state
+    const { data } = this.props
     const options = [
       { label: 'Apple', value: 'Apple' },
       { label: 'Pear', value: 'Pear' },
@@ -193,14 +228,9 @@ class SectorManage extends Component {
     ];
     return (
       <Fragment>
-        <div
+        <CustomBtn
           onClick={() => this.handleViewModal(true, '新建')}
-          style={{
-            display: 'inline-block'
-          }}
-        >
-          <CustomBtn type='create' />
-        </div>
+          type='create' />
         <Card
           bodyStyle={{
             padding: '16px 15px'
@@ -214,19 +244,14 @@ class SectorManage extends Component {
             onCancel={() => this.handleViewModal(false)}
             footer={
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
-                <div
+                <CustomBtn
                   onClick={() => this.handleViewModal(false)}
-                >
-                  <CustomBtn
-                    type='cancel'
-                    style={{ marginRight: '18px' }}
-                  />
-                </div>
-                <div
+                  type='cancel'
+                  style={{ marginRight: '18px' }}
+                />
+                <CustomBtn
                   onClick={() => this.handleSubmit()}
-                >
-                  <CustomBtn type='save' />
-                </div>
+                  type='save' />
               </div>}
           >
             <div className={styles.customModalForm}>
@@ -246,10 +271,18 @@ class SectorManage extends Component {
           <Table
             columns={this.genColumns()}
             // dataSource={data}
+            // rowKey={(r,k) => r.id}
+            // pagination={paginationProps({
+            //   total,
+            //   changePage: this.changePage,
+            //   pageSize,
+            //   handleShowSizeChanger: this.handleShowSizeChanger,
+            //   current,
+            // })}
             dataSource={[
-              {name: 'gong'},
-              {name: 'gong2'},
-              {name: 'gong3'}
+              { name: 'gong' },
+              { name: 'gong2' },
+              { name: 'gong3' }
             ]}
           // loading={loadingQueryData}
           />
