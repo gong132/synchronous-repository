@@ -1,4 +1,4 @@
-import { queryNotices, fetchMenuList } from '@/services/user';
+import { queryNotices, fetchMenuList, fetchCurrentUserInfo } from '@/services/user';
 import {message} from "antd";
 import storage from "@/utils/storage";
 import { isEmpty } from "@/utils/lang";
@@ -11,6 +11,7 @@ const GlobalModel = {
     notices: [],
     allMenuList: [],
     authActions: [],
+    userInfo: {},
   },
   effects: {
     *queryAllMenuList({ payload, callback }, { call, put }) {
@@ -23,6 +24,21 @@ const GlobalModel = {
       yield put({
         type: 'saveData',
         payload: { allMenuList: data },
+      });
+
+      callback && callback(data);
+      return data
+    },
+    *queryCurrentUserInfo({ payload, callback }, { call, put }) {
+      const { code, data, msg } = yield call(fetchCurrentUserInfo, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false
+      }
+      storage.add('gd-user', { userInfo: data });
+      yield put({
+        type: 'saveData',
+        payload: { userInfo: data },
       });
 
 
