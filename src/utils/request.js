@@ -4,6 +4,7 @@
  */
 import { extend } from 'umi-request';
 import { notification } from 'antd';
+import storage from "@/utils/storage";
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -70,39 +71,40 @@ const request = extend({
 
 // request拦截器, 改变url 或 options.
 request.interceptors.request.use(async (url, options) => {
-  // const { token } = localStorage.getItem('userInfo')
-  const header = {
-    'Content-Type': 'application/json; charset=utf-8',
-    Accept: 'application/json',
+  const { token } = storage.get('gd-user', {});
+  const headers = {
     credentials: 'include',
     'Access-Control-Allow-Origin': '*',
     'X-Requested-With': 'XMLHttpRequest',
   };
 
-  let newOptions = { ...options, ...header };
 
+  console.log(options, 'options')
+
+  let newOptions = { ...options, headers: headers };
+  if (token) {
+    newOptions.headers['Authorization'] = `Bearer ${token}`
+    // newOptions.headers['token'] = token
+  }
   if (newOptions.method === 'post') {
     newOptions = { ...newOptions };
-    // console.log(newOptions.body instanceof FormData, 'newOptions.body instanceof FormData')
     if (!(newOptions.body instanceof FormData)) {
       newOptions.headers = {
-        Accept: 'application/json',
         'Content-Type': 'application/json; charset=utf-8',
+        Accept: 'application/json',
         ...newOptions.headers,
       };
       newOptions.body = JSON.stringify(newOptions.params);
+      newOptions.params={}
     } else {
       newOptions.headers = {
-        Accept: 'application/json',
         ...newOptions.headers,
+        Accept: 'application/json',
       };
     }
   }
 
-  // if (token) {
-  //   header['token'] = token
-  // }
-
+console.log(newOptions, 'newOptions')
   return (
     {
       url: url,
@@ -114,7 +116,7 @@ request.interceptors.request.use(async (url, options) => {
 });
 
 request.interceptors.response.use(async (response, options) => {
-  const data = await response.clone().json()
+  const data = await response.clone().json();
   if (data.code === 5203) {
     notification.error({
       description: data.message || '登陆超时,请重新登陆',
