@@ -27,28 +27,38 @@ body {
     .ant-pro-basicLayout-content {
       margin: 16px;
     }
-    .ant-layout-header{
+
+    .ant-layout-header {
       height: 56px;
       line-height: 56px;
     }
+
     .ant-pro-global-header-trigger {
       padding: 0 16px;
     }
-    .ant-pro-global-header, .antd-pro-components-global-header-index-right, .ant-pro-global-header-trigger{
+
+    .ant-pro-global-header,
+    .antd-pro-components-global-header-index-right,
+    .ant-pro-global-header-trigger {
       height: 56px;
     }
-    .antd-pro-components-global-header-index-right .antd-pro-components-global-header-index-account .antd-pro-components-global-header-index-avatar{
+
+    .antd-pro-components-global-header-index-right .antd-pro-components-global-header-index-account .antd-pro-components-global-header-index-avatar {
       margin: calc((56px - 24px) / 2) 0;
     }
-    .ant-layout.ant-layout-has-sider > .ant-layout {
+
+    .ant-layout.ant-layout-has-sider>.ant-layout {
       background-color: #F4F6FC;
     }
+
     .ant-calendar-picker {
       width: 100%;
     }
+
     .ant-descriptions-bordered .ant-descriptions-item-label {
-      background-color: rgba(243,245,247,1);
+      background-color: rgba(243, 245, 247, 1);
     }
+
     //section {
     //  .ant-pro-sider-menu-sider {
     //    flex: 0 0 200px !important;
@@ -57,6 +67,50 @@ body {
     //    width: 200px !important;
     //  }
     //}
+    //modal 样式修改
+    .ant-modal-header {
+      border-bottom: none;
+    }
+
+    .ant-modal-title {
+      font-size: 16px;
+      font-family: Source Han Sans CN;
+      font-weight: 600;
+      color: #303133;
+    }
+
+    .ant-modal-body {
+      padding: 0 24px;
+
+      :global {
+        .ant-form-item {
+          margin-bottom: 12px;
+        }
+      }
+    }
+
+    .ant-modal-footer {
+      padding: 16px 24px;
+      border-top: none;
+    }
+
+    // table样式修改
+    .ant-table-thead>tr>th {
+      background: rgba(243, 245, 247, 1);
+      font-size: 14px;
+      font-family: Source Han Sans CN;
+      font-weight: 400;
+      color: rgba(135, 152, 173, 1);
+    }
+
+    .ant-table-tbody>tr:nth-child(even) {
+      background: rgba(244, 246, 252, 1);
+    }
+
+    // card样式修改
+    .ant-card-body {
+      padding: 16px
+    }
   }
 }
 
@@ -69,12 +123,15 @@ ol {
   .ant-table {
     width: 100%;
     overflow-x: auto;
-    &-thead > tr,
-    &-tbody > tr {
-      > th,
-      > td {
+
+    &-thead>tr,
+    &-tbody>tr {
+
+      >th,
+      >td {
         white-space: pre;
-        > span {
+
+        >span {
           display: block;
         }
       }
@@ -83,8 +140,9 @@ ol {
 }
 
 // 兼容IE11
-@media screen and(-ms-high-contrast: active), (-ms-high-contrast: none) {
-  body .ant-design-pro > .ant-layout {
+@media screen and(-ms-high-contrast: active),
+(-ms-high-contrast: none) {
+  body .ant-design-pro>.ant-layout {
     min-height: 100vh;
   }
 }
@@ -100,12 +158,15 @@ ol {
 .margin-left-12 {
   margin-left: 12px;
 }
+
 .margin-right-12 {
   margin-right: 12px;
 }
+
 .margin-right-6 {
   margin-right: 6px;
 }
+
 .main {
   padding: 0;
   min-height: 87.5vh;
@@ -116,7 +177,7 @@ ol {
 .overHide {
   display: block;
   overflow: hidden;
-  text-overflow:ellipsis;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -126,17 +187,20 @@ ol {
   display: flex;
   justify-content: center;
 }
+
 // 垂直居中
 .yCenter {
   display: flex;
   align-items: center;
 }
+
 // 水平垂直居中
 .xyCenter {
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 // 垂直居中, 两端对齐
 .yCenter-between {
   display: flex;
@@ -144,26 +208,53 @@ ol {
   justify-content: space-between;
 }
 
+// 全局基础样式
+.globalStyle {
+  color: #FF9716;
+}
+
+.globalStyle:hover {
+  cursor: pointer;
+}
+
 // 修改侧边栏样式
 :global {
-  .ant-menu-item-selected > a, .ant-menu-submenu-selected, .ant-menu-item-selected > a:hover, .ant-menu-item > a:hover {
+
+  .ant-menu-item-selected>a,
+  .ant-menu-submenu-selected,
+  .ant-menu-item-selected>a:hover,
+  .ant-menu-item>a:hover {
     color: #FF9716;
   }
+
   .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
-    background-color: rgba(255,151,22,0.11);
+    background-color: rgba(255, 151, 22, 0.11);
   }
-  .ant-menu-item:hover, .ant-menu-item-active, .ant-menu:not(.ant-menu-inline) .ant-menu-submenu-open, .ant-menu-submenu-active, .ant-menu-submenu-title:hover {
+
+  .ant-menu-item:hover,
+  .ant-menu-item-active,
+  .ant-menu:not(.ant-menu-inline) .ant-menu-submenu-open,
+  .ant-menu-submenu-active,
+  .ant-menu-submenu-title:hover {
     color: #FF9716;
   }
-  .ant-menu-vertical .ant-menu-item::after, .ant-menu-vertical-left .ant-menu-item::after, .ant-menu-vertical-right .ant-menu-item::after, .ant-menu-inline .ant-menu-item::after {
+
+  .ant-menu-vertical .ant-menu-item::after,
+  .ant-menu-vertical-left .ant-menu-item::after,
+  .ant-menu-vertical-right .ant-menu-item::after,
+  .ant-menu-inline .ant-menu-item::after {
     border-right: 3px solid #FF9716;
   }
-  .ant-menu-submenu-inline > .ant-menu-submenu-title:hover .ant-menu-submenu-arrow::after {
+
+  .ant-menu-submenu-inline>.ant-menu-submenu-title:hover .ant-menu-submenu-arrow::after {
     background: linear-gradient(to right, #FF9716, #FF9716);
     // background-color: #FF9716;
   }
-  .ant-menu-submenu-inline > .ant-menu-submenu-title:hover .ant-menu-submenu-arrow::before {
+
+  .ant-menu-submenu-inline>.ant-menu-submenu-title:hover .ant-menu-submenu-arrow::before {
     background: linear-gradient(to right, #FF9716, #FF9716);
     // background-color: #FF9716;
   }
+
+
 }

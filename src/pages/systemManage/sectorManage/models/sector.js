@@ -1,45 +1,86 @@
 import {
   fetchData,
   createData,
-  updateData
+  updateData,
+  queryDept,
 } from '@/services/systemManage/sectorManage'
+import { PagerHelper } from "@/utils/helper";
+import {message} from "antd";
 
 const Sector = {
   namespace: 'sector',
   state: {
-    data: [],
+    sectorList: PagerHelper.genListState(),
+    deptList: [],
+    deptListMap: {}
   },
   effects: {
-    *queryData({payload}, {call, put}) {
-      const res = yield call(fetchData, payload)
-      console.log(res)
-      if(res && res.data) {
-        yield put({
-          type: 'saveData',
-          payload: {
-            data: res.data
-          }
-        })
-        return res
+    *queryData({ payload }, { call, put }) {
+      const { code, data, msg } = yield call(fetchData, payload)
+      if (code !== 200) {
+        message.error(msg);
+        return
       }
-      return res
+      const { records, ...others } = data;
+      yield put({
+        type: 'setSectorData',
+        payload: {
+          filter: payload,
+          data: records,
+          ...others
+        },
+      })
     },
-    *addData({payload}, {call}) {
-      const res = yield call(createData, payload)
-      return res
+    *addData({ payload }, { call }) {
+      const { code, msg } = yield call(createData, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true
     },
-    *updateData({payload}, {call}) {
-      const res = yield call(updateData, payload)
-      return res
+    *updateData({ payload }, { call }) {
+      const { code, msg } = yield call(updateData, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true
+    },
+
+    // 查询未被集群绑定部门
+    *fetchNotBindDept({payload}, {call, put}) {
+      const { code, msg, data } = yield call(queryDept, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      let obj = {}
+      data.map(v => {
+        obj[v.number] = v.name
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          deptList: data,
+          deptListMap: obj
+        }
+      })
     }
   },
   reducers: {
-    saveData(state, {payload}){
+    saveData(state, { payload }) {
       return {
         ...state,
         ...payload
       }
-    }
+    },
+    setSectorData(state, action) {
+      return {
+        ...state,
+        sectorList: PagerHelper.resolveListState(action.payload),
+      };
+    },
   }
 }
 

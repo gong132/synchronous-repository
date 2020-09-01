@@ -1,5 +1,7 @@
-import { queryNotices, fetchMenuList, fetchCurrentUserInfo } from '@/services/user';
+import {PagerHelper} from "@/utils/helper";
 import {message} from "antd";
+import { queryLogList } from '@/services/global'
+import { queryNotices, fetchMenuList, fetchCurrentUserInfo } from '@/services/user';
 import storage from "@/utils/storage";
 import { isEmpty } from "@/utils/lang";
 import {router} from "umi";
@@ -9,6 +11,7 @@ const GlobalModel = {
   state: {
     collapsed: false,
     notices: [],
+    logList: PagerHelper.genListState(),
     allMenuList: [],
     authActions: [],
     userInfo: {},
@@ -111,6 +114,25 @@ const GlobalModel = {
         },
       });
     },
+
+    *fetchLogList({payload}, {call, put}) {
+      const { code, data, msg } = yield call(queryLogList, payload);
+      if (code !== 200) {
+        message.error(msg);
+        return
+      }
+      data.currentPage = data.current;
+      data.pageSize = data.size;
+      const { records, ...others } = data;
+      yield put({
+        type: 'setLOgData',
+        payload: {
+          filter: payload,
+          data: records,
+          ...others
+        },
+      })
+    }
   },
   reducers: {
     saveData(state, { payload }) {
@@ -135,6 +157,13 @@ const GlobalModel = {
         collapsed: false,
         ...state,
         notices: payload,
+      };
+    },
+
+    setLOgData(state, action) {
+      return {
+        ...state,
+        logList: PagerHelper.resolveListState(action.payload),
       };
     },
 
