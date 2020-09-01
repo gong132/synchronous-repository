@@ -39,8 +39,6 @@ const UserModel = {
         message.error(msg);
         return
       }
-      data.currentPage = data.current;
-      data.pageSize = data.size;
       const { records, ...others } = data;
       yield put({
         type: 'setLogData',

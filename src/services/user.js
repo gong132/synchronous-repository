@@ -1,7 +1,7 @@
 import request from '@/utils/request';
 
-export async function query() {
-  return request('/api/users');
+export async function fetchMenuList(params) {
+  return request('/resource/queryList',{ method: 'get', params});
 }
 export async function queryCurrent() {
   return request('/api/currentUser');

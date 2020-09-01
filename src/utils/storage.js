@@ -63,4 +63,15 @@ storage.forEach = callback => {
   }
 };
 
+storage.add = (key, val, callback) => {
+  if (val === undefined) {
+    return storage.remove(key);
+  }
+  const historyStorage = storage.get(key, {});
+  storage.set(key, {...historyStorage, ...val});
+
+  callback && callback();
+  return val;
+};
+
 export default storage;

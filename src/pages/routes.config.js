@@ -41,7 +41,7 @@ module.exports = {
             name: 'contract-budget',
             icon: 'smile',
             routes: [
-              { path: '/contract-budget', redirect: '/contract' },
+              { path: '/contract-budget', redirect: '/contract-budget/contract' },
               {
                 path: '/contract-budget/contract',
                 name: 'contractManage',
@@ -88,17 +88,35 @@ module.exports = {
               },
             ]
           },
-
           // 路由页面 end
 
-          // 404页面
+
           {
-            component: './404',
-          },
+            path: '/exception',
+            hideInMenu: true,
+            routes: [
+              { path: '/exception', redirect: '/exception/404' },
+              {
+                path: '/exception/403',
+                name: 'not-permission',
+                hideInMenu: true,
+                component: './Exception/403',
+              },
+              {
+                path: '/exception/404',
+                name: 'not-find',
+                hideInMenu: true,
+                component: './Exception/404',
+              },
+              {
+                path: '/exception/500',
+                name: 'server-error',
+                hideInMenu: true,
+                component: './Exception/500',
+              },
+            ],
+          }
         ],
-      },
-      {
-        component: './404',
       },
     ],
   }
