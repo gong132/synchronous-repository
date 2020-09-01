@@ -209,7 +209,7 @@ class SectorManage extends Component {
               width: '100%'
             }}
           >
-            {!_.isEmpty(deptList) && deptList.map(v => (
+            {!_.isEmpty(deptList) && deptList.map(d => (
               <Option key={d.number} value={d.number}>{d.name}</Option>
             ))}
           </Select>

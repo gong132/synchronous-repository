@@ -1,9 +1,7 @@
-import { queryNotices } from '@/services/user';
 import { queryLogList } from '@/services/global'
 import {PagerHelper} from "@/utils/helper";
 import {message} from "antd";
 import { queryNotices, fetchMenuList } from '@/services/user';
-import {message} from "antd";
 import storage from "@/utils/storage";
 import { isEmpty } from "@/utils/lang";
 import {router} from "umi";
