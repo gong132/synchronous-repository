@@ -21,6 +21,20 @@ export async function updateBudget(params) {
     params,
   });
 }
+// 获取预算详情
+export async function fetchBudgetDetails(params) {
+  return request('/budget/info', {
+    method: 'get',
+    params,
+  });
+}
+// 获取日志
+export async function fetchLogList(params) {
+  return request('/log/query', {
+    method: 'post',
+    params,
+  });
+}
 // 获取所有集成模块
 export async function fetchClusterList(params) {
   return request('/cluster/all', {

@@ -6,7 +6,7 @@ import StandardTable from "@/components/StandardTable";
 import {Button, Col, Divider, Form, Input, Popover, Row, Select, Tooltip, DatePicker, Icon } from "antd";
 import {isEmpty} from "@/utils/lang";
 import styles from "../index.less";
-import {formLayoutItem, formLayoutItem1} from "@/utils/constant";
+import {formLayoutItem, formLayoutItem1, MENU_ACTIONS} from "@/utils/constant";
 import {BUDGET_TYPE, PROJECT_TYPE} from "@/pages/contractBudget/util/constant";
 import edit from '@/assets/icon/Button_bj.svg'
 
@@ -17,7 +17,9 @@ const FormItem = Form.Item;
 const { Option } = Select;
 
 const Index = props => {
-  const { dispatch, budgetManage:{ budgetList, clusterList, deptList, groupList }, loading, form } = props;
+  const { dispatch, budgetManage:{ budgetList, clusterList, deptList, groupList }, loading, form,
+    global: { authActions },
+  } = props;
 
   // 查询更多
   const [searchMore, setSearchMore] = useState(false);
@@ -45,7 +47,17 @@ const Index = props => {
         if (isEmpty(rows.number, true)) return '';
         return (
           <Tooltip placement="top" title={rows.number}>
-            <a style={{ color: '#FF9716' }}>
+            <a
+              style={{ color: '#FF9716' }}
+              onClick={() => {
+                props.history.push({
+                  pathname: '/contract-budget/budget/detail',
+                  query: {
+                    id: rows.id,
+                  }
+                })
+              }}
+            >
               {rows.number.length > 10 ? `${rows.number.substring(0, 10)}...` : rows.number.substring(0, 10)}
             </a>
           </Tooltip>
@@ -66,20 +78,28 @@ const Index = props => {
       align: 'center',
       render: rows => (
         <Fragment>
-          <OptButton
-            img={edit}
-            text="编辑"
-            onClick={() => {
-              setAddModalVisible(true);
-              setSelectedRows(rows)
-            }}
-          />
+          {
+            authActions.includes(MENU_ACTIONS.EDIT) && (
+              <OptButton
+                img={edit}
+                text="编辑"
+                onClick={() => {
+                  setAddModalVisible(true);
+                  setSelectedRows(rows)
+                }}
+              />
+            )
+          }
           <OptButton
             icon="eye"
             text="查看"
             onClick={() => {
-              setAddModalVisible(true);
-              setSelectedRows(rows)
+              props.history.push({
+                pathname: '/contract-budget/budget/detail',
+                query: {
+                  id: rows.id,
+                }
+              })
             }}
           />
         </Fragment>
@@ -301,8 +321,9 @@ const Index = props => {
 }
 
 export default connect(
-  ({ budgetManage, loading }) => ({
+  ({ budgetManage, global, loading }) => ({
     budgetManage,
+    global,
     loading: loading.models.budgetManage
   })
 )(Form.create()(Index))

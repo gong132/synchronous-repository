@@ -6,8 +6,9 @@
  * https://pro.ant.design/docs/deploy
  */
 
-const apiUrl = 'http://10.90.48.22:80'; // yaowei
-const apiUrl1 = 'http://10.90.48.40:80'; // yaowei
+// const apiUrl = 'http://10.90.48.22:80'; // yaowei
+const apiUrl = 'http://10.90.48.40:80'; // zzp
+// const apiUrl = 'http://10.90.48.26:80'; // lqq
 export default {
   dev: {
     '/budget/': {
@@ -31,7 +32,21 @@ export default {
         '^': '',
       },
     },
+    '/log/': {
+      target: apiUrl,
+      changeOrigin: true,
+      pathRewrite: {
+        '^': '',
+      },
+    },
     '/temp/': {
+      target: apiUrl,
+      changeOrigin: true,
+      pathRewrite: {
+        '^': '',
+      },
+    },
+    '/resource/': {
       target: apiUrl,
       changeOrigin: true,
       pathRewrite: {

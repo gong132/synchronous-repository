@@ -62,3 +62,20 @@ export const LOGIN_ENTRY_TYPE = {
   CASHIER: 'CASHIER', // 门店管理
 };
 
+export const MENU_ACTIONS = {
+  ADD: 'add', // 新增
+  EDIT: 'edit', // 编辑
+  CHANGE: 'change', // 变更
+  DELETE: 'delete', // 删除
+  ABANDON: 'abandon', // 废弃
+  CHECK: 'check', // 查看
+  ENABLE: 'enable', // 启用
+  DISABLE: 'disable', // 禁用
+  AUDIT: 'audit', // 审核
+  EXPORT: 'export', // 导出
+  PRINT: 'print', // 打印
+  SAVE: 'save', // 保存
+  SUBMIT: 'submit', // 提交
+  CANCEL: 'cancel', // 取消
+  BACK: 'back', // 返回
+};

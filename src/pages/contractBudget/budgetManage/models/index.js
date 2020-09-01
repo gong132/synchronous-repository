@@ -1,5 +1,5 @@
 import { queryBudgetList, addBudget, updateBudget, fetchClusterList,
-  fetchDeptListByCluster, fetchGroupList } from '@/services/contractBudget/budget';
+  fetchDeptListByCluster, fetchGroupList, fetchBudgetDetails, fetchLogList } from '@/services/contractBudget/budget';
 import {PagerHelper} from "@/utils/helper";
 import {message} from "antd";
 
@@ -11,6 +11,8 @@ const UserModel = {
     clusterList: [],
     deptList: [],
     groupList: [],
+    budgetDetails: {},
+    budgetLogList: PagerHelper.genListState(),
   },
   effects: {
     *fetchBudgetData({ payload }, { call, put }) {
@@ -24,6 +26,22 @@ const UserModel = {
       const { records, ...others } = data;
       yield put({
         type: 'setBudgetData',
+        payload: {
+          filter: payload,
+          data: records,
+          ...others
+        },
+      })
+    },
+    *queryLogList({ payload }, { call, put }) {
+      const { code, data, msg } = yield call(fetchLogList, payload);
+      if (code !== 200) {
+        message.error(msg);
+        return
+      }
+      const { records, ...others } = data;
+      yield put({
+        type: 'setLogData',
         payload: {
           filter: payload,
           data: records,
@@ -54,8 +72,8 @@ const UserModel = {
         return;
       }
       yield put({
-        type: 'setClusterData',
-        payload: data,
+        type: 'saveData',
+        payload: { clusterList: data },
       })
     },
     *queryDeptList({ payload }, { call, put }) {
@@ -65,8 +83,8 @@ const UserModel = {
         return;
       }
       yield put({
-        type: 'setDeptData',
-        payload: data,
+        type: 'saveData',
+        payload: { deptList: data },
       })
     },
     *queryGroupList({ payload }, { call, put }) {
@@ -76,14 +94,25 @@ const UserModel = {
         return;
       }
       yield put({
-        type: 'setGroupData',
-        payload: data,
+        type: 'saveData',
+        payload: { groupList: data },
+      })
+    },
+    *queryBudgetDetails({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(fetchBudgetDetails, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return;
+      }
+      yield put({
+        type: 'saveData',
+        payload: { budgetDetails: data },
       })
     },
   },
   reducers: {
-    saveData(state, action) {
-      return { ...state, ...action };
+    saveData(state, { payload }) {
+      return { ...state, ...payload };
     },
     setBudgetData(state, action) {
       return {
@@ -91,22 +120,10 @@ const UserModel = {
         budgetList: PagerHelper.resolveListState(action.payload),
       };
     },
-    setClusterData(state, action) {
+    setLogData(state, action) {
       return {
         ...state,
-        clusterList: action.payload,
-      };
-    },
-    setDeptData(state, action) {
-      return {
-        ...state,
-        deptList: action.payload,
-      };
-    },
-    setGroupData(state, action) {
-      return {
-        ...state,
-        groupList: action.payload,
+        budgetLogList: PagerHelper.resolveListState(action.payload),
       };
     },
   },

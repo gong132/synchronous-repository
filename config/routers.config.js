@@ -9,9 +9,6 @@ const routes = [
     ],
   },
   AdminRoutes,
-  {
-    component: './404',
-  },
 ]
 
 export default routes

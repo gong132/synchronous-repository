@@ -74,12 +74,15 @@ request.interceptors.request.use(async (url, options) => {
   const header = {
     'Content-Type': 'application/json; charset=utf-8',
     Accept: 'application/json',
+    credentials: 'include',
+    'Access-Control-Allow-Origin': '*',
+    'X-Requested-With': 'XMLHttpRequest',
   };
 
   let newOptions = { ...options, ...header };
 
   if (newOptions.method === 'post') {
-    newOptions = { ...newOptions, body: newOptions.params };
+    newOptions = { ...newOptions };
     // console.log(newOptions.body instanceof FormData, 'newOptions.body instanceof FormData')
     if (!(newOptions.body instanceof FormData)) {
       newOptions.headers = {
@@ -87,7 +90,7 @@ request.interceptors.request.use(async (url, options) => {
         'Content-Type': 'application/json; charset=utf-8',
         ...newOptions.headers,
       };
-      newOptions.body = JSON.stringify(newOptions.body);
+      newOptions.body = JSON.stringify(newOptions.params);
     } else {
       newOptions.headers = {
         Accept: 'application/json',

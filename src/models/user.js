@@ -1,4 +1,4 @@
-import { queryCurrent, query as queryUsers } from '@/services/user';
+import { fetchMenuList, query as queryUsers } from '@/services/user';
 import storage from "@/utils/storage";
 
 const UserModel = {

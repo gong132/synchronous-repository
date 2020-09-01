@@ -14,29 +14,23 @@ import RightContent from '@/components/GlobalHeader/RightContent';
 import { isAntDesignPro, getAuthorityFromRouter } from '@/utils/utils';
 import logo from '../assets/logoImg.png';
 import logoBg from '../assets/logo.png'
+import storage from "@/utils/storage";
+import {isEmpty} from "@/utils/lang";
 
-const noMatch = (
-  <Result
-    status={403}
-    title="403"
-    subTitle="Sorry, you are not authorized to access this page."
-    extra={
-      <Button type="primary">
-        <Link to="/user/login">Go Login</Link>
-      </Button>
-    }
-  />
-);
-
-/**
- * use Authorized check all menu item
- */
-const menuDataRender = menuList =>
-  menuList.map(item => {
-    const localItem = { ...item, children: item.children ? menuDataRender(item.children) : [] };
-    return Authorized.check(item.authority, localItem, null);
-  });
-
+const noMatch = status => {
+  return (
+    <Result
+      status={403}
+      title="403"
+      subTitle="对不起，您没有权限访问此页."
+      extra={
+        <Button type="primary">
+          <Link to="/user/login">去登陆</Link>
+        </Button>
+      }
+    />
+  )
+};
 
 const BasicLayout = props => {
   const {
@@ -51,12 +45,53 @@ const BasicLayout = props => {
    * constructor
    */
 
+
+  const  getAllMenu = () => {
+    dispatch({
+      type: 'global/queryAllMenuList',
+      payload: {},
+    }).then(data => {
+      // console.log(data, 'data')
+      // this.getCurrentUser();
+    })
+  };
+
+  /**
+   * use Authorized check all menu item
+   */
+  const menuDataRender = menuList =>{
+    const {
+      global: {
+        allMenuList,
+      },
+    } = props;
+    const newMenuList = [...menuList].filter(x => [...allMenuList].some(y => y.url === x.path));
+    return newMenuList.map(item => {
+      const localItem = { ...item, children: item.children ? menuDataRender(item.children) : [] };
+      return Authorized.check(item.authority, localItem, null);
+    })
+  };
+
+
   useEffect(() => {
-    if (dispatch) {
-      dispatch({
-        type: 'user/fetchCurrent',
+
+    // 判断是否登录了，未登录直接跳转登录
+    const gdUser = storage.get('gd-user');
+    if (gdUser) {
+      // this.getSetting();
+      // this.getRegions();
+      getAllMenu();
+    } else {
+      window.g_app._store.dispatch({
+        type: 'login/logout',
       });
     }
+
+    // if (dispatch) {
+    //   dispatch({
+    //     type: 'user/fetchCurrent',
+    //   });
+    // }
   }, []);
   useEffect(() => {
     const {
@@ -71,6 +106,7 @@ const BasicLayout = props => {
       formatMessage,
       menuDataRender,
     );
+
   }, [props])
   /**
    * init variables
@@ -83,8 +119,9 @@ const BasicLayout = props => {
         payload,
       });
     }
-  }; // get children authority
+  };
 
+  // get children authority
   const authorized = getAuthorityFromRouter(props.route.routes, location.pathname || '/') || {
     authority: undefined,
   };
@@ -145,5 +182,6 @@ const BasicLayout = props => {
 
 export default connect(({ global, settings }) => ({
   collapsed: global.collapsed,
+  global,
   settings,
 }))(BasicLayout);
