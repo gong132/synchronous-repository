@@ -54,8 +54,9 @@ body {
     .ant-calendar-picker {
       width: 100%;
     }
+
     .ant-descriptions-bordered .ant-descriptions-item-label {
-      background-color: rgba(243,245,247,1);
+      background-color: rgba(243, 245, 247, 1);
     }
 
     //section {
@@ -71,8 +72,21 @@ body {
       border-bottom: none;
     }
 
+    .ant-modal-title {
+      font-size: 16px;
+      font-family: Source Han Sans CN;
+      font-weight: 600;
+      color: #303133;
+    }
+
     .ant-modal-body {
       padding: 0 24px;
+
+      :global {
+        .ant-form-item {
+          margin-bottom: 12px;
+        }
+      }
     }
 
     .ant-modal-footer {
@@ -91,6 +105,11 @@ body {
 
     .ant-table-tbody>tr:nth-child(even) {
       background: rgba(244, 246, 252, 1);
+    }
+
+    // card样式修改
+    .ant-card-body {
+      padding: 16px
     }
   }
 }

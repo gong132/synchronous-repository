@@ -1,10 +1,13 @@
 import { queryNotices } from '@/services/user';
-
+import { queryLogList } from '@/services/global'
+import {PagerHelper} from "@/utils/helper";
+import {message} from "antd";
 const GlobalModel = {
   namespace: 'global',
   state: {
     collapsed: false,
     notices: [],
+    logList: PagerHelper.genListState()
   },
   effects: {
     *fetchNotices(_, { call, put, select }) {
@@ -67,6 +70,25 @@ const GlobalModel = {
         },
       });
     },
+
+    *fetchLogList({payload}, {call, put}) {
+      const { code, data, msg } = yield call(queryLogList, payload);
+      if (code !== 200) {
+        message.error(msg);
+        return
+      }
+      data.currentPage = data.current;
+      data.pageSize = data.size;
+      const { records, ...others } = data;
+      yield put({
+        type: 'setLOgData',
+        payload: {
+          filter: payload,
+          data: records,
+          ...others
+        },
+      })
+    }
   },
   reducers: {
     changeLayoutCollapsed(
@@ -84,6 +106,13 @@ const GlobalModel = {
         collapsed: false,
         ...state,
         notices: payload,
+      };
+    },
+
+    setLOgData(state, action) {
+      return {
+        ...state,
+        logList: PagerHelper.resolveListState(action.payload),
       };
     },
 

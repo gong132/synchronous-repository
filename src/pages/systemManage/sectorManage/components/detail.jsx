@@ -1,4 +1,5 @@
 import React, { PureComponent, Fragment } from 'react'
+import { connect } from 'dva'
 import GlobalSandBox from "@/components/commonUseModule/globalSandBox";
 import StandardTable from "@/components/StandardTable";
 import { DefaultPage, TableColumnHelper } from "@/utils/helper";
@@ -6,6 +7,10 @@ import budget_xq from '@/assets/icon/modular_xq.svg'
 import budget_log from '@/assets/icon/modular_czrz.svg'
 import { Card, Descriptions } from 'antd'
 
+
+@connect(({ sector, global, loading }) => ({
+  loadingQueryLogData: loading.effects['global/fetchLogList'],
+}))
 class SectorDetail extends PureComponent {
   constructor(props) {
     super(props)
@@ -23,7 +28,7 @@ class SectorDetail extends PureComponent {
       pageSize: pagination.pageSize,
       // ...formValues, // 添加已查询条件去获取分页
     };
-    handleQueryBudgetData(params)
+    this.handleQueryBudgetData(params)
   };
 
   render() {
@@ -36,8 +41,8 @@ class SectorDetail extends PureComponent {
       { span: 1, required: false, name: '修改时间', value: '820', dataIndex: 'updateTime' },
     ]
     const columns = [
-      TableColumnHelper.genPlanColumn('updateUser', '修改人'),
-      TableColumnHelper.genPlanColumn('updateCOntent', '修改内容'),
+      TableColumnHelper.genPlanColumn('operateUserName', '修改人'),
+      TableColumnHelper.genPlanColumn('content', '修改内容'),
       TableColumnHelper.genPlanColumn('updateTime', '修改时间'),
     ]
     return (
@@ -66,6 +71,7 @@ class SectorDetail extends PureComponent {
           title='操作日志'
         >
           <StandardTable
+            rowKey={(record, index) => index}
             columns={columns}
             onChange={this.handleStandardTableChange}
           />
