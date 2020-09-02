@@ -45,7 +45,7 @@ module.exports = {
               {
                 path: '/contract-budget/contract',
                 name: 'contractManage',
-                component: './contractBudget/contractManage/index',
+                component: './contractBudget/contractManage',
               },
               {
                 path: '/contract-budget/budget',
