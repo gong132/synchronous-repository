@@ -20,19 +20,20 @@ const GlobalHeaderRight = props => {
   }
   const createBreadcrumb = () => {
     const { location: { pathname }, breadcrumb } = props
+    // console.log(pathname, breadcrumb)
     let arr = pathname.split('/')
     const breadPath = breadcrumb[pathname] || {}
     // console.log(breadcrumb, pathname, arr);
     if (arr.length === 4) {
       arr.pop()
       let secPath = arr.join('/')
-      const fB = breadcrumb[breadPath.parentKeys[1]]
+      const fB = breadPath.parentKeys ? breadcrumb[breadPath.parentKeys[1]] : {}
       return (
         <Breadcrumb separator="|">
           <Breadcrumb.Item>{fB.name}</Breadcrumb.Item>
           <Breadcrumb.Item
             onClick={() => window.history.back(secPath)}
-          >{breadcrumb[secPath].name}</Breadcrumb.Item>
+          >{breadcrumb[secPath] && breadcrumb[secPath].name}</Breadcrumb.Item>
           <Breadcrumb.Item>{breadPath.name}</Breadcrumb.Item>
         </Breadcrumb>
       )

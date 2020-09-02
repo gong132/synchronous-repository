@@ -479,24 +479,15 @@ export const flatArrayByChildKey = (array, childKey) => {
   return ret;
 };
 
+// 获取url后的参数
 /**
- * @desc 分页
- * @param {Number} current = 1
- * @param {Number} total = 10
- * @param {Function} callback
- * @param {Number} pageSize
- * @param {Boolean} bool = true
- * @todo
-*/
-export const paginationProps = (props) => {
-  const {current, pageSize, total, changePage, handleShowSizeChanger, showQuickJumper} = props
-  return {
-    defaultPageSize: pageSize,
-    showQuickJumper: bool,
-    total: total,
-    current: current,
-    showTotal: () => `共${total}条数据， 每页${pageSize}条`,
-    onChange: page => callback(page)
-  }
+ * @param {string} name 字段名
+ */
+export const getParam = (name) => {
+  const str = window.location.href.split('?')[1] || ''
+  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+  const r = str.match(reg)
+  if (r) return decodeURI(r[2]);
+  return ''; //返回参数值
 }
 

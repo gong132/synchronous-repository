@@ -28,6 +28,12 @@ const GlobalModel = {
         type: 'saveData',
         payload: { allMenuList: data },
       });
+      yield put({
+        type: 'updateAuthData',
+        payload: {
+          pathname: window.location.pathname,
+        },
+      });
 
       callback && callback(data);
       return data
@@ -45,27 +51,22 @@ const GlobalModel = {
       });
 
 
-      yield put({
-        type: 'updateAuthData',
-        payload: {
-          pathname: window.location.pathname,
-        },
-      });
+    
       callback && callback(data);
       return data
     },
 
     *fetchLogList({payload}, {call, put}) {
+      console.log('payload:', payload)
       const { code, data, msg } = yield call(queryLogList, payload);
+      console.log(data)
       if (code !== 200) {
         message.error(msg);
         return
       }
-      data.currentPage = data.current;
-      data.pageSize = data.size;
       const { records, ...others } = data;
       yield put({
-        type: 'setLOgData',
+        type: 'setLogData',
         payload: {
           filter: payload,
           data: records,
@@ -100,7 +101,7 @@ const GlobalModel = {
       };
     },
 
-    setLOgData(state, action) {
+    setLogData(state, action) {
       return {
         ...state,
         logList: PagerHelper.resolveListState(action.payload),
