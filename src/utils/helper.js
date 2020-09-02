@@ -336,6 +336,7 @@ const MaxPage = {
 };
 
 function genPagination(page = DefaultPage, showSizeChanger = true) {
+  console.log(page)
   return {
     current: parseInt(page.currentPage, 0),
     total: parseInt(page.records, 0),
@@ -360,14 +361,17 @@ function genListState(filter) {
 
 function resolveListState(payload) {
   const { filter, data, ...page } = payload;
+  console.log(genPagination)
+  page.records = page.total
   return {
     filter,
     list: data || [],
-    pagination: {
-      current: filter.currentPage,
-      pageSize: filter.pageSize,
-      total: page.total,
-    },
+    // pagination: {
+    //   current: filter.currentPage,
+    //   pageSize: filter.pageSize,
+    //   total: page.total,
+    // },
+    pagination: genPagination(page)
   };
 }
 

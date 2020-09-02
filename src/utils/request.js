@@ -80,7 +80,7 @@ request.interceptors.request.use(async (url, options) => {
   };
 
 
-  console.log(options, 'options')
+  // console.log(options, 'options')
 
   let newOptions = { ...options, headers: headers };
   if (token) {
@@ -105,7 +105,7 @@ request.interceptors.request.use(async (url, options) => {
     }
   }
 
-console.log(newOptions, 'newOptions')
+// console.log(newOptions, 'newOptions')
   return (
     {
       url: url,

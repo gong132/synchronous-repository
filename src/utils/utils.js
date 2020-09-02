@@ -484,7 +484,7 @@ export const flatArrayByChildKey = (array, childKey) => {
  * @param {string} name 字段名
  */
 export const getParam = (name) => {
-  const str = window.location.hash.split('?')[1] || ''
+  const str = window.location.href.split('?')[1] || ''
   var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
   const r = str.match(reg)
   if (r) return decodeURI(r[2]);

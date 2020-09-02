@@ -5,6 +5,7 @@ import {
   queryDept,
   querySectorInfo,
 } from '@/services/systemManage/sectorManage'
+import { queryLogList } from '@/services/global'
 import { PagerHelper } from "@/utils/helper";
 import {message} from "antd";
 
@@ -12,11 +13,30 @@ const Sector = {
   namespace: 'sector',
   state: {
     sectorList: PagerHelper.genListState(),
+    logList: PagerHelper.genListState(),
     deptList: [],
     deptListMap: {},
     sectorInfo: {}
   },
   effects: {
+    *fetchLogList({payload}, {call, put}) {
+      console.log('payload:', payload)
+      const { code, data, msg } = yield call(queryLogList, payload);
+      console.log(data)
+      if (code !== 200) {
+        message.error(msg);
+        return
+      }
+      const { records, ...others } = data;
+      yield put({
+        type: 'setLogData',
+        payload: {
+          filter: payload,
+          data: records,
+          ...others
+        },
+      })
+    },
     *queryData({ payload }, { call, put }) {
       const { code, data, msg } = yield call(fetchData, payload)
       if (code !== 200) {
@@ -96,6 +116,12 @@ const Sector = {
       return {
         ...state,
         sectorList: PagerHelper.resolveListState(action.payload),
+      };
+    },
+    setLogData(state, action) {
+      return {
+        ...state,
+        logList: PagerHelper.resolveListState(action.payload),
       };
     },
   }
