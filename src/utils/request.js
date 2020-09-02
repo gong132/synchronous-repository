@@ -78,12 +78,9 @@ request.interceptors.request.use(async (url, options) => {
     'X-Requested-With': 'XMLHttpRequest',
   };
 
-
-  console.log(options, 'options')
-
   let newOptions = { ...options, headers: headers };
   if (token) {
-    newOptions.headers['Authorization'] = `Bearer ${token}`
+    newOptions.headers['Authorization'] = token
     // newOptions.headers['token'] = token
   }
   if (newOptions.method === 'post') {
@@ -104,7 +101,6 @@ request.interceptors.request.use(async (url, options) => {
     }
   }
 
-console.log(newOptions, 'newOptions')
   return (
     {
       url: url,
