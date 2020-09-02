@@ -31,3 +31,11 @@ export async function queryDept(params) {
     params,
   });
 }
+
+// 查看集群板块详情
+export async function querySectorInfo(params) {
+  return request('/cluster/info', {
+    method: 'get',
+    params,
+  });
+}

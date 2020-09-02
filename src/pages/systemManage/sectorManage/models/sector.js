@@ -3,6 +3,7 @@ import {
   createData,
   updateData,
   queryDept,
+  querySectorInfo,
 } from '@/services/systemManage/sectorManage'
 import { PagerHelper } from "@/utils/helper";
 import {message} from "antd";
@@ -12,7 +13,8 @@ const Sector = {
   state: {
     sectorList: PagerHelper.genListState(),
     deptList: [],
-    deptListMap: {}
+    deptListMap: {},
+    sectorInfo: {}
   },
   effects: {
     *queryData({ payload }, { call, put }) {
@@ -64,6 +66,21 @@ const Sector = {
         payload: {
           deptList: data,
           deptListMap: obj
+        }
+      })
+    },
+
+    //查看集群详情
+    *fetchSectorInfo({payload}, {call, put}) {
+      const {code, msg, data} = yield call(querySectorInfo, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      yield put({
+        type: 'saveData',
+        payload: {
+          sectorInfo: data,
         }
       })
     }

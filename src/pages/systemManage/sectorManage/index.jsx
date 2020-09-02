@@ -78,11 +78,13 @@ class SectorManage extends Component {
       obj[type] = val
     }
     else if (type = 'name') {
+      val.persist()
       obj[type] = val.target.value
+      console.log(obj)
     }
     this.setState({
       searchParams: obj
-    }, () => _.debounce(this.handleQueryData, 500)
+    }, () => this.handleQueryData()
     )
   }
 
@@ -162,8 +164,13 @@ class SectorManage extends Component {
     })
   }
 
-  handleViewDetail = () => {
-    router.push('/systemManage/sectorManage/detail')
+  handleViewDetail = (record) => {
+    router.push({
+      pathname: '/systemManage/sectorManage/detail',
+      query: {
+        id: record.id
+      }
+    })
   }
 
   handleChangeChecked = (checkedValues) => {
@@ -193,7 +200,7 @@ class SectorManage extends Component {
           <Input
             allowClear
             value={searchParams.name}
-            // onChange={_.debounce(this.saveParams, 500)}
+            onChange={_.debounce(this.saveParams, 500)}
             onChange={e => this.saveParams(e, 'name')}
             placeholder='请输入集群/板块名称' />
         </SearchForm>
@@ -210,7 +217,7 @@ class SectorManage extends Component {
             }}
           >
             {!_.isEmpty(deptList) && deptList.map(d => (
-              <Option key={d.number} value={d.number}>{d.name}</Option>
+              <Option key={d.number} value={d.name}>{d.name}</Option>
             ))}
           </Select>
         </SearchForm>

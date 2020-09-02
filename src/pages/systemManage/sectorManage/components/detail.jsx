@@ -6,14 +6,32 @@ import { DefaultPage, TableColumnHelper } from "@/utils/helper";
 import budget_xq from '@/assets/icon/modular_xq.svg'
 import budget_log from '@/assets/icon/modular_czrz.svg'
 import { Card, Descriptions } from 'antd'
+import { getParam } from '@/utils/utils'
 
 
 @connect(({ sector, global, loading }) => ({
   loadingQueryLogData: loading.effects['global/fetchLogList'],
+  loadingQueryInfo: loading.effects['sector/fetchSectorInfo'],
+  sectorInfo: sector.sectorInfo,
 }))
 class SectorDetail extends PureComponent {
   constructor(props) {
     super(props)
+  }
+
+  componentDidMount() {
+    const id = getParam('id')
+    this.handleQuerySectorInfo({ clusterId: id })
+  }
+
+  // 查看板块详情
+  handleQuerySectorInfo = (params) => {
+    this.props.dispatch({
+      type: 'sector/fetchSectorInfo',
+      payload: {
+        ...params
+      }
+    })
   }
 
   handleQueryBudgetData = (params) => {
@@ -32,13 +50,27 @@ class SectorDetail extends PureComponent {
   };
 
   render() {
+    const { sectorInfo } = this.props
+    console.log(sectorInfo)
+    const { name, createUserName, createTime, updateUserName, updateTime, clusterLinkDepts } = sectorInfo
+    let str = ''
+    if (_.isArray(clusterLinkDepts) && !_.isEmpty(clusterLinkDepts)) {
+      clusterLinkDepts.map((d, index) => {
+        if (clusterLinkDepts.length > index + 1) {
+          str += `${d.deptName}, `
+          return
+        }
+        str += d.deptName
+      })
+    }
+
     const detailList = [
-      { span: 1, required: true, name: '集群/板块名称', value: '111111', dataIndex: 'name' },
-      { span: 1, required: false, name: '所属部门', value: 'bumne', dataIndex: 'deptName' },
-      { span: 1, required: false, name: '创建人', value: 'gong', dataIndex: 'createUserName' },
-      { span: 1, required: false, name: '创建时间', value: '818', dataIndex: 'createTime' },
-      { span: 1, required: false, name: '修改人', value: '胖胖', dataIndex: 'updateUserName' },
-      { span: 1, required: false, name: '修改时间', value: '820', dataIndex: 'updateTime' },
+      { span: 1, required: true, name: '集群/板块名称', value: name, dataIndex: 'name' },
+      { span: 1, required: false, name: '所属部门', value: str, dataIndex: 'deptName' },
+      { span: 1, required: false, name: '创建人', value: createUserName, dataIndex: 'createUserName' },
+      { span: 1, required: false, name: '创建时间', value: createTime, dataIndex: 'createTime' },
+      { span: 1, required: false, name: '修改人', value: updateUserName, dataIndex: 'updateUserName' },
+      { span: 1, required: false, name: '修改时间', value: updateTime, dataIndex: 'updateTime' },
     ]
     const columns = [
       TableColumnHelper.genPlanColumn('operateUserName', '修改人'),

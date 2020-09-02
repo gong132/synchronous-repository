@@ -96,7 +96,6 @@ module.exports = {
           },
           // 路由页面 end
 
-
           {
             path: '/exception',
             hideInMenu: true,
