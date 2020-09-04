@@ -40,6 +40,13 @@ class LoginPage extends Component {
           loginName: values.username,
           passWord: values.password,
         },
+      }).then(result => {
+        if (!result) return
+        dispatch({
+          type: 'global/queryCurrentUserInfo',
+          payload: {
+          },
+        });
       });
     }
   };

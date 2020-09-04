@@ -30,7 +30,7 @@ const codeMessage = {
  */
 const logout = () => {
   window.g_app._store.dispatch({
-    type: 'type/logout'
+    type: 'login/logout'
   })
 };
 
@@ -63,18 +63,17 @@ const errorHandler = error => {
 
 const request = extend({
   errorHandler,
-  timeout: 5000,
+  // timeout: 5000,
   // prefix: '/server',
   // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
 });
 
-
 // request拦截器, 改变url 或 options.
 request.interceptors.request.use(async (url, options) => {
   const { token } = storage.get('gd-user', {});
   const headers = {
-    credentials: 'include',
+    // credentials: 'include',
     'Access-Control-Allow-Origin': '*',
     'X-Requested-With': 'XMLHttpRequest',
   };
@@ -119,6 +118,15 @@ request.interceptors.response.use(async (response, options) => {
       description: data.message || '登陆超时,请重新登陆',
       message: '登陆超时',
     });
+    logout();
+    return
+  }
+  if (data.code === 5200 || data.code === 5201 || data.code ===5202 ) {
+    notification.error({
+      description: data.message || 'token失效,请重新登陆',
+      message: 'token失效',
+    });
+    logout();
     return
   }
   return  response;

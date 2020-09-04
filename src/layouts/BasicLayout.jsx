@@ -45,19 +45,10 @@ const BasicLayout = props => {
    * constructor
    */
 
-
-  const  getCurrentUser = () => {
-    dispatch({
-      type: 'global/queryCurrentUserInfo',
-      payload: {},
-    })
-  };
   const  getAllMenu = () => {
     dispatch({
       type: 'global/queryAllMenuList',
       payload: {},
-    }).then(() => {
-      getCurrentUser();
     })
   };
 
