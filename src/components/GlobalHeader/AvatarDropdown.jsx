@@ -5,6 +5,7 @@ import { connect } from 'dva';
 import { router } from 'umi';
 import HeaderDropdown from '../HeaderDropdown';
 import styles from './index.less';
+import storage from "@/utils/storage";
 
 class AvatarDropdown extends React.Component {
   onMenuClick = event => {
@@ -26,13 +27,10 @@ class AvatarDropdown extends React.Component {
   };
 
   render() {
-    const {
-      currentUser = {
-        avatar: '',
-        name: '',
-      },
-      menu,
-    } = this.props;
+    const { menu } = this.props;
+    const { userInfo = {} } = storage.get('gd-user', {});
+
+    const defaultImage = 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'
     const menuHeaderDropdown = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={this.onMenuClick}>
         {menu && (
@@ -55,11 +53,11 @@ class AvatarDropdown extends React.Component {
         </Menu.Item>
       </Menu>
     );
-    return currentUser && currentUser.name ? (
+    return userInfo && userInfo.userName ? (
       <HeaderDropdown overlay={menuHeaderDropdown}>
         <span className={`${styles.action} ${styles.account}`}>
-          <Avatar size="small" className={styles.avatar} src={currentUser.avatar} alt="avatar" />
-          <span className={styles.name}>{currentUser.name}</span>
+          <Avatar size="small" className={styles.avatar} src={userInfo.avatar || defaultImage} alt="avatar" />
+          <span className={styles.name}>{userInfo.userName}</span>
         </span>
       </HeaderDropdown>
     ) : (
@@ -74,6 +72,7 @@ class AvatarDropdown extends React.Component {
   }
 }
 
-export default connect(({ user }) => ({
-  currentUser: user.currentUser,
+export default connect(({ global }) => ({
+  global,
+  userInfo: global.userInfo,
 }))(AvatarDropdown);

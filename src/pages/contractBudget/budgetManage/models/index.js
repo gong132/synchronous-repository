@@ -4,7 +4,7 @@ import {PagerHelper} from "@/utils/helper";
 import {message} from "antd";
 
 
-const UserModel = {
+const budgetManage = {
   namespace: 'budgetManage',
   state: {
     budgetList: PagerHelper.genListState(),
@@ -128,4 +128,4 @@ const UserModel = {
     },
   },
 };
-export default UserModel;
+export default budgetManage;

@@ -1,45 +1,58 @@
-import React, {Component, Fragment} from 'react'
+import React, {Component, Fragment, useEffect} from 'react'
 import CustomBtn from '@/components/commonUseModule/customBtn'
 import {connect} from 'dva'
-import styles from './index.less'
-import {
-  Card,
-  Table,
-  Row,
-  Col,
-  Icon
-} from 'antd'
-class AuthorManage extends Component {
-  constructor(props) {
-    super(props);
-    this.state={
-    }
-  }
+import {DefaultPage, TableColumnHelper} from "@/utils/helper";
+import StandardTable from "@/components/StandardTable";
 
-  render() {
-    return (
-      <Fragment>
-         <CustomBtn
-          onClick={() => this.handleViewModal(true, '新建')}
-          type='create' />
-        <Card>
-          <Row>
-            <Col span={10}>
-              <h4>选择角色</h4>
-            </Col>
-            <Col span={14}>
-              <div className={styles.rightTitle}>
-                <div className={styles.rightTitle_roleName}>角色1</div>
-                <h4>选择功能</h4>
-                <Icon type="plus-square" />
-                <Icon type="minus-square" />
-              </div>
-            </Col>
-          </Row>
-        </Card>
-      </Fragment>
-    )
-  }
+import styles from './index.less'
+import {Form} from "antd";
+
+const AuthorManage = props => {
+  console.log(props, 'props')
+  const { dispatch, authorManage: { roleList }, loading } = props
+
+  const handleQueryAllRolesList = params => {
+    dispatch({
+      type:'authorManage/queryAllRolesList',
+      payload: {
+        ...DefaultPage,
+        ...params,
+      }
+    })
+  };
+
+  useEffect(() => {
+    handleQueryAllRolesList()
+  }, []);
+
+  const columns = [
+    TableColumnHelper.genPlanColumn('id', '角色编号'),
+    TableColumnHelper.genPlanColumn('roleName', '角色名'),
+  ]
+
+  return (
+    <div className="main">
+      <CustomBtn
+        // onClick={() => }
+        type='create' />
+      <div className={styles.tableList}>
+        {/*<div className={styles.tableListForm}>*/}
+        {/*</div>*/}
+        <StandardTable
+          rowkey="id"
+          columns={columns}
+          data={roleList}
+        />
+      </div>
+    </div>
+  )
 }
 
-export default AuthorManage
+
+export default connect(
+  ({ authorManage, global, loading }) => ({
+    authorManage,
+    global,
+    loading: loading.models.budgetManage
+  })
+)(AuthorManage)

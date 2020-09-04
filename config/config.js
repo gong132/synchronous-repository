@@ -11,6 +11,8 @@ const { pwa } = defaultSettings; // preview.pro.ant.design only do not use in yo
 
 const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION, REACT_APP_ENV } = process.env;
 const isAntDesignProPreview = ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site';
+
+console.log(process.env, 'process.env,')
 const plugins = [
   ['umi-plugin-antd-icon-config', {}],
   [
@@ -19,6 +21,9 @@ const plugins = [
       antd: true,
       dva: {
         hmr: true,
+      },
+      targets: {
+        ie: 11,
       },
       locale: {
         // default false

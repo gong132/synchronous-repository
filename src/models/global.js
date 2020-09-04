@@ -14,7 +14,7 @@ const GlobalModel = {
     logList: PagerHelper.genListState(),
     allMenuList: [],
     authActions: [],
-    userInfo: {},
+    currentUser: {},
   },
   effects: {
     *queryAllMenuList({ payload, callback }, { call, put }) {
@@ -28,6 +28,23 @@ const GlobalModel = {
         type: 'saveData',
         payload: { allMenuList: data },
       });
+
+      callback && callback(data);
+      return data
+    },
+
+    *queryCurrentUserInfo({ payload, callback }, { call, put }) {
+      const { code, data, msg } = yield call(fetchCurrentUserInfo, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false
+      }
+      storage.add('gd-user', { userInfo: data });
+      yield put({
+        type: 'saveData',
+        payload: { currentUser: data },
+      });
+
       yield put({
         type: 'updateAuthData',
         payload: {
@@ -38,20 +55,10 @@ const GlobalModel = {
       callback && callback(data);
       return data
     },
-    *queryCurrentUserInfo({ payload, callback }, { call, put }) {
-      const { code, data, msg } = yield call(fetchCurrentUserInfo, payload);
-      if (!code || code !== 200) {
-        message.error(msg);
-        return false
-      }
-      storage.add('gd-user', { userInfo: data });
-      yield put({
-        type: 'saveData',
-        payload: { userInfo: data },
-      });
-    
-      callback && callback(data);
-      return data
+
+    *fetchCurrentUser({payload}, {call, put}) {
+      console.log(localStorage.getItem('gd-user'), 'gd-userInfo')
+      const currentUser = localStorage.getItem('gd-user')
     },
 
     *fetchLogList({payload}, {call, put}) {
@@ -173,11 +180,15 @@ const GlobalModel = {
       history.listen(({ pathname, search }) => {
         const { allMenuList } = storage.get('gd-user', []);
         const findCurrentPage = allMenuList && allMenuList.find(v => v.url === pathname );
+        // console.log(allMenuList, pathname, findCurrentPage, 'findCurrentPage')
         // 监听当前页面路由是否在菜单池, 如果不在, 并且不是异常页面和登陆页时, 跳转到403页面
         // 异常页面不监听路由
-        if (!findCurrentPage && pathname.indexOf('/exception') < 0 && pathname !== '/user/login') {
+        if (!findCurrentPage && pathname.indexOf('/exception') < 0 && pathname !== '/user/login' && pathname !== '/') {
           router.replace('/exception/403');
         }
+        // if (!findCurrentPage || pathname !== '/user/login') {
+        //   router.replace('/');
+        // }
         // 如果路径名为' / '，则触发' load '操作
         if (typeof window.ga !== 'undefined') {
           window.ga('send', 'pageview', pathname + search);

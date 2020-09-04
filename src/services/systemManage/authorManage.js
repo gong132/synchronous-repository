@@ -1,7 +1,7 @@
 import request from '@/utils/request';
 
 // 查询所有角色
-export async function fetchAllRoles(params) {
+export async function fetchAllRolesList(params) {
   return request('/role/queryList', {
     method: 'get',
     params,
