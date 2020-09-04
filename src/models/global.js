@@ -49,8 +49,6 @@ const GlobalModel = {
         type: 'saveData',
         payload: { userInfo: data },
       });
-
-
     
       callback && callback(data);
       return data

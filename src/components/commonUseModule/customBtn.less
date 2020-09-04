@@ -42,17 +42,18 @@
   border: 1px solid rgba(255, 151, 22, 1);
   opacity: 1;
   border-radius: 2px;
-  color:rgba(255,151,22,1);
+  color: rgba(255, 151, 22, 1);
   font-size: 14px;
   font-family: Source Han Sans CN;
   font-weight: 400;
 }
+
 .cancelBtn:hover {
   cursor: pointer;
 }
 
 .saveBtn {
-  width: 80px;
+  min-width: 80px;
   height: 32px;
   background: rgba(255, 151, 22, 1);
   opacity: 1;
@@ -61,12 +62,13 @@
   font-size: 14px;
   font-family: Source Han Sans CN;
   font-weight: 400;
-  line-height: 32px;
+  line-height: 31px;
   color: rgba(255, 255, 255, 1);
 }
-.saveBtn:hover {
-  cursor: pointer;
-}
+
+// .saveBtn:hover {
+//   cursor: pointer;
+// }
 
 .resetBtn {
   display: inline-block;
@@ -81,6 +83,22 @@
   border-radius: 2px;
 }
 
-.resetBtn:hover {
+.exportBtn {
+  width: 90px;
+  height: 40px;
+  background: #FFFFFF;
+  border: 1px solid #E0E7FF;
+  opacity: 1;
+  border-radius: 2px;
+  text-align: center;
+  line-height: 40px;
+  span {
+    margin-left: 8px;
+  }
+}
+
+.exportBtn:hover {
   cursor: pointer;
+  // color: rgba(255, 151, 22, 1);
+  // border: 1px solid rgba(255, 151, 22, 1);
 }

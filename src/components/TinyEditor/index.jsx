@@ -61,13 +61,14 @@ class App extends Component {
 
     xhr.send(formData);
   }
+
   render() {
     const {
       height = 500, // 高度
       content, // 内容
       disabled = false, // 控制文本框是否可编辑
+      editorKey,
     } = this.props;
-    const _this = this;
     let cusToolbar = toolbar;
     const pastProps = {
       paste_retain_style_properties: 'all',
@@ -83,14 +84,17 @@ class App extends Component {
         disabled={disabled}
         onEditorChange={this.handleEditorChange}
         init={{
+          key:editorKey,
           height: height,
           plugins,
           toolbar: cusToolbar,
           language: 'zh_CN',
           branding: false, // 隐藏右下角技术支持
           menubar: true,
-
           ...pastProps,
+          file_picker_types: '*',
+          relative_urls: false,
+          remove_script_host: false,
           images_upload_handler: this.handleUploadImg,
         }}
       />

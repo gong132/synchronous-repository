@@ -6,12 +6,12 @@ import StandardTable from "@/components/StandardTable";
 import { DefaultPage, TableColumnHelper } from "@/utils/helper";
 import budget_xq from '@/assets/icon/modular_xq.svg'
 import budget_log from '@/assets/icon/modular_czrz.svg'
-import { Card, Descriptions, Spin } from 'antd'
+import { Descriptions, Spin } from 'antd'
 import { getParam } from '@/utils/utils'
 
 
-@connect(({ sector, global, loading }) => ({
-  loadingQueryLogData: loading.effects['global/fetchLogList'],
+@connect(({ sector, loading }) => ({
+  loadingQueryLogData: loading.effects['sector/fetchLogList'],
   loadingQueryInfo: loading.effects['sector/fetchSectorInfo'],
   sectorInfo: sector.sectorInfo,
   logList: sector.logList,
@@ -42,8 +42,6 @@ class SectorDetail extends PureComponent {
 
   // 查日志
   handleQueryLogList = (params) => {
-    console.log(params)
-    console.log(this.props)
     this.props.dispatch({
       type: 'sector/fetchLogList',
       payload: {
@@ -55,18 +53,15 @@ class SectorDetail extends PureComponent {
 
   // 分页操作
   handleStandardTableChange = pagination => {
-    // const formValues = form.getFieldsValue();
     const params = {
       currentPage: pagination.current,
       pageSize: pagination.pageSize,
-      // ...formValues, // 添加已查询条件去获取分页
     };
     this.handleQueryLogList(params)
   };
 
   render() {
-    const { sectorInfo, loadingQueryInfo, logList } = this.props
-    console.log(logList)
+    const { sectorInfo, loadingQueryInfo, logList, loadingQueryLogData } = this.props
     const { name, createUserName, createTime, updateUserName, updateTime, clusterLinkDepts } = sectorInfo
     let str = ''
     if (_.isArray(clusterLinkDepts) && !_.isEmpty(clusterLinkDepts)) {
@@ -120,6 +115,7 @@ class SectorDetail extends PureComponent {
           title='操作日志'
         >
           <StandardTable
+            loading={loadingQueryLogData}
             rowKey={(record, index) => index}
             columns={columns}
             data={logList}

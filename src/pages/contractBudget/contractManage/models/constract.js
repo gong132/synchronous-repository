@@ -3,6 +3,7 @@ import {
   queryContractInfo,
   createContract,
   editContract,
+  queryDept
 } from '@/services/contractBudget/contract'
 import { PagerHelper } from "@/utils/helper";
 import { queryLogList } from '@/services/global'
@@ -35,6 +36,7 @@ const Constract = {
       })
     },
     *queryData({ payload }, { call, put }) {
+      console.log('payload:', payload)
       const { code, data, msg } = yield call(queryContractList, payload)
       if (code !== 200) {
         message.error(msg);
@@ -67,7 +69,28 @@ const Constract = {
       return true
     },
 
-    //查看合同详情
+    // 查询未被集群绑定部门
+    *fetchNotBindDept({payload}, {call, put}) {
+      const { code, msg, data } = yield call(queryDept, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      let obj = {}
+      data.map(v => {
+        obj[v.number] = v.name
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          deptList: data,
+          deptListMap: obj
+        }
+      })
+      return true
+    },
+
+    // 查看合同详情
     *fetchContractInfo({ payload }, { call, put }) {
       const { code, msg, data } = yield call(queryContractInfo, payload)
       if (!code || code !== 200) {
@@ -80,6 +103,7 @@ const Constract = {
           constractInfo: data,
         }
       })
+      return true
     }
   },
   reducers: {

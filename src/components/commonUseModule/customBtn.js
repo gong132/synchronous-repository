@@ -1,8 +1,10 @@
 import React, { Fragment } from 'react'
+import dcBtn from '@/assets/icon/Button_dc.svg'
+import {Icon, Button} from 'antd'
 import styles from './customBtn.less'
-// import {Button} from 'antd'
+
 const CustomBtn = (props) => {
-  const { type, style = {}, onClick } = props
+  const { type, style = {}, onClick, loading } = props
   return (
     <Fragment>
       {type === 'create' && <div
@@ -27,21 +29,35 @@ const CustomBtn = (props) => {
         </div>
       }
       {
-        type === 'save' && <div
+        type === 'save' && <Button
+          loading={loading}
+          type='primary'
           className={styles.saveBtn}
           style={style}
           onClick={onClick}
         >
           <span>保存</span>
-        </div>
+        </Button>
       }
       {
-        type === 'reset' && <div
+        type === 'reset' && <Button
           className={styles.resetBtn}
           style={style}
           onClick={onClick}
+          type='default'
+          loading={loading}
         >
           <span>重置</span>
+        </Button>
+      }
+      {
+        type === 'export' && <div
+          className={styles.exportBtn}
+          style={style}
+          onClick={onClick}
+        >
+            <Icon component={dcBtn} />
+            <span>导出</span>
         </div>
       }
     </Fragment>

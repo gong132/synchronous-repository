@@ -57,6 +57,7 @@ export default {
   'menu.test.test': '测试',
   'menu.contract-budget': '合同预算管理',
   'menu.contract-budget.contractManage': '合同管理',
+  'menu.contract-budget.contractDetail': '详情',
   'menu.contract-budget.budgetManage': '预算管理',
   'menu.contract-budget.budgetDetail': '预算管理详情',
 
