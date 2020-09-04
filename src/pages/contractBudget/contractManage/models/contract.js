@@ -1,25 +1,24 @@
 import {
-  fetchData,
-  createData,
-  updateData,
-  queryDept,
-  querySectorInfo,
-} from '@/services/systemManage/sectorManage'
-import { queryLogList } from '@/services/global'
+  queryContractList,
+  queryContractInfo,
+  createContract,
+  editContract,
+} from '@/services/contractBudget/contract'
 import { PagerHelper } from "@/utils/helper";
-import {message} from "antd";
+import { queryLogList } from '@/services/global'
+import { message } from "antd";
 
-const Sector = {
-  namespace: 'sector',
+const Constract = {
+  namespace: 'constract',
   state: {
-    sectorList: PagerHelper.genListState(),
+    constractList: PagerHelper.genListState(),
     logList: PagerHelper.genListState(),
+    constractInfo: {},
     deptList: [],
     deptListMap: {},
-    sectorInfo: {}
   },
   effects: {
-    *fetchLogList({payload}, {call, put}) {
+    *fetchLogList({ payload }, { call, put }) {
       const { code, data, msg } = yield call(queryLogList, payload);
       if (code !== 200) {
         message.error(msg);
@@ -36,7 +35,7 @@ const Sector = {
       })
     },
     *queryData({ payload }, { call, put }) {
-      const { code, data, msg } = yield call(fetchData, payload)
+      const { code, data, msg } = yield call(queryContractList, payload)
       if (code !== 200) {
         message.error(msg);
         return
@@ -52,7 +51,7 @@ const Sector = {
       })
     },
     *addData({ payload }, { call }) {
-      const { code, msg } = yield call(createData, payload)
+      const { code, msg } = yield call(createContract, payload)
       if (!code || code !== 200) {
         message.error(msg);
         return false;
@@ -60,7 +59,7 @@ const Sector = {
       return true
     },
     *updateData({ payload }, { call }) {
-      const { code, msg } = yield call(updateData, payload)
+      const { code, msg } = yield call(editContract, payload)
       if (!code || code !== 200) {
         message.error(msg);
         return false;
@@ -68,29 +67,9 @@ const Sector = {
       return true
     },
 
-    // 查询未被集群绑定部门
-    *fetchNotBindDept({payload}, {call, put}) {
-      const { code, msg, data } = yield call(queryDept, payload)
-      if (!code || code !== 200) {
-        message.error(msg);
-        return false;
-      }
-      let obj = {}
-      data.map(v => {
-        obj[v.number] = v.name
-      })
-      yield put({
-        type: 'saveData',
-        payload: {
-          deptList: data,
-          deptListMap: obj
-        }
-      })
-    },
-
-    //查看集群详情
-    *fetchSectorInfo({payload}, {call, put}) {
-      const {code, msg, data} = yield call(querySectorInfo, payload)
+    //查看合同详情
+    *fetchContractInfo({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(queryContractInfo, payload)
       if (!code || code !== 200) {
         message.error(msg);
         return false;
@@ -98,7 +77,7 @@ const Sector = {
       yield put({
         type: 'saveData',
         payload: {
-          sectorInfo: data,
+          constractInfo: data,
         }
       })
     }
@@ -125,4 +104,4 @@ const Sector = {
   }
 }
 
-export default Sector
+export default Constract

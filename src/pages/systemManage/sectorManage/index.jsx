@@ -76,11 +76,9 @@ class SectorManage extends Component {
     let obj = searchParams
     if (type === 'deptInfo') {
       obj[type] = val
-    }
-    else if (type = 'name') {
+    } else {
       val.persist()
       obj[type] = val.target.value
-      console.log(obj)
     }
     this.setState({
       searchParams: obj
@@ -88,10 +86,24 @@ class SectorManage extends Component {
     )
   }
 
+  saveInputParams = (e, type) => {
+    const { searchParams } = this.state
+    let obj = searchParams
+    e.persist()
+    obj[type] = e.target.value
+    console.log(obj)
+    this.setState({
+      searchParams: obj,
+    }, () => {
+      console.log(this.handleQueryData)
+      _.debounce(this.handleQueryData, 500)
+    })
+  }
+
   handleResetSearch = () => {
     this.setState({
       searchParams: {}
-    }, () => this.handleQueryData())
+    }, () => this.handleQueryData(), 500)
   }
 
   handleEdit = (params) => {
@@ -200,8 +212,8 @@ class SectorManage extends Component {
           <Input
             allowClear
             value={searchParams.name}
-            onChange={_.debounce(this.saveParams, 500)}
-            onChange={e => this.saveParams(e, 'name')}
+            onChange={(e) => this.saveParams(e, 'name')}
+            // onChange={e => this.saveInputParams(e, 'name')}
             placeholder='请输入集群/板块名称' />
         </SearchForm>
         <SearchForm

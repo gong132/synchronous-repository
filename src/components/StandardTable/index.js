@@ -80,7 +80,7 @@ class StandardTable extends PureComponent {
           showSizeChanger: true,
           showQuickJumper: true,
           pageSizeOptions: ['10', '20', '30', '50'],
-          showTotal: total => `共 ${total} 页`,
+          showTotal: total => `共 ${total} 项`,
           ...pagination,
         };
 
