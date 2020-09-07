@@ -5,14 +5,16 @@
   display: flex;
   flex-direction: column;
   background-color: #fff;
+
   .sandboxHead {
     display: flex;
     align-items: center;
     margin-bottom: 16px;
-    .sandboxHead_title{
+
+    .sandboxHead_title {
       margin-left: 8px;
-      font-weight:bold;
-      color:rgba(48,49,51,1);
+      font-weight: bold;
+      color: rgba(48, 49, 51, 1);
     }
   }
 }
@@ -21,11 +23,13 @@
 
 .operateBtnBox {
   display: inline-block;
-  .operateBtn, .operateBtn:hover, .operateBtn:active {
-    height: 28px;
-    color: #FF9716;
-    background-color: rgba(255,151,22,0.06);
-    border: 1px solid rgba(255,151,22,0.5);
+
+  .operateBtn,
+  .operateBtn:hover,
+  .operateBtn:active {
+    color: #2E5BFF;
+    background-color: rgba(46, 91, 255, 0.1);
+    border: 1px solid rgba(46, 91, 255, 0.5);
     border-radius: 2px;
     font-size: 12px;
     padding: 0 8px;
@@ -33,7 +37,10 @@
   }
 
   :global {
-    .ant-btn > .anticon + span, .ant-btn > span + .anticon {
+
+    .ant-btn>.anticon+span,
+    .ant-btn>span+.anticon {
+      // height: 28px;
       margin-left: 6px;
     }
   }

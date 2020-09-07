@@ -5,6 +5,7 @@ import {
   editContract,
   queryDept
 } from '@/services/contractBudget/contract'
+import {addMenuList} from '@/services/global'
 import { PagerHelper } from "@/utils/helper";
 import { queryLogList } from '@/services/global'
 import { message } from "antd";
@@ -14,11 +15,19 @@ const Constract = {
   state: {
     constractList: PagerHelper.genListState(),
     logList: PagerHelper.genListState(),
-    constractInfo: {},
+    contractInfo: {},
     deptList: [],
     deptListMap: {},
   },
   effects: {
+    *addMenu({payload}, {put, call}) {
+      const { code, msg } = yield call(addMenuList, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true
+    },
     *fetchLogList({ payload }, { call, put }) {
       const { code, data, msg } = yield call(queryLogList, payload);
       if (code !== 200) {
@@ -36,7 +45,6 @@ const Constract = {
       })
     },
     *queryData({ payload }, { call, put }) {
-      console.log('payload:', payload)
       const { code, data, msg } = yield call(queryContractList, payload)
       if (code !== 200) {
         message.error(msg);
@@ -100,7 +108,7 @@ const Constract = {
       yield put({
         type: 'saveData',
         payload: {
-          constractInfo: data,
+          contractInfo: data,
         }
       })
       return true
@@ -116,7 +124,7 @@ const Constract = {
     setSectorData(state, action) {
       return {
         ...state,
-        sectorList: PagerHelper.resolveListState(action.payload),
+        constractList: PagerHelper.resolveListState(action.payload),
       };
     },
     setLogData(state, action) {

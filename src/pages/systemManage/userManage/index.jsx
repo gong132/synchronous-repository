@@ -3,7 +3,7 @@ import { connect } from 'dva'
 import CustomBtn from '@/components/commonUseModule/customBtn'
 import OptButton from "@/components/commonUseModule/optButton";
 import SearchForm from '@/components/commonUseModule/searchForm'
-import editIcon from '@/assets/Button_bj.svg'
+import editIcon from '@/assets/icon/Button_bj.svg'
 import StandardTable from "@/components/StandardTable";
 import { DefaultPage, TableColumnHelper } from "@/utils/helper";
 import {

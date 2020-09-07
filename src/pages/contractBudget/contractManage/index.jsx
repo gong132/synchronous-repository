@@ -39,6 +39,7 @@ const { RangePicker } = DatePicker
   constractList: constract.constractList,
   deptList: constract.deptList,
   deptListMap: constract.deptListMap,
+  contractInfo: constract.contractInfo,
 }))
 class ContractManage extends Component {
   constructor(props) {
@@ -47,6 +48,7 @@ class ContractManage extends Component {
       visibleModal: false,
       searchMore: false,
       modalTitle: '新建',
+      recordValue: {},
     }
     this.handleDebounceQueryData = _.debounce(this.handleDebounceQueryData, 500)
   }
@@ -54,7 +56,7 @@ class ContractManage extends Component {
   componentDidMount() {
     this.handleQueryDept()
 
-    // this.handleQueryData()
+    this.handleQueryData()
   }
 
   handleQueryData = (params = {}) => {
@@ -63,6 +65,16 @@ class ContractManage extends Component {
       type: 'constract/queryData',
       payload: {
         ...DefaultPage,
+        ...params,
+      }
+    })
+  }
+
+  // 查看板块详情
+  handleQuerySectorInfo = (params) => {
+    this.props.dispatch({
+      type: 'constract/fetchContractInfo',
+      payload: {
         ...params,
       }
     })
@@ -108,11 +120,22 @@ class ContractManage extends Component {
     this.handleQueryData(params)
   };
 
-  handleViewModal = (bool, title) => {
+  handleViewModal = (bool, title, record={}) => {
     this.setState({
       visibleModal: bool,
       modalTitle: title,
+      recordValue: record,
     })
+    if(record.id) {
+      this.handleQuerySectorInfo({id: record.id})
+    } else {
+      this.props.dispatch({
+        type: 'constract/saveData',
+        payload: {
+          contractInfo: {}
+        }
+      })
+    }
   }
 
   setSearchMore = (bool) => {
@@ -127,7 +150,21 @@ class ContractManage extends Component {
     router.push({
       pathname: '/contract-budget/contract/detail',
       query: {
-        id: 1
+        id: record.id
+      }
+    })
+  }
+
+  // 添加菜单
+  handleAddMenu = () => {
+    this.props.dispatch({
+      type: 'constract/addMenu',
+      payload: {
+        name: '详情',
+        pid: '16',
+        url: '/contract-budget/contract/detail',
+        checked: false,
+        type: 0
       }
     })
   }
@@ -140,7 +177,7 @@ class ContractManage extends Component {
         <Row>
           <Col span={24}>
             <FormItem {...formLayoutItem1} label="标题">
-              {getFieldDecorator('title', {
+              {getFieldDecorator('name', {
               })(<Input
                 allowClear
                 placeholder="请输入标题" />)}
@@ -315,13 +352,15 @@ class ContractManage extends Component {
   }
 
   render() {
-    const { constractList } = this.props
-    const { visibleModal, modalTitle } = this.state
+    const { constractList, loadingQueryData, contractInfo } = this.props
+    console.log(constractList)
+    const { visibleModal, modalTitle, recordValue } = this.state
     const createProps = {
       visibleModal,
       modalTitle,
       handleViewModal: this.handleViewModal,
-      recordValue: {},
+      recordValue: contractInfo,
+      handleQueryData: this.handleQueryData,
     }
     return (
       <Fragment>
@@ -333,20 +372,22 @@ class ContractManage extends Component {
             // onClick={() => this.handleViewModal(true, '新建')}
             type='export' />
         </div>
-
+        {/* <Button
+          onClick={() => this.handleAddMenu()}
+        >添加菜单</Button> */}
         {visibleModal && <CreateConstract {...createProps} />}
         <Card>
           {this.renderSearchForm()}
           <StandardTable
             rowKey={(record, index) => index}
             columns={this.genColumns()}
-            // data={constractList}
-            // loading={loadingQueryData}
-            dataSource={[
-              { number: 'gong', systemName: 'gg' },
-              { number: 'gong2', systemName: 'gg' },
-              { number: 'gong3', systemName: 'gg' }
-            ]}
+            data={constractList}
+            loading={loadingQueryData}
+            // dataSource={[
+            //   { number: 'gong', systemName: 'gg' },
+            //   { number: 'gong2', systemName: 'gg' },
+            //   { number: 'gong3', systemName: 'gg' }
+            // ]}
             onChange={this.handleStandardTableChange}
           />
         </Card>
