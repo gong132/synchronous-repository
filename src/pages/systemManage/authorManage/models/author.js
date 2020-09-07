@@ -1,5 +1,7 @@
 import {
   fetchAllRolesList,
+  queryMenuList,
+  fetchAuthorByRoleId,
   updateRoleAuthor,
   deleteRoleAuthor,
   addRoleAuthor,
@@ -11,19 +13,64 @@ const Author = {
   namespace: 'authorManage',
   state: {
     roleList: PagerHelper.genListState(),
+    allMenuList: [],
+    menuList: [],
   },
   effects: {
-    *queryAllRolesList({ payload }, { put, call }) {
-      const { code, msg, data } = call(fetchAllRolesList, payload)
+    *queryAllRolesList({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(fetchAllRolesList, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false
+      }
+      yield put({
+        type: 'saveData',
+        payload: { roleList: PagerHelper.resolveListState({
+            filter: payload,
+            ...data,
+          })}
+      })
+      return data.data
+    },
+    *queryMenuList({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(queryMenuList, payload)
       if (!code || code !== 200) {
         message.error(msg);
         return
       }
       yield put({
         type: 'saveData',
-        payload: { roleList: PagerHelper.resolveListState(data)}
+        payload: { allMenuList: data}
       })
-    }
+    },
+    *queryAuthorByRoleId({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(fetchAuthorByRoleId, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false
+      }
+      yield put({
+        type: 'saveData',
+        payload: { menuList: data }
+      })
+      return data
+    },
+    *updateRoleAuthor({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(updateRoleAuthor, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false
+      }
+      return true
+    },
+    *addRoleAuthor({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(addRoleAuthor, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false
+      }
+      return true
+    },
   },
   reducers: {
     saveData(state, { payload }) {

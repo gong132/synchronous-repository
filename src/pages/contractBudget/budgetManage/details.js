@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import { Descriptions } from "antd";
+import {Button, Descriptions} from "antd";
 import GlobalSandBox from "@/components/commonUseModule/globalSandBox";
 import budget_xq from '@/assets/icon/modular_xq.svg'
 import budget_log from '@/assets/icon/modular_czrz.svg'
@@ -7,6 +7,7 @@ import {connect} from "dva";
 import {DefaultPage, findValueByArray, moneyFormatAfter, TableColumnHelper} from "@/utils/helper";
 import {BUDGET_TYPE, PROJECT_TYPE} from "@/pages/contractBudget/util/constant";
 import StandardTable from "@/components/StandardTable";
+import customBtn from "@/components/commonUseModule/customBtn";
 
 const Index = props => {
   const columns = [
@@ -76,6 +77,7 @@ const Index = props => {
       <GlobalSandBox
         img={budget_xq}
         title="预算详情"
+        optNode={<Button type="primary">编辑</Button>}
       >
         <Descriptions column={3} bordered>
           {

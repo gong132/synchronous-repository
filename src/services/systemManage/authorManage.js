@@ -2,8 +2,8 @@ import request from '@/utils/request';
 
 // 查询所有角色
 export async function fetchAllRolesList(params) {
-  return request('/role/queryList', {
-    method: 'get',
+  return request('/role/queryPage', {
+    method: 'post',
     params,
   });
 }
@@ -11,7 +11,7 @@ export async function fetchAllRolesList(params) {
 //修改角色对应的权限菜单
 export async function updateRoleAuthor(params) {
   return request('/role/updateMenu', {
-    method: 'put',
+    method: 'post',
     params,
   });
 }
@@ -19,7 +19,7 @@ export async function updateRoleAuthor(params) {
 // 删除id对应的角色权限
 export async function deleteRoleAuthor(params) {
   return request('/role/deleteRole', {
-    method: 'delete',
+    method: 'get',
     params,
   });
 }
@@ -49,7 +49,7 @@ export async function addAuthorMenu(params) {
 }
 
 // 查询角色对应菜单权限
-export async function queryAuthorByRoleId(params) {
+export async function fetchAuthorByRoleId(params) {
   return request('/resource/queryListByRoleId', {
     method: 'get',
     params,

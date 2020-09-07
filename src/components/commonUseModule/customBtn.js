@@ -40,6 +40,15 @@ const CustomBtn = (props) => {
         </Button>
       }
       {
+        type === 'edit' && <div
+          className={styles.saveBtn}
+          style={style}
+          onClick={onClick}
+        >
+          <span>编辑</span>
+        </div>
+      }
+      {
         type === 'reset' && <Button
           className={styles.resetBtn}
           style={style}

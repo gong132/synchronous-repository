@@ -407,6 +407,7 @@ class Detail extends PureComponent {
           img={payIcon}
           title='付款笔数'
         >
+          
           <Table
             columns={payColumns}
             dataSource={payRecords}

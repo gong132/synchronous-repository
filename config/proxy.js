@@ -42,6 +42,13 @@ export default {
         '^': '',
       },
     },
+    '/role/': {
+      target: apiUrl,
+      changeOrigin: true,
+      pathRewrite: {
+        '^': '',
+      },
+    },
     '/user/': {
       target: apiUrl,
       changeOrigin: true,
