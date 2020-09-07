@@ -31,7 +31,7 @@ export interface ILoginItemProps {
   footer?: Function;
   indentSize?: number;
   locale?: object;
-  pagination?: object;
+  pagination?: any;
   rowClassName?: Function | string;
 
 }

@@ -1,14 +1,18 @@
 import React from "react";
 import { Icon } from "antd";
 import styles from  './index.less'
+import customBtn from "@/components/commonUseModule/customBtn";
 
 const Index = props => {
-  const { sandboxStyle, titleStyle, title, img } = props;
+  const { sandboxStyle, titleStyle, title, img, optNode } = props;
 
   const headerRender = () => (
-    <div className={styles.sandboxHead} style={titleStyle}>
-      <Icon component={img}/>
-      <div className={styles.sandboxHead_title}>{title}</div>
+    <div className={styles.sandboxHeadBox}>
+      <div className={styles.sandboxHead} style={titleStyle}>
+        <Icon component={img}/>
+        <div className={styles.sandboxHead_title}>{title}</div>
+      </div>
+      <div>{optNode}</div>
     </div>
   );
   return (

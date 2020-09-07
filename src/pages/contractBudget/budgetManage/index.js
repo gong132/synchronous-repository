@@ -3,7 +3,7 @@ import { connect } from 'dva'
 import classNames from "classnames";
 import {DefaultPage, TableColumnHelper} from "@/utils/helper";
 import StandardTable from "@/components/StandardTable";
-import {Button, Col, Divider, Form, Input, Popover, Row, Select, Tooltip, DatePicker, Icon } from "antd";
+import {Button, Col, Divider, Form, Input, Popover, Row, Select, Tooltip, DatePicker, Icon, Card} from "antd";
 import {isEmpty} from "@/utils/lang";
 import styles from "../index.less";
 import {formLayoutItem, formLayoutItem1, MENU_ACTIONS} from "@/utils/constant";
@@ -297,13 +297,15 @@ const Index = props => {
         <div className={styles.tableListForm}>
           {renderForm()}
         </div>
-        <StandardTable
-          rowKey="id"
-          loading={loading}
-          data={budgetList}
-          columns={columns}
-          onChange={handleStandardTableChange}
-        />
+        <Card bordered={false}>
+          <StandardTable
+            rowKey="id"
+            loading={loading}
+            data={budgetList}
+            columns={columns}
+            onChange={handleStandardTableChange}
+          />
+        </Card>
         { addModalVisible && (
           <AddForm
             modalVisible={addModalVisible}
