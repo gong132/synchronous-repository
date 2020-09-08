@@ -7,6 +7,7 @@ import StandardTable from "@/components/StandardTable";
 import MenuTree from "./component/menuTree";
 
 import AddForm from './addForm'
+import Detail from './detail'
 import styles from './index.less'
 import {Affix, Button, Card, Col, Form, Input, message, Row} from "antd";
 import {isEmpty} from "@/utils/lang";
@@ -27,6 +28,7 @@ const AuthorManage = props => {
   const [expandedRow, setExpandedRow] = useState([]);
   // 新增角色
   const [addModalVisible, setAddModalVisible] = useState(false);
+  const [detailModalVisible, setDetailModalVisible] = useState(false);
 
   const [searchValue, setSearchValue] = useState('');
 
@@ -61,7 +63,8 @@ const AuthorManage = props => {
       },
     }).then(data => {
       if (!data) return;
-      setExpandedRow(data)
+      setExpandedRow(data);
+      setSelectedMenu(data)
     })
   };
 
@@ -95,7 +98,10 @@ const AuthorManage = props => {
       align: 'center',
       render: rows => (
         <>
-          <OptButton icon="eye" text="查看"/>
+          <OptButton icon="eye" onClick={() => {
+            setDetailModalVisible(true);
+            setSelectedRows(rows)
+          }} text="查看"/>
           <OptButton img={deleteIcon} text="删除"/>
         </>
       )
@@ -167,14 +173,14 @@ const AuthorManage = props => {
                     </div>
                   </div>
                   <div className={styles.searchForm}>
-                    <Input
-                      value={searchValue}
-                      onChange={e => setSearchValue(e.target.value)}
-                      style={{ width: 120, height: 28 }}
-                      allowClear
-                      onBlur={() => searchTree()}
-                      onPressEnter={() => searchTree()}
-                    />
+                    {/*<Input*/}
+                    {/*  value={searchValue}*/}
+                    {/*  onChange={e => setSearchValue(e.target.value)}*/}
+                    {/*  style={{ width: 120, height: 28 }}*/}
+                    {/*  allowClear*/}
+                    {/*  onBlur={() => searchTree()}*/}
+                    {/*  onPressEnter={() => searchTree()}*/}
+                    {/*/>*/}
                   </div>
                 </div>
                 <div className={styles.tree}>
@@ -210,6 +216,15 @@ const AuthorManage = props => {
               modalVisible={addModalVisible}
               handleModalVisible={() => setAddModalVisible(false)}
               onOk={handleSaveMenu}
+            />
+          )
+        }
+        {
+          detailModalVisible && (
+            <Detail
+              modalVisible={detailModalVisible}
+              handleModalVisible={() => setDetailModalVisible(false)}
+              values={selectedRows}
             />
           )
         }

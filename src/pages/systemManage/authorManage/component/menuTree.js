@@ -119,11 +119,10 @@ const Index = memo(props => {
           return arr.filter(v => !parentArr.filter(o => o.id === v.id).length > 0)
         })
       }}
-      onRow={record => {
-        return {
-          onClick: e => console.log(record, 'record')
-        }
-      }}
+      // expandIcon={props => {
+      //   if (isEmpty(props.record.children)) return '  ';
+      //   return props.expanded ? '-' : "+"
+      // }}
       data={{ list: generateAllMenu(allMenuList)}}
       columns={columns}
       pagination={false}
