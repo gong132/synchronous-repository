@@ -12,6 +12,7 @@ import edit from '@/assets/icon/Button_bj.svg'
 
 import AddForm from './addForm'
 import OptButton from "@/components/commonUseModule/optButton";
+import CustomBtn from "@/components/commonUseModule/customBtn";
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -48,7 +49,7 @@ const Index = props => {
         return (
           <Tooltip placement="top" title={rows.number}>
             <a
-              style={{ color: '#FF9716' }}
+              style={{ color: '#2E5BFF' }}
               onClick={() => {
                 props.history.push({
                   pathname: '/contract-budget/budget/detail',
@@ -126,9 +127,8 @@ const Index = props => {
 
   const handleSearchForm = () => {
     const formValues = form.getFieldsValue();
-    console.log(formValues, 'formValues')
     handleQueryBudgetData(formValues)
-  }
+  };
 
   // 获取搜索条件,转换成数组
   const getSearchValuesToList = () => {
@@ -284,11 +284,7 @@ const Index = props => {
   return (
     <div className="main">
       <div className="yCenter-between">
-        <Button
-          className={styles.addForm}
-          icon="plus"
-          onClick={() => setAddModalVisible(true)}
-        >新建</Button>
+        <CustomBtn type='create' onClick={() => setAddModalVisible(true)} />
         <Button
           type="default"
         >导出</Button>
