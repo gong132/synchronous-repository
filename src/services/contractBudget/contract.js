@@ -24,10 +24,18 @@ export async function createContract(params) {
   });
 }
 
-// 修改合同
+// 修改合同/项目完结确认
 export async function editContract(params) {
   return request('/contract/update', {
     method: 'post',
+    params,
+  });
+}
+
+// 未被集群版块绑定的部门
+export async function queryDept(params) {
+  return request('/cluster/notBindDept', {
+    method: 'get',
     params,
   });
 }

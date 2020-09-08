@@ -1,31 +1,36 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'dva'
 import { router } from 'umi'
-import styles from './index.less'
-import * as _ from 'lodash'
+import moment from 'moment'
 import StandardTable from "@/components/StandardTable";
 import { DefaultPage, TableColumnHelper } from "@/utils/helper";
+import { formLayoutItem1 } from '@/utils/constant'
 import CustomBtn from '@/components/commonUseModule/customBtn'
 import OptButton from "@/components/commonUseModule/optButton";
 import SearchForm from '@/components/commonUseModule/searchForm'
-import editIcon from '@/assets/Button_bj.svg'
-import CreateConstract from './components/createConstract'
+import editIcon from '@/assets/icon/Button_bj.svg'
+import downIcon from '@/assets/icon/drop_down.svg'
+import upIcon from '@/assets/icon/Pull_up.svg'
 import {
-  Table,
-  Button,
-  Modal,
   Form,
   Input,
   Select,
   Card,
-  Checkbox,
+  Popover,
   Icon,
   Row,
-  Col
+  Col,
+  Button,
+  DatePicker
 } from 'antd'
+import _ from 'lodash'
+import styles from './index.less'
+
+import CreateConstract from './components/createConstract'
+
 const { Option } = Select
 const FormItem = Form.Item
-
+const { RangePicker } = DatePicker
 @Form.create()
 @connect(({ constract, loading }) => ({
   loadingQueryData: loading.effects['constract/queryData'],
@@ -34,32 +39,65 @@ const FormItem = Form.Item
   constractList: constract.constractList,
   deptList: constract.deptList,
   deptListMap: constract.deptListMap,
+  contractInfo: constract.contractInfo,
 }))
 class ContractManage extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      searchParams: {},
       visibleModal: false,
-      modalTitle: '新建'
+      searchMore: false,
+      modalTitle: '新建',
+      recordValue: {},
     }
+    this.handleDebounceQueryData = _.debounce(this.handleDebounceQueryData, 500)
   }
 
   componentDidMount() {
-    this.handleQueryData()
     this.handleQueryDept()
+    this.handleQueryData()
   }
 
   handleQueryData = (params = {}) => {
-    const { searchParams } = this.state
+    console.log('params: ', params)
     this.props.dispatch({
       type: 'constract/queryData',
       payload: {
         ...DefaultPage,
         ...params,
-        ...searchParams
       }
     })
+  }
+
+  // 查看板块详情
+  handleQuerySectorInfo = (params) => {
+    this.props.dispatch({
+      type: 'constract/fetchContractInfo',
+      payload: {
+        ...params,
+      }
+    })
+  }
+
+  // 更多查询
+  moreQuery = () => {
+    const formValues = this.props.form.getFieldsValue();
+    if(formValues.signTime && !_.isEmpty(formValues.signTime)) {
+      formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYYMMDD') 
+      formValues.signingEndTime = moment(formValues.signTime[1]).format('YYYYMMDD') 
+    }
+    console.log(formValues)
+
+    this.handleDebounceQueryData(formValues)
+  }
+
+  saveParams = () => {
+    this.moreQuery()
+  }
+
+  // 搜索时防抖
+  handleDebounceQueryData = (params) => {
+    this.handleQueryData(params)
   }
 
   // 查部门
@@ -81,93 +119,177 @@ class ContractManage extends Component {
     this.handleQueryData(params)
   };
 
-  handleViewModal = (bool, title) => {
+  handleViewModal = (bool, title, record={}) => {
     this.setState({
       visibleModal: bool,
       modalTitle: title,
+      recordValue: record,
+    })
+    if(record.id) {
+      this.handleQuerySectorInfo({id: record.id})
+    } else {
+      this.props.dispatch({
+        type: 'constract/saveData',
+        payload: {
+          contractInfo: {}
+        }
+      })
+    }
+  }
+
+  setSearchMore = (bool) => {
+    this.setState({
+      searchMore: bool
     })
   }
 
-  handleResetSearch = () => { }
+  handleResetSearch = () => {
+    this.props.form.resetFields()
+    this.handleDebounceQueryData()
+  }
 
-  handleViewDetail = () => { }
+  handleViewDetail = (record) => { 
+    router.push({
+      pathname: '/contract-budget/contract/detail',
+      query: {
+        id: record.id
+      }
+    })
+  }
+
+  // 添加菜单
+  handleAddMenu = () => {
+    this.props.dispatch({
+      type: 'constract/addMenu',
+      payload: {
+        name: '项目管理',
+        pid: '16',
+        url: '/projectManage',
+        type: 0
+      }
+    })
+  }
 
   renderSearchForm = () => {
-    const { searchParams } = this.state
-    const { deptList } = this.props
+    const { searchMore } = this.state
+    const { deptList, loadingQueryData, form: { getFieldDecorator } } = this.props
+    const content = (
+      <div className={styles.moreSearch}>
+        <Row>
+          <Col span={24}>
+            <FormItem {...formLayoutItem1} label="名称">
+              {getFieldDecorator('name', {
+              })(<Input
+                allowClear
+                placeholder="请输入名称" />)}
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem {...formLayoutItem1} label="预算编号">
+              {getFieldDecorator('budgetNumber', {
+              })(<Input
+                allowClear
+                placeholder="请输入预算编号" />)}
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem {...formLayoutItem1} label="项目编号">
+              {getFieldDecorator('projectNumber', {
+              })(<Input
+                allowClear
+                placeholder="请输入项目编号" />)}
+            </FormItem>
+          </Col>
+        </Row>
+        <div className={styles.moreSearchButton}>
+          <Button onClick={() => this.moreQuery()}>查询</Button>
+          <Button onClick={() => this.setSearchMore(false)}>取消</Button>
+        </div>
+      </div>
+    );
     return (
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
         <SearchForm
           labelName="合同编号"
         >
-          <Input
+          {getFieldDecorator('number', {
+          })(<Input
             allowClear
-            value={searchParams.number}
-            onChange={e => this.saveParams(e, 'number')}
-            placeholder='请输入合同编号' />
+            onChange={_.debounce(this.saveParams, 500)}
+            placeholder='请输入合同编号' />)}
         </SearchForm>
         <SearchForm
           labelName="所属部门"
         >
-          <Select
+          {getFieldDecorator('deptId', {
+          })(<Select
             allowClear
-            value={searchParams.deptId}
             placeholder='请输入所属部门'
-            onChange={val => this.saveParams(val, 'deptId')}
+            onChange={_.debounce(this.saveParams, 500)}
             style={{
               width: '100%'
             }}
           >
-            <Option key={1} value={1}>自定义</Option>
-            {/* {!_.isEmpty(deptList) && deptList.map(d => (
+            {!_.isEmpty(deptList) && deptList.map(d => (
               <Option key={d.number} value={d.name}>{d.name}</Option>
-            ))} */}
-          </Select>
+            ))}
+          </Select>)}
         </SearchForm>
         <SearchForm
           labelName="供应商"
         >
-          <Select
-            allowClear
-            value={searchParams.providerCompanyName}
-            placeholder='请输入供应商'
-            onChange={val => this.saveParams(val, 'providerCompanyName')}
-            style={{
-              width: '100%'
-            }}
-          >
-            <Option key={1} value={1}>自定义</Option>
-            {/* {!_.isEmpty(deptList) && deptList.map(d => (
+          {getFieldDecorator('providerCompanyName', {
+          })(
+            <Select
+              allowClear
+              placeholder='请输入供应商'
+              onChange={_.debounce(this.saveParams, 500)}
+              style={{
+                width: '100%'
+              }}
+            >
+              <Option key={1} value={1}>自定义</Option>
+              {/* {!_.isEmpty(deptList) && deptList.map(d => (
               <Option key={d.number} value={d.name}>{d.name}</Option>
             ))} */}
-          </Select>
+            </Select>
+          )}
         </SearchForm>
         <SearchForm
           labelName="合同签订时间"
         >
-          <Select
-            allowClear
-            value={searchParams.deptInfo}
-            placeholder='请输入合同签订时间'
-            onChange={val => this.saveParams(val, 'deptInfo')}
-            style={{
-              width: '100%'
-            }}
-          >
-            <Option key={1} value={1}>自定义</Option>
-            {/* {!_.isEmpty(deptList) && deptList.map(d => (
-              <Option key={d.number} value={d.name}>{d.name}</Option>
-            ))} */}
-          </Select>
+          {getFieldDecorator('signTime', {
+          })(
+            <RangePicker
+              onChange={_.debounce(this.saveParams, 500)}
+            />
+          )}
         </SearchForm>
-        <div
+        <CustomBtn
           onClick={() => this.handleResetSearch()}
           style={{
             display: 'inline-block'
           }}
-        >
-          <CustomBtn type='reset' />
-        </div>
+          // loading={loadingQueryData}
+          type='reset' />
+        <Popover visible={searchMore} placement="bottomRight" content={content} trigger="click">
+          {
+            <div
+              className="activeColor"
+              onClick={() => this.setSearchMore(!searchMore)}
+              style={{
+                position: 'absolute',
+                right: '16px',
+                top: '30px'
+              }}
+            >
+              <div className={styles.moreBtn}>
+                <Icon component={searchMore ? downIcon : upIcon} />
+                <span>更多</span>
+              </div>
+            </div>
+          }
+        </Popover>
       </div>
     )
   }
@@ -193,7 +315,7 @@ class ContractManage extends Component {
       TableColumnHelper.genPlanColumn('deptName', '所属部门'),
       TableColumnHelper.genLangColumn('systemName', '涉及系统', {}, 6),
       TableColumnHelper.genPlanColumn('userName', '录入人'),
-      TableColumnHelper.genPlanColumn('createTime', '录入时间'),
+      TableColumnHelper.genDateTimeColumn('createTime', '录入时间', "YYYY-MM-DD"),
       TableColumnHelper.genPlanColumn('headerName', '合同负责人'),
       TableColumnHelper.genPlanColumn('providerCompanyName', '供应商'),
       TableColumnHelper.genPlanColumn('signingTime', '合同签订时间'),
@@ -231,33 +353,44 @@ class ContractManage extends Component {
   }
 
   render() {
-    const { constractList } = this.props
-    const { visibleModal, modalTitle } = this.state
+    const { constractList, loadingQueryData, contractInfo } = this.props
+    console.log(constractList)
+    const { visibleModal, modalTitle, recordValue } = this.state
     const createProps = {
       visibleModal,
       modalTitle,
       handleViewModal: this.handleViewModal,
-      recordValue:{},
+      recordValue: contractInfo,
+      handleQueryData: this.handleQueryData,
     }
     return (
       <Fragment>
-        <CustomBtn
-          onClick={() => this.handleViewModal(true, '新建')}
-          type='create' />
-          {visibleModal && <CreateConstract {...createProps} />}
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <CustomBtn
+            onClick={() => this.handleViewModal(true, '新建')}
+            type='create' />
+          <CustomBtn
+            // onClick={() => this.handleViewModal(true, '新建')}
+            type='export' />
+        </div>
+        <Button
+          onClick={() => this.handleAddMenu()}
+        >添加菜单</Button>
+        {visibleModal && <CreateConstract {...createProps} />}
         <Card>
           {this.renderSearchForm()}
           <StandardTable
             rowKey={(record, index) => index}
             columns={this.genColumns()}
             data={constractList}
-            // loading={loadingQueryData}
+            loading={loadingQueryData}
             // dataSource={[
-            //   { name: 'gong' },
-            //   { name: 'gong2' },
-            //   { name: 'gong3' }
+            //   { number: 'gong', systemName: 'gg' },
+            //   { number: 'gong2', systemName: 'gg' },
+            //   { number: 'gong3', systemName: 'gg' }
             // ]}
             onChange={this.handleStandardTableChange}
+            scroll={{x: 1800}}
           />
         </Card>
       </Fragment>

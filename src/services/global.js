@@ -8,4 +8,10 @@ export async function queryLogList(params) {
   });
 }
 
-
+// 新增权限菜单
+export async function addMenuList(params) {
+  return request('/resource/addResource', {
+    method: 'post',
+    params,
+  });
+}

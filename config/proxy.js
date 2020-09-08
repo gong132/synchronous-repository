@@ -28,55 +28,62 @@ const proxyApi = [
 // ];
 export default {
   dev: {
-    '/budget/': {
+    '/server/': {
       target: apiUrl,
       changeOrigin: true,
       pathRewrite: {
-        '^': '',
+        '/server': '',
       },
     },
-    '/role/': {
-      target: apiUrl,
-      changeOrigin: true,
-      pathRewrite: {
-        '^': '',
-      },
-    },
-    '/user/': {
-      target: apiUrl,
-      changeOrigin: true,
-      pathRewrite: {
-        '^': '',
-      },
-    },
-    '/cluster/': {
-      target: apiUrl,
-      changeOrigin: true,
-      pathRewrite: {
-        '^': '',
-      },
-    },
-    '/log/': {
-      target: apiUrl,
-      changeOrigin: true,
-      pathRewrite: {
-        '^': '',
-      },
-    },
-    '/temp/': {
-      target: apiUrl,
-      changeOrigin: true,
-      pathRewrite: {
-        '^': '',
-      },
-    },
-    '/resource/': {
-      target: apiUrl,
-      changeOrigin: true,
-      pathRewrite: {
-        '^': '',
-      },
-    },
+    // '/contract/': {
+    //   target: apiUrl,
+    //   changeOrigin: true,
+    //   pathRewrite: {
+    //     '^': '',
+    //   },
+    // },
+    // '/role/': {
+    //   target: apiUrl,
+    //   changeOrigin: true,
+    //   pathRewrite: {
+    //     '^': '',
+    //   },
+    // },
+    // '/user/': {
+    //   target: apiUrl,
+    //   changeOrigin: true,
+    //   pathRewrite: {
+    //     '^': '',
+    //   },
+    // },
+    // '/cluster/': {
+    //   target: apiUrl,
+    //   changeOrigin: true,
+    //   pathRewrite: {
+    //     '^': '',
+    //   },
+    // },
+    // '/log/': {
+    //   target: apiUrl,
+    //   changeOrigin: true,
+    //   pathRewrite: {
+    //     '^': '',
+    //   },
+    // },
+    // '/temp/': {
+    //   target: apiUrl,
+    //   changeOrigin: true,
+    //   pathRewrite: {
+    //     '^': '',
+    //   },
+    // },
+    // '/resource/': {
+    //   target: apiUrl,
+    //   changeOrigin: true,
+    //   pathRewrite: {
+    //     '^': '',
+    //   },
+    // },
   },
   test: {
     '/api/': {

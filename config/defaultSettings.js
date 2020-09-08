@@ -1,7 +1,7 @@
 export default {
   navTheme: 'light',
   // 拂晓蓝
-  primaryColor: '#FF9716',
+  primaryColor: '#2E5BFF',
   layout: 'sidemenu',
   contentWidth: 'Fluid',
   fixedHeader: false,

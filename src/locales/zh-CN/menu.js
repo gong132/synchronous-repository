@@ -57,6 +57,7 @@ export default {
   'menu.test.test': '测试',
   'menu.contract-budget': '合同预算管理',
   'menu.contract-budget.contractManage': '合同管理',
+  'menu.contract-budget.contractDetail': '详情',
   'menu.contract-budget.budgetManage': '预算管理',
   'menu.contract-budget.budgetDetail': '预算管理详情',
 
@@ -65,5 +66,7 @@ export default {
   'menu.systemManage.teamManage': '团队管理',
   'menu.systemManage.authorManage': '角色权限',
   'menu.systemManage.sectorManage': '集群或板块管理',
-  'menu.systemManage.detail': '详情'
+  'menu.systemManage.detail': '详情',
+
+  'menu.projectManage': '项目管理',
 };

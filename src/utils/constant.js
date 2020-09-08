@@ -79,3 +79,24 @@ export const MENU_ACTIONS = {
   CANCEL: 'cancel', // 取消
   BACK: 'back', // 返回
 };
+
+const imgTypes = ['JPG', 'JPEG', 'PNG', 'BMP']
+const fileTypes = ['TXT', 'XLS', 'EXCEL', 'DOC', 'XLSX', 'DOCX', 'PPT', 'PPTX', 'VSD', 'CVS', 'PDF']
+const judgeFileType = (file={}, fileArr = []) => {
+  const {name } = file
+  const arr = name ? name.split('.') : []
+  let bool = false
+  let suffix = ''
+  if(arr.length> 0) {
+    suffix=arr[arr.length-1].toUpperCase()
+  }
+  if(fileArr.indexOf(suffix) < 0) {
+    bool = true
+  }
+  return bool
+}
+export {
+  imgTypes,
+  fileTypes,
+  judgeFileType
+}

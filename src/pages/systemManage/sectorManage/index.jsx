@@ -1,36 +1,32 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'dva'
 import { router } from 'umi'
-import styles from './index.less'
-import * as _ from 'lodash'
 import StandardTable from "@/components/StandardTable";
 import { DefaultPage, TableColumnHelper } from "@/utils/helper";
 import CustomBtn from '@/components/commonUseModule/customBtn'
 import OptButton from "@/components/commonUseModule/optButton";
 import SearchForm from '@/components/commonUseModule/searchForm'
-import editIcon from '@/assets/Button_bj.svg'
+import editIcon from '@/assets/icon/Button_bj.svg'
 import {
-  Table,
-  Button,
   Modal,
   Form,
   Input,
   Select,
   Card,
   Checkbox,
-  Icon,
   Row,
   Col
 } from 'antd'
+import * as _ from 'lodash'
+
 const { Option } = Select
 const FormItem = Form.Item
 
 @Form.create()
-@connect(({ sector, global, loading }) => ({
+@connect(({ sector, loading }) => ({
   loadingQueryData: loading.effects['sector/queryData'],
   loadingCreateData: loading.effects['sector/addData'],
   loadingUpdateData: loading.effects['sector/updateData'],
-  loadingQueryLogData: loading.effects['global/fetchLogList'],
   sectorList: sector.sectorList,
   deptList: sector.deptList,
   deptListMap: sector.deptListMap,
@@ -44,6 +40,7 @@ class SectorManage extends Component {
       record: {},
       searchParams: {},
     }
+    this.handleDebounceQueryData = _.debounce(this.handleDebounceQueryData, 500)
   }
 
   componentDidMount() {
@@ -63,6 +60,11 @@ class SectorManage extends Component {
     })
   }
 
+  // 搜索时防抖
+  handleDebounceQueryData = () => {
+    this.handleQueryData()
+  }
+
   // 查部门
   handleQueryDept = () => {
     this.props.dispatch({
@@ -71,33 +73,16 @@ class SectorManage extends Component {
   }
 
   saveParams = (val, type) => {
-    console.log(val, type)
     const { searchParams } = this.state
     let obj = searchParams
     if (type === 'deptInfo') {
       obj[type] = val
-    } else {
-      val.persist()
+    } else if (type === 'name') {
       obj[type] = val.target.value
     }
     this.setState({
       searchParams: obj
-    }, () => this.handleQueryData()
-    )
-  }
-
-  saveInputParams = (e, type) => {
-    const { searchParams } = this.state
-    let obj = searchParams
-    e.persist()
-    obj[type] = e.target.value
-    console.log(obj)
-    this.setState({
-      searchParams: obj,
-    }, () => {
-      console.log(this.handleQueryData)
-      _.debounce(this.handleQueryData, 500)
-    })
+    }, () => this.handleDebounceQueryData())
   }
 
   handleResetSearch = () => {
@@ -202,8 +187,7 @@ class SectorManage extends Component {
 
   renderSearchForm = () => {
     const { searchParams } = this.state
-    console.log('searchParams:', searchParams)
-    const { deptList } = this.props
+    const { deptList, loadingQueryData } = this.props
     return (
       <div style={{ display: 'flex' }}>
         <SearchForm
@@ -213,7 +197,6 @@ class SectorManage extends Component {
             allowClear
             value={searchParams.name}
             onChange={(e) => this.saveParams(e, 'name')}
-            // onChange={e => this.saveInputParams(e, 'name')}
             placeholder='请输入集群/板块名称' />
         </SearchForm>
         <SearchForm
@@ -233,14 +216,13 @@ class SectorManage extends Component {
             ))}
           </Select>
         </SearchForm>
-        <div
+        <CustomBtn
           onClick={() => this.handleResetSearch()}
           style={{
             display: 'inline-block'
           }}
-        >
-          <CustomBtn type='reset' />
-        </div>
+          loading={loadingQueryData}
+          type='reset' />
       </div>
     )
   }
@@ -321,16 +303,11 @@ class SectorManage extends Component {
     const { modalVisible, modalTitle, record } = this.state
     const { sectorList, form, loadingQueryData, deptList, loadingCreateData } = this.props
     const { name, clusterLinkDepts } = record
-    let arr = []
-    clusterLinkDepts && clusterLinkDepts.map(v => {
+    const arr = []
+    clusterLinkDepts && clusterLinkDepts.map(function (v) {
       arr.push(v.deptId)
     })
-    console.log(record)
-    const options = [
-      { label: 'Apple', value: 'Apple' },
-      { label: 'Pear', value: 'Pear' },
-      { label: 'Orange', value: 'Orange' },
-    ];
+
     return (
       <Fragment>
         <CustomBtn
@@ -351,6 +328,7 @@ class SectorManage extends Component {
                   style={{ marginRight: '18px' }}
                 />
                 <CustomBtn
+                  loading={loadingCreateData}
                   onClick={() => this.handleSubmit()}
                   loading={loadingCreateData}
                   type='save' />

@@ -3,7 +3,9 @@ import {
   queryContractInfo,
   createContract,
   editContract,
+  queryDept
 } from '@/services/contractBudget/contract'
+import {addMenuList} from '@/services/global'
 import { PagerHelper } from "@/utils/helper";
 import { queryLogList } from '@/services/global'
 import { message } from "antd";
@@ -13,11 +15,19 @@ const Constract = {
   state: {
     constractList: PagerHelper.genListState(),
     logList: PagerHelper.genListState(),
-    constractInfo: {},
+    contractInfo: {},
     deptList: [],
     deptListMap: {},
   },
   effects: {
+    *addMenu({payload}, {put, call}) {
+      const { code, msg } = yield call(addMenuList, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true
+    },
     *fetchLogList({ payload }, { call, put }) {
       const { code, data, msg } = yield call(queryLogList, payload);
       if (code !== 200) {
@@ -67,7 +77,28 @@ const Constract = {
       return true
     },
 
-    //查看合同详情
+    // 查询未被集群绑定部门
+    *fetchNotBindDept({payload}, {call, put}) {
+      const { code, msg, data } = yield call(queryDept, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      let obj = {}
+      data.map(v => {
+        obj[v.number] = v.name
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          deptList: data,
+          deptListMap: obj
+        }
+      })
+      return true
+    },
+
+    // 查看合同详情
     *fetchContractInfo({ payload }, { call, put }) {
       const { code, msg, data } = yield call(queryContractInfo, payload)
       if (!code || code !== 200) {
@@ -77,9 +108,10 @@ const Constract = {
       yield put({
         type: 'saveData',
         payload: {
-          constractInfo: data,
+          contractInfo: data,
         }
       })
+      return true
     }
   },
   reducers: {
@@ -92,7 +124,7 @@ const Constract = {
     setSectorData(state, action) {
       return {
         ...state,
-        sectorList: PagerHelper.resolveListState(action.payload),
+        constractList: PagerHelper.resolveListState(action.payload),
       };
     },
     setLogData(state, action) {
