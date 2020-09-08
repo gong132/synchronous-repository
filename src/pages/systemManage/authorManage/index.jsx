@@ -9,7 +9,7 @@ import MenuTree from "./component/menuTree";
 import AddForm from './addForm'
 import Detail from './detail'
 import styles from './index.less'
-import {Affix, Button, Card, Col, Form, Input, message, Row} from "antd";
+import {Affix, Button, Card, Col, Form, Input, message, Popconfirm, Popover, Row} from "antd";
 import {isEmpty} from "@/utils/lang";
 import OptButton from "@/components/commonUseModule/optButton";
 import deleteIcon from '@/assets/icon/Button_del.svg'
@@ -30,7 +30,7 @@ const AuthorManage = props => {
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
 
-  const [searchValue, setSearchValue] = useState('');
+  // const [searchValue, setSearchValue] = useState('');
 
   const handleQueryAllRolesList = params => {
     dispatch({
@@ -78,7 +78,19 @@ const AuthorManage = props => {
       if (!sure) return;
       message.success(selectedRows.id ? "修改成功" : "新增成功");
       callback && callback();
-      handleQueryAuthorByRoleId(selectedRows.id)
+      handleQueryAllRolesList();
+    })
+  };
+  const handleDeleteRole = params => {
+    dispatch({
+      type: "authorManage/deleteRoleAuthor",
+      payload: {
+        id: params.id
+      }
+    }).then(sure => {
+      if (!sure) return;
+      message.success('删除成功');
+      handleQueryAllRolesList();
     })
   };
 
@@ -102,33 +114,40 @@ const AuthorManage = props => {
             setDetailModalVisible(true);
             setSelectedRows(rows)
           }} text="查看"/>
-          <OptButton img={deleteIcon} text="删除"/>
+          <Popconfirm
+            title={`确定要删除（${rows.roleName}）吗?`}
+            onConfirm={() => handleDeleteRole(rows)}
+            okText="确定"
+            cancelText="取消"
+          >
+            <OptButton img={deleteIcon} text="删除"/>
+          </Popconfirm>
         </>
       )
     }
   ];
 
-  // 搜索菜单树
-  const searchTree = () => {
-    if (searchValue === '') return setExpandedRow([]);
-    // 递归找到当前节点的所有父节点(不包括当前节点)
-    const findParentMenu = (menuArray, pid, newArr = []) => {
-      const menuJson = _filter(menuArray, o => String(o.id) === String(pid));
-      if (isEmpty(menuJson)) {
-        return null;
-      }
-      _sortBy(menuJson, 'id').map(v => {
-        newArr.push(v);
-        findParentMenu(menuArray, v.pid, newArr);
-      })
-    };
-    const parentMenu = allMenuList.filter(v => v.name.includes(searchValue));
-    parentMenu.map(v=> {
-      findParentMenu(allMenuList, v.pid, parentMenu)
-    });
-    if (isEmpty(parentMenu)) return;
-    setExpandedRow(parentMenu)
-  };
+  // // 搜索菜单树
+  // const searchTree = () => {
+  //   if (searchValue === '') return setExpandedRow([]);
+  //   // 递归找到当前节点的所有父节点(不包括当前节点)
+  //   const findParentMenu = (menuArray, pid, newArr = []) => {
+  //     const menuJson = _filter(menuArray, o => String(o.id) === String(pid));
+  //     if (isEmpty(menuJson)) {
+  //       return null;
+  //     }
+  //     _sortBy(menuJson, 'id').map(v => {
+  //       newArr.push(v);
+  //       findParentMenu(menuArray, v.pid, newArr);
+  //     })
+  //   };
+  //   const parentMenu = allMenuList.filter(v => v.name.includes(searchValue));
+  //   parentMenu.map(v=> {
+  //     findParentMenu(allMenuList, v.pid, parentMenu)
+  //   });
+  //   if (isEmpty(parentMenu)) return;
+  //   setExpandedRow(parentMenu)
+  // };
 
   return (
     <div className="main">
