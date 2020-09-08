@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
-import {Col, Form, Tree, message, Modal, Row} from "antd";
+import {Col, Form, Tree, Empty, Modal, Row} from "antd";
 import { connect } from 'dva'
 import {formLayoutItem, formLayoutItemAddEdit} from "@/utils/constant";
-import {isEmpty} from "@/utils/lang";
+import {isArray, isEmpty} from "@/utils/lang";
 import styles from './index.less'
 import _filter from "lodash/filter";
 import _sortBy from "lodash/sortBy";
@@ -87,22 +87,29 @@ const Index = props => {
               {values && values.description || ''}
             </FormItem>
             <FormItem {...formLayoutItemAddEdit} label="角色描述">
-              <div className={styles.treeShow}>
-                {
-                  menuList && generateAllMenu(menuList).map(v => {
-                    return (
-                      <Tree
-                        key={v.key}
-                        showLine
-                        selectedKeys={menuList.map(v=>v.id)}
-                        defaultExpandAll
-                      >
-                        {renderTreeNodes([v])}
-                      </Tree>
-                    )
-                  })
-                }
-              </div>
+              {
+                menuList && !isEmpty(menuList) && <div className={styles.treeShow}>
+                  {
+                    generateAllMenu(menuList).map(v => {
+                      return (
+                        <Tree
+                          key={v.key}
+                          showLine
+                          selectedKeys={menuList.map(v=>v.id)}
+                          defaultExpandAll
+                        >
+                          {renderTreeNodes([v])}
+                        </Tree>
+                      )
+                    })
+                  }
+                </div>
+              }
+              {
+                menuList && isEmpty(menuList) && <div className={styles.treeShowEmpty}>
+                  <Empty />
+                </div>
+              }
             </FormItem>
           </Col>
         </Row>

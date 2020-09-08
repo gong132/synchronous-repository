@@ -172,7 +172,7 @@ const AuthorManage = props => {
                     return {
                       onClick: event => {
                         setSelectedRows(record);
-                        setExpandedRow([])
+                        setExpandedRow([]);
                         handleQueryAuthorByRoleId(record.id)
                       }
                     }
