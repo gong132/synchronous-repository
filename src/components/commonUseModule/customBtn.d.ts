@@ -1,7 +1,7 @@
 import * as React from 'react';
 export interface IGCustomBtnProps {
-  type?: string;
-  style: React.CSSProperties;
+  type: 'create' | 'cancel' | 'save' | 'edit' | 'reset';
+  style?: React.CSSProperties;
   onClick?: React.MouseEventHandler<any>;
 }
 

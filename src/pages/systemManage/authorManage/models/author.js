@@ -71,6 +71,14 @@ const Author = {
       }
       return true
     },
+    *deleteRoleAuthor({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(deleteRoleAuthor, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false
+      }
+      return true
+    },
   },
   reducers: {
     saveData(state, { payload }) {

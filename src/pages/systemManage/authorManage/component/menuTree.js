@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, {memo, useEffect} from "react";
 import { Checkbox } from "antd";
 import _filter from 'lodash/filter';
 import _sortBy from 'lodash/sortBy';
@@ -7,7 +7,7 @@ import {TableColumnHelper} from "@/utils/helper";
 import {isEmpty} from "@/utils/lang";
 
 const Index = memo(props => {
-  const { allMenuList, selectedRows, setSelectedRows } = props;
+  const { allMenuList, selectedRows, setSelectedRows, expandedRow, setExpandedRow } = props;
 
   // 递归找到当前节点的所有父节点(不包括当前节点)
   const findParentMenu = (menuArray, pid, newArr = []) => {
@@ -106,7 +106,26 @@ const Index = memo(props => {
   return (
     <StandardTable
       rowKey="id"
-      // expandedRowKeys={selectedRows.map(v => v.id)}
+      expandedRowKeys={expandedRow.map(v => v.id)}
+      expandRowByClick
+      onExpand={(expanded, record) => {
+        if (expanded) {
+          const newArr = _filter(allMenuList, o => String(o.pid) === String(record.id));
+          setExpandedRow(arr => [...arr, ...newArr, record]);
+          return
+        }
+        const parentArr = [];
+        parentArr.push(record);
+        findChildMenu(allMenuList, record.id, parentArr);
+        setExpandedRow(arr => {
+          // 找到取消的所有子节点. 取原始选中菜单不包含该子节点数组的差集
+          return arr.filter(v => !parentArr.filter(o => o.id === v.id).length > 0)
+        })
+      }}
+      // expandIcon={props => {
+      //   if (isEmpty(props.record.children)) return '  ';
+      //   return props.expanded ? '-' : "+"
+      // }}
       data={{ list: generateAllMenu(allMenuList)}}
       columns={columns}
       pagination={false}

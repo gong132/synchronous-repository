@@ -6,9 +6,8 @@
  * https://pro.ant.design/docs/deploy
  */
 
-// const apiUrl = 'http://192.168.1.13:80'; // yaowei （home)
-const apiUrl = 'http://10.90.48.22:80'; // yaowei
-// const apiUrl = 'http://10.90.48.40:80'; // zzp
+// const apiUrl = 'http://10.90.48.22:80'; // yaowei
+const apiUrl = 'http://10.90.48.40:80'; // zzp
 // const apiUrl = 'http://10.90.48.26:80'; // lqq
 
 const proxyApi = [
