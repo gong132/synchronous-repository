@@ -37,7 +37,7 @@ const Index = props => {
         },
       }).then(sure => {
         if (!sure) return;
-        message.success(isEmpty(values) ? '新增成功' : '修改成功')
+        message.success(isEmpty(values) ? '新增成功' : '修改成功');
         handleModalVisible();
         handleQueryBudgetData()
       })
