@@ -5,6 +5,7 @@ import numeral from 'numeral'
 import { formLayoutItemAddDouble, formLayoutItemAddEdit } from "@/utils/constant";
 import CustomBtn from '@/components/commonUseModule/customBtn'
 import Editor from "@/components/TinyEditor"
+import UploadFile from './uploadFile'
 import styles from '../index.less'
 import { Modal, Form, Select, Input, DatePicker, Col, Row, Table, message, Upload, Button } from 'antd'
 
@@ -25,7 +26,7 @@ const CreateConstract = (props) => {
   } = props
 
   console.log(recordValue)
-  const [description, setDescription] = useState( '');
+  const [description, setDescription] = useState('');
   useEffect(() => {
     setDescription(recordValue.description)
   }, [recordValue.description])
@@ -51,7 +52,7 @@ const CreateConstract = (props) => {
         ...params
       }
     }).then(res => {
-      if(res) {
+      if (res) {
         handleViewModal(false)
         handleQueryData()
       }
@@ -65,7 +66,7 @@ const CreateConstract = (props) => {
         ...params
       }
     }).then(res => {
-      if(res) {
+      if (res) {
         handleViewModal(false)
         handleQueryData()
       }
@@ -79,9 +80,9 @@ const CreateConstract = (props) => {
     // }
   ]
 
-  const [data, setData] = useState( defaultData)
+  const [data, setData] = useState(defaultData)
   useEffect(() => {
-    if(payRecords) {
+    if (payRecords) {
       setData(payRecords)
     }
   }, [JSON.stringify(payRecords)])
@@ -458,7 +459,9 @@ const CreateConstract = (props) => {
             {...formLayoutItemAddEdit}
             label='上传附件'
           >
-            <Button>上传</Button>
+            <UploadFile>
+              <Button>上传</Button>
+            </UploadFile>
           </FormItem>
         </Col>
       </Row>
@@ -480,7 +483,7 @@ const CreateConstract = (props) => {
             style={{ marginRight: '18px' }}
           />
           <CustomBtn
-            loading={modalTitle==='编辑' ? loadingUpdate : loadingAdd}
+            loading={modalTitle === '编辑' ? loadingUpdate : loadingAdd}
             onClick={handleSubmitForm}
             type='save' />
         </div>}

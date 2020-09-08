@@ -1,6 +1,7 @@
 import React, { PureComponent, Fragment } from 'react'
 import { connect } from 'dva'
 import _ from 'lodash'
+import moment from 'moment'
 import numeral from 'numeral'
 import GlobalSandBox from "@/components/commonUseModule/globalSandBox";
 import StandardTable from "@/components/StandardTable";
@@ -10,7 +11,6 @@ import editIcon from '@/assets/icon/Button_bj.svg'
 import budget_xq from '@/assets/icon/modular_xq.svg'
 import budget_log from '@/assets/icon/modular_czrz.svg'
 import payIcon from '@/assets/icon/modular_zfmx.svg'
-import styles from '../index.less'
 import {
   Descriptions,
   Spin,
@@ -19,9 +19,14 @@ import {
   Table,
   Input,
   Select,
-  DatePicker
+  DatePicker,
+  Modal
+
 } from 'antd'
 import { getParam } from '@/utils/utils'
+import { formLayoutItemAddDouble, formLayoutItemAddEdit } from "@/utils/constant";
+import styles from '../index.less'
+
 
 const DescriptionItem = Descriptions.Item
 const FormItem = Form.Item
@@ -31,6 +36,7 @@ const { Option } = Select
 @connect(({ constract, loading }) => ({
   loadingQueryLogData: loading.effects['constract/fetchLogList'],
   loadingQueryInfo: loading.effects['constract/fetchContractInfo'],
+  loadingUpdate: loading.effects['constract/updateData'],
   contractInfo: constract.contractInfo,
   logList: constract.logList,
 }))
@@ -39,36 +45,65 @@ class Detail extends PureComponent {
     super(props)
     this.state = {
       editBool: false,
+      modalVisible: false,
+      freePayDay: '',
     }
   }
 
   componentDidMount() {
-    const id = getParam('id')
-    this.handleQuerySectorInfo({ id })
-    this.handleQueryLogList({
-      linkId: id,
-      type: '3'
-    })
+    this.handleQuerySectorInfo()
+    this.handleQueryLogList()
   }
 
   // 查看板块详情
   handleQuerySectorInfo = (params) => {
+    const id = getParam('id')
     this.props.dispatch({
       type: 'constract/fetchContractInfo',
       payload: {
-        ...params,
+        id,
       }
     })
   }
 
   // 查日志
-  handleQueryLogList = (params) => {
+  handleQueryLogList = () => {
+    const id = getParam('id')
+    const params = {
+      linkId: id,
+      type: '1'
+    }
     this.props.dispatch({
       type: 'constract/fetchLogList',
       payload: {
         ...DefaultPage,
         ...params,
       }
+    })
+  }
+
+  // 编辑
+  sumbitEdit = (params) => {
+    const id = getParam('id')
+    params.id = id
+    this.props.dispatch({
+      type: 'constract/updateData',
+      payload: {
+        ...params
+      }
+    }).then(res => {
+      if (res) {
+        this.handleQuerySectorInfo()
+        this.handleQueryLogList()
+        this.handleModalVisible(false)
+      }
+    })
+  }
+
+  handleSubmit = () => {
+    this.props.form.validateFieldsAndScroll((err,values) => {
+      if(err) return
+      console.log(values)
     })
   }
 
@@ -88,9 +123,49 @@ class Detail extends PureComponent {
     return numeral(value).format('0,0')
   }
 
+  // 格式化整数
+  formatCount = (value) => {
+    return numeral(value).format()
+  }
+
+  // 自动计算维保支付日期
+  autoCalc = () => {
+    const values = this.props.form.getFieldsValue(['freeDefendDate', 'projectCheckTime'])
+    values.projectCheckTime = values.projectCheckTime ? moment(values.projectCheckTime).format('YYYY-MM-DD') : null
+    if (values.freeDefendDate && values.projectCheckTime) {
+      const str = moment(values.projectCheckTime).add(Number(values.freeDefendDate) - 1, 'months').format('YYYY-MM-DD');
+      this.setState({
+        freePayDay: str
+      })
+    }
+  }
+
+  // 项目完结确认
+  handleModalVisible = (bool) => {
+    this.setState({
+      modalVisible: bool
+    })
+  }
+
+  handleSurePro = () => {
+    const { freePayDay } = this.state
+    this.props.form.validateFields(['freeDefendDate', 'projectCheckTime'], (err, values) => {
+      if (err) return
+      values.defendPayTime = freePayDay
+      values.projectCheckTime = moment(values.projectCheckTime).format('YYYY-MM-DD')
+      this.sumbitEdit(values)
+    })
+  }
+
   render() {
-    const { editBool } = this.state
-    const { logList, loadingQueryInfo, loadingQueryLogData, contractInfo, form } = this.props
+    const w = 150
+    const { editBool, modalVisible, freePayDay } = this.state
+    const { logList,
+      loadingQueryInfo,
+      loadingQueryLogData,
+      contractInfo,
+      form,
+      loadingUpdate } = this.props
     const {
       name,
       budgetNumber,
@@ -149,9 +224,9 @@ class Detail extends PureComponent {
       }
     ]
     const columns = [
-      TableColumnHelper.genPlanColumn('operateUserName', '修改人'),
+      TableColumnHelper.genPlanColumn('operateUserName', '修改人', {width: '100px'}),
       TableColumnHelper.genPlanColumn('content', '修改内容'),
-      TableColumnHelper.genPlanColumn('updateTime', '修改时间'),
+      TableColumnHelper.genPlanColumn('updateTime', '修改时间', {width: '100px'}),
     ]
     const detailList = [
       { span: 2, required: false, name: '合同名称', value: name },
@@ -181,14 +256,10 @@ class Detail extends PureComponent {
         <GlobalSandBox
           img={budget_xq}
           title='合同详情'
-        >
-          <Spin spinning={loadingQueryInfo}>
-            {!editBool
+          optNode={
+            !editBool
               ? <OptButton
                 style={{
-                  position: 'absolute',
-                  top: '17px',
-                  right: '17px',
                   backgroundColor: 'white'
                 }}
                 onClick={
@@ -215,7 +286,10 @@ class Detail extends PureComponent {
                   type='primary'
                   onClick={() => this.handleSubmit()}
                 >保存</Button>
-              </div>}
+              </div>
+          }
+        >
+          <Spin spinning={loadingQueryInfo}>
             <Descriptions column={3} bordered className={styles.clearFormMargin}>
               {editBool
                 ? <Fragment>
@@ -241,7 +315,7 @@ class Detail extends PureComponent {
                         rules: [{ required: true, message: '请输入合同编号!' }],
                         initialValue: number
                       })(
-                        <Input disabled placeholder='请输入合同编号' />
+                        <Input style={{width: w}} disabled placeholder='请输入合同编号' />
                       )}
                     </FormItem>
                   </DescriptionItem>
@@ -255,6 +329,7 @@ class Detail extends PureComponent {
                         initialValue: budgetNumber,
                       })(<Select
                         placeholder="请输入预算编号"
+                        style={{width: w}}
                       >
                         <Option key={1} value={1}>自定义</Option>
                       </Select>)}
@@ -266,10 +341,11 @@ class Detail extends PureComponent {
                   >
                     <FormItem>
                       {form.getFieldDecorator('budgetNumber', {
-                        rules: [{ required: true, message: '请输入所属集群/板块	' }],
+                        rules: [{ required: true, message: '请输入所属集群/板块' }],
                         initialValue: budgetNumber,
                       })(<Select
-                        placeholder="请输入所属集群/板块	"
+                        placeholder="请输入所属集群/板块"
+                        style={{width: w}}
                       >
                         <Option key={1} value={1}>自定义</Option>
                       </Select>)}
@@ -285,6 +361,7 @@ class Detail extends PureComponent {
                         initialValue: projectNumber,
                       })(<Select
                         placeholder="请输入所属项目"
+                        style={{width: w}}
                       >
                         <Option key={1} value={1}>自定义</Option>
                       </Select>)}
@@ -300,6 +377,7 @@ class Detail extends PureComponent {
                         initialValue: providerCompanyId,
                       })(<Select
                         placeholder="请输入供应商"
+                        style={{width: w}}
                       >
                         <Option key={1} value={1}>自定义</Option>
                       </Select>)}
@@ -315,6 +393,7 @@ class Detail extends PureComponent {
                         initialValue: deptId,
                       })(<Select
                         placeholder="请输入所属部门"
+                        style={{width: w}}
                       >
                         <Option key={1} value={1}>自定义</Option>
                       </Select>)}
@@ -334,7 +413,7 @@ class Detail extends PureComponent {
                         }],
                         normalize: this.formatMoney,
                         initialValue: firstOfferAmount,
-                      })(<Input addonAfter='元' placeholder="请输入首次报价金额" />)}
+                      })(<Input style={{width: w}} addonAfter='元' placeholder="请输入首次报价金额" />)}
                     </FormItem>
                   </DescriptionItem>
                   <DescriptionItem
@@ -351,7 +430,7 @@ class Detail extends PureComponent {
                         }],
                         normalize: this.formatMoney,
                         initialValue: transactionAmount,
-                      })(<Input addonAfter='元' placeholder="请输入合同成交额" />)}
+                      })(<Input style={{width: w}} addonAfter='元' placeholder="请输入合同成交额" />)}
                     </FormItem>
                   </DescriptionItem>
                   <DescriptionItem
@@ -366,6 +445,7 @@ class Detail extends PureComponent {
                         allowClear
                         // showSearch
                         placeholder="请输入合同负责人"
+                        style={{width: w}}
                       >
                         <Option key={1} value={1}>自定义</Option>
                       </Select>)}
@@ -383,9 +463,101 @@ class Detail extends PureComponent {
                         allowClear
                         // showSearch
                         placeholder="请输入合同负责人团队"
+                        style={{width: w}}
                       >
                         <Option key={1} value={1}>自定义</Option>
                       </Select>)}
+                    </FormItem>
+                  </DescriptionItem>
+                  <DescriptionItem
+                    span={1}
+                    label={<>{<span style={{ color: 'red' }}>*</span>}合同签订时间</>}
+                  >
+                    <FormItem>
+                      {form.getFieldDecorator('signingTime', {
+                        rules: [{ required: true, message: '请输入合同签订时间' }],
+                        initialValue: signingTime ? moment(signingTime) : null,
+                      })(<DatePicker style={{width: w}} placeholder="请输入合同签订时间" />)}
+                    </FormItem>
+                  </DescriptionItem>
+                  <DescriptionItem
+                    span={1}
+                    label={<>{<span style={{ color: 'red' }}>*</span>}录入人</>}
+                  >
+                    <FormItem>
+                      {form.getFieldDecorator('userId', {
+                        rules: [{ required: true, message: '请输入录入人' }],
+                        initialValue: userId,
+                      })(<Select
+                        allowClear
+                        // showSearch
+                        placeholder="请输入录入人"
+                        style={{width: w}}
+                      >
+                        <Option key={1} value={1}>自定义</Option>
+                      </Select>)}
+                    </FormItem>
+                  </DescriptionItem>
+                  <DescriptionItem
+                    span={1}
+                    label={<>{<span style={{ color: 'red' }}>*</span>}录入时间</>}
+                  >
+                    <FormItem>
+                      {form.getFieldDecorator('createTime', {
+                        rules: [{ required: true, message: '请输入录入时间' }],
+                        initialValue: createTime ? moment(createTime) : null,
+                      })(<DatePicker style={{width: w}} placeholder="请输入录入时间" />)}
+                    </FormItem>
+                  </DescriptionItem>
+                  <DescriptionItem
+                    span={1}
+                    label={<>{<span style={{ color: 'red' }}>*</span>}项目验收日期</>}
+                  >
+                    <FormItem>
+                      {form.getFieldDecorator('projectCheckTime', {
+                        rules: [{ required: true, message: '请输入项目验收日期' }],
+                        initialValue: projectCheckTime ? moment(projectCheckTime) : null,
+                      })(<DatePicker
+                        style={{width: w}}
+                        onChange={_.debounce(this.autoCalc, 500)}
+                        placeholder="请输入项目验收日期"
+                      />)}
+                    </FormItem>
+                  </DescriptionItem>
+                  <DescriptionItem
+                    span={1}
+                    label={<>{<span style={{ color: 'red' }}>*</span>}免费维保期</>}
+                  >
+                    <FormItem>
+                      {form.getFieldDecorator('freeDefendDate', {
+                        rules: [{
+                          required: true,
+                          message: '请输入免费维保期',
+                          pattern: /^[0-9]+$/
+                        }],
+                        normalize: this.formatCount,
+                        initialValue: freeDefendDate
+                      })(<Input
+                        style={{width: w}}
+                        onChange={_.debounce(this.autoCalc, 500)}
+                        placeholder='请输入免费维保期'
+                        addonAfter='月' />)}
+                    </FormItem>
+                  </DescriptionItem>
+                  <DescriptionItem
+                    span={1}
+                    label={<>{<span style={{ color: 'red' }}>*</span>}维保支付期</>}
+                  >
+                    <FormItem>
+                      {form.getFieldDecorator('defendPayTime', {
+                        rules: [{
+                          required: true,
+                          message: '请输入免费维保期',
+                          pattern: /^[0-9]+$/
+                        }],
+                        normalize: this.formatCount,
+                        initialValue: defendPayTime,
+                      })(<Input style={{width: w}} disabled placeholder="请输入维保支付日期" />)}
                     </FormItem>
                   </DescriptionItem>
                 </Fragment>
@@ -406,8 +578,10 @@ class Detail extends PureComponent {
         <GlobalSandBox
           img={payIcon}
           title='付款笔数'
+          optNode={<Button
+            onClick={() => this.handleModalVisible(true)}
+            type='primary' ghost>项目完结确认</Button>}
         >
-          
           <Table
             columns={payColumns}
             dataSource={payRecords}
@@ -428,8 +602,45 @@ class Detail extends PureComponent {
             onChange={this.handleStandardTableChange}
           />
         </GlobalSandBox>
+        <Modal
+          title='项目完结确认'
+          visible={modalVisible}
+          onCancel={() => this.handleModalVisible(false)}
+          onOk={this.handleSurePro}
+          width={794}
+          confirmLoading={loadingUpdate}
+        >
+          <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 8 }} label="项目验收日期">
+            {form.getFieldDecorator('projectCheckTime', {
+              rules: [{ required: true, message: '请输入项目验收日期' }],
+              initialValue: projectCheckTime ? moment(projectCheckTime) : null,
+            })(<DatePicker
+              onChange={_.debounce(this.autoCalc, 500)}
+              placeholder="请输入项目验收日期"
+            />)}
+          </FormItem>
+          <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 8 }} label="免费维保期">
+            {form.getFieldDecorator('freeDefendDate', {
+              rules: [{
+                required: true,
+                message: '请输入免费维保期',
+                pattern: /^[0-9]+$/
+              }],
+              normalize: this.formatCount,
+              // initialValue: values && values.name,
+            })(<Input
+              onChange={_.debounce(this.autoCalc, 500)}
+              placeholder='请输入免费维保期'
+              addonAfter='月' />)}
+          </FormItem>
+          <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 8 }} label="维保支付日期">
+            <Input value={freePayDay} disabled placeholder="请输入维保支付日期" />
+          </FormItem>
+          <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="项目验收报告">
+            <Button type='primary' ghost>上传</Button>
+          </FormItem>
+        </Modal>
       </Fragment>
-
     );
   }
 }

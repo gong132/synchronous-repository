@@ -6,6 +6,7 @@
  * https://pro.ant.design/docs/deploy
  */
 
+// const apiUrl = 'http://192.168.1.13:80'; // yaowei （home)
 const apiUrl = 'http://10.90.48.22:80'; // yaowei
 // const apiUrl = 'http://10.90.48.40:80'; // zzp
 // const apiUrl = 'http://10.90.48.26:80'; // lqq
@@ -28,62 +29,62 @@ const proxyApi = [
 // ];
 export default {
   dev: {
-    '/budget/': {
+    '/server/': {
       target: apiUrl,
       changeOrigin: true,
       pathRewrite: {
-        '^': '',
+        '/server': '',
       },
     },
-    '/contract/': {
-      target: apiUrl,
-      changeOrigin: true,
-      pathRewrite: {
-        '^': '',
-      },
-    },
-    '/role/': {
-      target: apiUrl,
-      changeOrigin: true,
-      pathRewrite: {
-        '^': '',
-      },
-    },
-    '/user/': {
-      target: apiUrl,
-      changeOrigin: true,
-      pathRewrite: {
-        '^': '',
-      },
-    },
-    '/cluster/': {
-      target: apiUrl,
-      changeOrigin: true,
-      pathRewrite: {
-        '^': '',
-      },
-    },
-    '/log/': {
-      target: apiUrl,
-      changeOrigin: true,
-      pathRewrite: {
-        '^': '',
-      },
-    },
-    '/temp/': {
-      target: apiUrl,
-      changeOrigin: true,
-      pathRewrite: {
-        '^': '',
-      },
-    },
-    '/resource/': {
-      target: apiUrl,
-      changeOrigin: true,
-      pathRewrite: {
-        '^': '',
-      },
-    },
+    // '/contract/': {
+    //   target: apiUrl,
+    //   changeOrigin: true,
+    //   pathRewrite: {
+    //     '^': '',
+    //   },
+    // },
+    // '/role/': {
+    //   target: apiUrl,
+    //   changeOrigin: true,
+    //   pathRewrite: {
+    //     '^': '',
+    //   },
+    // },
+    // '/user/': {
+    //   target: apiUrl,
+    //   changeOrigin: true,
+    //   pathRewrite: {
+    //     '^': '',
+    //   },
+    // },
+    // '/cluster/': {
+    //   target: apiUrl,
+    //   changeOrigin: true,
+    //   pathRewrite: {
+    //     '^': '',
+    //   },
+    // },
+    // '/log/': {
+    //   target: apiUrl,
+    //   changeOrigin: true,
+    //   pathRewrite: {
+    //     '^': '',
+    //   },
+    // },
+    // '/temp/': {
+    //   target: apiUrl,
+    //   changeOrigin: true,
+    //   pathRewrite: {
+    //     '^': '',
+    //   },
+    // },
+    // '/resource/': {
+    //   target: apiUrl,
+    //   changeOrigin: true,
+    //   pathRewrite: {
+    //     '^': '',
+    //   },
+    // },
   },
   test: {
     '/api/': {

@@ -23,10 +23,10 @@ import {
   Button,
   DatePicker
 } from 'antd'
-import CreateConstract from './components/createConstract'
-
+import _ from 'lodash'
 import styles from './index.less'
-import * as _ from 'lodash'
+
+import CreateConstract from './components/createConstract'
 
 const { Option } = Select
 const FormItem = Form.Item
@@ -55,7 +55,6 @@ class ContractManage extends Component {
 
   componentDidMount() {
     this.handleQueryDept()
-
     this.handleQueryData()
   }
 
@@ -144,7 +143,10 @@ class ContractManage extends Component {
     })
   }
 
-  handleResetSearch = () => { }
+  handleResetSearch = () => {
+    this.props.form.resetFields()
+    this.handleDebounceQueryData()
+  }
 
   handleViewDetail = (record) => { 
     router.push({
@@ -160,10 +162,9 @@ class ContractManage extends Component {
     this.props.dispatch({
       type: 'constract/addMenu',
       payload: {
-        name: '详情',
+        name: '项目管理',
         pid: '16',
-        url: '/contract-budget/contract/detail',
-        checked: false,
+        url: '/projectManage',
         type: 0
       }
     })
@@ -176,11 +177,11 @@ class ContractManage extends Component {
       <div className={styles.moreSearch}>
         <Row>
           <Col span={24}>
-            <FormItem {...formLayoutItem1} label="标题">
+            <FormItem {...formLayoutItem1} label="名称">
               {getFieldDecorator('name', {
               })(<Input
                 allowClear
-                placeholder="请输入标题" />)}
+                placeholder="请输入名称" />)}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -372,9 +373,9 @@ class ContractManage extends Component {
             // onClick={() => this.handleViewModal(true, '新建')}
             type='export' />
         </div>
-        {/* <Button
+        <Button
           onClick={() => this.handleAddMenu()}
-        >添加菜单</Button> */}
+        >添加菜单</Button>
         {visibleModal && <CreateConstract {...createProps} />}
         <Card>
           {this.renderSearchForm()}
@@ -389,6 +390,7 @@ class ContractManage extends Component {
             //   { number: 'gong3', systemName: 'gg' }
             // ]}
             onChange={this.handleStandardTableChange}
+            scroll={{x: 1800}}
           />
         </Card>
       </Fragment>

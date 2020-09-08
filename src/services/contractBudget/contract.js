@@ -24,7 +24,7 @@ export async function createContract(params) {
   });
 }
 
-// 修改合同
+// 修改合同/项目完结确认
 export async function editContract(params) {
   return request('/contract/update', {
     method: 'post',

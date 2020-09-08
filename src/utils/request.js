@@ -64,7 +64,7 @@ const errorHandler = error => {
 const request = extend({
   errorHandler,
   // timeout: 5000,
-  // prefix: '/server',
+  prefix: '/server',
   // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
 });

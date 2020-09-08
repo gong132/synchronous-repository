@@ -100,10 +100,13 @@ const Index = memo(props => {
     return menu;
   };
 
+  console.log(allMenuList, 'allMenu');
+
+  console.log(generateAllMenu(allMenuList), '111111111')
   return (
     <StandardTable
       rowKey="id"
-      expandedRowKeys={selectedRows.map(v => v.id)}
+      // expandedRowKeys={selectedRows.map(v => v.id)}
       data={{ list: generateAllMenu(allMenuList)}}
       columns={columns}
       pagination={false}

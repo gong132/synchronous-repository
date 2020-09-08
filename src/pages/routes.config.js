@@ -67,6 +67,12 @@ module.exports = {
             ]
           },
           {
+            path: '/projectManage',
+            name: 'projectManage',
+            icon: 'project',
+            component: './projectManage'
+          },
+          {
             path: '/systemManage',
             name: 'systemManage',
             icon: 'setting',
