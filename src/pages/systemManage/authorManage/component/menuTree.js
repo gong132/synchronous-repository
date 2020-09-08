@@ -100,9 +100,6 @@ const Index = memo(props => {
     return menu;
   };
 
-  console.log(allMenuList, 'allMenu');
-
-  console.log(generateAllMenu(allMenuList), '111111111')
   return (
     <StandardTable
       rowKey="id"

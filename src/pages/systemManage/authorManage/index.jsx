@@ -164,6 +164,7 @@ const AuthorManage = props => {
                 <div className={styles.title}>选择角色</div>
                 <StandardTable
                   rowkey="id"
+                  rowClassName={record => record.id === selectedRows.id ? styles.clickRowSty : ''}
                   columns={columns}
                   data={roleList}
                   scroll={{ y: 800 }}

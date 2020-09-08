@@ -70,13 +70,14 @@ const Index = props => {
     TableColumnHelper.genPlanColumn('userName', '录入人'),
     TableColumnHelper.genDateTimeColumn('createTime', '录入时间', "YYYY-MM-DD"),
     TableColumnHelper.genPlanColumn('deptName', '需求部门'),
-    TableColumnHelper.genLangColumn('clusterName', '所属集群或板块', {}, 4),
+    TableColumnHelper.genLangColumn('clusterName', '集群或板块', {}, 4),
     TableColumnHelper.genDateTimeColumn('expectSetTime', '预计立项时间', "YYYY-MM-DD"),
     TableColumnHelper.genMoneyColumn('expectTotalAmount', '预算总金额'),
     TableColumnHelper.genMoneyColumn('hardwareExpectAmount', '硬件预算金额'),
     {
       title: '操作',
       align: 'center',
+      fixed: 'right',
       render: rows => (
         <Fragment>
           {
@@ -283,8 +284,12 @@ const Index = props => {
   };
   return (
     <div className="main">
-      <div className="yCenter-between">
-        <CustomBtn type='create' onClick={() => setAddModalVisible(true)} />
+      <div style={{ marginBottom: 12 }} className="yCenter-between">
+        <Button
+          className={styles.addForm}
+          icon="plus"
+          onClick={() => setAddModalVisible(true)}
+        >新建</Button>
         <Button
           type="default"
         >导出</Button>
@@ -300,6 +305,7 @@ const Index = props => {
             data={budgetList}
             columns={columns}
             onChange={handleStandardTableChange}
+            scroll={{ x: 1400 }}
           />
         </Card>
         { addModalVisible && (
