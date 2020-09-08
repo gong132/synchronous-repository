@@ -84,7 +84,7 @@ const Index = props => {
               {values && values.roleName || ''}
             </FormItem>
             <FormItem {...formLayoutItemAddEdit} label="角色描述">
-              {values && values.describe || ''}
+              {values && values.description || ''}
             </FormItem>
             <FormItem {...formLayoutItemAddEdit} label="角色描述">
               <div className={styles.treeShow}>
