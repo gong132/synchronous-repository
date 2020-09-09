@@ -12,6 +12,7 @@ import edit from '@/assets/icon/Button_bj.svg'
 
 import AddForm from './addForm'
 import OptButton from "@/components/commonUseModule/optButton";
+import CustomBtn from "@/components/commonUseModule/customBtn";
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -48,7 +49,7 @@ const Index = props => {
         return (
           <Tooltip placement="top" title={rows.number}>
             <a
-              style={{ color: '#FF9716' }}
+              style={{ color: '#2E5BFF' }}
               onClick={() => {
                 props.history.push({
                   pathname: '/contract-budget/budget/detail',
@@ -69,7 +70,7 @@ const Index = props => {
     TableColumnHelper.genPlanColumn('userName', '录入人'),
     TableColumnHelper.genDateTimeColumn('createTime', '录入时间', "YYYY-MM-DD"),
     TableColumnHelper.genPlanColumn('deptName', '需求部门'),
-    TableColumnHelper.genLangColumn('clusterName', '所属集群或板块', {}, 4),
+    TableColumnHelper.genLangColumn('clusterName', '集群或板块', {}, 4),
     TableColumnHelper.genDateTimeColumn('expectSetTime', '预计立项时间', "YYYY-MM-DD"),
     TableColumnHelper.genMoneyColumn('expectTotalAmount', '预算总金额'),
     TableColumnHelper.genMoneyColumn('hardwareExpectAmount', '硬件预算金额'),
@@ -127,9 +128,8 @@ const Index = props => {
 
   const handleSearchForm = () => {
     const formValues = form.getFieldsValue();
-    console.log(formValues, 'formValues')
     handleQueryBudgetData(formValues)
-  }
+  };
 
   // 获取搜索条件,转换成数组
   const getSearchValuesToList = () => {
@@ -284,7 +284,7 @@ const Index = props => {
   };
   return (
     <div className="main">
-      <div className="yCenter-between">
+      <div style={{ marginBottom: 12 }} className="yCenter-between">
         <Button
           className={styles.addForm}
           icon="plus"
