@@ -32,9 +32,49 @@ export async function editContract(params) {
   });
 }
 
-// 未被集群版块绑定的部门
+// // 未被集群版块绑定的部门
+// export async function queryDept(params) {
+//   return request('/cluster/notBindDept', {
+//     method: 'get',
+//     params,
+//   });
+// }
+
+// 查询所有部门
 export async function queryDept(params) {
-  return request('/cluster/notBindDept', {
+  return request('/temp/dept', {
+    method: 'get',
+    params,
+  });
+}
+
+// 查询所有项目
+export async function queryProject(params) {
+  return request('/temp/project', {
+    method: 'get',
+    params,
+  });
+}
+
+// 查询所有系统
+export async function querySystem(params) {
+  return request('/temp/system', {
+    method: 'get',
+    params,
+  });
+}
+
+// 查询所有供应商
+export async function querySupplier(params) {
+  return request('/temp/supplier', {
+    method: 'get',
+    params,
+  });
+}
+
+// 负责人和团队
+export async function queryHeaderGroup(params) {
+  return request('/temp/group', {
     method: 'get',
     params,
   });

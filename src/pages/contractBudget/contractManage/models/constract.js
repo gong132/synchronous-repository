@@ -3,9 +3,13 @@ import {
   queryContractInfo,
   createContract,
   editContract,
-  queryDept
+  queryDept,
+  queryProject,
+  querySystem,
+  querySupplier,
+  queryHeaderGroup
 } from '@/services/contractBudget/contract'
-import {addMenuList} from '@/services/global'
+import { addMenuList } from '@/services/global'
 import { PagerHelper } from "@/utils/helper";
 import { queryLogList } from '@/services/global'
 import { message } from "antd";
@@ -18,9 +22,18 @@ const Constract = {
     contractInfo: {},
     deptList: [],
     deptListMap: {},
+    projectList: [],
+    projectMap: {},
+    systemList: [],
+    systemMap: {},
+    supplierList: [],
+    supplierMap: {},
+    headerList: [],
+    headerMap: {},
+    groupMap: {}
   },
   effects: {
-    *addMenu({payload}, {put, call}) {
+    *addMenu({ payload }, { put, call }) {
       const { code, msg } = yield call(addMenuList, payload)
       if (!code || code !== 200) {
         message.error(msg);
@@ -77,9 +90,30 @@ const Constract = {
       return true
     },
 
-    // 查询未被集群绑定部门
-    *fetchNotBindDept({payload}, {call, put}) {
+    // 查询部门
+    *fetchNotBindDept({ payload }, { call, put }) {
       const { code, msg, data } = yield call(queryDept, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      let obj = {}
+      data.map(v => {
+        obj[v.deptId] = v.deptName
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          deptList: data,
+          deptListMap: obj
+        }
+      })
+      return true
+    },
+
+    // 查询项目
+    *fetchProject({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(queryProject, payload)
       if (!code || code !== 200) {
         message.error(msg);
         return false;
@@ -91,8 +125,76 @@ const Constract = {
       yield put({
         type: 'saveData',
         payload: {
-          deptList: data,
-          deptListMap: obj
+          projectList: data,
+          projectMap: obj
+        }
+      })
+      return true
+    },
+
+    // 查询系统
+    *fetchSystem({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(querySystem, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      let obj = {}
+      data.map(v => {
+        obj[v.systemId] = v.systemName
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          systemList: data,
+          systemMap: obj
+        }
+      })
+      return true
+    },
+
+     // 查询供应商
+     *fetchSupplier({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(querySupplier, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      let obj = {}
+      data.map(v => {
+        obj[v.supplierId] = v.supplierName
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          supplierList: data,
+          supplierMap: obj
+        }
+      })
+      return true
+    },
+
+    // 查询负责人和团队
+    *fetchHeaderGroup({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(queryHeaderGroup, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      let obj = {}
+      let gObj = {}
+      data.map(v => {
+        obj[v.leaderId] = v.leaderName
+      })
+      data.map(v => {
+        gObj[v.number] = v.name
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          headerList: data,
+          headerMap: obj,
+          groupMap: gObj
         }
       })
       return true

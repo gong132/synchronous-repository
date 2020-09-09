@@ -34,18 +34,16 @@ class SectorDetail extends PureComponent {
   componentDidMount() {
     const id = getParam('id')
     this.handleQuerySectorInfo({ clusterId: id })
-    this.handleQueryLogList({
-      linkId: id,
-      type: '3'
-    })
+    this.handleQueryLogList()
     this.handleQueryDept()
   }
 
-
   // 查部门
   handleQueryDept = () => {
+    const id = getParam('id')
     this.props.dispatch({
       type: 'sector/fetchNotBindDept',
+      payload: { clusterId: id }
     })
   }
 
@@ -61,10 +59,16 @@ class SectorDetail extends PureComponent {
 
   // 查日志
   handleQueryLogList = (params) => {
+    const id = getParam('id')
+    const defParams = {
+      linkId: id,
+      type: '3'
+    }
     this.props.dispatch({
       type: 'sector/fetchLogList',
       payload: {
         ...DefaultPage,
+        ...defParams,
         ...params,
       }
     })
@@ -91,7 +95,6 @@ class SectorDetail extends PureComponent {
         arr.push(str)
       })
       values.deptInfo = arr.join(',')
-      console.log(values)
       delete values.dept
       values.id = id
       this.handleEdit(values)
@@ -119,6 +122,7 @@ class SectorDetail extends PureComponent {
       }
     })
   }
+
 
   render() {
     const { editBool } = this.state
@@ -163,29 +167,26 @@ class SectorDetail extends PureComponent {
       { span: 1, required: false, name: '修改时间', value: updateTime, dataIndex: 'updateTime' },
     ]
     const columns = [
-      TableColumnHelper.genPlanColumn('operateUserName', '修改人'),
+      TableColumnHelper.genPlanColumn('operateUserName', '修改人', {width:'100px'}),
       TableColumnHelper.genPlanColumn('content', '修改内容'),
-      TableColumnHelper.genPlanColumn('updateTime', '修改时间'),
+      TableColumnHelper.genPlanColumn('updateTime', '修改时间', {width:'100px'}),
     ]
     return (
       <Fragment>
         <GlobalSandBox
           img={budget_xq}
           title='板块详情'
-        >
-          <Spin spinning={loadingQueryInfo}>
-            {!editBool
+          optNode={
+            !editBool
               ? <OptButton
                 style={{
-                  position: 'absolute',
-                  top: '17px',
-                  right: '17px',
                   backgroundColor: 'white'
                 }}
                 onClick={
                   () => this.setState({
                     editBool: true,
-                  })
+                  }),
+                  () => this.handleQueryDept()
                 }
                 img={editIcon}
                 text="编辑"
@@ -206,7 +207,10 @@ class SectorDetail extends PureComponent {
                   type='primary'
                   onClick={() => this.handleSubmit()}
                 >保存</Button>
-              </div>}
+              </div>
+          }
+        >
+          <Spin spinning={loadingQueryInfo}>
             <Descriptions column={3} bordered className={styles.clearFormMargin}>
               {editBool ?
                 <Fragment>
@@ -235,8 +239,8 @@ class SectorDetail extends PureComponent {
                         <Checkbox.Group style={{ width: '100%' }}>
                           <Row>
                             {!_.isEmpty(deptList) && deptList.map(v => (
-                              <Col key={v.number} span={4}>
-                                <Checkbox key={v.number} value={v.number}>{v.name}</Checkbox>
+                              <Col key={v.deptId} span={4}>
+                                <Checkbox key={v.deptId} value={v.deptId}>{v.deptName}</Checkbox>
                               </Col>
                             ))}
                           </Row>

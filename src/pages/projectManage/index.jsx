@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import { connect } from 'dva'
 import { router } from 'umi'
 import StandardTable from "@/components/StandardTable";
@@ -27,15 +27,19 @@ import styles from './index.less'
 
 const { Option } = Select
 const FormItem = Form.Item
-
+const { RangePicker } = DatePicker
+@Form.create()
 class ProjectManage extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+
+    }
   }
 
+  saveParams = () => { }
 
-
-genColumns = () => {
+  genColumns = () => {
     const columns = [
       {
         title: '合同编号',
@@ -44,9 +48,9 @@ genColumns = () => {
         render: (text, record) => {
           return (
             <span
-              onClick={
-                () => this.handleViewDetail(record)
-              }
+              // onClick={
+              //   () => this.handleViewDetail(record)
+              // }
               className='globalStyle'>
               {text}
             </span>
@@ -199,7 +203,7 @@ genColumns = () => {
           {
             <div
               className="activeColor"
-              onClick={() => this.setSearchMore(!searchMore)}
+              // onClick={() => this.setSearchMore(!searchMore)}
               style={{
                 position: 'absolute',
                 right: '16px',
@@ -222,18 +226,18 @@ genColumns = () => {
       <Card>
         {this.renderSearchForm()}
         <StandardTable
-            rowKey={(record, index) => index}
-            columns={this.genColumns()}
-            // data={constractList}
-            // loading={loadingQueryData}
-            dataSource={[
-              { number: 'gong', systemName: 'gg' },
-              { number: 'gong2', systemName: 'gg' },
-              { number: 'gong3', systemName: 'gg' }
-            ]}
-            // onChange={this.handleStandardTableChange}
-            scroll={{x: 1800}}
-          />
+          rowKey={(record, index) => index}
+          columns={this.genColumns()}
+          // data={constractList}
+          // loading={loadingQueryData}
+          dataSource={[
+            { number: 'gong', systemName: 'gg' },
+            { number: 'gong2', systemName: 'gg' },
+            { number: 'gong3', systemName: 'gg' }
+          ]}
+          // onChange={this.handleStandardTableChange}
+          scroll={{ x: 1800 }}
+        />
       </Card>
     );
   }

@@ -27,6 +27,7 @@ import _ from 'lodash'
 import styles from './index.less'
 
 import CreateConstract from './components/createConstract'
+import Sector from '@/pages/systemManage/sectorManage/models/sector';
 
 const { Option } = Select
 const FormItem = Form.Item
@@ -40,6 +41,15 @@ const { RangePicker } = DatePicker
   deptList: constract.deptList,
   deptListMap: constract.deptListMap,
   contractInfo: constract.contractInfo,
+  projectList: constract.projectList,
+  projectMap: constract.projectMap,
+  systemList: constract.systemList,
+  systemMap: constract.systemMap,
+  supplierList: constract.supplierList,
+  supplierMap: constract.supplierMap,
+  headerList: constract.headerList,
+  headerMap: constract.headerMap,
+  groupMap: constract.groupMap,
 }))
 class ContractManage extends Component {
   constructor(props) {
@@ -56,6 +66,10 @@ class ContractManage extends Component {
   componentDidMount() {
     this.handleQueryDept()
     this.handleQueryData()
+    this.handleQueryProject()
+    this.handleQuerySystem()
+    this.handleQuerySupplier()
+    this.handleQueryGroup()
   }
 
   handleQueryData = (params = {}) => {
@@ -82,9 +96,9 @@ class ContractManage extends Component {
   // 更多查询
   moreQuery = () => {
     const formValues = this.props.form.getFieldsValue();
-    if(formValues.signTime && !_.isEmpty(formValues.signTime)) {
-      formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYYMMDD') 
-      formValues.signingEndTime = moment(formValues.signTime[1]).format('YYYYMMDD') 
+    if (formValues.signTime && !_.isEmpty(formValues.signTime)) {
+      formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYYMMDD')
+      formValues.signingEndTime = moment(formValues.signTime[1]).format('YYYYMMDD')
     }
     console.log(formValues)
 
@@ -107,6 +121,33 @@ class ContractManage extends Component {
     })
   }
 
+  // 查项目
+  handleQueryProject = () => {
+    this.props.dispatch({
+      type: 'constract/fetchProject',
+    })
+  }
+
+  // 查询系统
+  handleQuerySystem = () => {
+    this.props.dispatch({
+      type: 'constract/fetchSystem',
+    })
+  }
+
+  // 查询供应商
+  handleQuerySupplier = () => {
+    this.props.dispatch({
+      type: 'constract/fetchSupplier',
+    })
+  }
+
+  // 查询负责人和团队
+  handleQueryGroup = () => {
+    this.props.dispatch({
+      type: 'constract/fetchHeaderGroup',
+    })
+  }
 
   // 分页操作
   handleStandardTableChange = pagination => {
@@ -119,14 +160,14 @@ class ContractManage extends Component {
     this.handleQueryData(params)
   };
 
-  handleViewModal = (bool, title, record={}) => {
+  handleViewModal = (bool, title, record = {}) => {
     this.setState({
       visibleModal: bool,
       modalTitle: title,
       recordValue: record,
     })
-    if(record.id) {
-      this.handleQuerySectorInfo({id: record.id})
+    if (record.id) {
+      this.handleQuerySectorInfo({ id: record.id })
     } else {
       this.props.dispatch({
         type: 'constract/saveData',
@@ -148,7 +189,7 @@ class ContractManage extends Component {
     this.handleDebounceQueryData()
   }
 
-  handleViewDetail = (record) => { 
+  handleViewDetail = (record) => {
     router.push({
       pathname: '/contract-budget/contract/detail',
       query: {
@@ -172,7 +213,7 @@ class ContractManage extends Component {
 
   renderSearchForm = () => {
     const { searchMore } = this.state
-    const { deptList, loadingQueryData, form: { getFieldDecorator } } = this.props
+    const { deptList, supplierList, loadingQueryData, form: { getFieldDecorator } } = this.props
     const content = (
       <div className={styles.moreSearch}>
         <Row>
@@ -231,7 +272,7 @@ class ContractManage extends Component {
             }}
           >
             {!_.isEmpty(deptList) && deptList.map(d => (
-              <Option key={d.number} value={d.name}>{d.name}</Option>
+              <Option key={d.deptId} value={d.deptId}>{d.deptName}</Option>
             ))}
           </Select>)}
         </SearchForm>
@@ -242,16 +283,15 @@ class ContractManage extends Component {
           })(
             <Select
               allowClear
-              placeholder='请输入供应商'
-              onChange={_.debounce(this.saveParams, 500)}
+              // showSearch
               style={{
                 width: '100%'
               }}
+              placeholder="请输入供应商"
             >
-              <Option key={1} value={1}>自定义</Option>
-              {/* {!_.isEmpty(deptList) && deptList.map(d => (
-              <Option key={d.number} value={d.name}>{d.name}</Option>
-            ))} */}
+              {!_.isEmpty(supplierList) && supplierList.map(d => (
+                <Option key={d.supplierId} value={d.supplierId}>{d.supplierName}</Option>
+              ))}
             </Select>
           )}
         </SearchForm>
@@ -324,6 +364,7 @@ class ContractManage extends Component {
       {
         title: '操作',
         align: 'left',
+        width: 190,
         render: (text, record) => {
           return (
             <div>
@@ -373,9 +414,9 @@ class ContractManage extends Component {
             // onClick={() => this.handleViewModal(true, '新建')}
             type='export' />
         </div>
-        <Button
+        {/* <Button
           onClick={() => this.handleAddMenu()}
-        >添加菜单</Button>
+        >添加菜单</Button> */}
         {visibleModal && <CreateConstract {...createProps} />}
         <Card>
           {this.renderSearchForm()}
@@ -390,7 +431,7 @@ class ContractManage extends Component {
             //   { number: 'gong3', systemName: 'gg' }
             // ]}
             onChange={this.handleStandardTableChange}
-            scroll={{x: 1800}}
+            scroll={{ x: 1800 }}
           />
         </Card>
       </Fragment>

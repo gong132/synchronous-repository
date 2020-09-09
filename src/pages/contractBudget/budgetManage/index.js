@@ -76,6 +76,7 @@ const Index = props => {
     {
       title: '操作',
       align: 'center',
+      fixed: 'right',
       render: rows => (
         <Fragment>
           {
@@ -304,6 +305,7 @@ const Index = props => {
             data={budgetList}
             columns={columns}
             onChange={handleStandardTableChange}
+            scroll={{ x: 1400 }}
           />
         </Card>
         { addModalVisible && (

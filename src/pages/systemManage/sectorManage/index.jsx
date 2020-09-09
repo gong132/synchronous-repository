@@ -30,6 +30,7 @@ const FormItem = Form.Item
   sectorList: sector.sectorList,
   deptList: sector.deptList,
   deptListMap: sector.deptListMap,
+  allDept:sector.allDept
 }))
 class SectorManage extends Component {
   constructor(props) {
@@ -45,7 +46,7 @@ class SectorManage extends Component {
 
   componentDidMount() {
     this.handleQueryData()
-    this.handleQueryDept()
+    this.handleQueryAllDept()
   }
 
   handleQueryData = (params = {}) => {
@@ -65,10 +66,18 @@ class SectorManage extends Component {
     this.handleQueryData()
   }
 
+  // 查询所有部门
+  handleQueryAllDept = ()=>{
+    this.props.dispatch({
+      type: 'sector/fetchAllDept',
+    })
+  }
+
   // 查部门
-  handleQueryDept = () => {
+  handleQueryDept = (params={}) => {
     this.props.dispatch({
       type: 'sector/fetchNotBindDept',
+      payload: {...params}
     })
   }
 
@@ -106,6 +115,10 @@ class SectorManage extends Component {
     })
     if (!bool) {
       this.props.form.resetFields()
+      this.handleQueryDept()
+    }
+    if(record.id) {
+      this.handleQueryDept({clusterId: record.id})
     }
   }
 
@@ -187,7 +200,7 @@ class SectorManage extends Component {
 
   renderSearchForm = () => {
     const { searchParams } = this.state
-    const { deptList, loadingQueryData } = this.props
+    const { allDept, loadingQueryData } = this.props
     return (
       <div style={{ display: 'flex' }}>
         <SearchForm
@@ -211,8 +224,8 @@ class SectorManage extends Component {
               width: '100%'
             }}
           >
-            {!_.isEmpty(deptList) && deptList.map(d => (
-              <Option key={d.number} value={d.name}>{d.name}</Option>
+            {!_.isEmpty(allDept) && allDept.map(d => (
+              <Option key={d.deptId} value={d.deptName}>{d.deptName}</Option>
             ))}
           </Select>
         </SearchForm>
@@ -362,8 +375,8 @@ class SectorManage extends Component {
                       <Checkbox.Group style={{ width: '100%' }} onChange={this.handleChangeChecked}>
                         <Row>
                           {!_.isEmpty(deptList) && deptList.map(v => (
-                            <Col key={v.number} span={4}>
-                              <Checkbox key={v.number} value={v.number}>{v.name}</Checkbox>
+                            <Col key={v.deptId} span={4}>
+                              <Checkbox key={v.deptId} value={v.deptId}>{v.deptName}</Checkbox>
                             </Col>
                           ))}
                         </Row>

@@ -5,7 +5,7 @@ import numeral from 'numeral'
 import { formLayoutItemAddDouble, formLayoutItemAddEdit } from "@/utils/constant";
 import CustomBtn from '@/components/commonUseModule/customBtn'
 import Editor from "@/components/TinyEditor"
-import UploadFile from './uploadFile'
+import UploadFile from '@/components/FileUpload'
 import styles from '../index.less'
 import { Modal, Form, Select, Input, DatePicker, Col, Row, Table, message, Upload, Button } from 'antd'
 
@@ -16,6 +16,16 @@ const CreateConstract = (props) => {
   const {
     form,
     deptList,
+    deptListMap,
+    projectList,
+    projectMap,
+    systemList,
+    systemMap,
+    supplierList,
+    supplierMap,
+    headerList,
+    headerMap,
+    groupMap,
     visibleModal,
     modalTitle,
     recordValue,
@@ -27,6 +37,7 @@ const CreateConstract = (props) => {
 
   console.log(recordValue)
   const [description, setDescription] = useState('');
+  const [urls, setUrls] = useState('')
   useEffect(() => {
     setDescription(recordValue.description)
   }, [recordValue.description])
@@ -71,6 +82,10 @@ const CreateConstract = (props) => {
         handleQueryData()
       }
     })
+  }
+
+  const handleSaveFileUrl = (arrUrl) => {
+    setUrls(arrUrl)
   }
 
   const defaultData = [
@@ -227,12 +242,12 @@ const CreateConstract = (props) => {
         return
       }
       if (bool) return
-      values.projectName = '自定义项目'
-      values.systemName = "自定义系统"
-      values.deptName = '自定义部门'
-      values.providerCompanyName = '自定义供应商'
-      values.headerName = '自定义负责人'
-      values.headerGroupName = '自定义团队名'
+      values.projectName = projectMap[values.projectNaId]
+      values.systemName = systemMap[values.systemId]
+      values.deptName = deptListMap[values.deptId]
+      values.providerCompanyName = supplierMap[values.supplierMap]
+      values.headerName = headerMap[values.headerId]
+      values.headerGroupName = groupMap[values.headerGroupId]
       values.signingTime = moment(values.signingTime).format('YYYY-MM-DD')
       values.description = description
       values.payRecords = data
@@ -279,7 +294,9 @@ const CreateConstract = (props) => {
               // showSearch
               placeholder="请输入所属项目"
             >
-              <Option key={1} value={1}>自定义项目</Option>
+               {!_.isEmpty(projectList) && projectList.map(d => (
+                <Option key={d.number} value={d.name}>{d.name}</Option>
+              ))}
             </Select>)}
           </FormItem>
         </Col>
@@ -294,7 +311,7 @@ const CreateConstract = (props) => {
               placeholder="请输入所属部门"
             >
               {!_.isEmpty(deptList) && deptList.map(d => (
-                <Option key={d.number} value={d.name}>{d.name}</Option>
+                <Option key={d.deptId} value={d.deptId}>{d.deptName}</Option>
               ))}
             </Select>)}
           </FormItem>
@@ -309,7 +326,9 @@ const CreateConstract = (props) => {
               // showSearch
               placeholder="请输入所属系统"
             >
-              <Option key={1} value={1}>自定义</Option>
+              {!_.isEmpty(systemList) && systemList.map(d => (
+                <Option key={d.systemId} value={d.systemId}>{d.systemName}</Option>
+              ))}
             </Select>)}
           </FormItem>
         </Col>
@@ -362,7 +381,9 @@ const CreateConstract = (props) => {
               // showSearch
               placeholder="请输入供应商"
             >
-              <Option key={1} value={1}>自定义</Option>
+              {!_.isEmpty(supplierList) && supplierList.map(d => (
+                <Option key={d.supplierId} value={d.supplierId}>{d.supplierName}</Option>
+              ))}
             </Select>)}
           </FormItem>
         </Col>
@@ -376,7 +397,9 @@ const CreateConstract = (props) => {
               // showSearch
               placeholder="请输入合同负责人"
             >
-              <Option key={1} value={1}>自定义</Option>
+              {!_.isEmpty(headerList) && headerList.map(d => (
+                <Option key={d.leaderId} value={d.leaderId}>{d.leaderName}</Option>
+              ))}
             </Select>)}
           </FormItem>
         </Col>
@@ -390,7 +413,9 @@ const CreateConstract = (props) => {
               // showSearch
               placeholder="请输入合同负责人团队"
             >
-              <Option key={1} value={1}>自定义</Option>
+              {!_.isEmpty(headerList) && headerList.map(d => (
+                <Option key={d.number} value={d.number}>{d.name}</Option>
+              ))}
             </Select>)}
           </FormItem>
         </Col>
@@ -454,16 +479,20 @@ const CreateConstract = (props) => {
             />
           </FormItem>
         </Col>
-        <Col span={24}>
+        {/* <Col span={24}>
           <FormItem
             {...formLayoutItemAddEdit}
             label='上传附件'
           >
-            <UploadFile>
+            <UploadFile
+              uploadType='2'
+              urls={urls}
+              handleSaveFileUrl={handleSaveFileUrl}
+            >
               <Button>上传</Button>
             </UploadFile>
           </FormItem>
-        </Col>
+        </Col> */}
       </Row>
     </Form>
   )
@@ -496,6 +525,15 @@ const CreateConstract = (props) => {
 export default connect(
   ({ constract, loading }) => ({
     constract,
+    projectList: constract.projectList,
+    projectMap: constract.projectMap,
+    systemList: constract.systemList,
+    systemMap: constract.systemMap,
+    supplierList: constract.supplierList,
+    supplierMap: constract.supplierMap,
+    headerList: constract.headerList,
+    headerMap: constract.headerMap,
+    groupMap: constract.groupMap,
     deptList: constract.deptList,
     deptListMap: constract.deptListMap,
     loadingAdd: loading.effects['constract/addData'],

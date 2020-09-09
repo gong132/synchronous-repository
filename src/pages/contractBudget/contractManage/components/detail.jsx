@@ -39,6 +39,8 @@ const { Option } = Select
   loadingUpdate: loading.effects['constract/updateData'],
   contractInfo: constract.contractInfo,
   logList: constract.logList,
+  deptList: constract.deptList,
+  deptListMap: constract.deptListMap,
 }))
 class Detail extends PureComponent {
   constructor(props) {
@@ -53,6 +55,7 @@ class Detail extends PureComponent {
   componentDidMount() {
     this.handleQuerySectorInfo()
     this.handleQueryLogList()
+    this.handleQueryDept()
   }
 
   // 查看板块详情
@@ -63,6 +66,13 @@ class Detail extends PureComponent {
       payload: {
         id,
       }
+    })
+  }
+
+  // 查部门
+  handleQueryDept = () => {
+    this.props.dispatch({
+      type: 'constract/fetchNotBindDept',
     })
   }
 
@@ -101,8 +111,8 @@ class Detail extends PureComponent {
   }
 
   handleSubmit = () => {
-    this.props.form.validateFieldsAndScroll((err,values) => {
-      if(err) return
+    this.props.form.validateFieldsAndScroll((err, values) => {
+      if (err) return
       console.log(values)
     })
   }
@@ -165,7 +175,9 @@ class Detail extends PureComponent {
       loadingQueryLogData,
       contractInfo,
       form,
-      loadingUpdate } = this.props
+      loadingUpdate,
+      deptList,
+    } = this.props
     const {
       name,
       budgetNumber,
@@ -224,9 +236,9 @@ class Detail extends PureComponent {
       }
     ]
     const columns = [
-      TableColumnHelper.genPlanColumn('operateUserName', '修改人', {width: '100px'}),
+      TableColumnHelper.genPlanColumn('operateUserName', '修改人', { width: '100px' }),
       TableColumnHelper.genPlanColumn('content', '修改内容'),
-      TableColumnHelper.genPlanColumn('updateTime', '修改时间', {width: '100px'}),
+      TableColumnHelper.genPlanColumn('updateTime', '修改时间', { width: '100px' }),
     ]
     const detailList = [
       { span: 2, required: false, name: '合同名称', value: name },
@@ -315,7 +327,7 @@ class Detail extends PureComponent {
                         rules: [{ required: true, message: '请输入合同编号!' }],
                         initialValue: number
                       })(
-                        <Input style={{width: w}} disabled placeholder='请输入合同编号' />
+                        <Input style={{ width: w }} disabled placeholder='请输入合同编号' />
                       )}
                     </FormItem>
                   </DescriptionItem>
@@ -329,7 +341,7 @@ class Detail extends PureComponent {
                         initialValue: budgetNumber,
                       })(<Select
                         placeholder="请输入预算编号"
-                        style={{width: w}}
+                        style={{ width: w }}
                       >
                         <Option key={1} value={1}>自定义</Option>
                       </Select>)}
@@ -345,7 +357,7 @@ class Detail extends PureComponent {
                         initialValue: budgetNumber,
                       })(<Select
                         placeholder="请输入所属集群/板块"
-                        style={{width: w}}
+                        style={{ width: w }}
                       >
                         <Option key={1} value={1}>自定义</Option>
                       </Select>)}
@@ -361,7 +373,7 @@ class Detail extends PureComponent {
                         initialValue: projectNumber,
                       })(<Select
                         placeholder="请输入所属项目"
-                        style={{width: w}}
+                        style={{ width: w }}
                       >
                         <Option key={1} value={1}>自定义</Option>
                       </Select>)}
@@ -377,7 +389,7 @@ class Detail extends PureComponent {
                         initialValue: providerCompanyId,
                       })(<Select
                         placeholder="请输入供应商"
-                        style={{width: w}}
+                        style={{ width: w }}
                       >
                         <Option key={1} value={1}>自定义</Option>
                       </Select>)}
@@ -392,10 +404,16 @@ class Detail extends PureComponent {
                         rules: [{ required: true, message: '请输入所属部门' }],
                         initialValue: deptId,
                       })(<Select
-                        placeholder="请输入所属部门"
-                        style={{width: w}}
+                        allowClear
+                        placeholder='请输入所属部门'
+                        onChange={_.debounce(this.saveParams, 500)}
+                        style={{
+                          width: '100%'
+                        }}
                       >
-                        <Option key={1} value={1}>自定义</Option>
+                        {!_.isEmpty(deptList) && deptList.map(d => (
+                          <Option key={d.deptId} value={d.deptId}>{d.deptName}</Option>
+                        ))}
                       </Select>)}
                     </FormItem>
                   </DescriptionItem>
@@ -413,7 +431,7 @@ class Detail extends PureComponent {
                         }],
                         normalize: this.formatMoney,
                         initialValue: firstOfferAmount,
-                      })(<Input style={{width: w}} addonAfter='元' placeholder="请输入首次报价金额" />)}
+                      })(<Input style={{ width: w }} addonAfter='元' placeholder="请输入首次报价金额" />)}
                     </FormItem>
                   </DescriptionItem>
                   <DescriptionItem
@@ -430,7 +448,7 @@ class Detail extends PureComponent {
                         }],
                         normalize: this.formatMoney,
                         initialValue: transactionAmount,
-                      })(<Input style={{width: w}} addonAfter='元' placeholder="请输入合同成交额" />)}
+                      })(<Input style={{ width: w }} addonAfter='元' placeholder="请输入合同成交额" />)}
                     </FormItem>
                   </DescriptionItem>
                   <DescriptionItem
@@ -445,7 +463,7 @@ class Detail extends PureComponent {
                         allowClear
                         // showSearch
                         placeholder="请输入合同负责人"
-                        style={{width: w}}
+                        style={{ width: w }}
                       >
                         <Option key={1} value={1}>自定义</Option>
                       </Select>)}
@@ -463,7 +481,7 @@ class Detail extends PureComponent {
                         allowClear
                         // showSearch
                         placeholder="请输入合同负责人团队"
-                        style={{width: w}}
+                        style={{ width: w }}
                       >
                         <Option key={1} value={1}>自定义</Option>
                       </Select>)}
@@ -477,7 +495,7 @@ class Detail extends PureComponent {
                       {form.getFieldDecorator('signingTime', {
                         rules: [{ required: true, message: '请输入合同签订时间' }],
                         initialValue: signingTime ? moment(signingTime) : null,
-                      })(<DatePicker style={{width: w}} placeholder="请输入合同签订时间" />)}
+                      })(<DatePicker style={{ width: w }} placeholder="请输入合同签订时间" />)}
                     </FormItem>
                   </DescriptionItem>
                   <DescriptionItem
@@ -492,7 +510,7 @@ class Detail extends PureComponent {
                         allowClear
                         // showSearch
                         placeholder="请输入录入人"
-                        style={{width: w}}
+                        style={{ width: w }}
                       >
                         <Option key={1} value={1}>自定义</Option>
                       </Select>)}
@@ -506,7 +524,7 @@ class Detail extends PureComponent {
                       {form.getFieldDecorator('createTime', {
                         rules: [{ required: true, message: '请输入录入时间' }],
                         initialValue: createTime ? moment(createTime) : null,
-                      })(<DatePicker style={{width: w}} placeholder="请输入录入时间" />)}
+                      })(<DatePicker style={{ width: w }} placeholder="请输入录入时间" />)}
                     </FormItem>
                   </DescriptionItem>
                   <DescriptionItem
@@ -518,7 +536,7 @@ class Detail extends PureComponent {
                         rules: [{ required: true, message: '请输入项目验收日期' }],
                         initialValue: projectCheckTime ? moment(projectCheckTime) : null,
                       })(<DatePicker
-                        style={{width: w}}
+                        style={{ width: w }}
                         onChange={_.debounce(this.autoCalc, 500)}
                         placeholder="请输入项目验收日期"
                       />)}
@@ -538,7 +556,7 @@ class Detail extends PureComponent {
                         normalize: this.formatCount,
                         initialValue: freeDefendDate
                       })(<Input
-                        style={{width: w}}
+                        style={{ width: w }}
                         onChange={_.debounce(this.autoCalc, 500)}
                         placeholder='请输入免费维保期'
                         addonAfter='月' />)}
@@ -557,7 +575,7 @@ class Detail extends PureComponent {
                         }],
                         normalize: this.formatCount,
                         initialValue: defendPayTime,
-                      })(<Input style={{width: w}} disabled placeholder="请输入维保支付日期" />)}
+                      })(<Input style={{ width: w }} disabled placeholder="请输入维保支付日期" />)}
                     </FormItem>
                   </DescriptionItem>
                 </Fragment>
@@ -636,9 +654,9 @@ class Detail extends PureComponent {
           <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 8 }} label="维保支付日期">
             <Input value={freePayDay} disabled placeholder="请输入维保支付日期" />
           </FormItem>
-          <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="项目验收报告">
+          {/* <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="项目验收报告">
             <Button type='primary' ghost>上传</Button>
-          </FormItem>
+          </FormItem> */}
         </Modal>
       </Fragment>
     );

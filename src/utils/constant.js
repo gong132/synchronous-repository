@@ -1,18 +1,18 @@
 const formLayoutItem = {
   labelCol: { span: 6 },
-  wrapperCol: { span: 13 },
+  wrapperCol: { span: 18 },
 }
 const formLayoutItemAddDouble = {
   labelCol: { span: 8 },
-  wrapperCol: { span: 14 },
+  wrapperCol: { span: 16 },
 }
 const formLayoutItem1 = {
   labelCol: { span: 10 },
-  wrapperCol: { span: 13 },
+  wrapperCol: { span: 14 },
 }
 const formLayoutItemAddEdit = {
   labelCol: { span: 4 },
-  wrapperCol: { span: 19 },
+  wrapperCol: { span: 20 },
 }
 const formLayout = {
   labelCol: {

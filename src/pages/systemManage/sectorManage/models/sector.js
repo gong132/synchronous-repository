@@ -4,6 +4,7 @@ import {
   updateData,
   queryDept,
   querySectorInfo,
+  queryDeptTemp,
 } from '@/services/systemManage/sectorManage'
 import { queryLogList } from '@/services/global'
 import { PagerHelper } from "@/utils/helper";
@@ -16,7 +17,8 @@ const Sector = {
     logList: PagerHelper.genListState(),
     deptList: [],
     deptListMap: {},
-    sectorInfo: {}
+    sectorInfo: {},
+    allDept:[]
   },
   effects: {
     *fetchLogList({payload}, {call, put}) {
@@ -77,13 +79,28 @@ const Sector = {
       }
       let obj = {}
       data.map(v => {
-        obj[v.number] = v.name
+        obj[v.deptId] = v.deptName
       })
       yield put({
         type: 'saveData',
         payload: {
           deptList: data,
           deptListMap: obj
+        }
+      })
+    },
+
+    // 临时查询所有项目接口
+    *fetchAllDept({payload}, {call, put}) {
+      const { code, msg, data } = yield call(queryDeptTemp, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      yield put({
+        type: 'saveData',
+        payload: {
+          allDept: data,
         }
       })
     },
