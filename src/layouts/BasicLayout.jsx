@@ -49,6 +49,11 @@ const BasicLayout = props => {
     dispatch({
       type: 'global/queryAllMenuList',
       payload: {},
+    }).then(data => {
+      if (!data) return
+      dispatch({
+        type: 'global/queryCurrentUserInfo',
+      });
     })
   };
 
@@ -74,20 +79,12 @@ const BasicLayout = props => {
     // 判断是否登录了，未登录直接跳转登录
     const gdUser = storage.get('gd-user');
     if (gdUser) {
-      // this.getSetting();
-      // this.getRegions();
-      getAllMenu();
+      getAllMenu()
     } else {
       window.g_app._store.dispatch({
         type: 'login/logout',
       });
     }
-
-    // if (dispatch) {
-    //   dispatch({
-    //     type: 'user/fetchCurrent',
-    //   });
-    // }
   }, []);
   useEffect(() => {
     const {

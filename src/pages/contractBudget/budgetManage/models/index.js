@@ -1,5 +1,6 @@
 import { queryBudgetList, addBudget, updateBudget, fetchClusterList,
-  fetchDeptListByCluster, fetchGroupList, fetchBudgetDetails, fetchLogList } from '@/services/contractBudget/budget';
+  fetchDeptListByCluster, fetchGroupList, fetchBudgetDetails, fetchLogList,
+  fetchDeptList, fetchGroupByDept } from '@/services/contractBudget/budget';
 import {PagerHelper} from "@/utils/helper";
 import {message} from "antd";
 
@@ -10,7 +11,9 @@ const budgetManage = {
     budgetList: PagerHelper.genListState(),
     clusterList: [],
     deptList: [],
+    allDeptList: [],
     groupList: [],
+    groupByDept: {},
     budgetDetails: {},
     budgetLogList: PagerHelper.genListState(),
   },
@@ -87,6 +90,18 @@ const budgetManage = {
         payload: { deptList: data },
       })
     },
+    *queryGroupByDept({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(fetchGroupByDept, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      yield put({
+        type: 'saveData',
+        payload: { groupByDept: data },
+      })
+      return data
+    },
     *queryGroupList({ payload }, { call, put }) {
       const { code, msg, data } = yield call(fetchGroupList, payload);
       if (!code || code !== 200) {
@@ -96,6 +111,17 @@ const budgetManage = {
       yield put({
         type: 'saveData',
         payload: { groupList: data },
+      })
+    },
+    *queryAllDeptList({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(fetchDeptList, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return;
+      }
+      yield put({
+        type: 'saveData',
+        payload: { allDeptList: data },
       })
     },
     *queryBudgetDetails({ payload }, { call, put }) {

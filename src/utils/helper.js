@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip, Popover, Badge, Avatar } from 'antd';
+import {Tooltip, Popover, Badge, Avatar, message} from 'antd';
 import moment from 'moment';
 import numeral from 'numeral';
 import pathToRegexp from 'path-to-regexp';
@@ -563,6 +563,74 @@ function findValueByArray(arr, preId, cruId, name) {
   return findName
 }
 
+
+// 转换金额必须为两位小数点
+const toTwoDecimals = (value, key, fm, minus = false) => {
+  // 两位小数正则
+  const reg = /^\d+(\.\d{1,2})?$/;
+  // 默认金额大于0, 如果需要接收负数, 第四个参数传true
+  // 如果minus 为true, 则忽略下面判断
+  if (value * 1 < 0 && !minus) {
+    message.error('金额不能为负');
+    fm.setFieldsValue({ [key]: '' });
+    return '';
+  }
+  // 如果输入0.0, 不确定用户是否继续输入, 直接返回
+  if (value === '0.0') return value;
+
+  // 如果输入., 直接返回给用户强制转换成0.
+  if (value === '.') {
+    value = '0.';
+    fm.setFieldsValue({
+      [key]: value,
+    });
+    return String(value)
+  }
+
+  // 判断是否是数字 或者 数字类型的字符串
+  if (!Number(value) && value !== '0' && value !== '0.') {
+    fm.setFieldsValue({ [key]: '' });
+    message.error('请输入金额');
+    return '';
+  }
+  // 判断出现多个小数点的异常数字, 比如 12.12.1
+  if (String(value).split('.').length > 2) {
+    message.error('请输入正确的金额');
+    fm.setFieldsValue({ [key]: '' });
+    return '';
+  }
+  // 不符合两位小数正则, 但是以.0开头时, 强制转换成0.xx 的形式
+  if (!reg.test(value) && value.split('.')[1]) {
+    value = Math.floor(value * 100) / 100;
+    fm.setFieldsValue({
+      [key]: value,
+    });
+  }
+  return String(value);
+};
+
+// 转换金额必须为整数
+const toInteger = (value, key, fm, minus = false) => {
+
+  // 默认金额大于0, 如果需要接收负数, 第四个参数传true
+  // 如果minus 为true, 则忽略下面判断
+  if (value * 1 < 0 && !minus) {
+    fm.setFieldsValue({ [key]: '0' });
+    return '0';
+  }
+  // 判断是否是数字 或者 数字类型的字符串
+  if (!Number(value) && value !== '0' ) {
+    fm.setFieldsValue({ [key]: '0' });
+    return '0';
+  }
+  // 判断出现多个小数点的异常数字, 比如 12.12.1
+  if (String(value).split('.').length > 1) {
+    fm.setFieldsValue({ [key]: '0' });
+    return '0';
+  }
+  return String(Number.parseInt(value));
+};
+
 export {
   DefaultPage,
   MenuActionHelper,
@@ -578,5 +646,7 @@ export {
   NumberHelper,
   SelectHelper,
   findValueByArray,
-  moneyFormatAfter
+  moneyFormatAfter,
+  toTwoDecimals,
+  toInteger
 };

@@ -151,6 +151,13 @@ const Index = props => {
       }
     })
   };
+  const handleUpdateAuthData = () => {
+    dispatch({
+      type: 'global/updateAuthData',
+      payload: {
+      }
+    })
+  };
 
   useEffect(() => {
     handleQueryBudgetData();

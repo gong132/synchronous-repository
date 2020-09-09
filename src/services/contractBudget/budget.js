@@ -56,3 +56,17 @@ export async function fetchGroupList(params) {
     params,
   });
 }
+// 部门  暂用
+export async function fetchDeptList(params) {
+  return request('/temp/dept', {
+    method: 'get',
+    params,
+  });
+}
+// 根据部门查询集群或者组
+export async function fetchGroupByDept(params) {
+  return request('/cluster/byDept', {
+    method: 'get',
+    params,
+  });
+}

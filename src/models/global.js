@@ -56,15 +56,8 @@ const GlobalModel = {
       return data
     },
 
-    *fetchCurrentUser({payload}, {call, put}) {
-      console.log(localStorage.getItem('gd-user'), 'gd-userInfo')
-      const currentUser = localStorage.getItem('gd-user')
-    },
-
     *fetchLogList({payload}, {call, put}) {
-      console.log('payload:', payload)
       const { code, data, msg } = yield call(queryLogList, payload);
-      console.log(data)
       if (code !== 200) {
         message.error(msg);
         return
