@@ -41,6 +41,8 @@ const { RangePicker } = DatePicker
   deptList: constract.deptList,
   deptListMap: constract.deptListMap,
   contractInfo: constract.contractInfo,
+  budgetList: constract.budgetList,
+  budgetMap: constract.budgetMap,
   projectList: constract.projectList,
   projectMap: constract.projectMap,
   systemList: constract.systemList,
@@ -70,6 +72,7 @@ class ContractManage extends Component {
     this.handleQuerySystem()
     this.handleQuerySupplier()
     this.handleQueryGroup()
+    this.handleQueryBudget()
   }
 
   handleQueryData = (params = {}) => {
@@ -97,8 +100,8 @@ class ContractManage extends Component {
   moreQuery = () => {
     const formValues = this.props.form.getFieldsValue();
     if (formValues.signTime && !_.isEmpty(formValues.signTime)) {
-      formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYYMMDD')
-      formValues.signingEndTime = moment(formValues.signTime[1]).format('YYYYMMDD')
+      formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYY-MM-DD')
+      formValues.signingEndTime = moment(formValues.signTime[1]).format('YYYY-MM-DD')
     }
     console.log(formValues)
 
@@ -125,6 +128,13 @@ class ContractManage extends Component {
   handleQueryProject = () => {
     this.props.dispatch({
       type: 'constract/fetchProject',
+    })
+  }
+
+  // 查预算编号
+  handleQueryBudget = () => {
+    this.props.dispatch({
+      type: 'constract/fetchBudgetNumber',
     })
   }
 
@@ -287,10 +297,11 @@ class ContractManage extends Component {
               style={{
                 width: '100%'
               }}
+              onChange={_.debounce(this.saveParams, 500)}
               placeholder="请输入供应商"
             >
               {!_.isEmpty(supplierList) && supplierList.map(d => (
-                <Option key={d.supplierId} value={d.supplierId}>{d.supplierName}</Option>
+                <Option key={d.supplierId} value={d.supplierName}>{d.supplierName}</Option>
               ))}
             </Select>
           )}
@@ -359,8 +370,8 @@ class ContractManage extends Component {
       TableColumnHelper.genPlanColumn('headerName', '合同负责人'),
       TableColumnHelper.genPlanColumn('providerCompanyName', '供应商'),
       TableColumnHelper.genPlanColumn('signingTime', '合同签订时间'),
-      TableColumnHelper.genDiscountMoneyColumn('payAmount', '合同已支付金额', {}, ''),
-      TableColumnHelper.genDiscountMoneyColumn('notPayAmount', '合同待支付金额', {}, ''),
+      TableColumnHelper.genPlanColumn('payAmount', '合同已支付金额', {}, ''),
+      TableColumnHelper.genPlanColumn('notPayAmount', '合同待支付金额', {}, ''),
       {
         title: '操作',
         align: 'left',
@@ -431,7 +442,7 @@ class ContractManage extends Component {
             //   { number: 'gong3', systemName: 'gg' }
             // ]}
             onChange={this.handleStandardTableChange}
-            scroll={{ x: 1800 }}
+            scroll={{ x: 1600 }}
           />
         </Card>
       </Fragment>

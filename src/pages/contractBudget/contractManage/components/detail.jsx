@@ -6,6 +6,7 @@ import numeral from 'numeral'
 import GlobalSandBox from "@/components/commonUseModule/globalSandBox";
 import StandardTable from "@/components/StandardTable";
 import { DefaultPage, TableColumnHelper } from "@/utils/helper";
+import Editor from "@/components/TinyEditor"
 import OptButton from "@/components/commonUseModule/optButton";
 import editIcon from '@/assets/icon/Button_bj.svg'
 import budget_xq from '@/assets/icon/modular_xq.svg'
@@ -41,6 +42,16 @@ const { Option } = Select
   logList: constract.logList,
   deptList: constract.deptList,
   deptListMap: constract.deptListMap,
+  projectList: constract.projectList,
+  projectMap: constract.projectMap,
+  systemList: constract.systemList,
+  systemMap: constract.systemMap,
+  supplierList: constract.supplierList,
+  supplierMap: constract.supplierMap,
+  headerList: constract.headerList,
+  headerMap: constract.headerMap,
+  groupMap: constract.groupMap,
+  budgetList: constract.budgetList,
 }))
 class Detail extends PureComponent {
   constructor(props) {
@@ -49,6 +60,8 @@ class Detail extends PureComponent {
       editBool: false,
       modalVisible: false,
       freePayDay: '',
+      freePayDayEdit: '',
+      descriptionState: ''
     }
   }
 
@@ -92,12 +105,18 @@ class Detail extends PureComponent {
     })
   }
 
-  // 编辑
+  handleChangeDesc = (content) => {
+    this.setState({
+      descriptionState: content
+    })
+  }
+
+  // 确认
   sumbitEdit = (params) => {
     const id = getParam('id')
     params.id = id
     this.props.dispatch({
-      type: 'constract/updateData',
+      type: 'constract/checkProject',
       payload: {
         ...params
       }
@@ -111,9 +130,44 @@ class Detail extends PureComponent {
   }
 
   handleSubmit = () => {
+    const {descriptionState} = this.state
+    const {projectMap, systemMap, deptListMap, supplierMap, headerMap, groupMap} = this.props
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (err) return
+      values.projectName = projectMap[values.projectNumber]
+      values.systemName = systemMap[values.systemId]
+      values.deptName = deptListMap[values.deptId]
+      values.providerCompanyName = supplierMap[values.providerCompanyId]
+      values.headerName = headerMap[values.headerId]
+      values.headerGroupName = groupMap[values.headerGroupId]
+      values.projectCheckTime = values.projectCheckTimeEdit ? moment(values.projectCheckTimeEdit).format('YYYY-MM-DD') : ''
+      values.freeDefendDate = values.freeDefendDateEdit
+      values.defendPayTime = values.defendPayTimeEdit
+      values.signingTime = moment(values.signingTime).format('YYYY-MM-DD')
+      values.createTime = moment(values.createTime).format('YYYY-MM-DD')
+      values.description = descriptionState
       console.log(values)
+      this.sumbitEdit(values)
+    })
+  }
+
+   // 编辑
+   sumbitEdit = (params) => {
+    const id = getParam('id')
+    params.id = id
+    this.props.dispatch({
+      type: 'constract/updateData',
+      payload: {
+        ...params
+      }
+    }).then(res => {
+      if (res) {
+        this.handleQuerySectorInfo()
+        this.handleQueryLogList()
+        this.setState({
+          editBool: false,
+        })
+      }
     })
   }
 
@@ -142,10 +196,23 @@ class Detail extends PureComponent {
   autoCalc = () => {
     const values = this.props.form.getFieldsValue(['freeDefendDate', 'projectCheckTime'])
     values.projectCheckTime = values.projectCheckTime ? moment(values.projectCheckTime).format('YYYY-MM-DD') : null
+    console.log(values.freeDefendDate, values.projectCheckTime)
     if (values.freeDefendDate && values.projectCheckTime) {
       const str = moment(values.projectCheckTime).add(Number(values.freeDefendDate) - 1, 'months').format('YYYY-MM-DD');
       this.setState({
         freePayDay: str
+      })
+    }
+  }
+
+  autoCalcEdit = () => {
+    const values = this.props.form.getFieldsValue(['freeDefendDateEdit', 'projectCheckTimeEdit'])
+    values.projectCheckTimeEdit = values.projectCheckTimeEdit ? moment(values.projectCheckTimeEdit).format('YYYY-MM-DD') : null
+    console.log(values.freeDefendDateEdit, values.projectCheckTimeEdit)
+    if (values.freeDefendDateEdit && values.projectCheckTimeEdit) {
+      const str = moment(values.projectCheckTimeEdit).add(Number(values.freeDefendDateEdit) - 1, 'months').format('YYYY-MM-DD');
+      this.setState({
+        freePayDayEdit: str
       })
     }
   }
@@ -169,7 +236,7 @@ class Detail extends PureComponent {
 
   render() {
     const w = 150
-    const { editBool, modalVisible, freePayDay } = this.state
+    const { editBool, modalVisible, freePayDay, descriptionState, freePayDayEdit } = this.state
     const { logList,
       loadingQueryInfo,
       loadingQueryLogData,
@@ -177,6 +244,16 @@ class Detail extends PureComponent {
       form,
       loadingUpdate,
       deptList,
+      projectList,
+      projectMap,
+      systemList,
+      systemMap,
+      supplierList,
+      supplierMap,
+      headerList,
+      headerMap,
+      groupMap,
+      budgetList,
     } = this.props
     const {
       name,
@@ -206,7 +283,8 @@ class Detail extends PureComponent {
       projectCheckTime,
       freeDefendDate,
       defendPayTime,
-      payRecords
+      payRecords,
+      clusterName
     } = contractInfo
     const payColumns = [
       {
@@ -244,24 +322,24 @@ class Detail extends PureComponent {
       { span: 2, required: false, name: '合同名称', value: name },
       { span: 1, required: false, name: '合同编号', value: number },
       { span: 1, required: false, name: '预算编号', value: budgetNumber },
-      { span: 1, required: false, name: '所属集群/板块', value: name },
+      { span: 1, required: false, name: '所属集群/板块', value: clusterName },
       { span: 1, required: false, name: '所属项目', value: projectName },
       { span: 1, required: false, name: '供应商', value: providerCompanyName },
       { span: 1, required: false, name: '所属部门', value: deptName },
-      { span: 1, required: false, name: '首次报价金额', value: name },
+      { span: 1, required: false, name: '首次报价金额', value: firstOfferAmount },
       { span: 1, required: false, name: '合同成交金额', value: transactionAmount },
       { span: 1, required: false, name: '合同负责人', value: headerName },
       { span: 1, required: false, name: '合同负责人团队', value: headerGroupName },
       { span: 1, required: false, name: '合同签订时间', value: signingTime },
       { span: 1, required: false, name: '录入人', value: userName },
       { span: 1, required: false, name: '录入时间', value: createTime },
-      { span: 1, required: false, name: '项目验收日期', value: name },
+      { span: 1, required: false, name: '项目验收日期', value: projectCheckTime },
       { span: 1, required: false, name: '免费维保期', value: freeDefendDate },
-      { span: 1, required: false, name: '维保支付期', value: name },
-      { span: 3, required: false, name: '项目报告', value: name },
+      { span: 1, required: false, name: '维保支付期', value: defendPayTime },
+      // { span: 3, required: false, name: '项目报告', value: name },
       { span: 3, required: false, name: '涉及系统', value: systemName },
-      { span: 3, required: false, name: '合同描述', value: description },
-      { span: 3, required: false, name: '附件', value: name },
+      { span: 3, required: false, name: '合同描述', value: description, dataIndex: 'description' },
+      // { span: 3, required: false, name: '附件', value: name },
     ]
     return (
       <Fragment>
@@ -277,6 +355,8 @@ class Detail extends PureComponent {
                 onClick={
                   () => this.setState({
                     editBool: true,
+                    freePayDay: '',
+                    descriptionState: description
                   })
                 }
                 img={editIcon}
@@ -288,6 +368,7 @@ class Detail extends PureComponent {
                   onClick={
                     () => this.setState({
                       editBool: false,
+                      freePayDay: ''
                     })
                   }
                 >取消</Button>
@@ -327,7 +408,7 @@ class Detail extends PureComponent {
                         rules: [{ required: true, message: '请输入合同编号!' }],
                         initialValue: number
                       })(
-                        <Input style={{ width: w }} disabled placeholder='请输入合同编号' />
+                        <Input disabled style={{ width: w }} disabled placeholder='请输入合同编号' />
                       )}
                     </FormItem>
                   </DescriptionItem>
@@ -343,7 +424,9 @@ class Detail extends PureComponent {
                         placeholder="请输入预算编号"
                         style={{ width: w }}
                       >
-                        <Option key={1} value={1}>自定义</Option>
+                        {!_.isEmpty(budgetList) && budgetList.map(d => (
+                          <Option key={d.number} value={d.number}>{d.number}</Option>
+                        ))}
                       </Select>)}
                     </FormItem>
                   </DescriptionItem>
@@ -352,15 +435,10 @@ class Detail extends PureComponent {
                     label={<>{<span style={{ color: 'red' }}>*</span>}所属集群/板块	</>}
                   >
                     <FormItem>
-                      {form.getFieldDecorator('budgetNumber', {
+                      {form.getFieldDecorator('clusterName', {
                         rules: [{ required: true, message: '请输入所属集群/板块' }],
-                        initialValue: budgetNumber,
-                      })(<Select
-                        placeholder="请输入所属集群/板块"
-                        style={{ width: w }}
-                      >
-                        <Option key={1} value={1}>自定义</Option>
-                      </Select>)}
+                        initialValue: clusterName,
+                      })(<Input disabled />)}
                     </FormItem>
                   </DescriptionItem>
                   <DescriptionItem
@@ -375,7 +453,9 @@ class Detail extends PureComponent {
                         placeholder="请输入所属项目"
                         style={{ width: w }}
                       >
-                        <Option key={1} value={1}>自定义</Option>
+                        {!_.isEmpty(projectList) && projectList.map(d => (
+                          <Option key={d.number} value={d.number}>{d.name}</Option>
+                        ))}
                       </Select>)}
                     </FormItem>
                   </DescriptionItem>
@@ -391,7 +471,9 @@ class Detail extends PureComponent {
                         placeholder="请输入供应商"
                         style={{ width: w }}
                       >
-                        <Option key={1} value={1}>自定义</Option>
+                        {!_.isEmpty(supplierList) && supplierList.map(d => (
+                          <Option key={d.supplierId} value={d.supplierId}>{d.supplierName}</Option>
+                        ))}
                       </Select>)}
                     </FormItem>
                   </DescriptionItem>
@@ -406,7 +488,6 @@ class Detail extends PureComponent {
                       })(<Select
                         allowClear
                         placeholder='请输入所属部门'
-                        onChange={_.debounce(this.saveParams, 500)}
                         style={{
                           width: '100%'
                         }}
@@ -465,7 +546,9 @@ class Detail extends PureComponent {
                         placeholder="请输入合同负责人"
                         style={{ width: w }}
                       >
-                        <Option key={1} value={1}>自定义</Option>
+                        {!_.isEmpty(headerList) && headerList.map(d => (
+                          <Option key={d.leaderId} value={d.leaderId}>{d.leaderName}</Option>
+                        ))}
                       </Select>)}
                     </FormItem>
                   </DescriptionItem>
@@ -483,7 +566,9 @@ class Detail extends PureComponent {
                         placeholder="请输入合同负责人团队"
                         style={{ width: w }}
                       >
-                        <Option key={1} value={1}>自定义</Option>
+                        {!_.isEmpty(headerList) && headerList.map(d => (
+                          <Option key={d.number} value={d.number}>{d.name}</Option>
+                        ))}
                       </Select>)}
                     </FormItem>
                   </DescriptionItem>
@@ -509,6 +594,7 @@ class Detail extends PureComponent {
                       })(<Select
                         allowClear
                         // showSearch
+                        disabled
                         placeholder="请输入录入人"
                         style={{ width: w }}
                       >
@@ -524,32 +610,32 @@ class Detail extends PureComponent {
                       {form.getFieldDecorator('createTime', {
                         rules: [{ required: true, message: '请输入录入时间' }],
                         initialValue: createTime ? moment(createTime) : null,
-                      })(<DatePicker style={{ width: w }} placeholder="请输入录入时间" />)}
+                      })(<DatePicker disabled style={{ width: w }} placeholder="请输入录入时间" />)}
                     </FormItem>
                   </DescriptionItem>
                   <DescriptionItem
                     span={1}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}项目验收日期</>}
+                    label={<>{<span style={{ color: 'red' }}></span>}项目验收日期</>}
                   >
                     <FormItem>
-                      {form.getFieldDecorator('projectCheckTime', {
-                        rules: [{ required: true, message: '请输入项目验收日期' }],
+                      {form.getFieldDecorator('projectCheckTimeEdit', {
+                        rules: [{ required: false, message: '请输入项目验收日期' }],
                         initialValue: projectCheckTime ? moment(projectCheckTime) : null,
                       })(<DatePicker
                         style={{ width: w }}
-                        onChange={_.debounce(this.autoCalc, 500)}
+                        onChange={_.debounce(this.autoCalcEdit, 500)}
                         placeholder="请输入项目验收日期"
                       />)}
                     </FormItem>
                   </DescriptionItem>
                   <DescriptionItem
                     span={1}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}免费维保期</>}
+                    label={<>{<span style={{ color: 'red' }}></span>}免费维保期</>}
                   >
                     <FormItem>
-                      {form.getFieldDecorator('freeDefendDate', {
+                      {form.getFieldDecorator('freeDefendDateEdit', {
                         rules: [{
-                          required: true,
+                          required: false,
                           message: '请输入免费维保期',
                           pattern: /^[0-9]+$/
                         }],
@@ -557,25 +643,56 @@ class Detail extends PureComponent {
                         initialValue: freeDefendDate
                       })(<Input
                         style={{ width: w }}
-                        onChange={_.debounce(this.autoCalc, 500)}
+                        onChange={_.debounce(this.autoCalcEdit, 500)}
                         placeholder='请输入免费维保期'
                         addonAfter='月' />)}
                     </FormItem>
                   </DescriptionItem>
                   <DescriptionItem
                     span={1}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}维保支付期</>}
+                    label={<>{<span style={{ color: 'red' }}></span>}维保支付期</>}
                   >
                     <FormItem>
-                      {form.getFieldDecorator('defendPayTime', {
+                      {form.getFieldDecorator('defendPayTimeEdit', {
                         rules: [{
-                          required: true,
-                          message: '请输入免费维保期',
-                          pattern: /^[0-9]+$/
+                          required: false,
+                          message: '请输入维保支付期',
                         }],
-                        normalize: this.formatCount,
-                        initialValue: defendPayTime,
+                        initialValue: freePayDayEdit ? freePayDayEdit : defendPayTime,
                       })(<Input style={{ width: w }} disabled placeholder="请输入维保支付日期" />)}
+                    </FormItem>
+                  </DescriptionItem>
+                  <DescriptionItem
+                    span={3}
+                    label={<>{<span style={{ color: 'red' }}>*</span>}涉及系统</>}
+                  >
+                    <FormItem>
+                      {form.getFieldDecorator('systemId', {
+                        rules: [{ required: true, message: '请输入所属系统' }],
+                        initialValue: systemId,
+                      })(<Select
+                        allowClear
+                        // showSearch
+                        placeholder="请输入所属系统"
+                        style={{ width: '100%' }}
+                      >
+                        {!_.isEmpty(systemList) && systemList.map(d => (
+                          <Option key={d.systemId} value={d.systemId}>{d.systemName}</Option>
+                        ))}
+                      </Select>)}
+                    </FormItem>
+                  </DescriptionItem>
+                  <DescriptionItem
+                    span={3}
+                    label={<>{<span style={{ color: 'red' }}>*</span>}描述</>}
+                  >
+                    <FormItem>
+                      <Editor
+                        editorKey='myContractAdd'
+                        height={300}
+                        content={descriptionState}
+                        onContentChange={content => this.handleChangeDesc(content)}
+                      />
                     </FormItem>
                   </DescriptionItem>
                 </Fragment>
@@ -585,7 +702,14 @@ class Detail extends PureComponent {
                     span={v.span}
                     label={<>{v.required && <span style={{ color: 'red' }}>*</span>}{v.name}</>}
                   >
-                    {v.value}
+                    {v.dataIndex === 'description'
+                      ? <div
+                        className='infoDescription'
+                        style={{ border: 0 }}
+                        dangerouslySetInnerHTML={{ __html: ((v.value ? v.value : '--')) }}
+                      >
+                      </div>
+                      : v.value}
                   </Descriptions.Item>
                 ))
               }

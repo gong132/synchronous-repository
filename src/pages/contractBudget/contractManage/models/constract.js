@@ -7,7 +7,9 @@ import {
   queryProject,
   querySystem,
   querySupplier,
-  queryHeaderGroup
+  queryHeaderGroup,
+  queryBudgetNumber,
+  checkProject
 } from '@/services/contractBudget/contract'
 import { addMenuList } from '@/services/global'
 import { PagerHelper } from "@/utils/helper";
@@ -30,7 +32,9 @@ const Constract = {
     supplierMap: {},
     headerList: [],
     headerMap: {},
-    groupMap: {}
+    groupMap: {},
+    budgetList: [],
+    budgetMap: {},
   },
   effects: {
     *addMenu({ payload }, { put, call }) {
@@ -90,6 +94,16 @@ const Constract = {
       return true
     },
 
+    // 合同确认
+    *checkProject({ payload }, { call }) {
+      const { code, msg } = yield call(checkProject, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true
+    },
+
     // 查询部门
     *fetchNotBindDept({ payload }, { call, put }) {
       const { code, msg, data } = yield call(queryDept, payload)
@@ -127,6 +141,27 @@ const Constract = {
         payload: {
           projectList: data,
           projectMap: obj
+        }
+      })
+      return true
+    },
+
+     // 查询预算编号
+     *fetchBudgetNumber({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(queryBudgetNumber, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      let obj = {}
+      data.map(v => {
+        obj[v.number] = v.name
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          budgetList: data,
+          budgetMap: obj
         }
       })
       return true

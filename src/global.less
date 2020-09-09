@@ -256,6 +256,45 @@ ol {
     background: linear-gradient(to right, #2E5BFF, #2E5BFF);
     background-color: #2E5BFF;
   }
+}
 
+// 处理详情中描述里的特殊dom的样式
+.infoDescription {
+  text-align: justify;
+  text-justify: newspaper;
+  word-wrap: break-word;
+  word-break: break-all;
+  display: inline-block;
 
+  table {
+    width: 100%;
+    table-layout: fixed;
+    border-style: hidden;
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 1px solid #dedede;
+    border-width: .5px;
+
+    th {
+      border-right: #dedede solid 1px;
+    }
+
+    td {
+      background-color: #fff;
+      border: 1px solid #dedede;
+      border-width: .5px;
+      overflow: visible;
+      cursor: text;
+      padding: 10px;
+    }
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+    font-size: 0;
+    height: auto;
+    resize: both;
+    outline-offset: 1px;
+  }
 }

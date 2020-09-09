@@ -17,6 +17,8 @@ const CreateConstract = (props) => {
     form,
     deptList,
     deptListMap,
+    budgetList,
+    budgetMap,
     projectList,
     projectMap,
     systemList,
@@ -171,6 +173,7 @@ const CreateConstract = (props) => {
       render: (text, record) => {
         return (
           <Input
+            value={text}
             onChange={(e) => saveTableValue(e, 'payCondition', record)}
             placeholder='请输入付款条件'
           />
@@ -219,7 +222,6 @@ const CreateConstract = (props) => {
   }
 
   const handleSubmitForm = () => {
-    console.log(data)
     let bool = false
     form.validateFieldsAndScroll((err, values) => {
       if (err) return
@@ -242,10 +244,10 @@ const CreateConstract = (props) => {
         return
       }
       if (bool) return
-      values.projectName = projectMap[values.projectNaId]
+      values.projectName = projectMap[values.projectNumber]
       values.systemName = systemMap[values.systemId]
       values.deptName = deptListMap[values.deptId]
-      values.providerCompanyName = supplierMap[values.supplierMap]
+      values.providerCompanyName = supplierMap[values.providerCompanyId]
       values.headerName = headerMap[values.headerId]
       values.headerGroupName = groupMap[values.headerGroupId]
       values.signingTime = moment(values.signingTime).format('YYYY-MM-DD')
@@ -263,13 +265,13 @@ const CreateConstract = (props) => {
 
   const renderForm = () => (
     <Form>
-      <Row>
+      <Row gutter={{xs: 8, sm: 16, md: 24}}>
         <Col span={24}>
-          <FormItem {...formLayoutItemAddEdit} label="标题">
+          <FormItem {...formLayoutItemAddEdit} label="名称">
             {form.getFieldDecorator('name', {
-              rules: [{ required: true, message: '请输入标题' }],
+              rules: [{ required: true, message: '请输入名称' }],
               initialValue: name,
-            })(<Input placeholder="请输入标题" />)}
+            })(<Input placeholder="请输入名称" />)}
           </FormItem>
         </Col>
         <Col span={12}>
@@ -280,7 +282,9 @@ const CreateConstract = (props) => {
             })(<Select
               placeholder="请输入预算编号"
             >
-              <Option key={1} value={1}>自定义</Option>
+              {!_.isEmpty(budgetList) && budgetList.map(d => (
+                <Option key={d.number} value={d.number}>{d.number}</Option>
+              ))}
             </Select>)}
           </FormItem>
         </Col>
@@ -294,8 +298,8 @@ const CreateConstract = (props) => {
               // showSearch
               placeholder="请输入所属项目"
             >
-               {!_.isEmpty(projectList) && projectList.map(d => (
-                <Option key={d.number} value={d.name}>{d.name}</Option>
+              {!_.isEmpty(projectList) && projectList.map(d => (
+                <Option key={d.number} value={d.number}>{d.name}</Option>
               ))}
             </Select>)}
           </FormItem>
@@ -500,6 +504,7 @@ const CreateConstract = (props) => {
   return (
     <Modal
       width={794}
+      style={{top: 0}}
       title={`${modalTitle}合同`}
       visible={visibleModal}
       onCancel={() => handleViewModal(false)}
@@ -525,6 +530,8 @@ const CreateConstract = (props) => {
 export default connect(
   ({ constract, loading }) => ({
     constract,
+    budgetList: constract.budgetList,
+    budgetMap: constract.budgetMap,
     projectList: constract.projectList,
     projectMap: constract.projectMap,
     systemList: constract.systemList,

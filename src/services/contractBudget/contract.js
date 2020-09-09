@@ -32,6 +32,14 @@ export async function editContract(params) {
   });
 }
 
+// 合同确认
+export async function checkProject(params) {
+  return request('/contract/check', {
+    method: 'post',
+    params,
+  });
+}
+
 // // 未被集群版块绑定的部门
 // export async function queryDept(params) {
 //   return request('/cluster/notBindDept', {
@@ -75,6 +83,14 @@ export async function querySupplier(params) {
 // 负责人和团队
 export async function queryHeaderGroup(params) {
   return request('/temp/group', {
+    method: 'get',
+    params,
+  });
+}
+
+// 查预算编号
+export async function queryBudgetNumber(params) {
+  return request('/budget/search', {
     method: 'get',
     params,
   });
