@@ -39,3 +39,11 @@ export async function querySectorInfo(params) {
     params,
   });
 }
+
+// 查询所有部门临时接口
+export async function queryDeptTemp(params) {
+  return request('/temp/dept', {
+    method: 'get',
+    params,
+  });
+}

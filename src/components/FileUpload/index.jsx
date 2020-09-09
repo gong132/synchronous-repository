@@ -2,8 +2,9 @@ import { Upload, Modal, message, Icon } from 'antd'
 import React, { Component } from 'react'
 import cn from 'classnames'
 import Config from '@/utils/config';
+import { isObjEqual } from '@/utils/utils'
 import moment from 'moment'
-import styles from '../index.less'
+import styles from './index.less'
 import {
   imgTypes,
   fileTypes,
@@ -14,12 +15,62 @@ class FileUploadNo extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      arrUrl: props.urls,
+      arrUrl: props.urls ? JSON.parse(props.urls) : [],
       preImg: false,
       curUrl: '',
       imgName: '',
-      editable: false,
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!isObjEqual(this.props.urls, nextProps.urls)) {
+      this.setState({
+        arrUrl: nextProps.urls ? JSON.parse(nextProps.urls) : [],
+      })
+    }
+  }
+
+  cOnMouseOver = (index) => {
+    const { arrUrl } = this.state
+    arrUrl[index].bool = true
+    this.setState({
+      arrUrl: arrUrl
+    })
+  }
+
+  cOnMouseLeave = (index) => {
+    const { arrUrl } = this.state
+    arrUrl[index].bool = false
+    this.setState({
+      arrUrl: arrUrl
+    })
+  }
+
+  renderFile = (v, index) => {
+    console.log('render', v)
+    const { createTime, name, path, type, uploadType, id, bool } = v
+    return (
+      <div
+        key={id}
+        onMouseOver={() => this.cOnMouseOver(index)}
+        onMouseLeave={() => this.cOnMouseLeave(index)}
+        className={styles.fileStyle}>
+        <div>{name}</div>
+        {bool ?
+          <div>
+            {
+              type === 2
+                ? <div className={styles.fileStyle_btn}>下载</div>
+                : <div className={styles.fileStyle_btn}>查看</div>
+            }
+            <div className={styles.fileStyle_btn}>
+              删除
+            </div>
+          </div>
+          : null
+        }
+      </div>
+    )
   }
 
   handleSubmitFile = (info) => {
@@ -34,33 +85,27 @@ class FileUploadNo extends Component {
         message.warning('暂不支持该文件类型上传！')
         return
       }
-      const res = info.file.response;
-      if (res.status == 'done') {
-        let o = {
-          fileName: res.name,
-          url: res.url,
-          createTime: time,
-          creator: userName
-        }
-        arrUrl.push(o)
+      const { code, msg, data } = info.file.response;
+      if (code === 200) {
+        arrUrl.push(data)
         this.setState({
           arrUrl,
         });
-        // this.props.handleSaveFileUrl(arrUrl)
+        this.props.handleSaveFileUrl(JSON.stringify(arrUrl))
       } else {
-        message.error(res.msg)
+        message.error(msg)
       }
     }
   }
 
 
   render() {
-    const { children, urls } = this.props
+    const { children, urls, uploadType } = this.props
     const { arrUrl, curUrl, imgName, preImg } = this.state
     // const { userId, kjxzToken } = getUserInfo()
     const uploadProps = {
       action: uploadUrl,
-      // data: { userId },
+      data: { uploadType },
       showUploadList: false,
       // headers: { Token: kjxzToken },
       beforeUpload: file => {
@@ -89,11 +134,11 @@ class FileUploadNo extends Component {
           {children}
         </Upload>
 
-        {/* {arrUrl.length > 0 && (
+        {arrUrl.length > 0 && (
           <div className={styles.customFileArea}>
-            {arrUrl.map((v, index) => this.renderFile(v.fileName, v.url, index, v.type, arrUrl))}
+            {arrUrl.map((v, index) => this.renderFile(v, index))}
           </div>
-        )} */}
+        )}
       </div>
 
     )
