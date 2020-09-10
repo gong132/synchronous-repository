@@ -8,6 +8,7 @@ import StandardTable from "@/components/StandardTable";
 import { DefaultPage, TableColumnHelper } from "@/utils/helper";
 import Editor from "@/components/TinyEditor"
 import OptButton from "@/components/commonUseModule/optButton";
+import CustomBtn from '@/components/commonUseModule/customBtn'
 import editIcon from '@/assets/icon/Button_bj.svg'
 import budget_xq from '@/assets/icon/modular_xq.svg'
 import budget_log from '@/assets/icon/modular_czrz.svg'
@@ -22,10 +23,9 @@ import {
   Select,
   DatePicker,
   Modal
-
 } from 'antd'
 import { getParam } from '@/utils/utils'
-import { formLayoutItemAddDouble, formLayoutItemAddEdit } from "@/utils/constant";
+import { isEmpty } from '@/utils/lang'
 import styles from '../index.less'
 
 
@@ -38,6 +38,7 @@ const { Option } = Select
   loadingQueryLogData: loading.effects['constract/fetchLogList'],
   loadingQueryInfo: loading.effects['constract/fetchContractInfo'],
   loadingUpdate: loading.effects['constract/updateData'],
+  loadingSureProject: loading.effects['constract/checkProject'],
   contractInfo: constract.contractInfo,
   logList: constract.logList,
   deptList: constract.deptList,
@@ -61,6 +62,7 @@ class Detail extends PureComponent {
       modalVisible: false,
       freePayDay: '',
       freePayDayEdit: '',
+      payChange: false,
       descriptionState: ''
     }
   }
@@ -72,7 +74,7 @@ class Detail extends PureComponent {
   }
 
   // 查看板块详情
-  handleQuerySectorInfo = (params) => {
+  handleQuerySectorInfo = () => {
     const id = getParam('id')
     this.props.dispatch({
       type: 'constract/fetchContractInfo',
@@ -112,14 +114,14 @@ class Detail extends PureComponent {
   }
 
   // 确认
-  sumbitEdit = (params) => {
+  chekeProject = (params) => {
     const id = getParam('id')
-    params.id = id
     this.props.dispatch({
       type: 'constract/checkProject',
       payload: {
-        ...params
-      }
+        ...params,
+        id,
+      },
     }).then(res => {
       if (res) {
         this.handleQuerySectorInfo()
@@ -130,10 +132,11 @@ class Detail extends PureComponent {
   }
 
   handleSubmit = () => {
-    const {descriptionState} = this.state
-    const {projectMap, systemMap, deptListMap, supplierMap, headerMap, groupMap} = this.props
-    this.props.form.validateFieldsAndScroll((err, values) => {
+    const { descriptionState } = this.state
+    const { projectMap, systemMap, deptListMap, supplierMap, headerMap, groupMap } = this.props
+    this.props.form.validateFieldsAndScroll((err, val) => {
       if (err) return
+      const values = val
       values.projectName = projectMap[values.projectNumber]
       values.systemName = systemMap[values.systemId]
       values.deptName = deptListMap[values.deptId]
@@ -146,18 +149,17 @@ class Detail extends PureComponent {
       values.signingTime = moment(values.signingTime).format('YYYY-MM-DD')
       values.createTime = moment(values.createTime).format('YYYY-MM-DD')
       values.description = descriptionState
-      console.log(values)
       this.sumbitEdit(values)
     })
   }
 
-   // 编辑
-   sumbitEdit = (params) => {
+  // 编辑
+  sumbitEdit = (params) => {
     const id = getParam('id')
-    params.id = id
     this.props.dispatch({
       type: 'constract/updateData',
       payload: {
+        id,
         ...params
       }
     }).then(res => {
@@ -182,13 +184,14 @@ class Detail extends PureComponent {
 
   // 格式化输入金额
   formatMoney = value => {
-    if (!Boolean(value)) return
+    if (isEmpty(value)) return ''
 
     return numeral(value).format('0,0')
   }
 
   // 格式化整数
   formatCount = (value) => {
+    if (isEmpty(value)) return ''
     return numeral(value).format()
   }
 
@@ -202,6 +205,10 @@ class Detail extends PureComponent {
       this.setState({
         freePayDay: str
       })
+    } else {
+      this.setState({
+        freePayDay: ''
+      })
     }
   }
 
@@ -212,7 +219,13 @@ class Detail extends PureComponent {
     if (values.freeDefendDateEdit && values.projectCheckTimeEdit) {
       const str = moment(values.projectCheckTimeEdit).add(Number(values.freeDefendDateEdit) - 1, 'months').format('YYYY-MM-DD');
       this.setState({
-        freePayDayEdit: str
+        freePayDayEdit: str,
+        payChange: true,
+      })
+    } else {
+      this.setState({
+        payChange: true,
+        freePayDayEdit: ''
       })
     }
   }
@@ -226,17 +239,18 @@ class Detail extends PureComponent {
 
   handleSurePro = () => {
     const { freePayDay } = this.state
-    this.props.form.validateFields(['freeDefendDate', 'projectCheckTime'], (err, values) => {
+    this.props.form.validateFields(['freeDefendDate', 'projectCheckTime'], (err, val) => {
       if (err) return
+      const values = val
       values.defendPayTime = freePayDay
       values.projectCheckTime = moment(values.projectCheckTime).format('YYYY-MM-DD')
-      this.sumbitEdit(values)
+      this.chekeProject(values)
     })
   }
 
   render() {
     const w = 150
-    const { editBool, modalVisible, freePayDay, descriptionState, freePayDayEdit } = this.state
+    const { editBool, modalVisible, freePayDay, descriptionState, freePayDayEdit, payChange } = this.state
     const { logList,
       loadingQueryInfo,
       loadingQueryLogData,
@@ -245,15 +259,10 @@ class Detail extends PureComponent {
       loadingUpdate,
       deptList,
       projectList,
-      projectMap,
-      systemList,
-      systemMap,
       supplierList,
-      supplierMap,
       headerList,
-      headerMap,
-      groupMap,
       budgetList,
+      loadingSureProject,
     } = this.props
     const {
       name,
@@ -274,8 +283,6 @@ class Detail extends PureComponent {
       firstOfferAmount,
       transactionAmount,
       signingTime,
-      payAmount,
-      notPayAmount,
       headerId,
       headerName,
       headerGroupId,
@@ -355,6 +362,7 @@ class Detail extends PureComponent {
                 onClick={
                   () => this.setState({
                     editBool: true,
+                    payChange: false,
                     freePayDay: '',
                     descriptionState: description
                   })
@@ -368,7 +376,7 @@ class Detail extends PureComponent {
                   onClick={
                     () => this.setState({
                       editBool: false,
-                      freePayDay: ''
+                      freePayDay: '',
                     })
                   }
                 >取消</Button>
@@ -377,6 +385,8 @@ class Detail extends PureComponent {
                     marginLeft: '16px'
                   }}
                   type='primary'
+                  ghost
+                  loading={loadingUpdate}
                   onClick={() => this.handleSubmit()}
                 >保存</Button>
               </div>
@@ -615,7 +625,7 @@ class Detail extends PureComponent {
                   </DescriptionItem>
                   <DescriptionItem
                     span={1}
-                    label={<>{<span style={{ color: 'red' }}></span>}项目验收日期</>}
+                    label={<>{<span style={{ color: 'red' }} />}项目验收日期</>}
                   >
                     <FormItem>
                       {form.getFieldDecorator('projectCheckTimeEdit', {
@@ -630,7 +640,7 @@ class Detail extends PureComponent {
                   </DescriptionItem>
                   <DescriptionItem
                     span={1}
-                    label={<>{<span style={{ color: 'red' }}></span>}免费维保期</>}
+                    label={<>{<span style={{ color: 'red' }} />}免费维保期</>}
                   >
                     <FormItem>
                       {form.getFieldDecorator('freeDefendDateEdit', {
@@ -650,7 +660,7 @@ class Detail extends PureComponent {
                   </DescriptionItem>
                   <DescriptionItem
                     span={1}
-                    label={<>{<span style={{ color: 'red' }}></span>}维保支付期</>}
+                    label={<>维保支付期</>}
                   >
                     <FormItem>
                       {form.getFieldDecorator('defendPayTimeEdit', {
@@ -658,7 +668,7 @@ class Detail extends PureComponent {
                           required: false,
                           message: '请输入维保支付期',
                         }],
-                        initialValue: freePayDayEdit ? freePayDayEdit : defendPayTime,
+                        initialValue: payChange ? freePayDayEdit : defendPayTime,
                       })(<Input style={{ width: w }} disabled placeholder="请输入维保支付日期" />)}
                     </FormItem>
                   </DescriptionItem>
@@ -684,7 +694,7 @@ class Detail extends PureComponent {
                   </DescriptionItem>
                   <DescriptionItem
                     span={3}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}描述</>}
+                    label={<>描述</>}
                   >
                     <FormItem>
                       <Editor
@@ -707,8 +717,7 @@ class Detail extends PureComponent {
                         className='infoDescription'
                         style={{ border: 0 }}
                         dangerouslySetInnerHTML={{ __html: ((v.value ? v.value : '--')) }}
-                      >
-                      </div>
+                      />
                       : v.value}
                   </Descriptions.Item>
                 ))
@@ -716,22 +725,23 @@ class Detail extends PureComponent {
             </Descriptions>
           </Spin>
         </GlobalSandBox>
-        <div style={{ height: '16px' }}></div>
-        <GlobalSandBox
-          img={payIcon}
-          title='付款笔数'
-          optNode={<Button
-            onClick={() => this.handleModalVisible(true)}
-            type='primary' ghost>项目完结确认</Button>}
-        >
-          <Table
-            columns={payColumns}
-            dataSource={payRecords}
-            pagination={false}
-          />
-        </GlobalSandBox>
-
-        <div style={{ height: '16px' }}></div>
+        <div style={{ height: '16px' }} />
+        <Spin spinning={loadingQueryInfo}>
+          <GlobalSandBox
+            img={payIcon}
+            title='付款笔数'
+            optNode={<Button
+              onClick={() => this.handleModalVisible(true)}
+              type='primary' ghost>项目完结确认</Button>}
+          >
+            <Table
+              columns={payColumns}
+              dataSource={payRecords}
+              pagination={false}
+            />
+          </GlobalSandBox>
+        </Spin>
+        <div style={{ height: '16px' }} />
         <GlobalSandBox
           img={budget_log}
           title='操作日志'
@@ -744,17 +754,28 @@ class Detail extends PureComponent {
             onChange={this.handleStandardTableChange}
           />
         </GlobalSandBox>
-        <Modal
+        {modalVisible && <Modal
           title='项目完结确认'
           visible={modalVisible}
           onCancel={() => this.handleModalVisible(false)}
-          onOk={this.handleSurePro}
+          // onOk={this.handleSurePro}
           width={794}
-          confirmLoading={loadingUpdate}
+          footer={
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <CustomBtn
+                onClick={() => this.handleModalVisible(false)}
+                type='cancel'
+                style={{ marginRight: '18px' }}
+              />
+              <CustomBtn
+                loading={loadingSureProject}
+                onClick={this.handleSurePro}
+                type='save' />
+            </div>}
         >
           <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 8 }} label="项目验收日期">
             {form.getFieldDecorator('projectCheckTime', {
-              rules: [{ required: true, message: '请输入项目验收日期' }],
+              rules: [{ required: modalVisible, message: '请输入项目验收日期' }],
               initialValue: projectCheckTime ? moment(projectCheckTime) : null,
             })(<DatePicker
               onChange={_.debounce(this.autoCalc, 500)}
@@ -764,12 +785,12 @@ class Detail extends PureComponent {
           <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 8 }} label="免费维保期">
             {form.getFieldDecorator('freeDefendDate', {
               rules: [{
-                required: true,
+                required: modalVisible,
                 message: '请输入免费维保期',
                 pattern: /^[0-9]+$/
               }],
               normalize: this.formatCount,
-              // initialValue: values && values.name,
+              initialValue: freeDefendDate,
             })(<Input
               onChange={_.debounce(this.autoCalc, 500)}
               placeholder='请输入免费维保期'
@@ -781,7 +802,8 @@ class Detail extends PureComponent {
           {/* <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="项目验收报告">
             <Button type='primary' ghost>上传</Button>
           </FormItem> */}
-        </Modal>
+        </Modal>}
+
       </Fragment>
     );
   }

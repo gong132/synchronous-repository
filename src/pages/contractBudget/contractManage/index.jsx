@@ -103,8 +103,6 @@ class ContractManage extends Component {
       formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYY-MM-DD')
       formValues.signingEndTime = moment(formValues.signTime[1]).format('YYYY-MM-DD')
     }
-    console.log(formValues)
-
     this.handleDebounceQueryData(formValues)
   }
 
@@ -161,11 +159,15 @@ class ContractManage extends Component {
 
   // 分页操作
   handleStandardTableChange = pagination => {
-    // const formValues = form.getFieldsValue();
+    const formValues = this.props.form.getFieldsValue();
+    if (formValues.signTime && !_.isEmpty(formValues.signTime)) {
+      formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYY-MM-DD')
+      formValues.signingEndTime = moment(formValues.signTime[1]).format('YYYY-MM-DD')
+    }
     const params = {
       currentPage: pagination.current,
       pageSize: pagination.pageSize,
-      // ...formValues, // 添加已查询条件去获取分页
+      ...formValues, // 添加已查询条件去获取分页
     };
     this.handleQueryData(params)
   };
@@ -253,7 +255,12 @@ class ContractManage extends Component {
           </Col>
         </Row>
         <div className={styles.moreSearchButton}>
-          <Button onClick={() => this.moreQuery()}>查询</Button>
+          <Button
+            onClick={() => this.moreQuery()}
+            loading={loadingQueryData}
+            type='primary'
+            ghost
+          >查询</Button>
           <Button onClick={() => this.setSearchMore(false)}>取消</Button>
         </div>
       </div>
@@ -321,7 +328,7 @@ class ContractManage extends Component {
           style={{
             display: 'inline-block'
           }}
-          // loading={loadingQueryData}
+          loading={loadingQueryData}
           type='reset' />
         <Popover visible={searchMore} placement="bottomRight" content={content} trigger="click">
           {
@@ -375,6 +382,7 @@ class ContractManage extends Component {
       {
         title: '操作',
         align: 'left',
+        fixed:'right',
         width: 190,
         render: (text, record) => {
           return (

@@ -239,10 +239,10 @@ const CreateConstract = (props) => {
           return
         }
       })
-      if (description.length < 1) {
-        message.error('请补全合同描述！')
-        return
-      }
+      // if (description.length < 1) {
+      //   message.error('请补全合同描述！')
+      //   return
+      // }
       if (bool) return
       values.projectName = projectMap[values.projectNumber]
       values.systemName = systemMap[values.systemId]
@@ -473,7 +473,7 @@ const CreateConstract = (props) => {
           <FormItem
             {...formLayoutItemAddEdit}
             label='合同描述'
-            required={true}
+            // required={true}
           >
             <Editor
               editorKey='myContractAdd'
