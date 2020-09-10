@@ -69,4 +69,5 @@ export default {
   'menu.systemManage.detail': '详情',
 
   'menu.projectManage': '项目管理',
+  'menu.menuConfig': '菜单管理',
 };

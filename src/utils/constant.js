@@ -62,6 +62,12 @@ export const LOGIN_ENTRY_TYPE = {
   CASHIER: 'CASHIER', // 门店管理
 };
 
+export const MENU_ITEM_TYPE = {
+  FOLDER: 0, // 目录
+  PAGE: 1, // 页面
+  ACTION: 2, // 功能
+};
+
 export const MENU_ACTIONS = {
   ADD: 'add', // 新增
   EDIT: 'edit', // 编辑
@@ -98,5 +104,5 @@ const judgeFileType = (file={}, fileArr = []) => {
 export {
   imgTypes,
   fileTypes,
-  judgeFileType
+  judgeFileType,
 }

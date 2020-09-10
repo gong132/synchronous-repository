@@ -1,4 +1,4 @@
-import React, {memo, useEffect, useState} from "react";
+import React, { useEffect, useState} from "react";
 import { connect } from "dva";
 import moment from "moment";
 import {Col, DatePicker, Form, Input, message, Modal, Radio, Row, Select} from "antd";
@@ -9,8 +9,7 @@ import {BUDGET_TYPE, PROJECT_TYPE} from "@/pages/contractBudget/util/constant";
 
 import Editor from "@/components/TinyEditor"
 import RadioGroup from "antd/es/radio/group";
-import {toInteger, transformAmount} from "@/utils/helper";
-import {regex} from "@/utils/reg";
+import {toInteger} from "@/utils/helper";
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -23,21 +22,25 @@ const Index = props => {
   } = props;
 
   // 描述
-  const [description, setDescription] = useState(values.description || '');
+  const [description, setDescription] = useState(values.description || "");
 
   const handleSubmitForm = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      fieldsValue.expectSetTime = fieldsValue.expectSetTime ? fieldsValue.expectSetTime.format('YYYY-MM-DD') : null;
-      fieldsValue.clusterName = fieldsValue.clusterId ? clusterList.find(v => v.id === fieldsValue.clusterId).name : null;
-      fieldsValue.deptName = fieldsValue.deptId ? allDeptList.find(v => v.deptId === fieldsValue.deptId).deptName : null;
-      fieldsValue.receiveGroupName = fieldsValue.receiveGroupId ? groupList.find(v => v.number === fieldsValue.receiveGroupId).name : null;
+      if (Number(fieldsValue.expectTotalAmount) <= 0) {
+        message.error("总金额必须大于0");
+        return;
+      }
       dispatch({
-        type: isEmpty(values) ? 'budgetManage/addBudget' : 'budgetManage/updateBudget',
+        type: isEmpty(values) ? "budgetManage/addBudget" : "budgetManage/updateBudget",
         payload: {
           id: values.id,
           ...fieldsValue,
-          description: description,
+          description,
+          expectSetTime: fieldsValue.expectSetTime ? fieldsValue.expectSetTime.format("YYYY-MM-DD") : null,
+          clusterName: fieldsValue.clusterId ? clusterList.find(v => v.id === fieldsValue.clusterId).name : null,
+          deptName: fieldsValue.deptId ? allDeptList.find(v => v.deptId === fieldsValue.deptId).deptName : null,
+          receiveGroupName: fieldsValue.receiveGroupId ? groupList.find(v => v.number === fieldsValue.receiveGroupId).name : null,
           hardwareExpectAmount: Number(fieldsValue.hardwareExpectAmount),
           softwareExpectAmount: Number(fieldsValue.softwareExpectAmount),
           otherExpectAmount: Number(fieldsValue.otherExpectAmount),
@@ -45,7 +48,7 @@ const Index = props => {
         },
       }).then(sure => {
         if (!sure) return;
-        message.success(isEmpty(values) ? '新增成功' : '修改成功');
+        message.success(isEmpty(values) ? "新增成功" : "修改成功");
         handleModalVisible();
         handleQueryBudgetData()
       })
@@ -54,7 +57,7 @@ const Index = props => {
 
   const handleQueryDeptList = id => {
     dispatch({
-      type: 'budgetManage/queryAllDeptList',
+      type: "budgetManage/queryAllDeptList",
       payload: {
         clusterId: id,
       }
@@ -62,7 +65,7 @@ const Index = props => {
   };
   const handleQueryGroupByDept = id => {
     dispatch({
-      type: 'budgetManage/queryGroupByDept',
+      type: "budgetManage/queryGroupByDept",
       payload: {
         deptId: id,
       }
@@ -77,27 +80,33 @@ const Index = props => {
 
   const calculateAmount = (val, id) => {
     let totalAmount = 0;
-    let hardwareAmount = form.getFieldValue('hardwareExpectAmount') || 0;
-    let softwareAmount = form.getFieldValue('softwareExpectAmount') || 0;
-    let otherwareAmount = form.getFieldValue('otherExpectAmount') || 0;
+    let hardwareAmount = form.getFieldValue("hardwareExpectAmount") || 0;
+    let softwareAmount = form.getFieldValue("softwareExpectAmount") || 0;
+    let otherwareAmount = form.getFieldValue("otherExpectAmount") || 0;
 
-    if (id === 'hardwareExpectAmount') hardwareAmount = val || 0;
-    if (id === 'softwareExpectAmount') softwareAmount = val || 0;
-    if (id === 'otherExpectAmount') otherwareAmount = val || 0;
+    if (id === "hardwareExpectAmount") hardwareAmount = val || 0;
+    if (id === "softwareExpectAmount") softwareAmount = val || 0;
+    if (id === "otherExpectAmount") otherwareAmount = val || 0;
     totalAmount = (hardwareAmount * 1 + softwareAmount * 1 + otherwareAmount * 1);
-    console.log(Number.isNaN(totalAmount), 'totalAmount');
-    form.setFieldsValue({ expectTotalAmount: !totalAmount ? 0 : Number.parseInt(totalAmount) })
+    const projectType = form.getFieldValue("type");
+    if (id !== "type" && String(projectType) === "2") {
+      totalAmount  *= 0.25
+    }
+    if (id === "type" && String(val) === "2") {
+      totalAmount  *= 0.25
+    }
+    form.setFieldsValue({ expectTotalAmount: !totalAmount ? 0 : Number.parseInt(totalAmount, 10) })
   };
 
   const renderForm = () => (
     <Form>
       <Row>
         <Col span={24}>
-          <FormItem {...formLayoutItemAddEdit} label="项目名称">
-            {form.getFieldDecorator('name', {
-              rules: [{required: true, message: '请输入项目名称'}],
+          <FormItem {...formLayoutItemAddEdit} label="预算名称">
+            {form.getFieldDecorator("name", {
+              rules: [{required: true, message: "请输入预算名称"}],
               initialValue: values && values.name,
-            })(<Input placeholder="请输入项目名称"/>)}
+            })(<Input.TextArea placeholder="请输入预算名称" rows={1}/>)}
           </FormItem>
         </Col>
         <Col span={12}>
@@ -106,7 +115,7 @@ const Index = props => {
               rules: [{required: true, message: '请选择项目类型'}],
               initialValue: values && values.type,
             })(
-              <RadioGroup placeholder="请选择项目类型">
+              <RadioGroup onChange={val => calculateAmount(val.target.value, 'type')} placeholder="请选择项目类型">
                 {PROJECT_TYPE.map(v => (
                   <Radio value={v.key} key={v.key}>{v.value}</Radio>
                 ))}
@@ -157,7 +166,7 @@ const Index = props => {
           <FormItem {...formLayoutItemAddDouble} label="硬件预算金额">
             {form.getFieldDecorator('hardwareExpectAmount', {
               rules: [{
-                required: true,
+                // required: true,
                 message: '请输入硬件预算金额',
                 transform: value => toInteger(value, 'hardwareExpectAmount', form)
               }],
@@ -173,7 +182,7 @@ const Index = props => {
           <FormItem {...formLayoutItemAddDouble} label="软件预算金额">
             {form.getFieldDecorator('softwareExpectAmount', {
               rules: [{
-                required: true,
+                // required: true,
                 message: '请输入软件预算金额',
                 transform: value => toInteger(value, 'softwareExpectAmount', form)
               }],
@@ -189,7 +198,7 @@ const Index = props => {
           <FormItem {...formLayoutItemAddDouble} label="其他预算金额">
             {form.getFieldDecorator('otherExpectAmount', {
               rules: [{
-                required: true,
+                // required: true,
                 message: '请输入软件预算金额',
                 transform: value => toInteger(value, 'otherExpectAmount', form)
               }],
@@ -228,7 +237,7 @@ const Index = props => {
         <Col span={12}>
           <FormItem {...formLayoutItemAddDouble} label="所属集群或板块">
             {form.getFieldDecorator('clusterId', {
-              rules: [{required: true, message: '请选择所属集群或板块'}],
+              // rules: [{required: true, message: '请选择所属集群或板块'}],
               initialValue: (!isEmpty(values) && values.clusterId) || (isEmpty(groupByDept) && groupByDept.id),
             })(<Select
               disabled>

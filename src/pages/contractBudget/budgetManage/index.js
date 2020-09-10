@@ -1,24 +1,25 @@
 import React, {Fragment, useEffect, useState} from "react";
-import { connect } from 'dva'
+import { connect } from "dva"
 import classNames from "classnames";
 import {DefaultPage, TableColumnHelper} from "@/utils/helper";
 import StandardTable from "@/components/StandardTable";
-import {Button, Col, Divider, Form, Input, Popover, Row, Select, Tooltip, DatePicker, Icon, Card} from "antd";
+import {Button, Col, Form, Input, Popover, Row, Select, Tooltip, DatePicker, Icon, Card} from "antd";
 import {isEmpty} from "@/utils/lang";
-import styles from "../index.less";
 import {formLayoutItem, formLayoutItem1, MENU_ACTIONS} from "@/utils/constant";
 import {BUDGET_TYPE, PROJECT_TYPE} from "@/pages/contractBudget/util/constant";
-import edit from '@/assets/icon/Button_bj.svg'
-
-import AddForm from './addForm'
 import OptButton from "@/components/commonUseModule/optButton";
-import CustomBtn from "@/components/commonUseModule/customBtn";
+import edit from "@/assets/icon/Button_bj.svg"
+import upIcon from "@/assets/icon/Pull_up.svg"
+import bottomIcon from "@/assets/icon/drop_down.svg"
+
+import AddForm from "./addForm"
+import styles from "../index.less";
 
 const FormItem = Form.Item;
 const { Option } = Select;
 
 const Index = props => {
-  const { dispatch, budgetManage:{ budgetList, clusterList, deptList, groupList }, loading, form,
+  const { dispatch, budgetManage:{ budgetList }, loading, form,
     global: { authActions },
   } = props;
 
@@ -31,7 +32,7 @@ const Index = props => {
 
   const handleQueryBudgetData = params => {
     dispatch({
-      type: 'budgetManage/fetchBudgetData',
+      type: "budgetManage/fetchBudgetData",
       payload: {
         ...DefaultPage,
         ...params,
@@ -42,25 +43,25 @@ const Index = props => {
 
   const columns = [
     {
-      title: '预算编号',
-      key: 'number',
-      render: rows =>{
-        if (isEmpty(rows.number, true)) return '';
+      title: "预算编号",
+      key: "number",
+      render: rows => {
+        if (isEmpty(rows.number, true)) return "";
         return (
           <Tooltip placement="top" title={rows.number}>
-            <a
-              style={{ color: '#2E5BFF' }}
-              onClick={() => {
-                props.history.push({
-                  pathname: '/contract-budget/budget/detail',
-                  query: {
-                    id: rows.id,
-                  }
-                })
-              }}
-            >
-              {rows.number.length > 10 ? `${rows.number.substring(0, 10)}...` : rows.number.substring(0, 10)}
-            </a>
+          <span
+            style={{ color: "#2E5BFF" }}
+            onClick={() => {
+              props.history.push({
+                pathname: "/contract-budget/budget/detail",
+                query: {
+                  id: rows.id,
+                }
+              })
+            }}
+          >
+            { rows.number.length > 10 ? `${rows.number.substring(0, 10)}...` : rows.number.substring(0, 10) }
+          </span>
           </Tooltip>
         )
       },
@@ -76,8 +77,8 @@ const Index = props => {
     TableColumnHelper.genMoneyColumn('hardwareExpectAmount', '硬件预算金额'),
     {
       title: '操作',
+      width: 200,
       align: 'center',
-      fixed: 'right',
       render: rows => (
         <Fragment>
           {
@@ -131,12 +132,6 @@ const Index = props => {
     handleQueryBudgetData(formValues)
   };
 
-  // 获取搜索条件,转换成数组
-  const getSearchValuesToList = () => {
-    const formValues = form.getFieldsValue()
-
-  };
-
   const handleQueryClusterList = () => {
     dispatch({
       type: 'budgetManage/queryClusterList',
@@ -147,13 +142,6 @@ const Index = props => {
   const handleQueryGroupList = () => {
     dispatch({
       type: 'budgetManage/queryGroupList',
-      payload: {
-      }
-    })
-  };
-  const handleUpdateAuthData = () => {
-    dispatch({
-      type: 'global/updateAuthData',
       payload: {
       }
     })
@@ -278,10 +266,12 @@ const Index = props => {
                 onClick={handleResetForm}
               >重置</Button>
               <Popover visible={searchMore} placement="bottomRight" content={content} trigger="click">
-                {
-                  !searchMore ? <span className="activeColor" onClick={() => setSearchMore(true)}>更多</span> :
-                    <span className="activeColor" onClick={() => setSearchMore(false)}>隐藏</span>
-                }
+                <div className="yCenter">
+                  {
+                    !searchMore ? <span className="activeColor" onClick={() => setSearchMore(true)}><Icon style={{ verticalAlign: '-0.4em'}} component={bottomIcon}/>更多</span> :
+                      <span className="activeColor" onClick={() => setSearchMore(false)}><Icon style={{ verticalAlign: '-0.4em'}} component={upIcon}/>隐藏</span>
+                  }
+                </div>
               </Popover>
             </div>
           </Col>
@@ -312,7 +302,7 @@ const Index = props => {
             data={budgetList}
             columns={columns}
             onChange={handleStandardTableChange}
-            scroll={{ x: 1400 }}
+            scroll={{ x: 1450 }}
           />
         </Card>
         { addModalVisible && (
