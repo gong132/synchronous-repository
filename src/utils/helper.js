@@ -87,7 +87,7 @@ function formatter(data, parentName, parentPath) {
         ...item,
         name: formatMessage({ id: locale, defaultMessage: item.name }),
         locale,
-        path: `${parentPath || ''}${parentPath ? '/' : ''}${item.path}`,
+        path: item.path,
       };
       if (item.routes) {
         const children = formatter(item.routes, locale, result.path);

@@ -19,7 +19,7 @@ module.exports = {
             component: './home/home',
           },
           {
-            path: 'table',
+            path: '/table',
             name: 'table',
             icon: 'TableOutlined',
             routes: [
@@ -28,6 +28,11 @@ module.exports = {
                 path: '/table/userTable',
                 name: 'userTable',
                 component: './table/userTable/index',
+                buttons: [
+                  { name: '审核', key: 'audit' },
+                  { name: '启用', key: 'enable' },
+                  { name: '停止', key: 'disable' },
+                ],
               },
               {
                 path: '/table/orderTable',
@@ -107,7 +112,14 @@ module.exports = {
             ]
           },
           // 路由页面 end
-
+          //前端新增路由按钮页面
+          {
+            path: '/menuConfig',
+            name: 'menuConfig',
+            hideInMenu: true,
+            component: './menuConfig/menuConfig',
+          },
+          // 异常页面
           {
             path: '/exception',
             hideInMenu: true,
