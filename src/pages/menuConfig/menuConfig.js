@@ -14,7 +14,7 @@ import styles from './index.less';
 const { TreeNode } = Tree;
 const Index = props => {
   const {
-    global: { allMenuList },
+    global: { currentUserMenuList },
   } = props;
 
   MenuActionHelper.getFlatMenus(MenuActionHelper.getMenuData(AdminRouters.routes[0].routes, '/'));
@@ -27,7 +27,7 @@ const Index = props => {
     if (menuJson.length === 0) {
       return null;
     }
-    const menu = _sortBy(menuJson, 'id').map(item => {
+    const menu = _sortBy(menuJson, "id").map(item => {
       const menuItem = {
         id: item.id,
         key: item.id,
@@ -97,7 +97,7 @@ const Index = props => {
 
   return (
     <Card title="菜单配置">
-      <div>{allMenuList && <Tree>{renderTreeNodes(generateAllMenu(allMenuList))}</Tree>}</div>
+      <div>{allMenuList && <Tree>{renderTreeNodes(generateAllMenu(currentUserMenuList))}</Tree>}</div>
     </Card>
   );
 };

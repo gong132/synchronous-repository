@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {Button, DatePicker, Descriptions, Form, Input, message, Radio, Select} from "antd";
 import GlobalSandBox from "@/components/commonUseModule/globalSandBox";
-import budget_xq from "@/assets/icon/modular_xq.svg"
-import budget_log from "@/assets/icon/modular_czrz.svg"
+import budgetXq from "@/assets/icon/modular_xq.svg"
+import budgetLog from "@/assets/icon/modular_czrz.svg"
 import {connect} from "dva";
 import {DefaultPage, findValueByArray, TableColumnHelper, toInteger} from "@/utils/helper";
 import {BUDGET_TYPE, PROJECT_TYPE} from "@/pages/contractBudget/util/constant";
@@ -173,7 +173,7 @@ const Index = props => {
       if (id === "type" && String(val) === "2") {
         totalAmount *= 0.25
       }
-      form.setFieldsValue({ expectTotalAmount: !totalAmount ? 0 : Number.parseInt(totalAmount, 10) })
+      form.setFieldsValue({ expectTotalAmount: !totalAmount ? 0 : parseInt(totalAmount, 10) })
     };
 
     return (
@@ -184,7 +184,13 @@ const Index = props => {
               {form.getFieldDecorator("name", {
                 rules: [{required: true, message: "请输入预算名称"}],
                 initialValue: budgetDetails && budgetDetails.name,
-              })(<Input.TextArea placeholder="请输入预算名称" cols={1} rows={1} />)}
+              })(
+                <Input.TextArea
+                  placeholder="请输入预算名称"
+                  cols={1}
+                  rows={1}
+                />
+              )}
             </FormItem>
           </Descriptions.Item>
           <Descriptions.Item span={1} label="预算编号">
@@ -205,8 +211,7 @@ const Index = props => {
                   allDeptList&& allDeptList.map(v => (
                     <Option value={v.deptId} key={v.deptId}>{v.deptName}</Option>
                   ))
-                }
-              </Select>)}
+                }</Select>)}
             </FormItem>
           </Descriptions.Item>
           <Descriptions.Item span={1} label="预计立项时间">
@@ -228,11 +233,14 @@ const Index = props => {
                   transform: value => toInteger(value, 'otherExpectAmount', form)
                 }],
                 initialValue: budgetDetails && budgetDetails.otherExpectAmount,
-              })(<Input
-                onChange={e => calculateAmount(e.target.value, 'otherExpectAmount')}
-                onBlur={e => calculateAmount(e.target.value, 'otherExpectAmount')}
-                placeholder="请输入其他预算金额"
-                addonAfter="万"/>)}
+              })(
+                <Input
+                  onChange={e => calculateAmount(e.target.value, 'otherExpectAmount')}
+                  onBlur={e => calculateAmount(e.target.value, 'otherExpectAmount')}
+                  placeholder="请输入其他预算金额"
+                  addonAfter="万"
+                />
+                )}
             </FormItem>
           </Descriptions.Item>
           <Descriptions.Item span={1} label="预算总金额">
@@ -241,7 +249,7 @@ const Index = props => {
                 rules: [{
                   required: true, message: '请输入预算总金额'}],
                 initialValue: budgetDetails.expectTotalAmount,
-              })(<Input disabled addonAfter="万"/>)}
+              })(<Input disabled addonAfter="万" />)}
             </FormItem>
           </Descriptions.Item>
           <Descriptions.Item span={1} label="硬件预算金额">
@@ -257,7 +265,8 @@ const Index = props => {
                 placeholder="请输入硬件预算金额"
                 onChange={e => calculateAmount(e.target.value, 'hardwareExpectAmount')}
                 onBlur={e => calculateAmount(e.target.value, 'hardwareExpectAmount')}
-                addonAfter="万"/>)}
+                addonAfter="万"
+              />)}
             </FormItem>
           </Descriptions.Item>
           <Descriptions.Item span={1} label="软件预算金额">
@@ -273,7 +282,8 @@ const Index = props => {
                 onChange={e => calculateAmount(e.target.value, 'softwareExpectAmount')}
                 onBlur={e => calculateAmount(e.target.value, 'softwareExpectAmount')}
                 placeholder="请输入软件预算金额"
-                addonAfter="万"/>)}
+                addonAfter="万"
+              />)}
             </FormItem>
           </Descriptions.Item>
           <Descriptions.Item span={1} label="项目类型">
@@ -295,11 +305,13 @@ const Index = props => {
               {form.getFieldDecorator('budgetType', {
                 rules: [{required: true, message: '请选择预算类型'}],
                 initialValue: budgetDetails && budgetDetails.budgetType,
-              })(<RadioGroup placeholder="请选择项目类型">
-                {BUDGET_TYPE.map(v => (
-                  <Radio value={v.key} key={v.key}>{v.value}</Radio>
-                ))}
-              </RadioGroup>)}
+              })(
+                <RadioGroup placeholder="请选择项目类型">
+                  {BUDGET_TYPE.map(v => (
+                    <Radio value={v.key} key={v.key}>{v.value}</Radio>
+                  ))}
+                </RadioGroup>
+              )}
             </FormItem>
           </Descriptions.Item>
           <Descriptions.Item span={1} label="承建团队">
@@ -307,15 +319,17 @@ const Index = props => {
               {form.getFieldDecorator('receiveGroupId', {
                 rules: [{required: true, message: '请选择承建团队'}],
                 initialValue: budgetDetails && budgetDetails.receiveGroupId,
-              })(<Select
-                placeholder="请选择承建团队"
-              >
-                {
-                  groupList && groupList.map(v => (
-                    <Option value={v.number} key={v.number}>{v.name}</Option>
-                  ))
-                }
-              </Select>)}
+              })(
+                <Select
+                  placeholder="请选择承建团队"
+                >
+                  {
+                    groupList && groupList.map(v => (
+                      <Option value={v.number} key={v.number}>{v.name}</Option>
+                    ))
+                  }
+                </Select>
+              )}
             </FormItem>
           </Descriptions.Item>
           <Descriptions.Item span={1} label="录入人">
@@ -337,14 +351,17 @@ const Index = props => {
               {form.getFieldDecorator('clusterId', {
                 // rules: [{required: true, message: '请选择所属集群或板块'}],
                 initialValue: budgetDetails&& budgetDetails.clusterId,
-              })(<Select
-                disabled>
-                {
-                  clusterList&& clusterList.map(v => (
-                    <Option value={v.id} key={v.id}>{v.name}</Option>
-                  ))
-                }
-              </Select>)}
+              })(
+                <Select
+                  disabled
+                >
+                  {
+                    clusterList&& clusterList.map(v => (
+                      <Option value={v.id} key={v.id}>{v.name}</Option>
+                    ))
+                  }
+                </Select>
+              )}
             </FormItem>
           </Descriptions.Item>
           <Descriptions.Item span={3} label="描述">
@@ -362,7 +379,7 @@ const Index = props => {
   return (
     <div className="main">
       <GlobalSandBox
-        img={budget_xq}
+        img={budgetXq}
         title="预算详情"
         optNode={
           !editModalVisible ? <Button onClick={() => setEditModalVisible(true)} type="primary">编辑</Button> : (
@@ -389,7 +406,7 @@ const Index = props => {
                   ))
                 }
                 <Descriptions.Item span={3} label="项目描述">
-                  <div dangerouslySetInnerHTML={{ __html: budgetDetails.description}}/>
+                  <div dangerouslySetInnerHTML={{ __html: budgetDetails.description}} />
                 </Descriptions.Item>
               </Descriptions>
             )}
@@ -400,17 +417,17 @@ const Index = props => {
         </Form>
       </GlobalSandBox>
       <GlobalSandBox
-        img={budget_log}
+        img={budgetLog}
         title="操作日志"
         sandboxStyle={{ marginTop: 16 }}
       >
-          <StandardTable
-            rowKey="id"
-            loading={loading}
-            columns={columns}
-            data={budgetLogList}
-            onChange={handleStandardTableChange}
-          />
+        <StandardTable
+          rowKey="id"
+          loading={loading}
+          columns={columns}
+          data={budgetLogList}
+          onChange={handleStandardTableChange}
+        />
       </GlobalSandBox>
     </div>
   )
