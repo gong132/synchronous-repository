@@ -5,10 +5,10 @@ import {
   queryDept,
   querySectorInfo,
   queryDeptTemp,
-} from '@/services/systemManage/sectorManage'
-import { queryLogList } from '@/services/global'
-import { PagerHelper } from "@/utils/helper";
-import {message} from "antd";
+} from '@/services/systemManage/sectorManage';
+import { queryLogList } from '@/services/global';
+import { PagerHelper } from '@/utils/helper';
+import { message } from 'antd';
 
 const Sector = {
   namespace: 'sector',
@@ -18,14 +18,14 @@ const Sector = {
     deptList: [],
     deptListMap: {},
     sectorInfo: {},
-    allDept:[]
+    allDept: [],
   },
   effects: {
-    *fetchLogList({payload}, {call, put}) {
+    *fetchLogList({ payload }, { call, put }) {
       const { code, data, msg } = yield call(queryLogList, payload);
       if (code !== 200) {
         message.error(msg);
-        return
+        return;
       }
       const { records, ...others } = data;
       yield put({
@@ -33,15 +33,15 @@ const Sector = {
         payload: {
           filter: payload,
           data: records,
-          ...others
+          ...others,
         },
-      })
+      });
     },
     *queryData({ payload }, { call, put }) {
-      const { code, data, msg } = yield call(fetchData, payload)
+      const { code, data, msg } = yield call(fetchData, payload);
       if (code !== 200) {
         message.error(msg);
-        return
+        return;
       }
       const { records, ...others } = data;
       yield put({
@@ -49,50 +49,52 @@ const Sector = {
         payload: {
           filter: payload,
           data: records,
-          ...others
+          ...others,
         },
-      })
+      });
     },
     *addData({ payload }, { call }) {
-      const { code, msg } = yield call(createData, payload)
+      const { code, msg } = yield call(createData, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
       }
-      return true
+      return true;
     },
     *updateData({ payload }, { call }) {
-      const { code, msg } = yield call(updateData, payload)
+      const { code, msg } = yield call(updateData, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
       }
-      return true
+      return true;
     },
 
     // 查询未被集群绑定部门
-    *fetchNotBindDept({payload}, {call, put}) {
-      const { code, msg, data } = yield call(queryDept, payload)
+    *fetchNotBindDept({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(queryDept, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
       }
-      let obj = {}
+      const obj = {};
       data.map(v => {
-        obj[v.deptId] = v.deptName
-      })
+        obj[v.deptId] = v.deptName;
+        return true;
+      });
       yield put({
         type: 'saveData',
         payload: {
           deptList: data,
-          deptListMap: obj
-        }
-      })
+          deptListMap: obj,
+        },
+      });
+      return true;
     },
 
     // 临时查询所有项目接口
-    *fetchAllDept({payload}, {call, put}) {
-      const { code, msg, data } = yield call(queryDeptTemp, payload)
+    *fetchAllDept({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(queryDeptTemp, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
@@ -101,13 +103,14 @@ const Sector = {
         type: 'saveData',
         payload: {
           allDept: data,
-        }
-      })
+        },
+      });
+      return true;
     },
 
-    //查看集群详情
-    *fetchSectorInfo({payload}, {call, put}) {
-      const {code, msg, data} = yield call(querySectorInfo, payload)
+    // 查看集群详情
+    *fetchSectorInfo({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(querySectorInfo, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
@@ -116,16 +119,17 @@ const Sector = {
         type: 'saveData',
         payload: {
           sectorInfo: data,
-        }
-      })
-    }
+        },
+      });
+      return true;
+    },
   },
   reducers: {
     saveData(state, { payload }) {
       return {
         ...state,
-        ...payload
-      }
+        ...payload,
+      };
     },
     setSectorData(state, action) {
       return {
@@ -139,7 +143,7 @@ const Sector = {
         logList: PagerHelper.resolveListState(action.payload),
       };
     },
-  }
-}
+  },
+};
 
-export default Sector
+export default Sector;

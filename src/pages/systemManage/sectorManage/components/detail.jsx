@@ -6,6 +6,7 @@ import GlobalSandBox from "@/components/commonUseModule/globalSandBox";
 import StandardTable from "@/components/StandardTable";
 import { DefaultPage, TableColumnHelper } from "@/utils/helper";
 import OptButton from "@/components/commonUseModule/optButton";
+import CustomBtn from '@/components/commonUseModule/customBtn'
 import editIcon from '@/assets/icon/Button_bj.svg'
 import budget_xq from '@/assets/icon/modular_xq.svg'
 import budget_log from '@/assets/icon/modular_czrz.svg'
@@ -18,6 +19,7 @@ const { Option } = Select
 @connect(({ sector, loading }) => ({
   loadingQueryLogData: loading.effects['sector/fetchLogList'],
   loadingQueryInfo: loading.effects['sector/fetchSectorInfo'],
+  loadingUpdate: loading.effects['sector/updateData'],
   sectorInfo: sector.sectorInfo,
   logList: sector.logList,
   deptList: sector.deptList,
@@ -131,7 +133,9 @@ class SectorDetail extends PureComponent {
       logList,
       loadingQueryLogData,
       form,
-      deptList } = this.props
+      deptList,
+      loadingUpdate,
+    } = this.props
     const { name,
       createUserId,
       createUserName,
@@ -167,10 +171,11 @@ class SectorDetail extends PureComponent {
       { span: 1, required: false, name: '修改时间', value: updateTime, dataIndex: 'updateTime' },
     ]
     const columns = [
-      TableColumnHelper.genPlanColumn('operateUserName', '修改人', {width:'100px'}),
+      TableColumnHelper.genPlanColumn('operateUserName', '修改人', { width: '100px' }),
       TableColumnHelper.genPlanColumn('content', '修改内容'),
-      TableColumnHelper.genPlanColumn('updateTime', '修改时间', {width:'100px'}),
+      TableColumnHelper.genPlanColumn('updateTime', '修改时间', { width: '100px' }),
     ]
+    console.log(editBool)
     return (
       <Fragment>
         <GlobalSandBox
@@ -182,12 +187,12 @@ class SectorDetail extends PureComponent {
                 style={{
                   backgroundColor: 'white'
                 }}
-                onClick={
-                  () => this.setState({
+                onClick={() => {
+                  this.setState({
                     editBool: true,
-                  }),
-                  () => this.handleQueryDept()
-                }
+                  })
+                  this.handleQueryDept()
+                }}
                 img={editIcon}
                 text="编辑"
               />
@@ -205,7 +210,9 @@ class SectorDetail extends PureComponent {
                     marginLeft: '16px'
                   }}
                   type='primary'
+                  ghost
                   onClick={() => this.handleSubmit()}
+                  loading={loadingUpdate}
                 >保存</Button>
               </div>
           }
