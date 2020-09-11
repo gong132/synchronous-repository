@@ -1,26 +1,25 @@
-import React, { useEffect, Fragment } from "react";
-import { connect } from "dva"
-import {Card, Icon, Form, Divider, Popconfirm, Tree} from "antd";
-import _filter from "lodash/filter";
-import _sortBy from "lodash/sortBy";
-import {isEmpty} from "@/utils/lang";
-import { MenuActionHelper } from "@/utils/helper";
-import {MENU_ITEM_TYPE} from "@/utils/constant";
-import AdminRouters from "@/pages/routes.config";
+import React, { useEffect, Fragment } from 'react';
+import { connect } from 'dva';
+import { Card, Icon, Form, Divider, Popconfirm, Tree } from 'antd';
+import _filter from 'lodash/filter';
+import _sortBy from 'lodash/sortBy';
+import { isEmpty } from '@/utils/lang';
+import { MenuActionHelper } from '@/utils/helper';
+import { MENU_ITEM_TYPE } from '@/utils/constant';
+import AdminRouters from '@/pages/routes.config';
 
-import styles from "./index.less"
+import styles from './index.less';
 
 // const FormItem = Form.Item;
 const { TreeNode } = Tree;
 const Index = props => {
-  const { global: { allMenuList } } = props;
+  const {
+    global: { allMenuList },
+  } = props;
 
-    MenuActionHelper.getFlatMenus(
-    MenuActionHelper.getMenuData(AdminRouters.routes[0].routes, "/")
-  );
+  MenuActionHelper.getFlatMenus(MenuActionHelper.getMenuData(AdminRouters.routes[0].routes, '/'));
 
-  useEffect(() => {
-  }, []);
+  useEffect(() => {}, []);
 
   // 递归序列初始化所有菜单树
   const generateAllMenu = (menuArray, pid = 0) => {
@@ -28,7 +27,7 @@ const Index = props => {
     if (menuJson.length === 0) {
       return null;
     }
-    const menu = _sortBy(menuJson, "id").map(item => {
+    const menu = _sortBy(menuJson, 'id').map(item => {
       const menuItem = {
         id: item.id,
         key: item.id,
@@ -98,18 +97,9 @@ const Index = props => {
 
   return (
     <Card title="菜单配置">
-      <div>
-        {
-          allMenuList && (
-            <Tree>
-              {renderTreeNodes(generateAllMenu(allMenuList))}
-            </Tree>
-          )
-        }
-      </div>
+      <div>{allMenuList && <Tree>{renderTreeNodes(generateAllMenu(allMenuList))}</Tree>}</div>
     </Card>
-  )
+  );
 };
 
-
-export default connect(({ global, menuConfig }) => ({ global, menuConfig }))(Form.create()(Index))
+export default connect(({ global, menuConfig }) => ({ global, menuConfig }))(Form.create()(Index));
