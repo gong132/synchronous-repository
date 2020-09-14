@@ -62,10 +62,10 @@ const BasicLayout = props => {
   const menuDataRender = menuList =>{
     const {
       global: {
-        allMenuList,
+        currentUserMenuList,
       },
     } = props;
-    const newMenuList = [...menuList].filter(x => [...allMenuList].some(y => y.url === x.path));
+    const newMenuList = [...menuList].filter(x => [...currentUserMenuList].some(y => y.url === x.path));
     return newMenuList.map(item => {
       const localItem = { ...item, children: item.children ? menuDataRender(item.children) : [] };
       return Authorized.check(item.authority, localItem, null);
@@ -97,7 +97,7 @@ const BasicLayout = props => {
     //   menuDataRender,
     // );
 
-  }, [props])
+  }, [props]);
   /**
    * init variables
    */
@@ -124,7 +124,7 @@ const BasicLayout = props => {
     >
       {logoImg}
     </div>
-  )
+  );
 
   return (
     <ProLayout

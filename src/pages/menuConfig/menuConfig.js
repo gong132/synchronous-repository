@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment } from 'react';
+import React, { useEffect, Fragment, useState } from 'react';
 import { connect } from 'dva';
 import { Card, Icon, Form, Divider, Popconfirm, Tree } from 'antd';
 import _filter from 'lodash/filter';
@@ -8,17 +8,20 @@ import { MenuActionHelper } from '@/utils/helper';
 import { MENU_ITEM_TYPE } from '@/utils/constant';
 import AdminRouters from '@/pages/routes.config';
 
+import AddChildrenNode from './addChildrenNode'
 import styles from './index.less';
 
 // const FormItem = Form.Item;
 const { TreeNode } = Tree;
 const Index = props => {
   const {
-    global: { currentUserMenuList },
+    global: { allMenuList },
   } = props;
 
-  MenuActionHelper.getFlatMenus(MenuActionHelper.getMenuData(AdminRouters.routes[0].routes, '/'));
+  const localMenu = MenuActionHelper.getFlatMenus(MenuActionHelper.getMenuData(AdminRouters.routes[0].routes, '/'));
 
+  const [addChildVisible, setAddChildVisible] = useState(false);
+  const [selectedNode, setSelectedNode] = useState({})
   useEffect(() => {}, []);
 
   // 递归序列初始化所有菜单树
@@ -63,7 +66,10 @@ const Index = props => {
             <Icon
               type="plus-circle"
               title="添加"
-              // onClick={() => this.handleAdd(node)}
+              onClick={() => {
+                setAddChildVisible(true)
+                setSelectedNode(node)
+              }}
             />
             <Divider type="vertical" />
           </Fragment>
@@ -95,9 +101,29 @@ const Index = props => {
     });
   };
 
+  console.log(localMenu, 'localMenu')
   return (
     <Card title="菜单配置">
-      <div>{allMenuList && <Tree>{renderTreeNodes(generateAllMenu(currentUserMenuList))}</Tree>}</div>
+      <div>
+      {localMenu && (
+          <Tree>
+          {renderTreeNodes(generateAllMenu(allMenuList))}
+        </Tree>
+        )}
+        {
+          addChildVisible && (
+            <AddChildrenNode
+              modalVisible={addChildVisible}
+              handleModalVisible={() => {
+                setAddChildVisible(false)
+                setSelectedNode({})
+              }}
+              localMenu={localMenu}
+              values={selectedNode}
+            />
+          )
+        }
+      </div>
     </Card>
   );
 };

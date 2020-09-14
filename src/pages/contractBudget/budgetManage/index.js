@@ -5,6 +5,7 @@ import {DefaultPage, TableColumnHelper} from "@/utils/helper";
 import StandardTable from "@/components/StandardTable";
 import {Button, Col, Form, Input, Popover, Row, Select, Tooltip, DatePicker, Icon, Card} from "antd";
 import {isEmpty} from "@/utils/lang";
+import { config } from "@/utils/config";
 import {formLayoutItem, formLayoutItem1, MENU_ACTIONS} from "@/utils/constant";
 import {BUDGET_TYPE, PROJECT_TYPE} from "@/pages/contractBudget/util/constant";
 import OptButton from "@/components/commonUseModule/optButton";
@@ -14,6 +15,7 @@ import bottomIcon from "@/assets/icon/drop_down.svg"
 
 import AddForm from "./addForm"
 import styles from "../index.less";
+import { downLoad } from "@/utils/utils";
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -49,19 +51,19 @@ const Index = props => {
         if (isEmpty(rows.number, true)) return "";
         return (
           <Tooltip placement="top" title={rows.number}>
-          <span
-            style={{ color: "#2E5BFF" }}
-            onClick={() => {
-              props.history.push({
-                pathname: "/contract-budget/budget/detail",
-                query: {
-                  id: rows.id,
-                }
-              })
-            }}
-          >
-            { rows.number.length > 10 ? `${rows.number.substring(0, 10)}...` : rows.number.substring(0, 10) }
-          </span>
+            <span
+              style={{ color: "#2E5BFF" }}
+              onClick={() => {
+                props.history.push({
+                  pathname: "/contract-budget/budget/detail",
+                  query: {
+                    id: rows.id,
+                  }
+                })
+              }}
+            >
+              { rows.number.length > 10 ? `${rows.number.substring(0, 10)}...` : rows.number.substring(0, 10) }
+            </span>
           </Tooltip>
         )
       },
@@ -132,6 +134,15 @@ const Index = props => {
     handleQueryBudgetData(formValues)
   };
 
+  const handleDownLoad = () => {
+    const formValues = form.getFieldsValue();
+      const params = {
+        ...formValues,
+      };
+      const exportUrl = `${config.uploadUrl}/budget/export`;
+      downLoad(exportUrl, '多经点位管理表.xls', params);
+  }
+
   const handleQueryClusterList = () => {
     dispatch({
       type: 'budgetManage/queryClusterList',
@@ -161,16 +172,18 @@ const Index = props => {
           <Col span={24}>
             <FormItem {...formLayoutItem1} label="项目类型">
               {getFieldDecorator('type', {
-              })(<Select
-                placeholder="请选择项目类型"
-                allowClear
-              >
-                {
-                  PROJECT_TYPE.map(v => (
-                    <Option value={v.key} key={v.key.toString()}>{v.value}</Option>
-                  ))
-                }
-              </Select>)}
+              })(
+                <Select
+                  placeholder="请选择项目类型"
+                  allowClear
+                >
+                  {
+                    PROJECT_TYPE.map(v => (
+                      <Option value={v.key} key={v.key.toString()}>{v.value}</Option>
+                    ))
+                  }
+                </Select>
+              )}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -178,22 +191,25 @@ const Index = props => {
               {getFieldDecorator('expectTotalAmount', {
               })(<Input
                 allowClear
-                placeholder="请输入预算总金额" />)}
+                placeholder="请输入预算总金额"
+              />)}
             </FormItem>
           </Col>
           <Col span={24}>
             <FormItem {...formLayoutItem1} label="预算类型">
               {getFieldDecorator('budgetType', {
-              })(<Select
-                placeholder="请选择预算类型"
-                allowClear
-              >
-                {
-                  BUDGET_TYPE.map(v => (
-                    <Option value={v.key} key={v.key.toString()}>{v.value}</Option>
-                  ))
-                }
-              </Select>)}
+              })(
+                <Select
+                  placeholder="请选择预算类型"
+                  allowClear
+                >
+                  {
+                    BUDGET_TYPE.map(v => (
+                      <Option value={v.key} key={v.key.toString()}>{v.value}</Option>
+                    ))
+                  }
+                </Select>
+              )}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -210,7 +226,8 @@ const Index = props => {
               {getFieldDecorator('receiveGroupId', {
               })(<Input
                 allowClear
-                placeholder="请输入承建团队" />)}
+                placeholder="请输入承建团队"
+              />)}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -218,7 +235,8 @@ const Index = props => {
               {getFieldDecorator('clusterId', {
               })(<Input
                 allowClear
-                placeholder="请输入所属集群或板块" />)}
+                placeholder="请输入所属集群或板块"
+              />)}
             </FormItem>
           </Col>
         </Row>
@@ -237,7 +255,8 @@ const Index = props => {
               })(<Input
                 allowClear
                 onBlur={handleSearchForm}
-                placeholder="请输入预算编号" />)}
+                placeholder="请输入预算编号"
+              />)}
             </FormItem>
           </Col>
           <Col span={6}>
@@ -246,7 +265,8 @@ const Index = props => {
               })(<Input
                 allowClear
                 onBlur={handleSearchForm}
-                placeholder="请输入项目名称" />)}
+                placeholder="请输入项目名称"
+              />)}
             </FormItem>
           </Col>
           <Col span={6}>
@@ -255,7 +275,8 @@ const Index = props => {
               })(<Input
                 allowClear
                 onBlur={handleSearchForm}
-                placeholder="请输入需求部门" />)}
+                placeholder="请输入需求部门"
+              />)}
             </FormItem>
           </Col>
           <Col span={6}>
@@ -264,12 +285,33 @@ const Index = props => {
                 ghost
                 className={classNames('margin-right-6',styles.orangeForm)}
                 onClick={handleResetForm}
-              >重置</Button>
+              >
+                重置
+              </Button>
               <Popover visible={searchMore} placement="bottomRight" content={content} trigger="click">
                 <div className="yCenter">
                   {
-                    !searchMore ? <span className="activeColor" onClick={() => setSearchMore(true)}><Icon style={{ verticalAlign: '-0.4em'}} component={bottomIcon}/>更多</span> :
-                      <span className="activeColor" onClick={() => setSearchMore(false)}><Icon style={{ verticalAlign: '-0.4em'}} component={upIcon}/>隐藏</span>
+                    !searchMore ?
+                      <span
+                        className="activeColor"
+                        onClick={() => setSearchMore(true)}
+                      >
+                        <Icon
+                          style={{ verticalAlign: '-0.4em'}}
+                          component={bottomIcon}
+                        />
+                          更多
+                      </span> :
+                      <span
+                        className="activeColor"
+                        onClick={() => setSearchMore(false)}
+                      >
+                        <Icon
+                          style={{ verticalAlign: '-0.4em'}}
+                          component={upIcon}
+                        />
+                        隐藏
+                      </span>
                   }
                 </div>
               </Popover>
@@ -286,10 +328,15 @@ const Index = props => {
           className={styles.addForm}
           icon="plus"
           onClick={() => setAddModalVisible(true)}
-        >新建</Button>
+        >
+          新建
+        </Button>
         <Button
           type="default"
-        >导出</Button>
+          onClick={() => handleDownLoad}
+        >
+          导出
+        </Button>
       </div>
       <div className={styles.tableList}>
         <div className={styles.tableListForm}>
@@ -319,7 +366,7 @@ const Index = props => {
       </div>
     </div>
   )
-}
+};
 
 export default connect(
   ({ budgetManage, global, loading }) => ({
