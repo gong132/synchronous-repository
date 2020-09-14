@@ -1,4 +1,4 @@
-import { fetchAllMenuList, deleteMenu } from '@/services/menuConfig/menuConfig';
+import { fetchAllMenuList, deleteMenu, addMenu } from '@/services/menuConfig/menuConfig';
 import {message} from "antd";
 
 
@@ -22,6 +22,15 @@ const menuConfig = {
     },
     *deleteMenu({payload}, { call }) {
       const { code, msg } = yield call(deleteMenu, payload);
+
+      if (code !== 200) {
+        message.error(msg);
+        return false
+      }
+      return true
+    },
+    *addMenu({payload}, { call }) {
+      const { code, msg } = yield call(addMenu, payload);
 
       if (code !== 200) {
         message.error(msg);

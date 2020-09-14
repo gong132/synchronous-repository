@@ -9,3 +9,8 @@ export async function fetchAllMenuList(params) {
 export async function deleteMenu(params) {
   return request('/resource/deleteBatch', { method: 'post', params });
 }
+
+// 新增菜单
+export async function addMenu(params) {
+  return request('/resource/addResource', { method: 'post', params });
+}
