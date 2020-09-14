@@ -58,9 +58,10 @@ module.exports = {
               name: 'contractManage',
               component: './contractBudget/contractManage',
               buttons: [
-                { name: '审核', key: 'audit' },
-                { name: '启用', key: 'enable' },
-                { name: '停止', key: 'disable' },
+                { name: '新建', key: 'add' },
+                { name: '编辑', key: 'edit' },
+                { name: '查看', key: 'check' },
+                { name: '导出', key: 'export' },
               ],
             },
             {

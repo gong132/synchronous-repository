@@ -1,5 +1,4 @@
-import { fetchAllMenuList } from '@/services/menuConfig/menuConfig';
-import {PagerHelper} from "@/utils/helper";
+import { fetchAllMenuList, deleteMenu } from '@/services/menuConfig/menuConfig';
 import {message} from "antd";
 
 
@@ -20,6 +19,15 @@ const menuConfig = {
         type: 'saveData',
         payload: { allMenuList: data },
       })
+    },
+    *deleteMenu({payload}, { call }) {
+      const { code, msg } = yield call(deleteMenu, payload);
+
+      if (code !== 200) {
+        message.error(msg);
+        return false
+      }
+      return true
     },
   },
   reducers: {

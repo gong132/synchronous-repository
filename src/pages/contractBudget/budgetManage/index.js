@@ -21,8 +21,9 @@ const FormItem = Form.Item;
 const { Option } = Select;
 
 const Index = props => {
-  const { dispatch, budgetManage:{ budgetList }, loading, form,
+  const { dispatch, loading, form,
     global: { authActions },
+    budgetManage:{ budgetList },
   } = props;
 
   // 查询更多

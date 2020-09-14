@@ -27,12 +27,16 @@ import _ from 'lodash'
 import styles from './index.less'
 
 import CreateConstract from './components/createConstract'
-import Sector from '@/pages/systemManage/sectorManage/models/sector';
+// import Sector from '@/pages/systemManage/sectorManage/models/sector';
 
-const { Option } = Select
-const FormItem = Form.Item
-const { RangePicker } = DatePicker
+const { Option } = Select;
+const FormItem = Form.Item;
+const { RangePicker } = DatePicker;
+
+
+/* eslint-disable */
 @Form.create()
+/* eslint-enable */
 @connect(({ constract, loading }) => ({
   loadingQueryData: loading.effects['constract/queryData'],
   loadingCreateData: loading.effects['constract/addData'],
@@ -60,7 +64,7 @@ class ContractManage extends Component {
       visibleModal: false,
       searchMore: false,
       modalTitle: '新建',
-      recordValue: {},
+      // recordValue: {},
     }
     this.handleDebounceQueryData = _.debounce(this.handleDebounceQueryData, 500)
   }
@@ -176,7 +180,7 @@ class ContractManage extends Component {
     this.setState({
       visibleModal: bool,
       modalTitle: title,
-      recordValue: record,
+      // recordValue: record,
     })
     if (record.id) {
       this.handleQuerySectorInfo({ id: record.id })
@@ -225,7 +229,7 @@ class ContractManage extends Component {
 
   renderSearchForm = () => {
     const { searchMore } = this.state
-    const { deptList, supplierList, loadingQueryData, form: { getFieldDecorator } } = this.props
+    const { deptList, supplierList, loadingQueryData, form: { getFieldDecorator } } = this.props;
     const content = (
       <div className={styles.moreSearch}>
         <Row>
@@ -234,7 +238,8 @@ class ContractManage extends Component {
               {getFieldDecorator('name', {
               })(<Input
                 allowClear
-                placeholder="请输入名称" />)}
+                placeholder="请输入名称"
+              />)}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -242,7 +247,8 @@ class ContractManage extends Component {
               {getFieldDecorator('budgetNumber', {
               })(<Input
                 allowClear
-                placeholder="请输入预算编号" />)}
+                placeholder="请输入预算编号"
+              />)}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -250,7 +256,8 @@ class ContractManage extends Component {
               {getFieldDecorator('projectNumber', {
               })(<Input
                 allowClear
-                placeholder="请输入项目编号" />)}
+                placeholder="请输入项目编号"
+              />)}
             </FormItem>
           </Col>
         </Row>
@@ -260,7 +267,9 @@ class ContractManage extends Component {
             loading={loadingQueryData}
             type='primary'
             ghost
-          >查询</Button>
+          >
+            查询
+          </Button>
           <Button onClick={() => this.setSearchMore(false)}>取消</Button>
         </div>
       </div>
@@ -274,24 +283,27 @@ class ContractManage extends Component {
           })(<Input
             allowClear
             onChange={_.debounce(this.saveParams, 500)}
-            placeholder='请输入合同编号' />)}
+            placeholder='请输入合同编号'
+          />)}
         </SearchForm>
         <SearchForm
           labelName="所属部门"
         >
           {getFieldDecorator('deptId', {
-          })(<Select
-            allowClear
-            placeholder='请输入所属部门'
-            onChange={_.debounce(this.saveParams, 500)}
-            style={{
-              width: '100%'
-            }}
-          >
-            {!_.isEmpty(deptList) && deptList.map(d => (
-              <Option key={d.deptId} value={d.deptId}>{d.deptName}</Option>
-            ))}
-          </Select>)}
+          })(
+            <Select
+              allowClear
+              placeholder='请输入所属部门'
+              onChange={_.debounce(this.saveParams, 500)}
+              style={{
+                width: '100%'
+              }}
+            >
+              {!_.isEmpty(deptList) && deptList.map(d => (
+                <Option key={d.deptId} value={d.deptId}>{d.deptName}</Option>
+              ))}
+            </Select>
+          )}
         </SearchForm>
         <SearchForm
           labelName="供应商"
@@ -329,7 +341,8 @@ class ContractManage extends Component {
             display: 'inline-block'
           }}
           loading={loadingQueryData}
-          type='reset' />
+          type='reset'
+        />
         <Popover visible={searchMore} placement="bottomRight" content={content} trigger="click">
           {
             <div
@@ -364,7 +377,8 @@ class ContractManage extends Component {
               onClick={
                 () => this.handleViewDetail(record)
               }
-              className='globalStyle'>
+              className='globalStyle'
+            >
               {text}
             </span>
           )
@@ -415,7 +429,7 @@ class ContractManage extends Component {
   render() {
     const { constractList, loadingQueryData, contractInfo } = this.props
     console.log(constractList)
-    const { visibleModal, modalTitle, recordValue } = this.state
+    const { visibleModal, modalTitle } = this.state
     const createProps = {
       visibleModal,
       modalTitle,
@@ -428,14 +442,18 @@ class ContractManage extends Component {
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <CustomBtn
             onClick={() => this.handleViewModal(true, '新建')}
-            type='create' />
+            type='create'
+          />
           <CustomBtn
             // onClick={() => this.handleViewModal(true, '新建')}
-            type='export' />
+            type='export'
+          />
         </div>
         <Button
           onClick={() => this.handleAddMenu()}
-        >添加菜单</Button>
+        >
+          添加菜单
+        </Button>
         {visibleModal && <CreateConstract {...createProps} />}
         <Card>
           {this.renderSearchForm()}
