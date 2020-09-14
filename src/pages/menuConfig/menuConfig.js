@@ -1,6 +1,6 @@
 import React, { useEffect, Fragment, useState } from 'react';
 import { connect } from 'dva';
-import { Card, Icon, Form, Divider, Popconfirm, Tree } from 'antd';
+import { Card, Icon, Form, Divider, Popconfirm, Tree, message } from 'antd';
 import _filter from 'lodash/filter';
 import _sortBy from 'lodash/sortBy';
 import { isEmpty } from '@/utils/lang';
@@ -15,15 +15,24 @@ import styles from './index.less';
 const { TreeNode } = Tree;
 const Index = props => {
   const {
+    dispatch,
     global: { allMenuList },
   } = props;
 
   const localMenu = MenuActionHelper.getFlatMenus(MenuActionHelper.getMenuData(AdminRouters.routes[0].routes, '/'));
 
-  const [addChildVisible, setAddChildVisible] = useState(false);
-  const [selectedNode, setSelectedNode] = useState({})
-  useEffect(() => {}, []);
-
+  // 递归找到当前节点的所有子节点(不包括当前节点)
+  const findChildMenu = (menuArray, id, newArr = [] ) => {
+    const menuJson = _filter(menuArray, o => String(o.pid) === String(id));
+    if (isEmpty(menuJson)) {
+      return null;
+    }
+    _sortBy(menuJson, 'id').map(v => {
+      newArr.push(v);
+      findChildMenu(menuArray, v.id, newArr);
+    })
+    return newArr
+  };
   // 递归序列初始化所有菜单树
   const generateAllMenu = (menuArray, pid = 0) => {
     const menuJson = _filter(menuArray, o => String(o.pid) === String(pid));
@@ -48,6 +57,42 @@ const Index = props => {
     });
     return menu;
   };
+
+  const [addChildVisible, setAddChildVisible] = useState(false);
+  const [selectedNode, setSelectedNode] = useState({})
+
+  const handleQueryAllMenu = () => {
+    dispatch({
+      type: 'global/queryAllMenuList',
+      payload: {
+      },
+    })
+  }
+
+  useEffect(() => {
+    handleQueryAllMenu()
+  }, []);
+
+  const handleDeleteMenu = node => {
+    const childrenMenuList = findChildMenu(allMenuList, node.id);
+    let idGather = [node];
+    if (!isEmpty(childrenMenuList)) {
+      idGather = [...idGather, ...childrenMenuList]
+    }
+    idGather = idGather.map(c => c.id).join(',')
+    console.log(idGather, 'idGather')
+    dispatch({
+      type: 'menuConfig/deleteMenu',
+      payload: {
+        ids: idGather,
+      },
+    }).then(sure => {
+      if (!sure) return;
+      message.success("删除成功")
+      handleQueryAllMenu();
+    })
+  }
+
   const getNodeTitle = node => (
     <div className={styles.nodeItem}>
       {node.title}
@@ -77,7 +122,7 @@ const Index = props => {
 
         <Popconfirm
           title={`确定要删除（${node.title}）吗?`}
-          // onConfirm={() => handleDelete(node)}
+          onConfirm={() => handleDeleteMenu(node)}
           okText="确定"
           cancelText="取消"
         >

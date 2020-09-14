@@ -29,9 +29,12 @@ import styles from './index.less'
 
 import CreateContract from './components/createContract'
 
-const { Option } = Select
-const FormItem = Form.Item
-const { RangePicker } = DatePicker
+const { Option } = Select;
+const FormItem = Form.Item;
+const { RangePicker } = DatePicker;
+
+
+/* eslint-disable */
 @Form.create()
 @connect(({ contract, loading }) => ({
   loadingQueryData: loading.effects['contract/queryData'],
@@ -223,7 +226,7 @@ class ContractManage extends Component {
 
   renderSearchForm = () => {
     const { searchMore } = this.state
-    const { deptList, supplierList, loadingQueryData, form: { getFieldDecorator } } = this.props
+    const { deptList, supplierList, loadingQueryData, form: { getFieldDecorator } } = this.props;
     const content = (
       <div className={styles.moreSearch}>
         <Row>
@@ -261,7 +264,9 @@ class ContractManage extends Component {
             loading={loadingQueryData}
             type='primary'
             ghost
-          >查询</Button>
+          >
+            查询
+          </Button>
           <Button onClick={() => this.setSearchMore(false)}>取消</Button>
         </div>
       </div>
@@ -282,18 +287,20 @@ class ContractManage extends Component {
           labelName="所属部门"
         >
           {getFieldDecorator('deptId', {
-          })(<Select
-            allowClear
-            placeholder='请输入所属部门'
-            onChange={_.debounce(this.saveParams, 500)}
-            style={{
-              width: '100%'
-            }}
-          >
-            {!_.isEmpty(deptList) && deptList.map(d => (
-              <Option key={d.deptId} value={d.deptId}>{d.deptName}</Option>
-            ))}
-          </Select>)}
+          })(
+            <Select
+              allowClear
+              placeholder='请输入所属部门'
+              onChange={_.debounce(this.saveParams, 500)}
+              style={{
+                width: '100%'
+              }}
+            >
+              {!_.isEmpty(deptList) && deptList.map(d => (
+                <Option key={d.deptId} value={d.deptId}>{d.deptName}</Option>
+              ))}
+            </Select>
+          )}
         </SearchForm>
         <SearchForm
           labelName="供应商"

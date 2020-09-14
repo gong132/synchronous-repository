@@ -75,7 +75,7 @@ const CreateContract = props => {
       });
   };
 
-  const sumbitEdit = params => {
+  const submitEdit = params => {
     props
       .dispatch({
         type: 'contract/updateData',
@@ -258,7 +258,7 @@ const CreateContract = props => {
       values.payRecords = data;
       if (recordValue.id) {
         values.id = recordValue.id;
-        sumbitEdit(values);
+        submitEdit(values);
         return '';
       }
       submitAdd(values);
