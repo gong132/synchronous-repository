@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-console */
 import pathRegexp from 'path-to-regexp';
 
 import moment from 'moment';
@@ -63,7 +66,6 @@ export const getRouteAuthority = (path, routeData) => {
   });
   return authorities;
 };
-
 
 export function fixedZero(val) {
   return val * 1 < 10 ? `0${val}` : val;
@@ -139,7 +141,6 @@ export function getPlainNode(nodeList, parentPath = '') {
   return arr;
 }
 
-
 function getRelation(str1, str2) {
   if (str1 === str2) {
     console.warn('Two path are equal!'); // eslint-disable-line
@@ -178,7 +179,7 @@ function getRenderArr(routes) {
  */
 export function getRoutes(path, routerData) {
   let routes = Object.keys(routerData).filter(
-    routePath => routePath.indexOf(path) === 0 && routePath !== path
+    routePath => routePath.indexOf(path) === 0 && routePath !== path,
   );
   // Replace path to '' eg. path='user' /user/name => name
   routes = routes.map(item => item.replace(path, ''));
@@ -247,10 +248,11 @@ export function formatWan(val) {
 
 export function isTokenExpired(userInfo) {
   // eslint-disable-next-line camelcase
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   const { loginTime, expires_in } = userInfo;
   const expireDateTime = new Date(loginTime).setSeconds(
     // eslint-disable-next-line camelcase
-    new Date(loginTime).getSeconds() + expires_in
+    new Date(loginTime).getSeconds() + expires_in,
   );
   return expireDateTime <= new Date().getTime();
 }
@@ -410,7 +412,7 @@ export function groupArray(datas, cols) {
       }
       return pre;
     },
-    { list: [], current: [] }
+    { list: [], current: [] },
   );
 
   if (result.current.length) {
@@ -442,7 +444,7 @@ export function transformLink(strUrl) {
           v.match(picreg)[0]
         }" style="display: block;width:15em;word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" target="_blank">${
           v.match(picreg)[0]
-        }</a>`
+        }</a>`,
       );
     }
     return v;
@@ -462,16 +464,16 @@ export const flatArrayByChildKey = (array, childKey) => {
     const rowOrder = currIndex + 1;
     const flagItems = currValue[childKey]
       ? currValue[childKey].map((child, childIndex) => {
-        const rowSpan = childIndex > 0 ? 0 : currValue[childKey].length;
-        return {
-          ...currValue,
-          flatItem: child,
-          rowSpan,
-          rowKey: `${currIndex}_${childIndex}`,
-          rowClassName,
-          rowOrder,
-        };
-      })
+          const rowSpan = childIndex > 0 ? 0 : currValue[childKey].length;
+          return {
+            ...currValue,
+            flatItem: child,
+            rowSpan,
+            rowKey: `${currIndex}_${childIndex}`,
+            rowClassName,
+            rowOrder,
+          };
+        })
       : [{ ...currValue, rowKey: `${currIndex}_0`, rowSpan: 1, rowClassName, rowOrder }];
     acc.push(...flagItems);
     return acc;
@@ -483,27 +485,36 @@ export const flatArrayByChildKey = (array, childKey) => {
 /**
  * @param {string} name 字段名
  */
-export const getParam = (name) => {
-  const str = window.location.href.split('?')[1] || ''
-  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-  const r = str.match(reg)
+export const getParam = name => {
+  const str = window.location.href.split('?')[1] || '';
+  const regInset = new RegExp(`(^|&)${name}=([^&]*)(&|$)`);
+  const r = str.match(regInset);
   if (r) return decodeURI(r[2]);
-  return ''; //返回参数值
-}
+  return ''; // 返回参数值
+};
 
 // 比较两个数组是否相同
-export const isObjEqual = function (o1={}, o2={}) {
-  var props1 = Object.getOwnPropertyNames(o1);
-  var props2 = Object.getOwnPropertyNames(o2);
-  if (props1.length != props2.length) {
+export const isObjEqual = (o1 = {}, o2 = {}) => {
+  const props1 = Object.getOwnPropertyNames(o1);
+  const props2 = Object.getOwnPropertyNames(o2);
+  if (props1.length !== props2.length) {
     return false;
   }
-  for (var i = 0, max = props1.length; i < max; i++) {
-    var propName = props1[i];
+  for (let i = 0, max = props1.length; i < max; i++) {
+    const propName = props1[i];
     if (o1[propName] !== o2[propName]) {
       return false;
     }
   }
   return true;
-}
+};
 
+/**
+ * 读取用户信息session
+ */
+export function getUserInfo() {
+  const infoString = localStorage.getItem('gd-user');
+  // const infoString = STORAGE ? localStorage.getItem('userInfo') : sessionStorage.getItem('userInfo')
+  const info = infoString && JSON.parse(infoString);
+  return info || [];
+}

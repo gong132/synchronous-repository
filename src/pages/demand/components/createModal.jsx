@@ -7,225 +7,155 @@ import CustomBtn from '@/components/commonUseModule/customBtn'
 import Editor from "@/components/TinyEditor"
 import UploadFile from '@/components/FileUpload'
 import styles from '../index.less'
-import { Modal, Form, Select, Input, DatePicker, Col, Row, Table, message, Upload, Button } from 'antd'
+import { Modal, Form, Select, Input, DatePicker, Col, Row, Table, message, Upload, Button, Radio } from 'antd'
+
+const FormItem = Form.Item
+const { Option } = Select
+const RadioGroup = Radio.Group
 
 const CreateDemand = (props) => {
     const {
         visibleModal,
         modalTitle,
         handleViewModal,
+        form
     } = props
+
+    const [description, setDescription] = useState('');
+
+    const handleSubmitForm = () => {
+        form.validateFieldsAndScroll((err, values) => {
+            if (err) return
+            if (description.length < 1) {
+                message.error('请补全合同描述！')
+                return
+            }
+            console.log('values: ', values)
+        })
+    }
 
     const renderForm = () => (
         <Form>
             <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
                 <Col span={24}>
-                    <FormItem {...formLayoutItemAddEdit} label="名称">
+                    <FormItem {...formLayoutItemAddEdit} label="标题">
                         {form.getFieldDecorator('name', {
-                            rules: [{ required: true, message: '请输入名称' }],
-                            initialValue: name,
-                        })(<Input placeholder="请输入名称" />)}
+                            rules: [{ required: true, message: '请输入标题' }],
+                            // initialValue: name,
+                        })(<Input placeholder="请输入标题" />)}
                     </FormItem>
                 </Col>
                 <Col span={12}>
-                    <FormItem {...formLayoutItemAddDouble} label="预算编号">
-                        {form.getFieldDecorator('budgetNumber', {
-                            rules: [{ required: true, message: '请输入预算编号' }],
-                            initialValue: budgetNumber,
-                        })(<Select
-                            placeholder="请输入预算编号"
-                        >
-                            {!_.isEmpty(budgetList) && budgetList.map(d => (
-                                <Option key={d.number} value={d.number}>{d.number}</Option>
-                            ))}
-                        </Select>)}
-                    </FormItem>
-                </Col>
-                <Col span={12}>
-                    <FormItem {...formLayoutItemAddDouble} label="所属项目">
-                        {form.getFieldDecorator('projectNumber', {
-                            rules: [{ required: true, message: '请输入所属项目' }],
-                            initialValue: projectNumber,
-                        })(<Select
-                            allowClear
-                            // showSearch
-                            placeholder="请输入所属项目"
-                        >
-                            {!_.isEmpty(projectList) && projectList.map(d => (
-                                <Option key={d.number} value={d.number}>{d.name}</Option>
-                            ))}
-                        </Select>)}
-                    </FormItem>
-                </Col>
-                <Col span={12}>
-                    <FormItem {...formLayoutItemAddDouble} label="所属部门">
-                        {form.getFieldDecorator('deptId', {
-                            rules: [{ required: true, message: '请输入所属部门' }],
-                            initialValue: deptId,
-                        })(<Select
-                            allowClear
-                            // showSearch
-                            placeholder="请输入所属部门"
-                        >
-                            {!_.isEmpty(deptList) && deptList.map(d => (
-                                <Option key={d.deptId} value={d.deptId}>{d.deptName}</Option>
-                            ))}
-                        </Select>)}
-                    </FormItem>
-                </Col>
-                <Col span={12}>
-                    <FormItem {...formLayoutItemAddDouble} label="所属系统">
-                        {form.getFieldDecorator('systemId', {
-                            rules: [{ required: true, message: '请输入所属系统' }],
-                            initialValue: systemId,
-                        })(<Select
-                            allowClear
-                            // showSearch
-                            placeholder="请输入所属系统"
-                        >
-                            {!_.isEmpty(systemList) && systemList.map(d => (
-                                <Option key={d.systemId} value={d.systemId}>{d.systemName}</Option>
-                            ))}
-                        </Select>)}
-                    </FormItem>
-                </Col>
-                <Col span={12}>
-                    <FormItem {...formLayoutItemAddDouble} label="合同成交额">
-                        {form.getFieldDecorator('transactionAmount', {
-                            rules: [{
-                                required: true,
-                                message: '请输入合同成交额',
-                                pattern: /^[0-9]+$|,/g,
-                                whitespace: true
-                            }],
-                            normalize: formatMoney,
-                            initialValue: transactionAmount,
-                        })(<Input
-                            onChange={changeTotalMoney}
-                            addonAfter='元'
-                            placeholder="请输入合同成交额" />)}
-                    </FormItem>
-                </Col>
-                <Col span={12}>
-                    <FormItem {...formLayoutItemAddDouble} label="首次报价金额">
-                        {form.getFieldDecorator('firstOfferAmount', {
-                            rules: [{
-                                required: true,
-                                message: '请输入首次报价金额',
-                                pattern: /^[0-9]+$|,/g,
-                                whitespace: true
-                            }],
-                            normalize: formatMoney,
-                            initialValue: firstOfferAmount,
-                        })(<Input addonAfter='元' placeholder="请输入首次报价金额" />)}
-                    </FormItem>
-                </Col>
-                <Col span={12}>
-                    <FormItem {...formLayoutItemAddDouble} label="合同签订时间">
+                    <FormItem {...formLayoutItemAddDouble} label="期望完成日期">
                         {form.getFieldDecorator('signingTime', {
-                            rules: [{ required: true, message: '请输入合同签订时间' }],
-                            initialValue: signingTime ? moment(signingTime) : null,
-                        })(<DatePicker placeholder="请输入合同签订时间" />)}
+                            rules: [{ required: true, message: '请输入期望完成日期' }],
+                            // initialValue: signingTime ? moment(signingTime) : null,
+                        })(<DatePicker placeholder="请输入期望完成日期" />)}
                     </FormItem>
                 </Col>
                 <Col span={12}>
-                    <FormItem {...formLayoutItemAddDouble} label="供应商">
-                        {form.getFieldDecorator('providerCompanyId', {
-                            rules: [{ required: true, message: '请输入供应商' }],
-                            initialValue: providerCompanyId,
-                        })(<Select
-                            allowClear
-                            // showSearch
-                            placeholder="请输入供应商"
-                        >
-                            {!_.isEmpty(supplierList) && supplierList.map(d => (
-                                <Option key={d.supplierId} value={d.supplierId}>{d.supplierName}</Option>
-                            ))}
-                        </Select>)}
-                    </FormItem>
-                </Col>
-                <Col span={12}>
-                    <FormItem {...formLayoutItemAddDouble} label="合同负责人">
+                    <FormItem {...formLayoutItemAddDouble} label="提出人">
                         {form.getFieldDecorator('headerId', {
-                            rules: [{ required: true, message: '请输入合同负责人' }],
-                            initialValue: headerId,
+                            rules: [{ required: true, message: '请输入提出人' }],
+                            // initialValue: headerId,
                         })(<Select
                             allowClear
                             // showSearch
-                            placeholder="请输入合同负责人"
+                            placeholder="请输入提出人"
                         >
-                            {!_.isEmpty(headerList) && headerList.map(d => (
+                            {/* {!_.isEmpty(headerList) && headerList.map(d => (
                                 <Option key={d.leaderId} value={d.leaderId}>{d.leaderName}</Option>
-                            ))}
+                            ))} */}
+                            <Option key={1} value={1}>{1}</Option>
                         </Select>)}
                     </FormItem>
                 </Col>
                 <Col span={12}>
-                    <FormItem {...formLayoutItemAddDouble} label="合同负责人团队">
-                        {form.getFieldDecorator('headerGroupId', {
-                            rules: [{ required: true, message: '请输入合同负责人团队' }],
-                            initialValue: headerGroupId,
+                    <FormItem {...formLayoutItemAddDouble} label="需求类型">
+                        {form.getFieldDecorator('headerId', {
+                            rules: [{ required: true, message: '请输入需求类型' }],
+                            // initialValue: headerId,
                         })(<Select
                             allowClear
                             // showSearch
-                            placeholder="请输入合同负责人团队"
+                            placeholder="请输入需求类型"
                         >
-                            {!_.isEmpty(headerList) && headerList.map(d => (
-                                <Option key={d.number} value={d.number}>{d.name}</Option>
-                            ))}
+                            {/* {!_.isEmpty(headerList) && headerList.map(d => (
+                                <Option key={d.leaderId} value={d.leaderId}>{d.leaderName}</Option>
+                            ))} */}
+                            <Option key={1} value={1}>{1}</Option>
                         </Select>)}
                     </FormItem>
                 </Col>
-                {/* <Col span={12}>
-              <FormItem {...formLayoutItemAddDouble} label="免费维保期">
-                {form.getFieldDecorator('headerGroupId', {
-                  rules: [{ required: true, message: '请输入免费维保期' }],
-                  // initialValue: values && values.name,
-                })(<Input placeholder='请输入免费维保期' addonAfter='月' />)}
-              </FormItem>
-            </Col>
-            <Col span={12}>
-              <FormItem {...formLayoutItemAddDouble} label="维保支付日期">
-                {form.getFieldDecorator('signingTime', {
-                  rules: [{ required: true, message: '请输入维保支付日期' }],
-                  // initialValue: values && values.name,
-                })(<DatePicker placeholder="请输入维保支付日期" />)}
-              </FormItem>
-            </Col> */}
                 <Col span={12}>
-                    <FormItem {...formLayoutItemAddDouble} label="付款笔数">
-                        {form.getFieldDecorator('count', {
-                            rules: [{
-                                required: true,
-                                message: '请输入付款笔数',
-                                pattern: /^[0-9]+$/
-                            }],
-                            normalize: formatCount,
-                            initialValue: data.length,
+                    <FormItem {...formLayoutItemAddDouble} label="优先级">
+                        {form.getFieldDecorator('headerId', {
+                            rules: [{ required: true, message: '请输入优先级' }],
+                            // initialValue: headerId,
+                        })(<Select
+                            allowClear
+                            // showSearch
+                            placeholder="请输入优先级"
+                        >
+                            {/* {!_.isEmpty(headerList) && headerList.map(d => (
+                                <Option key={d.leaderId} value={d.leaderId}>{d.leaderName}</Option>
+                            ))} */}
+                            <Option key={1} value={1}>{1}</Option>
+                        </Select>)}
+                    </FormItem>
+                </Col>
+                <Col span={12}>
+                    <FormItem {...formLayoutItemAddDouble} label="受理团队">
+                        {form.getFieldDecorator('headerId', {
+                            rules: [{ required: false, message: '请输入受理团队' }],
+                            // initialValue: headerId,
+                        })(<Select
+                            allowClear
+                            // showSearch
+                            placeholder="请输入受理团队"
+                        >
+                            {/* {!_.isEmpty(headerList) && headerList.map(d => (
+                                <Option key={d.leaderId} value={d.leaderId}>{d.leaderName}</Option>
+                            ))} */}
+                            <Option key={1} value={1}>{1}</Option>
+                        </Select>)}
+                    </FormItem>
+                </Col>
+                <Col span={12}>
+                    <FormItem {...formLayoutItemAddDouble} label="受理人">
+                        {form.getFieldDecorator('headerId', {
+                            rules: [{ required: false, message: '请输入受理人' }],
+                            // initialValue: headerId,
+                        })(<Select
+                            allowClear
+                            // showSearch
+                            placeholder="请输入受理人"
+                        >
+                            {/* {!_.isEmpty(headerList) && headerList.map(d => (
+                                <Option key={d.leaderId} value={d.leaderId}>{d.leaderName}</Option>
+                            ))} */}
+                            <Option key={1} value={1}>{1}</Option>
+                        </Select>)}
+                    </FormItem>
+                </Col>
+                <Col span={12}>
+                    <FormItem {...formLayoutItemAddDouble} label="是否沟通">
+                        {form.getFieldDecorator('type', {
+                            rules: [{ required: false, message: '请选择项目类型' }],
+                            // initialValue: values && values.type,
                         })(
-                            <Input
-                                onChange={e => handleChangeColumns(e)}
-                                addonAfter='笔'
-                                placeholder='请输入付款笔数' />
+                            <RadioGroup>
+                                <Radio value={1} key={1}>是</Radio>
+                                <Radio value={0} key={0}>否</Radio>
+                            </RadioGroup>
                         )}
                     </FormItem>
                 </Col>
-                {!_.isEmpty(data) && <Col span={24}>
-                    <FormItem {...formLayoutItemAddEdit} label=" " colon={false}>
-                        <div className={styles.customTable}>
-                            <Table
-                                rowKey={(record, index) => index}
-                                columns={payColumns}
-                                pagination={false}
-                                dataSource={data}
-                            />
-                        </div>
-                    </FormItem>
-                </Col>}
+
                 <Col span={24}>
                     <FormItem
                         {...formLayoutItemAddEdit}
-                        label='合同描述'
+                        label='需求描述'
                         required={true}
                     >
                         <Editor
@@ -258,7 +188,7 @@ const CreateDemand = (props) => {
         <Modal
             width={794}
             style={{ top: 0 }}
-            title={`${modalTitle}合同`}
+            title={`${modalTitle}需求`}
             visible={visibleModal}
             onCancel={() => handleViewModal(false)}
             // confirmLoading={loadingAdd || loadingUpdate}
@@ -281,4 +211,6 @@ const CreateDemand = (props) => {
 
 }
 
-export default CreateDemand
+export default connect(({ constract, loading }) => ({
+
+}))(Form.create()(CreateDemand));

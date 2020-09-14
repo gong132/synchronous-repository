@@ -1,23 +1,22 @@
-import React, { PureComponent, Fragment } from 'react'
-import { connect } from 'dva'
-import _ from 'lodash'
-import moment from 'moment'
-import GlobalSandBox from "@/components/commonUseModule/globalSandBox";
-import StandardTable from "@/components/StandardTable";
-import { DefaultPage, TableColumnHelper } from "@/utils/helper";
-import OptButton from "@/components/commonUseModule/optButton";
-import editIcon from '@/assets/icon/Button_bj.svg'
-import budget_xq from '@/assets/icon/modular_xq.svg'
-import budget_log from '@/assets/icon/modular_czrz.svg'
-import { Descriptions, Spin, Input, Row, Col, Checkbox, DatePicker, Select, Button, Form } from 'antd'
-import { getParam } from '@/utils/utils'
-import styles from '../index.less'
+import React, { PureComponent, Fragment } from 'react';
+import { connect } from 'dva';
+import _ from 'lodash';
+import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
+import StandardTable from '@/components/StandardTable';
+import { DefaultPage, TableColumnHelper } from '@/utils/helper';
+import OptButton from '@/components/commonUseModule/optButton';
+import editIcon from '@/assets/icon/Button_bj.svg';
+import budget_xq from '@/assets/icon/modular_xq.svg';
+import budget_log from '@/assets/icon/modular_czrz.svg';
+import { Descriptions, Spin, Input, Row, Col, Checkbox, Button, Form } from 'antd';
+import { getParam } from '@/utils/utils';
+import styles from '../index.less';
 
-const { Option } = Select
 @Form.create()
 @connect(({ sector, loading }) => ({
   loadingQueryLogData: loading.effects['sector/fetchLogList'],
   loadingQueryInfo: loading.effects['sector/fetchSectorInfo'],
+  loadingUpdate: loading.effects['sector/updateData'],
   sectorInfo: sector.sectorInfo,
   logList: sector.logList,
   deptList: sector.deptList,
@@ -25,54 +24,54 @@ const { Option } = Select
 }))
 class SectorDetail extends PureComponent {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       editBool: false,
-    }
+    };
   }
 
   componentDidMount() {
-    const id = getParam('id')
-    this.handleQuerySectorInfo({ clusterId: id })
-    this.handleQueryLogList()
-    this.handleQueryDept()
+    const id = getParam('id');
+    this.handleQuerySectorInfo({ clusterId: id });
+    this.handleQueryLogList();
+    this.handleQueryDept();
   }
 
   // 查部门
   handleQueryDept = () => {
-    const id = getParam('id')
+    const id = getParam('id');
     this.props.dispatch({
       type: 'sector/fetchNotBindDept',
-      payload: { clusterId: id }
-    })
-  }
+      payload: { clusterId: id },
+    });
+  };
 
   // 查看板块详情
-  handleQuerySectorInfo = (params) => {
+  handleQuerySectorInfo = params => {
     this.props.dispatch({
       type: 'sector/fetchSectorInfo',
       payload: {
         ...params,
-      }
-    })
-  }
+      },
+    });
+  };
 
   // 查日志
-  handleQueryLogList = (params) => {
-    const id = getParam('id')
+  handleQueryLogList = params => {
+    const id = getParam('id');
     const defParams = {
       linkId: id,
-      type: '3'
-    }
+      type: '3',
+    };
     this.props.dispatch({
       type: 'sector/fetchLogList',
       payload: {
         ...DefaultPage,
         ...defParams,
         ...params,
-      }
-    })
-  }
+      },
+    });
+  };
 
   // 分页操作
   handleStandardTableChange = pagination => {
@@ -80,139 +79,164 @@ class SectorDetail extends PureComponent {
       currentPage: pagination.current,
       pageSize: pagination.pageSize,
     };
-    this.handleQueryLogList(params)
+    this.handleQueryLogList(params);
   };
 
   handleSubmit = () => {
-    const { deptListMap } = this.props
-    const id = getParam('id')
+    const { deptListMap } = this.props;
+    const id = getParam('id');
 
-    this.props.form.validateFields((err, values) => {
-      if (err) return
-      let arr = []
+    this.props.form.validateFields((err, val) => {
+      if (err) return;
+      const arr = [];
+      const values = val;
       values.dept.map(d => {
-        const str = `${deptListMap[d]}-${d}`
-        arr.push(str)
-      })
-      values.deptInfo = arr.join(',')
-      delete values.dept
-      values.id = id
-      this.handleEdit(values)
-    })
-  }
+        const str = `${deptListMap[d]}-${d}`;
+        arr.push(str);
+        return '';
+      });
+      values.deptInfo = arr.join(',');
+      delete values.dept;
+      values.id = id;
+      this.handleEdit(values);
+    });
+  };
 
   // 编辑
-  handleEdit = (params) => {
-    this.props.dispatch({
-      type: 'sector/updateData',
-      payload: {
-        ...params
-      }
-    }).then(bool => {
-      if (bool) {
-        const id = getParam('id')
-        this.handleQuerySectorInfo({ clusterId: id })
-        this.handleQueryLogList({
-          linkId: id,
-          type: '3'
-        })
-        this.setState({
-          editBool: false,
-        })
-      }
-    })
-  }
-
+  handleEdit = params => {
+    this.props
+      .dispatch({
+        type: 'sector/updateData',
+        payload: {
+          ...params,
+        },
+      })
+      .then(bool => {
+        if (bool) {
+          const id = getParam('id');
+          this.handleQuerySectorInfo({ clusterId: id });
+          this.handleQueryLogList({
+            linkId: id,
+            type: '3',
+          });
+          this.setState({
+            editBool: false,
+          });
+        }
+      });
+  };
 
   render() {
-    const { editBool } = this.state
-    const { sectorInfo,
+    const { editBool } = this.state;
+    const {
+      sectorInfo,
       loadingQueryInfo,
       logList,
       loadingQueryLogData,
       form,
-      deptList } = this.props
-    const { name,
-      createUserId,
+      deptList,
+      loadingUpdate,
+    } = this.props;
+    const {
+      name,
       createUserName,
       createTime,
-      updateUserId,
       updateUserName,
       updateTime,
-      clusterLinkDepts
-    } = sectorInfo
-    let str = ''
-    let arr = []
+      clusterLinkDepts,
+    } = sectorInfo;
+    let str = '';
+    const arr = [];
     if (_.isArray(clusterLinkDepts) && !_.isEmpty(clusterLinkDepts)) {
       clusterLinkDepts.map((d, index) => {
         if (clusterLinkDepts.length > index + 1) {
-          str += `${d.deptName}, `
-          return
+          str += `${d.deptName}, `;
+          return '';
         }
-        str += d.deptName
-      })
+        str += d.deptName;
+        return true;
+      });
+      clusterLinkDepts.map(v => {
+        arr.push(v.deptId);
+        return true;
+      });
     }
-
-    clusterLinkDepts && clusterLinkDepts.map(function (v) {
-      arr.push(v.deptId)
-    })
-
 
     const detailList = [
       { span: 1, required: true, name: '集群/板块名称', value: name, dataIndex: 'name' },
       { span: 1, required: false, name: '所属部门', value: str, dataIndex: 'deptName' },
-      { span: 1, required: false, name: '创建人', value: createUserName, dataIndex: 'createUserName' },
+      {
+        span: 1,
+        required: false,
+        name: '创建人',
+        value: createUserName,
+        dataIndex: 'createUserName',
+      },
       { span: 1, required: false, name: '创建时间', value: createTime, dataIndex: 'createTime' },
-      { span: 1, required: false, name: '修改人', value: updateUserName, dataIndex: 'updateUserName' },
+      {
+        span: 1,
+        required: false,
+        name: '修改人',
+        value: updateUserName,
+        dataIndex: 'updateUserName',
+      },
       { span: 1, required: false, name: '修改时间', value: updateTime, dataIndex: 'updateTime' },
-    ]
+    ];
     const columns = [
-      TableColumnHelper.genPlanColumn('operateUserName', '修改人', {width:'100px'}),
+      TableColumnHelper.genPlanColumn('operateUserName', '修改人', { width: '100px' }),
       TableColumnHelper.genPlanColumn('content', '修改内容'),
-      TableColumnHelper.genPlanColumn('updateTime', '修改时间', {width:'100px'}),
-    ]
+      TableColumnHelper.genPlanColumn('updateTime', '修改时间', { width: '100px' }),
+    ];
     return (
       <Fragment>
         <GlobalSandBox
           img={budget_xq}
-          title='板块详情'
+          title="板块详情"
           optNode={
-            !editBool
-              ? <OptButton
+            !editBool ? (
+              <OptButton
                 style={{
-                  backgroundColor: 'white'
+                  backgroundColor: 'white',
                 }}
-                onClick={
-                  () => this.setState({
+                onClick={() => {
+                  this.setState({
                     editBool: true,
-                  }),
-                  () => this.handleQueryDept()
-                }
+                  });
+                  this.handleQueryDept();
+                }}
                 img={editIcon}
                 text="编辑"
               />
-              : <div>
+            ) : (
+              <div>
                 <Button
-                  icon='close'
-                  onClick={
-                    () => this.setState({
+                  icon="close"
+                  onClick={() =>
+                    this.setState({
                       editBool: false,
                     })
                   }
-                >取消</Button>
+                >
+                  取消
+                </Button>
                 <Button
                   style={{
-                    marginLeft: '16px'
+                    marginLeft: '16px',
                   }}
-                  type='primary'
+                  type="primary"
+                  ghost
                   onClick={() => this.handleSubmit()}
-                >保存</Button>
+                  loading={loadingUpdate}
+                >
+                  保存
+                </Button>
               </div>
+            )
           }
         >
           <Spin spinning={loadingQueryInfo}>
             <Descriptions column={3} bordered className={styles.clearFormMargin}>
-              {editBool ?
+              {editBool ? (
                 <Fragment>
                   <Descriptions.Item
                     span={3}
@@ -221,10 +245,8 @@ class SectorDetail extends PureComponent {
                     <Form.Item>
                       {form.getFieldDecorator('name', {
                         rules: [{ required: true, message: '请输入集群/板块名称!' }],
-                        initialValue: name
-                      })(
-                        <Input placeholder='请输入集群/板块名称' />
-                      )}
+                        initialValue: name,
+                      })(<Input placeholder="请输入集群/板块名称" />)}
                     </Form.Item>
                   </Descriptions.Item>
                   <Descriptions.Item
@@ -234,20 +256,22 @@ class SectorDetail extends PureComponent {
                     <Form.Item>
                       {form.getFieldDecorator('dept', {
                         rules: [{ required: true, message: '请至少选择一个部门！' }],
-                        initialValue: arr
+                        initialValue: arr,
                       })(
                         <Checkbox.Group style={{ width: '100%' }}>
                           <Row>
-                            {!_.isEmpty(deptList) && deptList.map(v => (
-                              <Col key={v.deptId} span={4}>
-                                <Checkbox key={v.deptId} value={v.deptId}>{v.deptName}</Checkbox>
-                              </Col>
-                            ))}
+                            {!_.isEmpty(deptList) &&
+                              deptList.map(v => (
+                                <Col key={v.deptId} span={4}>
+                                  <Checkbox key={v.deptId} value={v.deptId}>
+                                    {v.deptName}
+                                  </Checkbox>
+                                </Col>
+                              ))}
                           </Row>
-                        </Checkbox.Group>
+                        </Checkbox.Group>,
                       )}
                     </Form.Item>
-
                   </Descriptions.Item>
                   {/* <Descriptions.Item
                     span={1}
@@ -313,23 +337,27 @@ class SectorDetail extends PureComponent {
                     )}
                   </Descriptions.Item> */}
                 </Fragment>
-                : detailList.map((v, i) => (
+              ) : (
+                detailList.map((v, i) => (
                   <Descriptions.Item
                     key={i.toString()}
                     span={v.span}
-                    label={<>{v.required && <span style={{ color: 'red' }}>*</span>}{v.name}</>}
+                    label={
+                      <>
+                        {v.required && <span style={{ color: 'red' }}>*</span>}
+                        {v.name}
+                      </>
+                    }
                   >
                     {v.value}
                   </Descriptions.Item>
-                ))}
+                ))
+              )}
             </Descriptions>
           </Spin>
         </GlobalSandBox>
-        <div style={{ height: '16px' }}></div>
-        <GlobalSandBox
-          img={budget_log}
-          title='操作日志'
-        >
+        <div style={{ height: '16px' }} />
+        <GlobalSandBox img={budget_log} title="操作日志">
           <StandardTable
             loading={loadingQueryLogData}
             rowKey={(record, index) => index}
@@ -338,10 +366,9 @@ class SectorDetail extends PureComponent {
             onChange={this.handleStandardTableChange}
           />
         </GlobalSandBox>
-      </Fragment >
-
-    )
+      </Fragment>
+    );
   }
 }
 
-export default SectorDetail
+export default SectorDetail;

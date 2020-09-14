@@ -1,24 +1,25 @@
-import React, { useState, useEffect, Fragment } from 'react'
-import { connect } from 'dva'
-import moment from 'moment'
-import numeral from 'numeral'
-import { formLayoutItemAddDouble, formLayoutItemAddEdit } from "@/utils/constant";
-import CustomBtn from '@/components/commonUseModule/customBtn'
-import Editor from "@/components/TinyEditor"
-import UploadFile from '@/components/FileUpload'
-import styles from '../index.less'
-import { Modal, Form, Select, Input, DatePicker, Col, Row, Table, message, Upload, Button } from 'antd'
+/* eslint-disable no-param-reassign */
+import React, { useState, useEffect } from 'react';
+import { connect } from 'dva';
+import moment from 'moment';
+import numeral from 'numeral';
+import { formLayoutItemAddDouble, formLayoutItemAddEdit } from '@/utils/constant';
+import CustomBtn from '@/components/commonUseModule/customBtn';
+import Editor from '@/components/TinyEditor';
+// import UploadFile from '@/components/FileUpload'
+import { Modal, Form, Select, Input, DatePicker, Col, Row, Table, message } from 'antd';
+import _, { isEmpty } from 'lodash';
+import styles from '../index.less';
 
-const FormItem = Form.Item
-const { Option } = Select
+const FormItem = Form.Item;
+const { Option } = Select;
 
-const CreateConstract = (props) => {
+const CreateConstract = props => {
   const {
     form,
     deptList,
     deptListMap,
     budgetList,
-    budgetMap,
     projectList,
     projectMap,
     systemList,
@@ -34,15 +35,14 @@ const CreateConstract = (props) => {
     handleViewModal,
     handleQueryData,
     loadingUpdate,
-    loadingAdd
-  } = props
+    loadingAdd,
+  } = props;
 
-  console.log(recordValue)
   const [description, setDescription] = useState('');
-  const [urls, setUrls] = useState('')
+  // const [urls, setUrls] = useState('')
   useEffect(() => {
-    setDescription(recordValue.description)
-  }, [recordValue.description])
+    setDescription(recordValue.description);
+  }, [recordValue.description]);
   const {
     name,
     budgetNumber,
@@ -56,115 +56,119 @@ const CreateConstract = (props) => {
     headerId,
     headerGroupId,
     payRecords,
-  } = recordValue
+  } = recordValue;
 
-  const submitAdd = (params) => {
-    props.dispatch({
-      type: 'constract/addData',
-      payload: {
-        ...params
-      }
-    }).then(res => {
-      if (res) {
-        handleViewModal(false)
-        handleQueryData()
-      }
-    })
-  }
+  const submitAdd = params => {
+    props
+      .dispatch({
+        type: 'constract/addData',
+        payload: {
+          ...params,
+        },
+      })
+      .then(res => {
+        if (res) {
+          handleViewModal(false);
+          handleQueryData();
+        }
+      });
+  };
 
-  const sumbitEdit = (params) => {
-    props.dispatch({
-      type: 'constract/updateData',
-      payload: {
-        ...params
-      }
-    }).then(res => {
-      if (res) {
-        handleViewModal(false)
-        handleQueryData()
-      }
-    })
-  }
+  const sumbitEdit = params => {
+    props
+      .dispatch({
+        type: 'constract/updateData',
+        payload: {
+          ...params,
+        },
+      })
+      .then(res => {
+        if (res) {
+          handleViewModal(false);
+          handleQueryData();
+        }
+      });
+  };
 
-  const handleSaveFileUrl = (arrUrl) => {
-    setUrls(arrUrl)
-  }
+  // const handleSaveFileUrl = (arrUrl) => {
+  //   setUrls(arrUrl)
+  // }
 
   const defaultData = [
     // {
     //   payOrder: '第1笔',
     //   key: '1'
     // }
-  ]
+  ];
 
-  const [data, setData] = useState(defaultData)
+  const [data, setData] = useState(defaultData);
   useEffect(() => {
     if (payRecords) {
-      setData(payRecords)
+      setData(payRecords);
     }
-  }, [JSON.stringify(payRecords)])
-  const [calcMoney, setCalcMoney] = useState(0)
-  const changeTotalMoney = (e) => {
-    console.log(e.target.value)
-    const money = Number(e.target.value.replace(/,/g, ''))
+  }, [JSON.stringify(payRecords)]);
+  // const [calcMoney, setCalcMoney] = useState(0)
+  const changeTotalMoney = e => {
+    const money = Number(e.target.value.replace(/,/g, ''));
     // 如果修改了总金额，要将table中所有的金额再计算一遍
-    const copyArr = JSON.parse(JSON.stringify(data))
+    const copyArr = JSON.parse(JSON.stringify(data));
     copyArr.map(v => {
-      if (_.isEmpty(v.payProportion)) return
-      const n = Number(v.payProportion)
-      console.log(n, money)
-
-      v.payAmount = money * n / 100
-    })
-    setData(copyArr)
-  }
-  const handleChangeColumns = (e) => {
-    let copyArr = JSON.parse(JSON.stringify(data))
-    if (!/[0-9]/.test(Number(e.target.value))) return
-    const count = Number(e.target.value)
-    const arr = []
+      if (_.isEmpty(v.payProportion)) return '';
+      const n = Number(v.payProportion);
+      v.payAmount = (money * n) / 100;
+      return '';
+    });
+    setData(copyArr);
+    return true;
+  };
+  const handleChangeColumns = e => {
+    let copyArr = JSON.parse(JSON.stringify(data));
+    if (!/[0-9]/.test(Number(e.target.value))) return;
+    const count = Number(e.target.value);
+    const arr = [];
     new Array(count).fill('').map((v, i) => {
       const obj = {
         paySequence: `第${i + 1}笔`,
-        key: (i + 1).toString()
-      }
-      arr.push(obj)
-    })
-    if (arr.length === 0) return
+        key: (i + 1).toString(),
+      };
+      arr.push(obj);
+      return '';
+    });
+    if (arr.length === 0) return;
     if (copyArr.length > arr.length) {
-      copyArr = copyArr.splice(0, arr.length)
+      copyArr = copyArr.splice(0, arr.length);
     } else if (copyArr.length < arr.length) {
-      const sArr = arr.splice(copyArr.length)
-      copyArr = copyArr.concat(sArr)
+      const sArr = arr.splice(copyArr.length);
+      copyArr = copyArr.concat(sArr);
     }
-    setData(copyArr)
-  }
+    setData(copyArr);
+  };
 
   const saveTableValue = (e, type, record) => {
-    let val = e.target.value
-    const copyData = JSON.parse(JSON.stringify(data))
-    const i = _.findIndex(data, d => d.key === record.key)
+    let val = e.target.value;
+    const copyData = JSON.parse(JSON.stringify(data));
+    const i = _.findIndex(data, d => d.key === record.key);
     if (type === 'payProportion') {
-      console.log(val)
-      val = val.replace(/\D/, '')
-      const totalMoney = form.getFieldValue('transactionAmount') && form.getFieldValue('transactionAmount').replace(/,/g, '')
-      console.log(totalMoney, 'totalMoney')
+      val = val.replace(/\D/, '');
+      const totalMoney =
+        form.getFieldValue('transactionAmount') &&
+        form.getFieldValue('transactionAmount').replace(/,/g, '');
       if (totalMoney * 1 > 1) {
-        const resMoney = totalMoney * val / 100
-        copyData[i].payAmount = resMoney
+        const resMoney = (totalMoney * val) / 100;
+        copyData[i].payAmount = resMoney;
       }
     }
     // 控制付款比例输入
-    copyData[i][type] = val
-    setData(copyData)
-  }
+    copyData[i][type] = val;
+    setData(copyData);
+  };
 
   const payColumns = [
     {
       title: '付款顺序',
       dataIndex: 'paySequence',
       key: 'paySequence',
-      width: '80px'
+      width: '80px',
     },
     {
       title: '付款条件',
@@ -174,104 +178,102 @@ const CreateConstract = (props) => {
         return (
           <Input
             value={text}
-            onChange={(e) => saveTableValue(e, 'payCondition', record)}
-            placeholder='请输入付款条件'
+            onChange={e => saveTableValue(e, 'payCondition', record)}
+            placeholder="请输入付款条件"
           />
-        )
-      }
+        );
+      },
     },
     {
       title: '付款金额比例',
       dataIndex: 'payProportion',
       key: 'payProportion',
       render: (text, record) => {
-        console.log(record)
         return (
           <Input
             value={text}
-            addonAfter='%'
+            addonAfter="%"
             placeholder="请输入付款比例"
-            onChange={(e) => saveTableValue(e, 'payProportion', record)}
+            onChange={e => saveTableValue(e, 'payProportion', record)}
           />
-        )
-      }
+        );
+      },
     },
     {
       title: '付款金额',
       dataIndex: 'payAmount',
       key: 'payAmount',
-      render: (text, record) => {
-        console.log(record, 'record')
-        return (
-          <Input value={text} disabled />
-        )
-      }
+      render: text => {
+        return <Input value={text} disabled />;
+      },
     },
-  ]
+  ];
 
   // 格式化输入金额
   const formatMoney = value => {
-    if (!Boolean(value)) return
-
-    return numeral(value).format('0,0')
-  }
+    if (isEmpty(value)) return '';
+    return numeral(value).format('0,0');
+  };
 
   // 格式化整数
-  const formatCount = (value) => {
-    return numeral(value).format()
-  }
+  const formatCount = value => {
+    if (isEmpty(value)) return '';
+    return numeral(value).format();
+  };
 
   const handleSubmitForm = () => {
-    let bool = false
-    form.validateFieldsAndScroll((err, values) => {
-      if (err) return
+    let bool = false;
+    form.validateFieldsAndScroll((err, val) => {
+      if (err) return '';
+      const values = val;
       data.map(v => {
-        if (!v) return
-        if (bool) return
+        if (!v) return '';
+        if (bool) return '';
         if (!v.payCondition || !v.payCondition.replace(' ', '')) {
-          message.error('请输入付款条件')
-          bool = true
-          return
+          message.error('请输入付款条件');
+          bool = true;
+          return '';
         }
         if (!v.payProportion || !v.payProportion.replace(' ', '')) {
-          message.error('请输入付款比例')
-          bool = true
-          return
+          message.error('请输入付款比例');
+          bool = true;
+          return '';
         }
-      })
-      if (description.length < 1) {
-        message.error('请补全合同描述！')
-        return
-      }
-      if (bool) return
-      values.projectName = projectMap[values.projectNumber]
-      values.systemName = systemMap[values.systemId]
-      values.deptName = deptListMap[values.deptId]
-      values.providerCompanyName = supplierMap[values.providerCompanyId]
-      values.headerName = headerMap[values.headerId]
-      values.headerGroupName = groupMap[values.headerGroupId]
-      values.signingTime = moment(values.signingTime).format('YYYY-MM-DD')
-      values.description = description
-      values.payRecords = data
+        return '';
+      });
+      // if (description.length < 1) {
+      //   message.error('请补全合同描述！')
+      //   return
+      // }
+      if (bool) return '';
+      values.projectName = projectMap[values.projectNumber];
+      values.systemName = systemMap[values.systemId];
+      values.deptName = deptListMap[values.deptId];
+      values.providerCompanyName = supplierMap[values.providerCompanyId];
+      values.headerName = headerMap[values.headerId];
+      values.headerGroupName = groupMap[values.headerGroupId];
+      values.signingTime = moment(values.signingTime).format('YYYY-MM-DD');
+      values.description = description;
+      values.payRecords = data;
       if (recordValue.id) {
-        values.id = recordValue.id
-        sumbitEdit(values)
-        return
+        values.id = recordValue.id;
+        sumbitEdit(values);
+        return '';
       }
-      submitAdd(values)
-      console.log(values)
-    })
-  }
+      submitAdd(values);
+      return true;
+    });
+  };
 
   const renderForm = () => (
     <Form>
-      <Row gutter={{xs: 8, sm: 16, md: 24}}>
+      <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
         <Col span={24}>
           <FormItem {...formLayoutItemAddEdit} label="名称">
             {form.getFieldDecorator('name', {
               rules: [{ required: true, message: '请输入名称' }],
               initialValue: name,
-            })(<Input placeholder="请输入名称" />)}
+            })(<Input.TextArea placeholder="请输入名称" />)}
           </FormItem>
         </Col>
         <Col span={12}>
@@ -279,13 +281,16 @@ const CreateConstract = (props) => {
             {form.getFieldDecorator('budgetNumber', {
               rules: [{ required: true, message: '请输入预算编号' }],
               initialValue: budgetNumber,
-            })(<Select
-              placeholder="请输入预算编号"
-            >
-              {!_.isEmpty(budgetList) && budgetList.map(d => (
-                <Option key={d.number} value={d.number}>{d.number}</Option>
-              ))}
-            </Select>)}
+            })(
+              <Select placeholder="请输入预算编号">
+                {!_.isEmpty(budgetList) &&
+                  budgetList.map(d => (
+                    <Option key={d.number} value={d.number}>
+                      {d.number}
+                    </Option>
+                  ))}
+              </Select>,
+            )}
           </FormItem>
         </Col>
         <Col span={12}>
@@ -293,15 +298,20 @@ const CreateConstract = (props) => {
             {form.getFieldDecorator('projectNumber', {
               rules: [{ required: true, message: '请输入所属项目' }],
               initialValue: projectNumber,
-            })(<Select
-              allowClear
-              // showSearch
-              placeholder="请输入所属项目"
-            >
-              {!_.isEmpty(projectList) && projectList.map(d => (
-                <Option key={d.number} value={d.number}>{d.name}</Option>
-              ))}
-            </Select>)}
+            })(
+              <Select
+                allowClear
+                // showSearch
+                placeholder="请输入所属项目"
+              >
+                {!_.isEmpty(projectList) &&
+                  projectList.map(d => (
+                    <Option key={d.number} value={d.number}>
+                      {d.name}
+                    </Option>
+                  ))}
+              </Select>,
+            )}
           </FormItem>
         </Col>
         <Col span={12}>
@@ -309,15 +319,20 @@ const CreateConstract = (props) => {
             {form.getFieldDecorator('deptId', {
               rules: [{ required: true, message: '请输入所属部门' }],
               initialValue: deptId,
-            })(<Select
-              allowClear
-              // showSearch
-              placeholder="请输入所属部门"
-            >
-              {!_.isEmpty(deptList) && deptList.map(d => (
-                <Option key={d.deptId} value={d.deptId}>{d.deptName}</Option>
-              ))}
-            </Select>)}
+            })(
+              <Select
+                allowClear
+                // showSearch
+                placeholder="请输入所属部门"
+              >
+                {!_.isEmpty(deptList) &&
+                  deptList.map(d => (
+                    <Option key={d.deptId} value={d.deptId}>
+                      {d.deptName}
+                    </Option>
+                  ))}
+              </Select>,
+            )}
           </FormItem>
         </Col>
         <Col span={12}>
@@ -325,46 +340,54 @@ const CreateConstract = (props) => {
             {form.getFieldDecorator('systemId', {
               rules: [{ required: true, message: '请输入所属系统' }],
               initialValue: systemId,
-            })(<Select
-              allowClear
-              // showSearch
-              placeholder="请输入所属系统"
-            >
-              {!_.isEmpty(systemList) && systemList.map(d => (
-                <Option key={d.systemId} value={d.systemId}>{d.systemName}</Option>
-              ))}
-            </Select>)}
+            })(
+              <Select
+                allowClear
+                // showSearch
+                placeholder="请输入所属系统"
+              >
+                {!_.isEmpty(systemList) &&
+                  systemList.map(d => (
+                    <Option key={d.systemId} value={d.systemId}>
+                      {d.systemName}
+                    </Option>
+                  ))}
+              </Select>,
+            )}
           </FormItem>
         </Col>
         <Col span={12}>
           <FormItem {...formLayoutItemAddDouble} label="合同成交额">
             {form.getFieldDecorator('transactionAmount', {
-              rules: [{
-                required: true,
-                message: '请输入合同成交额',
-                pattern: /^[0-9]+$|,/g,
-                whitespace: true
-              }],
+              rules: [
+                {
+                  required: true,
+                  message: '请输入合同成交额',
+                  pattern: /^[0-9]+$|,/g,
+                  whitespace: true,
+                },
+              ],
               normalize: formatMoney,
               initialValue: transactionAmount,
-            })(<Input
-              onChange={changeTotalMoney}
-              addonAfter='元'
-              placeholder="请输入合同成交额" />)}
+            })(
+              <Input onChange={changeTotalMoney} addonAfter="元" placeholder="请输入合同成交额" />,
+            )}
           </FormItem>
         </Col>
         <Col span={12}>
           <FormItem {...formLayoutItemAddDouble} label="首次报价金额">
             {form.getFieldDecorator('firstOfferAmount', {
-              rules: [{
-                required: true,
-                message: '请输入首次报价金额',
-                pattern: /^[0-9]+$|,/g,
-                whitespace: true
-              }],
+              rules: [
+                {
+                  required: true,
+                  message: '请输入首次报价金额',
+                  pattern: /^[0-9]+$|,/g,
+                  whitespace: true,
+                },
+              ],
               normalize: formatMoney,
               initialValue: firstOfferAmount,
-            })(<Input addonAfter='元' placeholder="请输入首次报价金额" />)}
+            })(<Input addonAfter="元" placeholder="请输入首次报价金额" />)}
           </FormItem>
         </Col>
         <Col span={12}>
@@ -380,15 +403,20 @@ const CreateConstract = (props) => {
             {form.getFieldDecorator('providerCompanyId', {
               rules: [{ required: true, message: '请输入供应商' }],
               initialValue: providerCompanyId,
-            })(<Select
-              allowClear
-              // showSearch
-              placeholder="请输入供应商"
-            >
-              {!_.isEmpty(supplierList) && supplierList.map(d => (
-                <Option key={d.supplierId} value={d.supplierId}>{d.supplierName}</Option>
-              ))}
-            </Select>)}
+            })(
+              <Select
+                allowClear
+                // showSearch
+                placeholder="请输入供应商"
+              >
+                {!_.isEmpty(supplierList) &&
+                  supplierList.map(d => (
+                    <Option key={d.supplierId} value={d.supplierId}>
+                      {d.supplierName}
+                    </Option>
+                  ))}
+              </Select>,
+            )}
           </FormItem>
         </Col>
         <Col span={12}>
@@ -396,15 +424,20 @@ const CreateConstract = (props) => {
             {form.getFieldDecorator('headerId', {
               rules: [{ required: true, message: '请输入合同负责人' }],
               initialValue: headerId,
-            })(<Select
-              allowClear
-              // showSearch
-              placeholder="请输入合同负责人"
-            >
-              {!_.isEmpty(headerList) && headerList.map(d => (
-                <Option key={d.leaderId} value={d.leaderId}>{d.leaderName}</Option>
-              ))}
-            </Select>)}
+            })(
+              <Select
+                allowClear
+                // showSearch
+                placeholder="请输入合同负责人"
+              >
+                {!_.isEmpty(headerList) &&
+                  headerList.map(d => (
+                    <Option key={d.leaderId} value={d.leaderId}>
+                      {d.leaderName}
+                    </Option>
+                  ))}
+              </Select>,
+            )}
           </FormItem>
         </Col>
         <Col span={12}>
@@ -412,15 +445,20 @@ const CreateConstract = (props) => {
             {form.getFieldDecorator('headerGroupId', {
               rules: [{ required: true, message: '请输入合同负责人团队' }],
               initialValue: headerGroupId,
-            })(<Select
-              allowClear
-              // showSearch
-              placeholder="请输入合同负责人团队"
-            >
-              {!_.isEmpty(headerList) && headerList.map(d => (
-                <Option key={d.number} value={d.number}>{d.name}</Option>
-              ))}
-            </Select>)}
+            })(
+              <Select
+                allowClear
+                // showSearch
+                placeholder="请输入合同负责人团队"
+              >
+                {!_.isEmpty(headerList) &&
+                  headerList.map(d => (
+                    <Option key={d.number} value={d.number}>
+                      {d.name}
+                    </Option>
+                  ))}
+              </Select>,
+            )}
           </FormItem>
         </Col>
         {/* <Col span={12}>
@@ -442,41 +480,46 @@ const CreateConstract = (props) => {
         <Col span={12}>
           <FormItem {...formLayoutItemAddDouble} label="付款笔数">
             {form.getFieldDecorator('count', {
-              rules: [{
-                required: true,
-                message: '请输入付款笔数',
-                pattern: /^[0-9]+$/
-              }],
+              rules: [
+                {
+                  required: true,
+                  message: '请输入付款笔数',
+                  pattern: /^[0-9]+$/,
+                },
+              ],
               normalize: formatCount,
               initialValue: data.length,
             })(
               <Input
                 onChange={e => handleChangeColumns(e)}
-                addonAfter='笔'
-                placeholder='请输入付款笔数' />
+                addonAfter="笔"
+                placeholder="请输入付款笔数"
+              />,
             )}
           </FormItem>
         </Col>
-        {!_.isEmpty(data) && <Col span={24}>
-          <FormItem {...formLayoutItemAddEdit} label=" " colon={false}>
-            <div className={styles.customTable}>
-              <Table
-                rowKey={(record, index) => index}
-                columns={payColumns}
-                pagination={false}
-                dataSource={data}
-              />
-            </div>
-          </FormItem>
-        </Col>}
+        {!_.isEmpty(data) && (
+          <Col span={24}>
+            <FormItem {...formLayoutItemAddEdit} label=" " colon={false}>
+              <div className={styles.customTable}>
+                <Table
+                  rowKey={(record, index) => index}
+                  columns={payColumns}
+                  pagination={false}
+                  dataSource={data}
+                />
+              </div>
+            </FormItem>
+          </Col>
+        )}
         <Col span={24}>
           <FormItem
             {...formLayoutItemAddEdit}
-            label='合同描述'
-            required={true}
+            label="合同描述"
+            // required={true}
           >
             <Editor
-              editorKey='myContractAdd'
+              editorKey="myContractAdd"
               height={300}
               content={description}
               onContentChange={content => setDescription(content)}
@@ -499,12 +542,12 @@ const CreateConstract = (props) => {
         </Col> */}
       </Row>
     </Form>
-  )
+  );
 
   return (
     <Modal
       width={794}
-      style={{top: 0}}
+      style={{ top: 0 }}
       title={`${modalTitle}合同`}
       visible={visibleModal}
       onCancel={() => handleViewModal(false)}
@@ -513,37 +556,37 @@ const CreateConstract = (props) => {
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <CustomBtn
             onClick={() => handleViewModal(false)}
-            type='cancel'
+            type="cancel"
             style={{ marginRight: '18px' }}
           />
           <CustomBtn
             loading={modalTitle === '编辑' ? loadingUpdate : loadingAdd}
             onClick={handleSubmitForm}
-            type='save' />
-        </div>}
+            type="save"
+          />
+        </div>
+      }
     >
       {renderForm()}
     </Modal>
-  )
-}
+  );
+};
 
-export default connect(
-  ({ constract, loading }) => ({
-    constract,
-    budgetList: constract.budgetList,
-    budgetMap: constract.budgetMap,
-    projectList: constract.projectList,
-    projectMap: constract.projectMap,
-    systemList: constract.systemList,
-    systemMap: constract.systemMap,
-    supplierList: constract.supplierList,
-    supplierMap: constract.supplierMap,
-    headerList: constract.headerList,
-    headerMap: constract.headerMap,
-    groupMap: constract.groupMap,
-    deptList: constract.deptList,
-    deptListMap: constract.deptListMap,
-    loadingAdd: loading.effects['constract/addData'],
-    loadingUpdate: loading.effects['constract/updateData'],
-  })
-)(Form.create()(CreateConstract))
+export default connect(({ constract, loading }) => ({
+  constract,
+  budgetList: constract.budgetList,
+  budgetMap: constract.budgetMap,
+  projectList: constract.projectList,
+  projectMap: constract.projectMap,
+  systemList: constract.systemList,
+  systemMap: constract.systemMap,
+  supplierList: constract.supplierList,
+  supplierMap: constract.supplierMap,
+  headerList: constract.headerList,
+  headerMap: constract.headerMap,
+  groupMap: constract.groupMap,
+  deptList: constract.deptList,
+  deptListMap: constract.deptListMap,
+  loadingAdd: loading.effects['constract/addData'],
+  loadingUpdate: loading.effects['constract/updateData'],
+}))(Form.create()(CreateConstract));

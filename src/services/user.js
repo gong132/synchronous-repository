@@ -18,3 +18,10 @@ export async function queryBudget(params) {
     params,
   });
 }
+
+export async function fetchListByRoleId(params) {
+  return request('/resource/queryListByRoleId', {
+    method: 'get',
+    params,
+  });
+}

@@ -3,21 +3,20 @@
  * You can view component api by:
  * https://github.com/ant-design/ant-design-pro-layout
  */
-import ProLayout, { DefaultFooter, getMenuData } from '@ant-design/pro-layout';
-import React, { useEffect, Fragment } from 'react';
-import { Link } from 'umi';
-import { connect } from 'dva';
-import { Icon, Result, Button } from 'antd';
-import { formatMessage } from 'umi-plugin-react/locale';
-import Authorized from '@/utils/Authorized';
-import RightContent from '@/components/GlobalHeader/RightContent';
-import { isAntDesignPro, getAuthorityFromRouter } from '@/utils/utils';
-import logo from '../assets/logoImg.png';
-import logoBg from '../assets/logo.png'
+import ProLayout from "@ant-design/pro-layout";
+import React, { useEffect } from "react";
+import { Link } from "umi";
+import { connect } from "dva";
+import { Result, Button } from "antd";
+import { formatMessage } from "umi-plugin-react/locale";
+import Authorized from "@/utils/Authorized";
+import RightContent from "@/components/GlobalHeader/RightContent";
+import { getAuthorityFromRouter } from "@/utils/utils";
+import logo from "../assets/logoImg.png";
+import logoBg from "../assets/logo.png"
 import storage from "@/utils/storage";
-import {isEmpty} from "@/utils/lang";
 
-const noMatch = status => {
+const noMatch = () => {
   return (
     <Result
       status={403}
@@ -25,7 +24,7 @@ const noMatch = status => {
       subTitle="对不起，您没有权限访问此页."
       extra={
         <Button type="primary">
-          <Link to="/user/login">去登陆</Link>
+          <Link to="/user/login">login</Link>
         </Button>
       }
     />
@@ -50,7 +49,7 @@ const BasicLayout = props => {
       type: 'global/queryAllMenuList',
       payload: {},
     }).then(data => {
-      if (!data) return
+      if (!data) return;
       dispatch({
         type: 'global/queryCurrentUserInfo',
       });
@@ -63,10 +62,10 @@ const BasicLayout = props => {
   const menuDataRender = menuList =>{
     const {
       global: {
-        allMenuList,
+        currentUserMenuList,
       },
     } = props;
-    const newMenuList = [...menuList].filter(x => [...allMenuList].some(y => y.url === x.path));
+    const newMenuList = [...menuList].filter(x => [...currentUserMenuList].some(y => y.url === x.path));
     return newMenuList.map(item => {
       const localItem = { ...item, children: item.children ? menuDataRender(item.children) : [] };
       return Authorized.check(item.authority, localItem, null);
@@ -87,20 +86,18 @@ const BasicLayout = props => {
     }
   }, []);
   useEffect(() => {
-    const {
-      routes,
-      menu,
-      formatMessage,
-      menuDataRender,
-    } = props
-    const { breadcrumb, menuData } = getMenuData(
-      routes,
-      menu,
-      formatMessage,
-      menuDataRender,
-    );
+    // const {
+    //   routes,
+    //   menu,
+    // } = props
+    // const { breadcrumb, menuData } = getMenuData(
+    //   routes,
+    //   menu,
+    //   formatMessage,
+    //   menuDataRender,
+    // );
 
-  }, [props])
+  }, [props]);
   /**
    * init variables
    */
@@ -119,20 +116,22 @@ const BasicLayout = props => {
     authority: undefined,
   };
 
-  const renderHeader = logo => <div
-    style={{
-      lineHeight: '56px'
-    }}
-  >
-    {logo}
-  </div>
+  const renderHeader = logoImg => (
+    <div
+      style={{
+        lineHeight: '56px'
+      }}
+    >
+      {logoImg}
+    </div>
+  );
 
   return (
     <ProLayout
       logo={props.collapsed ? logo : logoBg}
       title='光大证券'
       siderWidth={188}
-      menuHeaderRender={(logo, title) => renderHeader(logo, title, props.collapsed)}
+      menuHeaderRender={(logoImg, title) => renderHeader(logoImg, title, props.collapsed)}
       onMenuHeaderClick={(e) => console.log(e)} // logo和title的位置
       onCollapse={handleMenuCollapse}
       menuItemRender={(menuItemProps, defaultDom) => {
@@ -141,7 +140,7 @@ const BasicLayout = props => {
         }
         return <Link to={menuItemProps.path}>{defaultDom}</Link>;
       }}
-      onPageChange={props => console.log(props, 'props')}
+      onPageChange={prop => console.log(prop, 'props')}
       breadcrumbRender={(routers = []) => [
         {
           path: '/',
@@ -157,12 +156,12 @@ const BasicLayout = props => {
         return first ? (
           <Link to={paths.join('/')}>{route.breadcrumbName}</Link>
         ) : (
-            <span>{route.breadcrumbName}</span>
+          <span>{route.breadcrumbName}</span>
           );
       }}
       menuDataRender={menuDataRender}
       formatMessage={formatMessage}
-      rightContentRender={(props) => <RightContent {...props} />}
+      rightContentRender={(prop) => <RightContent {...prop} />}
       {...props}
       {...settings}
     >

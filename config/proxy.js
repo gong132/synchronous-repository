@@ -6,18 +6,11 @@
  * https://pro.ant.design/docs/deploy
  */
 
-const apiUrl = 'http://10.90.48.22:80'; // yaowei
-// const apiUrl = 'http://10.90.48.40:80'; // zzp
+// const apiUrl = 'http://10.90.48.22:80'; // yaowei
+const apiUrl = 'http://10.90.48.40:80'; // zzp
 // const apiUrl = 'http://10.90.48.26:80'; // lqq
 
-const proxyApi = [
-  '/budget',
-  '/user',
-  '/cluster',
-  '/log',
-  '/temp',
-  '/resource',
-]
+const proxyApi = ['/budget', '/user', '/cluster', '/log', '/temp', '/resource'];
 
 // export default [
 //   {
