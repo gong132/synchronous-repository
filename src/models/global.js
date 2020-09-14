@@ -4,7 +4,7 @@ import storage from "@/utils/storage";
 import {PagerHelper} from "@/utils/helper";
 import { isEmpty } from "@/utils/lang";
 import { queryLogList } from '@/services/global'
-import { queryNotices, fetchMenuList, fetchCurrentUserInfo } from '@/services/user';
+import { queryNotices, fetchMenuList, fetchCurrentUserInfo, fetchListByRoleId } from '@/services/user';
 
 const GlobalModel = {
   namespace: 'global',
@@ -13,6 +13,7 @@ const GlobalModel = {
     notices: [],
     logList: PagerHelper.genListState(),
     allMenuList: [],
+    currentUserMenuList: [],
     authActions: [],
     currentUser: {},
   },
@@ -43,6 +44,25 @@ const GlobalModel = {
       yield put({
         type: 'saveData',
         payload: { currentUser: data },
+      });
+      yield put({
+        type: 'queryListByRoleId',
+        payload: { id: data.roleId }
+      })
+
+      callback && callback(data);
+      return data
+    },
+    *queryListByRoleId({ payload, callback }, { call, put }) {
+      const { code, data, msg } = yield call(fetchListByRoleId, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false
+      }
+      storage.add('gd-user', { currentUserMenuList: data });
+      yield put({
+        type: 'saveData',
+        payload: { currentUserMenuList: data },
       });
 
       yield put({
@@ -121,20 +141,20 @@ const GlobalModel = {
     },
 
     updateAuthData(state, action) {
-      const { allMenuList } = state;
+      const { currentUserMenuList } = state;
 
       // 如果没有菜单列表，则返回空的authActions
-      if (isEmpty(allMenuList)) return { ...state, authActions: [] };
+      if (isEmpty(currentUserMenuList)) return { ...state, authActions: [] };
 
       const { pathname } = action.payload;
 
-      const currentMenu = allMenuList.find(menu => menu.url === pathname);
+      const currentMenu = currentUserMenuList.find(menu => menu.url === pathname);
 
       // 如果没有当前菜单权限，则返回空的authActions
       if (isEmpty(currentMenu)) return { ...state, authActions: [] };
 
       // menu.type 菜单类型 0 url  1 按钮
-      const authActionsList = allMenuList
+      const authActionsList = currentUserMenuList
           .filter(menu => menu.pid === currentMenu.id && menu.type === 1)
           .map(menu => menu.url);
       return {
@@ -171,9 +191,9 @@ const GlobalModel = {
     setup({ history, dispatch }) {
       // 订阅, 监听当前页面路由改变,
       history.listen(({ pathname, search }) => {
-        const { allMenuList } = storage.get('gd-user', []);
-        const findCurrentPage = allMenuList && allMenuList.find(v => v.url === pathname );
-        // console.log(allMenuList, pathname, findCurrentPage, 'findCurrentPage')
+        const { currentUserMenuList } = storage.get('gd-user', []);
+        const findCurrentPage = currentUserMenuList && currentUserMenuList.find(v => v.url === pathname );
+        // console.log(currentUserMenuList, pathname, findCurrentPage, 'findCurrentPage')
         // 监听当前页面路由是否在菜单池, 如果不在, 并且不是异常页面和登陆页时, 跳转到403页面
         // 异常页面不监听路由
         if (!findCurrentPage && pathname.indexOf('/exception') < 0 && pathname !== '/user/login' && pathname !== '/') {
