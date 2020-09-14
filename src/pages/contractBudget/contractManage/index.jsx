@@ -27,7 +27,6 @@ import _ from 'lodash'
 import styles from './index.less'
 
 import CreateConstract from './components/createConstract'
-import Sector from '@/pages/systemManage/sectorManage/models/sector';
 
 const { Option } = Select
 const FormItem = Form.Item
@@ -60,7 +59,6 @@ class ContractManage extends Component {
       visibleModal: false,
       searchMore: false,
       modalTitle: '新建',
-      recordValue: {},
     }
     this.handleDebounceQueryData = _.debounce(this.handleDebounceQueryData, 500)
   }
@@ -176,7 +174,6 @@ class ContractManage extends Component {
     this.setState({
       visibleModal: bool,
       modalTitle: title,
-      recordValue: record,
     })
     if (record.id) {
       this.handleQuerySectorInfo({ id: record.id })
@@ -234,7 +231,8 @@ class ContractManage extends Component {
               {getFieldDecorator('name', {
               })(<Input
                 allowClear
-                placeholder="请输入名称" />)}
+                placeholder="请输入名称"
+              />)}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -242,7 +240,8 @@ class ContractManage extends Component {
               {getFieldDecorator('budgetNumber', {
               })(<Input
                 allowClear
-                placeholder="请输入预算编号" />)}
+                placeholder="请输入预算编号"
+              />)}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -250,7 +249,8 @@ class ContractManage extends Component {
               {getFieldDecorator('projectNumber', {
               })(<Input
                 allowClear
-                placeholder="请输入项目编号" />)}
+                placeholder="请输入项目编号"
+              />)}
             </FormItem>
           </Col>
         </Row>
@@ -274,7 +274,8 @@ class ContractManage extends Component {
           })(<Input
             allowClear
             onChange={_.debounce(this.saveParams, 500)}
-            placeholder='请输入合同编号' />)}
+            placeholder='请输入合同编号'
+          />)}
         </SearchForm>
         <SearchForm
           labelName="所属部门"
@@ -329,7 +330,8 @@ class ContractManage extends Component {
             display: 'inline-block'
           }}
           loading={loadingQueryData}
-          type='reset' />
+          type='reset'
+        />
         <Popover visible={searchMore} placement="bottomRight" content={content} trigger="click">
           {
             <div
@@ -364,7 +366,8 @@ class ContractManage extends Component {
               onClick={
                 () => this.handleViewDetail(record)
               }
-              className='globalStyle'>
+              className='globalStyle'
+            >
               {text}
             </span>
           )
@@ -382,7 +385,7 @@ class ContractManage extends Component {
       {
         title: '操作',
         align: 'left',
-        fixed:'right',
+        fixed: 'right',
         width: 190,
         render: (text, record) => {
           return (
@@ -415,7 +418,7 @@ class ContractManage extends Component {
   render() {
     const { constractList, loadingQueryData, contractInfo } = this.props
     console.log(constractList)
-    const { visibleModal, modalTitle, recordValue } = this.state
+    const { visibleModal, modalTitle } = this.state
     const createProps = {
       visibleModal,
       modalTitle,
@@ -428,10 +431,12 @@ class ContractManage extends Component {
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <CustomBtn
             onClick={() => this.handleViewModal(true, '新建')}
-            type='create' />
+            type='create'
+          />
           <CustomBtn
             // onClick={() => this.handleViewModal(true, '新建')}
-            type='export' />
+            type='export'
+          />
         </div>
         <Button
           onClick={() => this.handleAddMenu()}
