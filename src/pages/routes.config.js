@@ -57,6 +57,11 @@ module.exports = {
               path: '/contract-budget/contract',
               name: 'contractManage',
               component: './contractBudget/contractManage',
+              buttons: [
+                { name: '审核', key: 'audit' },
+                { name: '启用', key: 'enable' },
+                { name: '停止', key: 'disable' },
+              ],
             },
             {
               path: '/contract-budget/contract/detail',

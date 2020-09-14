@@ -1,24 +1,21 @@
-import React, {Component, Fragment, useEffect, useState} from 'react'
+import React, { useEffect, useState} from "react"
 import classNames from "classnames";
-import CustomBtn from '@/components/commonUseModule/customBtn'
-import {connect} from 'dva'
-import {DefaultPage, TableColumnHelper} from "@/utils/helper";
+import CustomBtn from "@/components/commonUseModule/customBtn"
+import { connect } from "dva"
+import { DefaultPage, TableColumnHelper } from "@/utils/helper";
 import StandardTable from "@/components/StandardTable";
 import MenuTree from "./component/menuTree";
 
-import AddForm from './addForm'
-import Detail from './detail'
-import styles from './index.less'
-import {Affix, Button, Card, Col, Form, Input, message, Popconfirm, Popover, Row} from "antd";
+import AddForm from "./addForm"
+import Detail from "./detail"
+import styles from "./index.less"
+import { Button, Card, Col, Form, message, Popconfirm, Row} from "antd";
 import {isEmpty} from "@/utils/lang";
 import OptButton from "@/components/commonUseModule/optButton";
-import deleteIcon from '@/assets/icon/Button_del.svg'
-import _filter from "lodash/filter";
-import _sortBy from "lodash/sortBy";
-let container;
+import deleteIcon from "@/assets/icon/Button_del.svg"
 
 const AuthorManage = props => {
-  const { dispatch, authorManage: { roleList, allMenuList, menuList }, loading, loadingUpdate } = props;
+  const { dispatch, authorManage: { roleList, allMenuList }, loadingUpdate } = props;
 
   // 选中菜单
   const [selectedMenu, setSelectedMenu] = useState([]);
@@ -30,11 +27,30 @@ const AuthorManage = props => {
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
 
-  // const [searchValue, setSearchValue] = useState('');
+  // 获取所有菜单
+  const handleQueryAllMenuList = () => {
+    dispatch({
+      type: "authorManage/queryMenuList",
+      payload: {},
+    })
+  };
+  // 根据角色Id获取对应菜单
+  const handleQueryAuthorByRoleId = roleId => {
+    dispatch({
+      type: "authorManage/queryAuthorByRoleId",
+      payload: {
+        id: roleId
+      },
+    }).then(data => {
+      if (!data) return;
+      setExpandedRow(data);
+      setSelectedMenu(data)
+    })
+  };
 
   const handleQueryAllRolesList = params => {
     dispatch({
-      type:'authorManage/queryAllRolesList',
+      type:"authorManage/queryAllRolesList",
       payload: {
         ...DefaultPage,
         ...params,
@@ -47,27 +63,13 @@ const AuthorManage = props => {
     })
   };
 
-  // 获取所有菜单
-  const handleQueryAllMenuList = () => {
+  const handleQueryCurrentUserInfo = () => {
     dispatch({
-      type: 'authorManage/queryMenuList',
-      payload: {},
-    })
-  };
-  // 根据角色Id获取对应菜单
-  const handleQueryAuthorByRoleId = roleId => {
-    dispatch({
-      type: 'authorManage/queryAuthorByRoleId',
+      type: "global/queryCurrentUserInfo'",
       payload: {
-        id: roleId
       },
-    }).then(data => {
-      if (!data) return;
-      setExpandedRow(data);
-      setSelectedMenu(data)
     })
-  };
-
+  }
   const handleSaveMenu = (params, callback) => {
     dispatch({
       type: params.id ? "authorManage/updateRoleAuthor" : "authorManage/addRoleAuthor",
@@ -78,6 +80,7 @@ const AuthorManage = props => {
       if (!sure) return;
       message.success(selectedRows.id ? "修改成功" : "新增成功");
       callback && callback();
+      handleQueryCurrentUserInfo();
       handleQueryAllRolesList();
     })
   };
@@ -89,7 +92,7 @@ const AuthorManage = props => {
       }
     }).then(sure => {
       if (!sure) return;
-      message.success('删除成功');
+      message.success("删除成功");
       handleQueryAllRolesList();
     })
   };
@@ -104,23 +107,27 @@ const AuthorManage = props => {
   }, [selectedMenu]);
 
   const columns = [
-    TableColumnHelper.genPlanColumn('roleName', '角色名'),
+    TableColumnHelper.genPlanColumn("roleName", "角色名"),
     {
-      title: '操作',
-      align: 'center',
+      title: "操作",
+      align: "center",
       render: rows => (
         <>
-          <OptButton icon="eye" onClick={() => {
-            setDetailModalVisible(true);
-            setSelectedRows(rows)
-          }} text="查看"/>
+          <OptButton
+            icon="eye"
+            onClick={() => {
+              setDetailModalVisible(true);
+              setSelectedRows(rows)
+          }}
+            text="查看"
+          />
           <Popconfirm
             title={`确定要删除（${rows.roleName}）吗?`}
             onConfirm={() => handleDeleteRole(rows)}
             okText="确定"
             cancelText="取消"
           >
-            <OptButton img={deleteIcon} text="删除"/>
+            <OptButton img={deleteIcon} text="删除" />
           </Popconfirm>
         </>
       )
@@ -153,10 +160,11 @@ const AuthorManage = props => {
     <div className="main">
       <CustomBtn
         onClick={() => setAddModalVisible(true)}
-        type='create' />
+        type='create'
+      />
       <div className={styles.tableList}>
-        {/*<div className={styles.tableListForm}>*/}
-        {/*</div>*/}
+        {/* <div className={styles.tableListForm}> */}
+        {/* </div> */}
         <Card bordered={false}>
           <Row>
             <Col span={10}>
@@ -171,7 +179,7 @@ const AuthorManage = props => {
                   pagination={false}
                   onRow={record => {
                     return {
-                      onClick: event => {
+                      onClick: () => {
                         setSelectedRows(record);
                         setExpandedRow([]);
                         handleQueryAuthorByRoleId(record.id)
@@ -193,14 +201,14 @@ const AuthorManage = props => {
                     </div>
                   </div>
                   <div className={styles.searchForm}>
-                    {/*<Input*/}
-                    {/*  value={searchValue}*/}
-                    {/*  onChange={e => setSearchValue(e.target.value)}*/}
-                    {/*  style={{ width: 120, height: 28 }}*/}
-                    {/*  allowClear*/}
-                    {/*  onBlur={() => searchTree()}*/}
-                    {/*  onPressEnter={() => searchTree()}*/}
-                    {/*/>*/}
+                    {/* <Input */}
+                    {/*  value={searchValue} */}
+                    {/*  onChange={e => setSearchValue(e.target.value)} */}
+                    {/*  style={{ width: 120, height: 28 }} */}
+                    {/*  allowClear */}
+                    {/*  onBlur={() => searchTree()} */}
+                    {/*  onPressEnter={() => searchTree()} */}
+                    {/* /> */}
                   </div>
                 </div>
                 <div className={styles.tree}>
@@ -223,7 +231,9 @@ const AuthorManage = props => {
                         resourceIds: selectedMenu.map(v => v.id).join(','),
                       })
                     }}
-                  >保存</Button>
+                  >
+                    保存
+                  </Button>
                 </div>
               </div>
             </Col>

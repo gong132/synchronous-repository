@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-filename-extension */
+/* eslint-disable camelcase */
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import _ from 'lodash';
@@ -24,25 +26,25 @@ const FormItem = Form.Item;
 const { Option } = Select;
 
 @Form.create()
-@connect(({ constract, loading }) => ({
-  loadingQueryLogData: loading.effects['constract/fetchLogList'],
-  loadingQueryInfo: loading.effects['constract/fetchContractInfo'],
-  loadingUpdate: loading.effects['constract/updateData'],
-  loadingSureProject: loading.effects['constract/checkProject'],
-  contractInfo: constract.contractInfo,
-  logList: constract.logList,
-  deptList: constract.deptList,
-  deptListMap: constract.deptListMap,
-  projectList: constract.projectList,
-  projectMap: constract.projectMap,
-  systemList: constract.systemList,
-  systemMap: constract.systemMap,
-  supplierList: constract.supplierList,
-  supplierMap: constract.supplierMap,
-  headerList: constract.headerList,
-  headerMap: constract.headerMap,
-  groupMap: constract.groupMap,
-  budgetList: constract.budgetList,
+@connect(({ contract, loading }) => ({
+  loadingQueryLogData: loading.effects['contract/fetchLogList'],
+  loadingQueryInfo: loading.effects['contract/fetchContractInfo'],
+  loadingUpdate: loading.effects['contract/updateData'],
+  loadingSureProject: loading.effects['contract/checkProject'],
+  contractInfo: contract.contractInfo,
+  logList: contract.logList,
+  deptList: contract.deptList,
+  deptListMap: contract.deptListMap,
+  projectList: contract.projectList,
+  projectMap: contract.projectMap,
+  systemList: contract.systemList,
+  systemMap: contract.systemMap,
+  supplierList: contract.supplierList,
+  supplierMap: contract.supplierMap,
+  headerList: contract.headerList,
+  headerMap: contract.headerMap,
+  groupMap: contract.groupMap,
+  budgetList: contract.budgetList,
 }))
 class Detail extends PureComponent {
   constructor(props) {
@@ -67,7 +69,7 @@ class Detail extends PureComponent {
   handleQuerySectorInfo = () => {
     const id = getParam('id');
     this.props.dispatch({
-      type: 'constract/fetchContractInfo',
+      type: 'contract/fetchContractInfo',
       payload: {
         id,
       },
@@ -77,7 +79,7 @@ class Detail extends PureComponent {
   // 查部门
   handleQueryDept = () => {
     this.props.dispatch({
-      type: 'constract/fetchNotBindDept',
+      type: 'contract/fetchNotBindDept',
     });
   };
 
@@ -89,7 +91,7 @@ class Detail extends PureComponent {
       type: '1',
     };
     this.props.dispatch({
-      type: 'constract/fetchLogList',
+      type: 'contract/fetchLogList',
       payload: {
         ...DefaultPage,
         ...params,
@@ -108,7 +110,7 @@ class Detail extends PureComponent {
     const id = getParam('id');
     this.props
       .dispatch({
-        type: 'constract/checkProject',
+        type: 'contract/checkProject',
         payload: {
           ...params,
           id,
@@ -152,7 +154,7 @@ class Detail extends PureComponent {
     const id = getParam('id');
     this.props
       .dispatch({
-        type: 'constract/updateData',
+        type: 'contract/updateData',
         payload: {
           id,
           ...params,

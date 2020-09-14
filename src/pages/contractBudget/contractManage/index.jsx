@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-filename-extension */
 import React, { Component, Fragment } from 'react'
 import { connect } from 'dva'
 import { router } from 'umi'
@@ -26,31 +27,31 @@ import {
 import _ from 'lodash'
 import styles from './index.less'
 
-import CreateConstract from './components/createConstract'
+import CreateContract from './components/createContract'
 
 const { Option } = Select
 const FormItem = Form.Item
 const { RangePicker } = DatePicker
 @Form.create()
-@connect(({ constract, loading }) => ({
-  loadingQueryData: loading.effects['constract/queryData'],
-  loadingCreateData: loading.effects['constract/addData'],
-  loadingUpdateData: loading.effects['constract/updateData'],
-  constractList: constract.constractList,
-  deptList: constract.deptList,
-  deptListMap: constract.deptListMap,
-  contractInfo: constract.contractInfo,
-  budgetList: constract.budgetList,
-  budgetMap: constract.budgetMap,
-  projectList: constract.projectList,
-  projectMap: constract.projectMap,
-  systemList: constract.systemList,
-  systemMap: constract.systemMap,
-  supplierList: constract.supplierList,
-  supplierMap: constract.supplierMap,
-  headerList: constract.headerList,
-  headerMap: constract.headerMap,
-  groupMap: constract.groupMap,
+@connect(({ contract, loading }) => ({
+  loadingQueryData: loading.effects['contract/queryData'],
+  loadingCreateData: loading.effects['contract/addData'],
+  loadingUpdateData: loading.effects['contract/updateData'],
+  contractList: contract.contractList,
+  deptList: contract.deptList,
+  deptListMap: contract.deptListMap,
+  contractInfo: contract.contractInfo,
+  budgetList: contract.budgetList,
+  budgetMap: contract.budgetMap,
+  projectList: contract.projectList,
+  projectMap: contract.projectMap,
+  systemList: contract.systemList,
+  systemMap: contract.systemMap,
+  supplierList: contract.supplierList,
+  supplierMap: contract.supplierMap,
+  headerList: contract.headerList,
+  headerMap: contract.headerMap,
+  groupMap: contract.groupMap,
 }))
 class ContractManage extends Component {
   constructor(props) {
@@ -76,7 +77,7 @@ class ContractManage extends Component {
   handleQueryData = (params = {}) => {
     console.log('params: ', params)
     this.props.dispatch({
-      type: 'constract/queryData',
+      type: 'contract/queryData',
       payload: {
         ...DefaultPage,
         ...params,
@@ -87,7 +88,7 @@ class ContractManage extends Component {
   // 查看板块详情
   handleQuerySectorInfo = (params) => {
     this.props.dispatch({
-      type: 'constract/fetchContractInfo',
+      type: 'contract/fetchContractInfo',
       payload: {
         ...params,
       }
@@ -116,42 +117,42 @@ class ContractManage extends Component {
   // 查部门
   handleQueryDept = () => {
     this.props.dispatch({
-      type: 'constract/fetchNotBindDept',
+      type: 'contract/fetchNotBindDept',
     })
   }
 
   // 查项目
   handleQueryProject = () => {
     this.props.dispatch({
-      type: 'constract/fetchProject',
+      type: 'contract/fetchProject',
     })
   }
 
   // 查预算编号
   handleQueryBudget = () => {
     this.props.dispatch({
-      type: 'constract/fetchBudgetNumber',
+      type: 'contract/fetchBudgetNumber',
     })
   }
 
   // 查询系统
   handleQuerySystem = () => {
     this.props.dispatch({
-      type: 'constract/fetchSystem',
+      type: 'contract/fetchSystem',
     })
   }
 
   // 查询供应商
   handleQuerySupplier = () => {
     this.props.dispatch({
-      type: 'constract/fetchSupplier',
+      type: 'contract/fetchSupplier',
     })
   }
 
   // 查询负责人和团队
   handleQueryGroup = () => {
     this.props.dispatch({
-      type: 'constract/fetchHeaderGroup',
+      type: 'contract/fetchHeaderGroup',
     })
   }
 
@@ -179,7 +180,7 @@ class ContractManage extends Component {
       this.handleQuerySectorInfo({ id: record.id })
     } else {
       this.props.dispatch({
-        type: 'constract/saveData',
+        type: 'contract/saveData',
         payload: {
           contractInfo: {}
         }
@@ -210,7 +211,7 @@ class ContractManage extends Component {
   // 添加菜单
   handleAddMenu = () => {
     this.props.dispatch({
-      type: 'constract/addMenu',
+      type: 'contract/addMenu',
       payload: {
         name: '我的需求',
         pid: '17',
@@ -416,8 +417,8 @@ class ContractManage extends Component {
   }
 
   render() {
-    const { constractList, loadingQueryData, contractInfo } = this.props
-    console.log(constractList)
+    const { contractList, loadingQueryData, contractInfo } = this.props
+    console.log(contractList)
     const { visibleModal, modalTitle } = this.state
     const createProps = {
       visibleModal,
@@ -441,13 +442,13 @@ class ContractManage extends Component {
         <Button
           onClick={() => this.handleAddMenu()}
         >添加菜单</Button>
-        {visibleModal && <CreateConstract {...createProps} />}
+        {visibleModal && <CreateContract {...createProps} />}
         <Card>
           {this.renderSearchForm()}
           <StandardTable
             rowKey={(record, index) => index}
             columns={this.genColumns()}
-            data={constractList}
+            data={contractList}
             loading={loadingQueryData}
             // dataSource={[
             //   { number: 'gong', systemName: 'gg' },

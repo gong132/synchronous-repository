@@ -196,7 +196,7 @@ const GlobalModel = {
         // console.log(currentUserMenuList, pathname, findCurrentPage, 'findCurrentPage')
         // 监听当前页面路由是否在菜单池, 如果不在, 并且不是异常页面和登陆页时, 跳转到403页面
         // 异常页面不监听路由
-        if (!findCurrentPage && pathname.indexOf('/exception') < 0 && pathname !== '/user/login' && pathname !== '/') {
+        if (!isEmpty(currentUserMenuList) && !findCurrentPage && pathname.indexOf('/exception') < 0 && pathname !== '/user/login' && pathname !== '/') {
           router.replace('/exception/403');
         }
         // if (!findCurrentPage || pathname !== '/user/login') {

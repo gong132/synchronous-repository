@@ -11,15 +11,14 @@ import {
   queryBudgetNumber,
   checkProject
 } from '@/services/contractBudget/contract'
-import { addMenuList } from '@/services/global'
+import { addMenuList, queryLogList } from '@/services/global'
 import { PagerHelper } from "@/utils/helper";
-import { queryLogList } from '@/services/global'
 import { message } from "antd";
 
-const Constract = {
-  namespace: 'constract',
+const Contract = {
+  namespace: 'contract',
   state: {
-    constractList: PagerHelper.genListState(),
+    contractList: PagerHelper.genListState(),
     logList: PagerHelper.genListState(),
     contractInfo: {},
     deptList: [],
@@ -37,7 +36,7 @@ const Constract = {
     budgetMap: {},
   },
   effects: {
-    *addMenu({ payload }, { put, call }) {
+    *addMenu({ payload }, { call }) {
       const { code, msg } = yield call(addMenuList, payload)
       if (!code || code !== 200) {
         message.error(msg);
@@ -111,9 +110,10 @@ const Constract = {
         message.error(msg);
         return false;
       }
-      let obj = {}
+      const obj = {}
       data.map(v => {
         obj[v.deptId] = v.deptName
+        return true
       })
       yield put({
         type: 'saveData',
@@ -132,9 +132,10 @@ const Constract = {
         message.error(msg);
         return false;
       }
-      let obj = {}
+      const obj = {}
       data.map(v => {
         obj[v.number] = v.name
+        return true
       })
       yield put({
         type: 'saveData',
@@ -146,16 +147,17 @@ const Constract = {
       return true
     },
 
-     // 查询预算编号
-     *fetchBudgetNumber({ payload }, { call, put }) {
+    // 查询预算编号
+    *fetchBudgetNumber({ payload }, { call, put }) {
       const { code, msg, data } = yield call(queryBudgetNumber, payload)
       if (!code || code !== 200) {
         message.error(msg);
         return false;
       }
-      let obj = {}
+      const obj = {}
       data.map(v => {
         obj[v.number] = v.name
+        return true
       })
       yield put({
         type: 'saveData',
@@ -174,9 +176,10 @@ const Constract = {
         message.error(msg);
         return false;
       }
-      let obj = {}
+      const obj = {}
       data.map(v => {
         obj[v.systemId] = v.systemName
+        return true
       })
       yield put({
         type: 'saveData',
@@ -188,16 +191,17 @@ const Constract = {
       return true
     },
 
-     // 查询供应商
-     *fetchSupplier({ payload }, { call, put }) {
+    // 查询供应商
+    *fetchSupplier({ payload }, { call, put }) {
       const { code, msg, data } = yield call(querySupplier, payload)
       if (!code || code !== 200) {
         message.error(msg);
         return false;
       }
-      let obj = {}
+      const obj = {}
       data.map(v => {
         obj[v.supplierId] = v.supplierName
+        return true
       })
       yield put({
         type: 'saveData',
@@ -216,13 +220,15 @@ const Constract = {
         message.error(msg);
         return false;
       }
-      let obj = {}
-      let gObj = {}
+      const obj = {}
+      const gObj = {}
       data.map(v => {
         obj[v.leaderId] = v.leaderName
+        return true
       })
       data.map(v => {
         gObj[v.number] = v.name
+        return true
       })
       yield put({
         type: 'saveData',
@@ -261,7 +267,7 @@ const Constract = {
     setSectorData(state, action) {
       return {
         ...state,
-        constractList: PagerHelper.resolveListState(action.payload),
+        contractList: PagerHelper.resolveListState(action.payload),
       };
     },
     setLogData(state, action) {
@@ -273,4 +279,4 @@ const Constract = {
   }
 }
 
-export default Constract
+export default Contract
