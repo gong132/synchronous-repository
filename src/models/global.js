@@ -192,11 +192,12 @@ const GlobalModel = {
       // 订阅, 监听当前页面路由改变,
       history.listen(({ pathname, search }) => {
         const { currentUserMenuList } = storage.get('gd-user', []);
-        const findCurrentPage = currentUserMenuList && currentUserMenuList.find(v => v.url === pathname );
+        console.log(currentUserMenuList, 'currentUserMenuList')
+        const findCurrentPage = currentUserMenuList && currentUserMenuList.filter(v => !!v ).find(v => v.url === pathname );
         // console.log(currentUserMenuList, pathname, findCurrentPage, 'findCurrentPage')
         // 监听当前页面路由是否在菜单池, 如果不在, 并且不是异常页面和登陆页时, 跳转到403页面
         // 异常页面不监听路由
-        if (!isEmpty(currentUserMenuList) && !findCurrentPage && pathname.indexOf('/exception') < 0 && pathname !== '/user/login' && pathname !== '/') {
+        if (!isEmpty(currentUserMenuList) && !findCurrentPage && pathname.indexOf('/exception') < 0 && pathname !== '/user/login' && pathname !== '/menuConfig' && pathname !== '/') {
           router.replace('/exception/403');
         }
         // if (!findCurrentPage || pathname !== '/user/login') {
