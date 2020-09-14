@@ -215,9 +215,9 @@ class ContractManage extends Component {
     this.props.dispatch({
       type: 'constract/addMenu',
       payload: {
-        name: '项目管理',
-        pid: '16',
-        url: '/projectManage',
+        name: '我的需求',
+        pid: '17',
+        url: '/demand',
         type: 0
       }
     })
@@ -433,9 +433,9 @@ class ContractManage extends Component {
             // onClick={() => this.handleViewModal(true, '新建')}
             type='export' />
         </div>
-        {/* <Button
+        <Button
           onClick={() => this.handleAddMenu()}
-        >添加菜单</Button> */}
+        >添加菜单</Button>
         {visibleModal && <CreateConstract {...createProps} />}
         <Card>
           {this.renderSearchForm()}

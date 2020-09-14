@@ -1,32 +1,28 @@
 .createBtn {
   display: flex;
-  width: 90px;
+  // display: inline-block;
+  // width: 72px;
   margin-bottom: 16px;
+  padding: 8px 13px;
   text-align: center;
-  background: linear-gradient(135deg, #2E5BFF 0%, #2496EE 100%);
+  background: linear-gradient(135deg, #2e5bff 0%, #2496ee 100%);
   opacity: 1;
   border-radius: 2px;
   font-size: 0;
-
-  &_icon {
-    height: 40px;
-    line-height: 34px;
-    margin-left: 18px;
-    margin-right: 6px;
-    font-size: 30px;
-    font-weight: 400;
-    color: white;
-    opacity: 1;
-  }
+  align-items: center;
 
   &_text {
-    height: 40px;
-    line-height: 41px;
     font-size: 14px;
-    font-family: Source Han Sans CN;
     font-weight: 400;
     color: rgba(255, 255, 255, 1);
     opacity: 1;
+
+    &_icon {
+      font-size: 16px;
+      color: white;
+      opacity: 1;
+      margin-right: 6px;
+    }
   }
 }
 
@@ -44,7 +40,6 @@
   border-radius: 2px;
   color: rgba(46, 91, 255, 1);
   font-size: 14px;
-  font-family: Source Han Sans CN;
   font-weight: 400;
 }
 
@@ -60,7 +55,6 @@
   border-radius: 2px;
   text-align: center;
   font-size: 14px;
-  font-family: Source Han Sans CN;
   font-weight: 400;
   line-height: 31px;
   color: rgba(255, 255, 255, 1);
@@ -84,14 +78,13 @@
 }
 
 .exportBtn {
-  width: 90px;
-  height: 40px;
-  background: #FFFFFF;
-  border: 1px solid #E0E7FF;
+  padding: 8px 13px;
+  background: #fff;
+  border: 1px solid #e0e7ff;
   opacity: 1;
   border-radius: 2px;
   text-align: center;
-  line-height: 40px;
+  margin-bottom: 16px;
 
   span {
     margin-left: 8px;

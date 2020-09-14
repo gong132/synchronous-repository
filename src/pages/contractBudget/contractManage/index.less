@@ -1,19 +1,17 @@
-
-
 .customTable {
   :global {
-
-    .ant-table-thead>tr>th,
-    .ant-table-tbody>tr>td {
-      padding: 9px
+    .ant-table-thead > tr > th,
+    .ant-table-tbody > tr > td {
+      padding: 9px;
     }
   }
 }
 
 .moreBtn {
-  background: #FFFFFF;
+  background: #fff;
   opacity: 1;
   text-align: center;
+
   span {
     margin-left: 2px;
     position: relative;
@@ -31,6 +29,7 @@
 .moreSearch {
   width: 270px;
   margin-top: 12px;
+
   :global {
     .ant-form-item {
       margin-bottom: 12px;
@@ -40,8 +39,38 @@
 
 .clearFormMargin {
   :global {
+    .ant-descriptions-view {
+      .ant-descriptions-item-label,
+      .ant-descriptions-item-content {
+        padding: 7px 9px;
+        min-width: 136px;
+        max-width: 158px;
+      }
+      .ant-descriptions-item-label {
+        padding-left: 24px;
+      }
+    }
+
     .ant-form-item {
       margin-bottom: 0;
+    }
+    .ant-form-item-control {
+      line-height: none;
+    }
+  }
+}
+
+.formatDetailDesc {
+  :global {
+    .ant-descriptions-view {
+      .ant-descriptions-row {
+        .ant-descriptions-item-label,
+        .ant-descriptions-item-colon {
+          padding: 10px 24px;
+          min-width: 136px;
+          max-width: 158px;
+        }
+      }
     }
   }
 }

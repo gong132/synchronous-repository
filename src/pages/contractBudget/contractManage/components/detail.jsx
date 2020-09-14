@@ -9,12 +9,13 @@ import { DefaultPage, TableColumnHelper } from '@/utils/helper';
 import Editor from '@/components/TinyEditor';
 import OptButton from '@/components/commonUseModule/optButton';
 import CustomBtn from '@/components/commonUseModule/customBtn';
+import Websocket from '@/components/Websocket';
 import editIcon from '@/assets/icon/Button_bj.svg';
 import budget_xq from '@/assets/icon/modular_xq.svg';
 import budget_log from '@/assets/icon/modular_czrz.svg';
 import payIcon from '@/assets/icon/modular_zfmx.svg';
 import { Descriptions, Spin, Form, Button, Table, Input, Select, DatePicker, Modal } from 'antd';
-import { getParam } from '@/utils/utils';
+import { getParam, getUserInfo } from '@/utils/utils';
 import { isEmpty } from '@/utils/lang';
 import styles from '../index.less';
 
@@ -250,7 +251,7 @@ class Detail extends PureComponent {
   };
 
   render() {
-    const w = 150;
+    const w = '100%';
     const {
       editBool,
       modalVisible,
@@ -336,7 +337,7 @@ class Detail extends PureComponent {
       TableColumnHelper.genPlanColumn('updateTime', '修改时间', { width: '100px' }),
     ];
     const detailList = [
-      { span: 2, required: false, name: '合同名称', value: name },
+      { span: 3, required: false, name: '合同名称', value: name, style: { whiteSpace: 'pre' } },
       { span: 1, required: false, name: '合同编号', value: number },
       { span: 1, required: false, name: '预算编号', value: budgetNumber },
       { span: 1, required: false, name: '所属集群/板块', value: clusterName },
@@ -358,8 +359,20 @@ class Detail extends PureComponent {
       { span: 3, required: false, name: '合同描述', value: description, dataIndex: 'description' },
       // { span: 3, required: false, name: '附件', value: name },
     ];
+    const { token } = getUserInfo();
     return (
       <Fragment>
+        <Websocket
+          url={`ws://10.90.48.22:80/websocket/${token}`}
+          // onMessage={this.handleReceiveMessage}
+          // onOpen={this.handleOpen}
+          // onClose={this.handleClose}
+          // reconnect
+          // debug
+          // ref={Websocket => {
+          //   this.refWebSocket = Websocket;
+          // }}
+        />
         <GlobalSandBox
           img={budget_xq}
           title="合同详情"
@@ -409,367 +422,365 @@ class Detail extends PureComponent {
           }
         >
           <Spin spinning={loadingQueryInfo}>
-            <Descriptions column={3} bordered className={styles.clearFormMargin}>
-              {editBool ? (
-                <Fragment>
+            {editBool ? (
+              <Descriptions column={3} bordered className={styles.clearFormMargin}>
+                <DescriptionItem
+                  span={3}
+                  label={<>{<span style={{ color: 'red' }}>*</span>}合同名称</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      rules: [{ required: true, message: '请输入合同名称!' }],
+                      initialValue: name,
+                    })(
+                      <Input.TextArea placeholder="请输入合同名称" cols={1} rows={1} allowClear />,
+                    )}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>{<span style={{ color: 'red' }}>*</span>}合同编号</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('number', {
+                      rules: [{ required: true, message: '请输入合同编号!' }],
+                      initialValue: number,
+                    })(<Input disabled style={{ width: w }} placeholder="请输入合同编号" />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>{<span style={{ color: 'red' }}>*</span>}预算编号</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('budgetNumber', {
+                      rules: [{ required: true, message: '请输入预算编号' }],
+                      initialValue: budgetNumber,
+                    })(
+                      <Select placeholder="请输入预算编号" style={{ width: w }}>
+                        {!_.isEmpty(budgetList) &&
+                          budgetList.map(d => (
+                            <Option key={d.number} value={d.number}>
+                              {d.number}
+                            </Option>
+                          ))}
+                      </Select>,
+                    )}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>{<span style={{ color: 'red' }}>*</span>}所属集群/板块 </>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('clusterName', {
+                      rules: [{ required: true, message: '请输入所属集群/板块' }],
+                      initialValue: clusterName,
+                    })(<Input disabled />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>{<span style={{ color: 'red' }}>*</span>}所属项目</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('projectNumber', {
+                      rules: [{ required: true, message: '请输入所属项目' }],
+                      initialValue: projectNumber,
+                    })(
+                      <Select placeholder="请输入所属项目" style={{ width: w }}>
+                        {!_.isEmpty(projectList) &&
+                          projectList.map(d => (
+                            <Option key={d.number} value={d.number}>
+                              {d.name}
+                            </Option>
+                          ))}
+                      </Select>,
+                    )}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>{<span style={{ color: 'red' }}>*</span>}供应商</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('providerCompanyId', {
+                      rules: [{ required: true, message: '请输入供应商' }],
+                      initialValue: providerCompanyId,
+                    })(
+                      <Select placeholder="请输入供应商" style={{ width: w }}>
+                        {!_.isEmpty(supplierList) &&
+                          supplierList.map(d => (
+                            <Option key={d.supplierId} value={d.supplierId}>
+                              {d.supplierName}
+                            </Option>
+                          ))}
+                      </Select>,
+                    )}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>{<span style={{ color: 'red' }}>*</span>}所属部门</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('deptId', {
+                      rules: [{ required: true, message: '请输入所属部门' }],
+                      initialValue: deptId,
+                    })(
+                      <Select
+                        allowClear
+                        placeholder="请输入所属部门"
+                        style={{
+                          width: '100%',
+                        }}
+                      >
+                        {!_.isEmpty(deptList) &&
+                          deptList.map(d => (
+                            <Option key={d.deptId} value={d.deptId}>
+                              {d.deptName}
+                            </Option>
+                          ))}
+                      </Select>,
+                    )}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>{<span style={{ color: 'red' }}>*</span>}首次报价金额</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('firstOfferAmount', {
+                      rules: [
+                        {
+                          required: true,
+                          message: '请输入首次报价金额',
+                          pattern: /^[0-9]+$|,/g,
+                          whitespace: true,
+                        },
+                      ],
+                      normalize: this.formatMoney,
+                      initialValue: firstOfferAmount,
+                    })(
+                      <Input
+                        style={{ width: w }}
+                        addonAfter="元"
+                        placeholder="请输入首次报价金额"
+                      />,
+                    )}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>{<span style={{ color: 'red' }}>*</span>}合同成交额</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('transactionAmount', {
+                      rules: [
+                        {
+                          required: true,
+                          message: '请输入合同成交额',
+                          pattern: /^[0-9]+$|,/g,
+                          whitespace: true,
+                        },
+                      ],
+                      normalize: this.formatMoney,
+                      initialValue: transactionAmount,
+                    })(
+                      <Input style={{ width: w }} addonAfter="元" placeholder="请输入合同成交额" />,
+                    )}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>{<span style={{ color: 'red' }}>*</span>}合同负责人</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('headerId', {
+                      rules: [{ required: true, message: '请输入合同负责人' }],
+                      initialValue: headerId,
+                    })(
+                      <Select
+                        allowClear
+                        // showSearch
+                        placeholder="请输入合同负责人"
+                        style={{ width: w }}
+                      >
+                        {!_.isEmpty(headerList) &&
+                          headerList.map(d => (
+                            <Option key={d.leaderId} value={d.leaderId}>
+                              {d.leaderName}
+                            </Option>
+                          ))}
+                      </Select>,
+                    )}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>{<span style={{ color: 'red' }}>*</span>}合同负责人团队</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('headerGroupId', {
+                      rules: [{ required: true, message: '请输入合同负责人团队' }],
+                      initialValue: headerGroupId,
+                    })(
+                      <Select
+                        allowClear
+                        // showSearch
+                        placeholder="请输入合同负责人团队"
+                        style={{ width: w }}
+                      >
+                        {!_.isEmpty(headerList) &&
+                          headerList.map(d => (
+                            <Option key={d.number} value={d.number}>
+                              {d.name}
+                            </Option>
+                          ))}
+                      </Select>,
+                    )}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>{<span style={{ color: 'red' }}>*</span>}合同签订时间</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('signingTime', {
+                      rules: [{ required: true, message: '请输入合同签订时间' }],
+                      initialValue: signingTime ? moment(signingTime) : null,
+                    })(<DatePicker style={{ width: w }} placeholder="请输入合同签订时间" />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>{<span style={{ color: 'red' }}>*</span>}录入人</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('userId', {
+                      rules: [{ required: true, message: '请输入录入人' }],
+                      initialValue: userId,
+                    })(
+                      <Select
+                        allowClear
+                        // showSearch
+                        disabled
+                        placeholder="请输入录入人"
+                        style={{ width: w }}
+                      >
+                        <Option key={1} value={1}>
+                          自定义
+                        </Option>
+                      </Select>,
+                    )}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>{<span style={{ color: 'red' }}>*</span>}录入时间</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('createTime', {
+                      rules: [{ required: true, message: '请输入录入时间' }],
+                      initialValue: createTime ? moment(createTime) : null,
+                    })(<DatePicker disabled style={{ width: w }} placeholder="请输入录入时间" />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>{<span style={{ color: 'red' }} />}项目验收日期</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('projectCheckTimeEdit', {
+                      rules: [{ required: false, message: '请输入项目验收日期' }],
+                      initialValue: projectCheckTime ? moment(projectCheckTime) : null,
+                    })(
+                      <DatePicker
+                        style={{ width: w }}
+                        onChange={_.debounce(this.autoCalcEdit, 500)}
+                        placeholder="请输入项目验收日期"
+                      />,
+                    )}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>{<span style={{ color: 'red' }} />}免费维保期</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('freeDefendDateEdit', {
+                      rules: [
+                        {
+                          required: false,
+                          message: '请输入免费维保期',
+                          pattern: /^[0-9]+$/,
+                        },
+                      ],
+                      normalize: this.formatCount,
+                      initialValue: freeDefendDate,
+                    })(
+                      <Input
+                        style={{ width: w }}
+                        onChange={_.debounce(this.autoCalcEdit, 500)}
+                        placeholder="请输入免费维保期"
+                        addonAfter="月"
+                      />,
+                    )}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem span={1} label={<>维保支付期</>}>
+                  <FormItem>
+                    {form.getFieldDecorator('defendPayTimeEdit', {
+                      rules: [
+                        {
+                          required: false,
+                          message: '请输入维保支付期',
+                        },
+                      ],
+                      initialValue: payChange ? freePayDayEdit : defendPayTime,
+                    })(<Input style={{ width: w }} disabled placeholder="请输入维保支付日期" />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={3}
+                  label={<>{<span style={{ color: 'red' }}>*</span>}涉及系统</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('systemId', {
+                      rules: [{ required: true, message: '请输入所属系统' }],
+                      initialValue: systemId,
+                    })(
+                      <Select
+                        allowClear
+                        // showSearch
+                        placeholder="请输入所属系统"
+                        style={{ width: '100%' }}
+                      >
+                        {!_.isEmpty(systemList) &&
+                          systemList.map(d => (
+                            <Option key={d.systemId} value={d.systemId}>
+                              {d.systemName}
+                            </Option>
+                          ))}
+                      </Select>,
+                    )}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem span={3} label={<>描述</>}>
+                  <FormItem>
+                    <Editor
+                      editorKey="myContractAdd"
+                      height={300}
+                      content={descriptionState}
+                      onContentChange={content => this.handleChangeDesc(content)}
+                    />
+                  </FormItem>
+                </DescriptionItem>
+              </Descriptions>
+            ) : (
+              <Descriptions column={3} bordered className={styles.formatDetailDesc}>
+                {detailList.map((v, i) => (
                   <DescriptionItem
-                    span={2}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}合同名称</>}
-                  >
-                    <FormItem>
-                      {form.getFieldDecorator('name', {
-                        rules: [{ required: true, message: '请输入合同名称!' }],
-                        initialValue: name,
-                      })(<Input placeholder="请输入合同名称" />)}
-                    </FormItem>
-                  </DescriptionItem>
-                  <DescriptionItem
-                    span={1}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}合同编号</>}
-                  >
-                    <FormItem>
-                      {form.getFieldDecorator('number', {
-                        rules: [{ required: true, message: '请输入合同编号!' }],
-                        initialValue: number,
-                      })(<Input disabled style={{ width: w }} placeholder="请输入合同编号" />)}
-                    </FormItem>
-                  </DescriptionItem>
-                  <DescriptionItem
-                    span={1}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}预算编号</>}
-                  >
-                    <FormItem>
-                      {form.getFieldDecorator('budgetNumber', {
-                        rules: [{ required: true, message: '请输入预算编号' }],
-                        initialValue: budgetNumber,
-                      })(
-                        <Select placeholder="请输入预算编号" style={{ width: w }}>
-                          {!_.isEmpty(budgetList) &&
-                            budgetList.map(d => (
-                              <Option key={d.number} value={d.number}>
-                                {d.number}
-                              </Option>
-                            ))}
-                        </Select>,
-                      )}
-                    </FormItem>
-                  </DescriptionItem>
-                  <DescriptionItem
-                    span={1}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}所属集群/板块 </>}
-                  >
-                    <FormItem>
-                      {form.getFieldDecorator('clusterName', {
-                        rules: [{ required: true, message: '请输入所属集群/板块' }],
-                        initialValue: clusterName,
-                      })(<Input disabled />)}
-                    </FormItem>
-                  </DescriptionItem>
-                  <DescriptionItem
-                    span={1}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}所属项目</>}
-                  >
-                    <FormItem>
-                      {form.getFieldDecorator('projectNumber', {
-                        rules: [{ required: true, message: '请输入所属项目' }],
-                        initialValue: projectNumber,
-                      })(
-                        <Select placeholder="请输入所属项目" style={{ width: w }}>
-                          {!_.isEmpty(projectList) &&
-                            projectList.map(d => (
-                              <Option key={d.number} value={d.number}>
-                                {d.name}
-                              </Option>
-                            ))}
-                        </Select>,
-                      )}
-                    </FormItem>
-                  </DescriptionItem>
-                  <DescriptionItem
-                    span={1}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}供应商</>}
-                  >
-                    <FormItem>
-                      {form.getFieldDecorator('providerCompanyId', {
-                        rules: [{ required: true, message: '请输入供应商' }],
-                        initialValue: providerCompanyId,
-                      })(
-                        <Select placeholder="请输入供应商" style={{ width: w }}>
-                          {!_.isEmpty(supplierList) &&
-                            supplierList.map(d => (
-                              <Option key={d.supplierId} value={d.supplierId}>
-                                {d.supplierName}
-                              </Option>
-                            ))}
-                        </Select>,
-                      )}
-                    </FormItem>
-                  </DescriptionItem>
-                  <DescriptionItem
-                    span={1}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}所属部门</>}
-                  >
-                    <FormItem>
-                      {form.getFieldDecorator('deptId', {
-                        rules: [{ required: true, message: '请输入所属部门' }],
-                        initialValue: deptId,
-                      })(
-                        <Select
-                          allowClear
-                          placeholder="请输入所属部门"
-                          style={{
-                            width: '100%',
-                          }}
-                        >
-                          {!_.isEmpty(deptList) &&
-                            deptList.map(d => (
-                              <Option key={d.deptId} value={d.deptId}>
-                                {d.deptName}
-                              </Option>
-                            ))}
-                        </Select>,
-                      )}
-                    </FormItem>
-                  </DescriptionItem>
-                  <DescriptionItem
-                    span={1}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}首次报价金额</>}
-                  >
-                    <FormItem>
-                      {form.getFieldDecorator('firstOfferAmount', {
-                        rules: [
-                          {
-                            required: true,
-                            message: '请输入首次报价金额',
-                            pattern: /^[0-9]+$|,/g,
-                            whitespace: true,
-                          },
-                        ],
-                        normalize: this.formatMoney,
-                        initialValue: firstOfferAmount,
-                      })(
-                        <Input
-                          style={{ width: w }}
-                          addonAfter="元"
-                          placeholder="请输入首次报价金额"
-                        />,
-                      )}
-                    </FormItem>
-                  </DescriptionItem>
-                  <DescriptionItem
-                    span={1}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}合同成交额</>}
-                  >
-                    <FormItem>
-                      {form.getFieldDecorator('transactionAmount', {
-                        rules: [
-                          {
-                            required: true,
-                            message: '请输入合同成交额',
-                            pattern: /^[0-9]+$|,/g,
-                            whitespace: true,
-                          },
-                        ],
-                        normalize: this.formatMoney,
-                        initialValue: transactionAmount,
-                      })(
-                        <Input
-                          style={{ width: w }}
-                          addonAfter="元"
-                          placeholder="请输入合同成交额"
-                        />,
-                      )}
-                    </FormItem>
-                  </DescriptionItem>
-                  <DescriptionItem
-                    span={1}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}合同负责人</>}
-                  >
-                    <FormItem>
-                      {form.getFieldDecorator('headerId', {
-                        rules: [{ required: true, message: '请输入合同负责人' }],
-                        initialValue: headerId,
-                      })(
-                        <Select
-                          allowClear
-                          // showSearch
-                          placeholder="请输入合同负责人"
-                          style={{ width: w }}
-                        >
-                          {!_.isEmpty(headerList) &&
-                            headerList.map(d => (
-                              <Option key={d.leaderId} value={d.leaderId}>
-                                {d.leaderName}
-                              </Option>
-                            ))}
-                        </Select>,
-                      )}
-                    </FormItem>
-                  </DescriptionItem>
-                  <DescriptionItem
-                    span={1}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}合同负责人团队</>}
-                  >
-                    <FormItem>
-                      {form.getFieldDecorator('headerGroupId', {
-                        rules: [{ required: true, message: '请输入合同负责人团队' }],
-                        initialValue: headerGroupId,
-                      })(
-                        <Select
-                          allowClear
-                          // showSearch
-                          placeholder="请输入合同负责人团队"
-                          style={{ width: w }}
-                        >
-                          {!_.isEmpty(headerList) &&
-                            headerList.map(d => (
-                              <Option key={d.number} value={d.number}>
-                                {d.name}
-                              </Option>
-                            ))}
-                        </Select>,
-                      )}
-                    </FormItem>
-                  </DescriptionItem>
-                  <DescriptionItem
-                    span={1}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}合同签订时间</>}
-                  >
-                    <FormItem>
-                      {form.getFieldDecorator('signingTime', {
-                        rules: [{ required: true, message: '请输入合同签订时间' }],
-                        initialValue: signingTime ? moment(signingTime) : null,
-                      })(<DatePicker style={{ width: w }} placeholder="请输入合同签订时间" />)}
-                    </FormItem>
-                  </DescriptionItem>
-                  <DescriptionItem
-                    span={1}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}录入人</>}
-                  >
-                    <FormItem>
-                      {form.getFieldDecorator('userId', {
-                        rules: [{ required: true, message: '请输入录入人' }],
-                        initialValue: userId,
-                      })(
-                        <Select
-                          allowClear
-                          // showSearch
-                          disabled
-                          placeholder="请输入录入人"
-                          style={{ width: w }}
-                        >
-                          <Option key={1} value={1}>
-                            自定义
-                          </Option>
-                        </Select>,
-                      )}
-                    </FormItem>
-                  </DescriptionItem>
-                  <DescriptionItem
-                    span={1}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}录入时间</>}
-                  >
-                    <FormItem>
-                      {form.getFieldDecorator('createTime', {
-                        rules: [{ required: true, message: '请输入录入时间' }],
-                        initialValue: createTime ? moment(createTime) : null,
-                      })(<DatePicker disabled style={{ width: w }} placeholder="请输入录入时间" />)}
-                    </FormItem>
-                  </DescriptionItem>
-                  <DescriptionItem
-                    span={1}
-                    label={<>{<span style={{ color: 'red' }} />}项目验收日期</>}
-                  >
-                    <FormItem>
-                      {form.getFieldDecorator('projectCheckTimeEdit', {
-                        rules: [{ required: false, message: '请输入项目验收日期' }],
-                        initialValue: projectCheckTime ? moment(projectCheckTime) : null,
-                      })(
-                        <DatePicker
-                          style={{ width: w }}
-                          onChange={_.debounce(this.autoCalcEdit, 500)}
-                          placeholder="请输入项目验收日期"
-                        />,
-                      )}
-                    </FormItem>
-                  </DescriptionItem>
-                  <DescriptionItem
-                    span={1}
-                    label={<>{<span style={{ color: 'red' }} />}免费维保期</>}
-                  >
-                    <FormItem>
-                      {form.getFieldDecorator('freeDefendDateEdit', {
-                        rules: [
-                          {
-                            required: false,
-                            message: '请输入免费维保期',
-                            pattern: /^[0-9]+$/,
-                          },
-                        ],
-                        normalize: this.formatCount,
-                        initialValue: freeDefendDate,
-                      })(
-                        <Input
-                          style={{ width: w }}
-                          onChange={_.debounce(this.autoCalcEdit, 500)}
-                          placeholder="请输入免费维保期"
-                          addonAfter="月"
-                        />,
-                      )}
-                    </FormItem>
-                  </DescriptionItem>
-                  <DescriptionItem span={1} label={<>维保支付期</>}>
-                    <FormItem>
-                      {form.getFieldDecorator('defendPayTimeEdit', {
-                        rules: [
-                          {
-                            required: false,
-                            message: '请输入维保支付期',
-                          },
-                        ],
-                        initialValue: payChange ? freePayDayEdit : defendPayTime,
-                      })(<Input style={{ width: w }} disabled placeholder="请输入维保支付日期" />)}
-                    </FormItem>
-                  </DescriptionItem>
-                  <DescriptionItem
-                    span={3}
-                    label={<>{<span style={{ color: 'red' }}>*</span>}涉及系统</>}
-                  >
-                    <FormItem>
-                      {form.getFieldDecorator('systemId', {
-                        rules: [{ required: true, message: '请输入所属系统' }],
-                        initialValue: systemId,
-                      })(
-                        <Select
-                          allowClear
-                          // showSearch
-                          placeholder="请输入所属系统"
-                          style={{ width: '100%' }}
-                        >
-                          {!_.isEmpty(systemList) &&
-                            systemList.map(d => (
-                              <Option key={d.systemId} value={d.systemId}>
-                                {d.systemName}
-                              </Option>
-                            ))}
-                        </Select>,
-                      )}
-                    </FormItem>
-                  </DescriptionItem>
-                  <DescriptionItem span={3} label={<>描述</>}>
-                    <FormItem>
-                      <Editor
-                        editorKey="myContractAdd"
-                        height={300}
-                        content={descriptionState}
-                        onContentChange={content => this.handleChangeDesc(content)}
-                      />
-                    </FormItem>
-                  </DescriptionItem>
-                </Fragment>
-              ) : (
-                detailList.map((v, i) => (
-                  <Descriptions.Item
                     key={i.toString()}
                     span={v.span}
                     label={
@@ -787,12 +798,12 @@ class Detail extends PureComponent {
                         dangerouslySetInnerHTML={{ __html: v.value ? v.value : '--' }}
                       /> /* eslint-disable */
                     ) : (
-                      v.value
+                      <div style={v.style}>{v.value}</div>
                     )}
-                  </Descriptions.Item>
-                ))
-              )}
-            </Descriptions>
+                  </DescriptionItem>
+                ))}
+              </Descriptions>
+            )}
           </Spin>
         </GlobalSandBox>
         <div style={{ height: '16px' }} />

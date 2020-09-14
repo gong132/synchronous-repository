@@ -113,6 +113,8 @@ class SectorManage extends Component {
     });
     if (!bool) {
       this.props.form.resetFields();
+    }
+    if (bool && !record.id) {
       this.handleQueryDept();
     }
     if (record.id) {
@@ -184,10 +186,6 @@ class SectorManage extends Component {
         id: record.id,
       },
     });
-  };
-
-  handleChangeChecked = checkedValues => {
-    console.log('checked = ', checkedValues);
   };
 
   // 分页操作
@@ -268,6 +266,7 @@ class SectorManage extends Component {
           record.clusterLinkDepts.map((d, index) => {
             if (record.clusterLinkDepts.length > index + 1) {
               str += `${d.deptName}, `;
+              return '';
             }
             str += d.deptName;
             return '';
@@ -282,6 +281,7 @@ class SectorManage extends Component {
       {
         title: '操作',
         align: 'left',
+        width: 190,
         render: (text, record) => {
           return (
             <div>
@@ -361,7 +361,7 @@ class SectorManage extends Component {
                       rules: [{ required: true, message: '请至少选择一个部门！' }],
                       initialValue: arr,
                     })(
-                      <Checkbox.Group style={{ width: '100%' }} onChange={this.handleChangeChecked}>
+                      <Checkbox.Group style={{ width: '100%' }}>
                         <Row>
                           {!_.isEmpty(deptList) &&
                             deptList.map(v => (
