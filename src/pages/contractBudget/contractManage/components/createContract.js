@@ -1,3 +1,4 @@
+/* eslint-disable compat/compat */
 /* eslint-disable no-param-reassign */
 import React, { useState, useEffect } from 'react';
 import { connect } from 'dva';
@@ -14,7 +15,7 @@ import styles from '../index.less';
 const FormItem = Form.Item;
 const { Option } = Select;
 
-const CreateConstract = props => {
+const CreateContract = props => {
   const {
     form,
     deptList,
@@ -61,7 +62,7 @@ const CreateConstract = props => {
   const submitAdd = params => {
     props
       .dispatch({
-        type: 'constract/addData',
+        type: 'contract/addData',
         payload: {
           ...params,
         },
@@ -74,10 +75,10 @@ const CreateConstract = props => {
       });
   };
 
-  const sumbitEdit = params => {
+  const submitEdit = params => {
     props
       .dispatch({
-        type: 'constract/updateData',
+        type: 'contract/updateData',
         payload: {
           ...params,
         },
@@ -217,7 +218,7 @@ const CreateConstract = props => {
 
   // 格式化整数
   const formatCount = value => {
-    if (isEmpty(value)) return '';
+    if (isEmpty(value) || value==='0') return '';
     return numeral(value).format();
   };
 
@@ -257,7 +258,7 @@ const CreateConstract = props => {
       values.payRecords = data;
       if (recordValue.id) {
         values.id = recordValue.id;
-        sumbitEdit(values);
+        submitEdit(values);
         return '';
       }
       submitAdd(values);
@@ -269,11 +270,11 @@ const CreateConstract = props => {
     <Form>
       <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
         <Col span={24}>
-          <FormItem {...formLayoutItemAddEdit} label="名称">
+          <FormItem {...formLayoutItemAddEdit} label="合同名称">
             {form.getFieldDecorator('name', {
-              rules: [{ required: true, message: '请输入名称' }],
+              rules: [{ required: true, message: '请输入合同名称' }],
               initialValue: name,
-            })(<Input.TextArea placeholder="请输入名称" />)}
+            })(<Input.TextArea placeholder="请输入合同名称" />)}
           </FormItem>
         </Col>
         <Col span={12}>
@@ -391,11 +392,11 @@ const CreateConstract = props => {
           </FormItem>
         </Col>
         <Col span={12}>
-          <FormItem {...formLayoutItemAddDouble} label="合同签订时间">
+          <FormItem {...formLayoutItemAddDouble} label="合同签订日期">
             {form.getFieldDecorator('signingTime', {
-              rules: [{ required: true, message: '请输入合同签订时间' }],
+              rules: [{ required: true, message: '请输入合同签订日期' }],
               initialValue: signingTime ? moment(signingTime) : null,
-            })(<DatePicker placeholder="请输入合同签订时间" />)}
+            })(<DatePicker placeholder="请输入合同签订日期" />)}
           </FormItem>
         </Col>
         <Col span={12}>
@@ -483,8 +484,8 @@ const CreateConstract = props => {
               rules: [
                 {
                   required: true,
-                  message: '请输入付款笔数',
-                  pattern: /^[0-9]+$/,
+                  message: '请输入付款笔数，至少1笔',
+                  pattern: /^[1-9]+$/,
                 },
               ],
               normalize: formatCount,
@@ -572,21 +573,21 @@ const CreateConstract = props => {
   );
 };
 
-export default connect(({ constract, loading }) => ({
-  constract,
-  budgetList: constract.budgetList,
-  budgetMap: constract.budgetMap,
-  projectList: constract.projectList,
-  projectMap: constract.projectMap,
-  systemList: constract.systemList,
-  systemMap: constract.systemMap,
-  supplierList: constract.supplierList,
-  supplierMap: constract.supplierMap,
-  headerList: constract.headerList,
-  headerMap: constract.headerMap,
-  groupMap: constract.groupMap,
-  deptList: constract.deptList,
-  deptListMap: constract.deptListMap,
-  loadingAdd: loading.effects['constract/addData'],
-  loadingUpdate: loading.effects['constract/updateData'],
-}))(Form.create()(CreateConstract));
+export default connect(({ contract, loading }) => ({
+  contract,
+  budgetList: contract.budgetList,
+  budgetMap: contract.budgetMap,
+  projectList: contract.projectList,
+  projectMap: contract.projectMap,
+  systemList: contract.systemList,
+  systemMap: contract.systemMap,
+  supplierList: contract.supplierList,
+  supplierMap: contract.supplierMap,
+  headerList: contract.headerList,
+  headerMap: contract.headerMap,
+  groupMap: contract.groupMap,
+  deptList: contract.deptList,
+  deptListMap: contract.deptListMap,
+  loadingAdd: loading.effects['contract/addData'],
+  loadingUpdate: loading.effects['contract/updateData'],
+}))(Form.create()(CreateContract));

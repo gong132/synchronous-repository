@@ -8,7 +8,7 @@ export async function fetchAllRolesList(params) {
   });
 }
 
-//修改角色对应的权限菜单
+// 修改角色对应的权限菜单
 export async function updateRoleAuthor(params) {
   return request('/role/updateMenu', {
     method: 'post',

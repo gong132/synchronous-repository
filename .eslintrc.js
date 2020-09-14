@@ -41,8 +41,8 @@ module.exports = {
     'import/extensions': 0,
     'react/sort-comp': 0,
     'import/order': 0,
-    'no-param-reassign': 0,
     'no-plusplus': 0,
+    'react/jsx-closing-tag-location': 0,
   },
   settings: {
     polyfills: ['fetch', 'promises', 'url'],
