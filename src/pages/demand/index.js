@@ -141,5 +141,5 @@ const Index = memo(
 export default connect(({ global, demand, loading }) => ({
   global,
   demand,
-  loading,
+  loading: loading.models.demand
 }))(Index);

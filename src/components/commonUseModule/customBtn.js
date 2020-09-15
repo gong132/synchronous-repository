@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import dcBtn from '@/assets/icon/Button_dc.svg';
 import { Icon, Button } from 'antd';
 import styles from './customBtn.less';
@@ -6,7 +6,7 @@ import styles from './customBtn.less';
 const CustomBtn = props => {
   const { type, style = {}, onClick, loading, title, icon } = props;
   return (
-    <Fragment>
+    <div className="lFlex">
       {type === 'create' && (
         <div className={styles.createBtn} style={style} onClick={onClick}>
           {/* <div className={styles.createBtn_icon}>
@@ -64,7 +64,7 @@ const CustomBtn = props => {
           </div>
         )
       }
-    </Fragment>
+    </div>
   );
 };
 
