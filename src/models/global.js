@@ -155,7 +155,7 @@ const GlobalModel = {
 
       // menu.type 菜单类型 0 url  1 按钮
       const authActionsList = currentUserMenuList
-          .filter(menu => menu.pid === currentMenu.id && menu.type === 1)
+          .filter(menu => menu.pid === currentMenu.id && menu.type === 2)
           .map(menu => menu.url);
       return {
         ...state,
@@ -192,7 +192,7 @@ const GlobalModel = {
       // 订阅, 监听当前页面路由改变,
       history.listen(({ pathname, search }) => {
         const { currentUserMenuList } = storage.get('gd-user', []);
-        console.log(currentUserMenuList, 'currentUserMenuList')
+        // console.log(currentUserMenuList, 'currentUserMenuList')
         const findCurrentPage = currentUserMenuList && currentUserMenuList.filter(v => !!v ).find(v => v.url === pathname );
         // console.log(currentUserMenuList, pathname, findCurrentPage, 'findCurrentPage')
         // 监听当前页面路由是否在菜单池, 如果不在, 并且不是异常页面和登陆页时, 跳转到403页面

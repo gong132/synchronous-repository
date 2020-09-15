@@ -98,7 +98,7 @@ const Index = props => {
       message.error('请正确选择菜单及类型')
       return;
     }
-    const onlyMenu = allMenuList.find(v => v.url === params.url)
+    const onlyMenu = allMenuList.find(v => v.url === params.url && params.pid === v.pid)
     if (!isEmpty(onlyMenu)) {
       message.error('禁止添加重复菜单')
       return

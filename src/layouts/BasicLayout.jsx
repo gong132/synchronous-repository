@@ -72,9 +72,7 @@ const BasicLayout = props => {
     })
   };
 
-
   useEffect(() => {
-
     // 判断是否登录了，未登录直接跳转登录
     const gdUser = storage.get('gd-user');
     if (gdUser) {

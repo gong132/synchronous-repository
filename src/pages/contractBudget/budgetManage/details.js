@@ -11,12 +11,13 @@ import RadioGroup from "antd/es/radio/group";
 import moment from "moment";
 import Editor from "@/components/TinyEditor";
 import styles from "../index.less"
+import {MENU_ACTIONS} from "@/utils/constant";
 
 const FormItem = Form;
 const { Option } = Select;
 const Index = props => {
   const { form, dispatch, budgetManage: { budgetDetails, budgetLogList, clusterList, allDeptList, groupList },
-    editLoading, loading } = props;
+    editLoading, loading, global: { authActions } } = props;
 
   const columns = [
     TableColumnHelper.genPlanColumn("operateUserName", "修改人", { width: 200 }),
@@ -382,11 +383,24 @@ const Index = props => {
         img={budgetXq}
         title="预算详情"
         optNode={
-          !editModalVisible ? <Button onClick={() => setEditModalVisible(true)} type="primary">编辑</Button> : (
-            <>
-              <Button onClick={() => setEditModalVisible(false)} type="default">取消</Button>
-              <Button loading={editLoading} className="margin-left-12" onClick={() => handleSubmitForm()} type="primary">保存</Button>
-            </>
+          authActions.includes(MENU_ACTIONS.EDIT) && !editModalVisible ?
+            <Button onClick={() => setEditModalVisible(true)} type="primary">编辑</Button> : (
+              <>
+                <Button
+                  onClick={() => setEditModalVisible(false)}
+                  type="default"
+                >
+                  取消
+                </Button>
+                <Button
+                  loading={editLoading}
+                  className="margin-left-12"
+                  onClick={() => handleSubmitForm()}
+                  type="primary"
+                >
+                  保存
+                </Button>
+              </>
           )
         }
       >
@@ -432,7 +446,8 @@ const Index = props => {
     </div>
   )
 };
-export default connect(({ budgetManage, loading }) => ({
+export default connect(({ global, budgetManage, loading }) => ({
+    global,
     budgetManage,
     loading: loading.models.budgetManage,
     editLoading: loading.effects['budgetManage/updateBudget'],
