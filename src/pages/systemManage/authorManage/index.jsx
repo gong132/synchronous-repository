@@ -13,7 +13,9 @@ import { Button, Card, Col, Form, message, Popconfirm, Row} from "antd";
 import {isEmpty} from "@/utils/lang";
 import OptButton from "@/components/commonUseModule/optButton";
 import deleteIcon from "@/assets/icon/Button_del.svg"
+import storage from "@/utils/storage";
 
+const { userInfo } = storage.get('gd-user', {});
 const AuthorManage = props => {
   const { dispatch, authorManage: { roleList, allMenuList }, loadingUpdate } = props;
 
@@ -82,6 +84,7 @@ const AuthorManage = props => {
       callback && callback();
       handleQueryCurrentUserInfo();
       handleQueryAllRolesList();
+      handleQueryAuthorByRoleId(userInfo.roleId)
     })
   };
   const handleDeleteRole = params => {

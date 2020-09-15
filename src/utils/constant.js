@@ -22,6 +22,10 @@ const formLayout = {
     span: 12
   }
 }
+export const formLayoutMenuItem = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 18 },
+}
 
 const searchItemLayout = {
   labelCol: {
@@ -67,6 +71,10 @@ export const MENU_ITEM_TYPE = {
   PAGE: 1, // 页面
   ACTION: 2, // 功能
 };
+export const MENU_ITEM = [
+  { key: 1, value: '页面'},
+  { key: 2, value: '按钮'},
+  ];
 
 export const MENU_ACTIONS = {
   ADD: 'add', // 新增

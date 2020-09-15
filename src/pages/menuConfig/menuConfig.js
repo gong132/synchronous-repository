@@ -10,7 +10,9 @@ import AdminRouters from '@/pages/routes.config';
 
 import AddChildrenNode from './addChildrenNode'
 import styles from './index.less';
+import storage from "@/utils/storage";
 
+const { currentUserMenuList } = storage.get('gd-user', {})
 // const FormItem = Form.Item;
 const { TreeNode } = Tree;
 const Index = props => {
@@ -80,7 +82,6 @@ const Index = props => {
       idGather = [...idGather, ...childrenMenuList]
     }
     idGather = idGather.map(c => c.id).join(',')
-    console.log(idGather, 'idGather')
     dispatch({
       type: 'menuConfig/deleteMenu',
       payload: {
@@ -90,6 +91,28 @@ const Index = props => {
       if (!sure) return;
       message.success("删除成功")
       handleQueryAllMenu();
+    })
+  }
+  const handleAddMenu = (params, callback) => {
+    if (isEmpty(params)){
+      message.error('请正确选择菜单及类型')
+      return;
+    }
+    const onlyMenu = allMenuList.find(v => v.url === params.url)
+    if (!isEmpty(onlyMenu)) {
+      message.error('禁止添加重复菜单')
+      return
+    }
+    dispatch({
+      type: 'menuConfig/addMenu',
+      payload: {
+        ...params
+      },
+    }).then(sure => {
+      if (!sure) return;
+      message.success("新增成功")
+      handleQueryAllMenu();
+      callback && callback()
     })
   }
 
@@ -146,15 +169,25 @@ const Index = props => {
     });
   };
 
-  console.log(localMenu, 'localMenu')
+  const firstNode = {
+    title: '菜单管理',
+    name: '菜单管理',
+    type: 0,
+    url: 'firstNode',
+  }
   return (
     <Card title="菜单配置">
       <div>
       {localMenu && (
           <Tree>
-          {renderTreeNodes(generateAllMenu(allMenuList))}
+          <TreeNode title={getNodeTitle(firstNode)}>
+            {renderTreeNodes(generateAllMenu(allMenuList))}
+          </TreeNode>
         </Tree>
         )}
+        {
+          // console.log(localMenu, currentUserMenuList, selectedNode, '11111111')
+        }
         {
           addChildVisible && (
             <AddChildrenNode
@@ -163,8 +196,9 @@ const Index = props => {
                 setAddChildVisible(false)
                 setSelectedNode({})
               }}
-              localMenu={localMenu}
+              localMenu={[...localMenu].filter(x => [...currentUserMenuList].every(y => y.url !== x.path || y.url === selectedNode.url))}
               values={selectedNode}
+              handleAddMenu={handleAddMenu}
             />
           )
         }
