@@ -36,7 +36,8 @@ const { RangePicker } = DatePicker;
 
 /* eslint-disable */
 @Form.create()
-@connect(({ contract, loading }) => ({
+@connect(({ contract, loading, global }) => ({
+  global,
   loadingQueryData: loading.effects['contract/queryData'],
   loadingCreateData: loading.effects['contract/addData'],
   loadingUpdateData: loading.effects['contract/updateData'],
@@ -78,7 +79,6 @@ class ContractManage extends Component {
   }
 
   handleQueryData = (params = {}) => {
-    console.log('params: ', params)
     this.props.dispatch({
       type: 'contract/queryData',
       payload: {
@@ -363,6 +363,7 @@ class ContractManage extends Component {
   }
 
   genColumns = () => {
+    const {global: {authActions}} = this.props
     const columns = [
       {
         title: '合同编号',
@@ -398,6 +399,7 @@ class ContractManage extends Component {
         render: (text, record) => {
           return (
             <div>
+              {/* {authActions.includes()} */}
               <OptButton
                 style={{
                   marginRight: '12px'
@@ -425,7 +427,6 @@ class ContractManage extends Component {
 
   render() {
     const { contractList, loadingQueryData, contractInfo } = this.props
-    console.log(contractList)
     const { visibleModal, modalTitle } = this.state
     const createProps = {
       visibleModal,
@@ -446,9 +447,9 @@ class ContractManage extends Component {
             type='export'
           />
         </div>
-        <Button
+        {/* <Button
           onClick={() => this.handleAddMenu()}
-        >添加菜单</Button>
+        >添加菜单</Button> */}
         {visibleModal && <CreateContract {...createProps} />}
         <Card>
           {this.renderSearchForm()}

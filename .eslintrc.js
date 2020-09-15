@@ -17,7 +17,7 @@ module.exports = {
   rules: {
     quotes: 0,
     'quote-props': 0,
-    'react/jsx-filename-extension': [1, { extensions: ['.js'] }],
+    'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx'] }],
     'react/jsx-wrap-multilines': 0,
     'react/prop-types': 0,
     'react/forbid-prop-types': 0,
@@ -43,6 +43,7 @@ module.exports = {
     'import/order': 0,
     'no-plusplus': 0,
     'react/jsx-closing-tag-location': 0,
+    'compat/compat': 0,
   },
   settings: {
     polyfills: ['fetch', 'promises', 'url'],

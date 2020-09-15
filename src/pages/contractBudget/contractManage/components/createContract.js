@@ -485,11 +485,11 @@ const CreateContract = props => {
                 {
                   required: true,
                   message: '请输入付款笔数，至少1笔',
-                  pattern: /^[1-9]+$/,
+                  // pattern: /^[1-9]+$/,
                 },
               ],
               normalize: formatCount,
-              initialValue: data.length,
+              initialValue: !_.isEmpty(data) ? String(data.length) : '',
             })(
               <Input
                 onChange={e => handleChangeColumns(e)}

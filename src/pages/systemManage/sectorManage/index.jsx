@@ -316,7 +316,12 @@ class SectorManage extends Component {
 
     return (
       <Fragment>
-        <CustomBtn onClick={() => this.handleViewModal(true, '新建')} type="create" />
+        <div style={{display:'flex'}}>
+          <CustomBtn
+            onClick={() => this.handleViewModal(true, '新建')}
+            type="create"
+          />
+        </div>
         <Card>
           <Modal
             title={modalTitle}

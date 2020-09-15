@@ -8,6 +8,7 @@ import numeral from 'numeral';
 import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
 import StandardTable from '@/components/StandardTable';
 import { DefaultPage, TableColumnHelper } from '@/utils/helper';
+import { MENU_ACTIONS } from '@/utils/constant';
 import Editor from '@/components/TinyEditor';
 import OptButton from '@/components/commonUseModule/optButton';
 import CustomBtn from '@/components/commonUseModule/customBtn';
@@ -26,7 +27,8 @@ const FormItem = Form.Item;
 const { Option } = Select;
 
 @Form.create()
-@connect(({ contract, loading }) => ({
+@connect(({ global, contract, loading }) => ({
+  global,
   loadingQueryLogData: loading.effects['contract/fetchLogList'],
   loadingQueryInfo: loading.effects['contract/fetchContractInfo'],
   loadingUpdate: loading.effects['contract/updateData'],
@@ -276,6 +278,7 @@ class Detail extends PureComponent {
       budgetList,
       systemList,
       loadingSureProject,
+      global: { authActions },
     } = this.props;
     const {
       name,
@@ -379,7 +382,7 @@ class Detail extends PureComponent {
           img={budget_xq}
           title="合同详情"
           optNode={
-            !editBool ? (
+            authActions.includes(MENU_ACTIONS.EDIT) && !editBool ? (
               <OptButton
                 style={{
                   backgroundColor: 'white',

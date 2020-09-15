@@ -1,4 +1,4 @@
-import { queryUserList, updateUser } from '@/services/systemManage/userManage';
+import { queryUserList, updateUser, addUser } from '@/services/systemManage/userManage';
 import { fetchAllRoles } from '@/services/systemManage/authorManage'
 import {PagerHelper} from "@/utils/helper";
 import {message} from "antd";
@@ -29,6 +29,15 @@ const UserModel = {
     },
     *updateUser({ payload }, { call }) {
       const { code, msg } = yield call(updateUser, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true
+    },
+
+    *addUser({ payload }, { call }) {
+      const { code, msg } = yield call(addUser, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
