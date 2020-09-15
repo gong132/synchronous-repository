@@ -22,7 +22,25 @@ module.exports = {
           path: '/demand',
           name: 'demand',
           icon: 'appstore',
-          component: './demand',
+          // component: './demand',
+          routes: [
+            { path: '/demand', redirect: '/demand/myDemand' },
+            {
+              path: '/demand/myDemand',
+              name: 'myDemand',
+              component: './demand/index.js',
+            },
+            {
+              path: '/demand/generalDemand',
+              name: 'generalDemand',
+              component: './demand/index.js',
+            },
+            {
+              path: '/demand/projectDemand',
+              name: 'projectDemand',
+              component: './demand/index.js',
+            },
+          ],
         },
         {
           path: '/table',
@@ -33,7 +51,7 @@ module.exports = {
             {
               path: '/table/userTable',
               name: 'userTable',
-              component: './table/userTable/index',
+              component: './table/userTable/index.js',
               buttons: [
                 { name: '审核', key: 'audit' },
                 { name: '启用', key: 'enable' },
@@ -43,7 +61,7 @@ module.exports = {
             {
               path: '/table/orderTable',
               name: 'orderTable',
-              component: './table/orderTable/index',
+              component: './table/orderTable/index.js',
             },
           ],
         },
@@ -69,14 +87,12 @@ module.exports = {
               name: 'contractDetail',
               hideInMenu: true,
               component: './contractBudget/contractManage/components/detail',
-              buttons: [
-                { name: '编辑', key: 'edit' },
-              ],
+              buttons: [{ name: '编辑', key: 'edit' }],
             },
             {
               path: '/contract-budget/budget',
               name: 'budgetManage',
-              component: './contractBudget/budgetManage/index',
+              component: './contractBudget/budgetManage/index.js',
               buttons: [
                 { name: '新建', key: 'add' },
                 { name: '编辑', key: 'edit' },
@@ -89,9 +105,7 @@ module.exports = {
               name: 'budgetDetail',
               hideInMenu: true,
               component: './contractBudget/budgetManage/details',
-              buttons: [
-                { name: '编辑', key: 'edit' },
-              ],
+              buttons: [{ name: '编辑', key: 'edit' }],
             },
           ],
         },

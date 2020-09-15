@@ -72,5 +72,8 @@ export default {
   'menu.projectManage': '项目管理',
   'menu.menuConfig': '菜单管理',
 
-  'menu.demand': '我的需求'
+  'menu.demand': '需求管理',
+  'menu.demand.myDemand': '我的需求',
+  'menu.demand.generalDemand': '一般需求',
+  'menu.demand.projectDemand': '项目',
 };

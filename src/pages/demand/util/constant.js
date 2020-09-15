@@ -69,36 +69,36 @@ const boardTitle = [
     name: '上线',
     boardId: '8',
   },
-]
+];
 
 // 需求类型
 const demandTypeArr = [
   { key: 'p', val: '项目需求（需要OA技术评审）' },
   { key: 'u', val: '一般需求（需要通过OA审批）' },
-]
+];
 
 const demandTypeObj = {
-  'p': '项目需求（需要OA技术评审）',
-  'u': '一般需求（需要通过OA审批）'
-}
+  p: '项目需求（需要OA技术评审）',
+  u: '一般需求（需要通过OA审批）',
+};
 
 // 优先级
 const demandPriorityArr = [
   { key: 'h', val: '高' },
   { key: 'm', val: '中' },
   { key: 'l', val: '低' },
-]
+];
 
 const demandPriorityObj = {
-  'h': '高',
-  'm': '中',
-  'l': '低',
-}
+  h: '高',
+  m: '中',
+  l: '低',
+};
 
 const isOrNot = {
   '0': '否',
-  '1': '是'
-}
+  '1': '是',
+};
 
 export {
   boardTitle,
@@ -108,4 +108,4 @@ export {
   demandPriorityObj,
   isOrNot,
   defaultDescription,
-}
+};

@@ -19,7 +19,7 @@ workbox.precaching.precacheAndRoute(self.__precacheManifest || []);
  * Register a navigation route.
  * https://developers.google.com/web/tools/workbox/modules/workbox-routing#how_to_register_a_navigation_route
  */
-workbox.routing.registerNavigationRoute('/index.html');
+workbox.routing.registerNavigationRoute('/index.js.html');
 
 /**
  * Use runtime cache:
