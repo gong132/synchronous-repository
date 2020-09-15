@@ -4,7 +4,8 @@ import CustomBtn from '@/components/commonUseModule/customBtn'
 import CreateDemand from './components/createModal'
 import DemandBoard from './demandBoard/index'
 import DemandList from './demandList/index'
-import {connect} from 'dva'
+// import gzIcon from '@/assets/icon/Button_gz.svg'
+import { connect } from 'dva'
 import {
   Form,
   Input,
@@ -24,7 +25,7 @@ const { Option } = Select
 const FormItem = Form.Item
 const { RangePicker } = DatePicker
 @Form.create()
-@connect(({demand})=>({
+@connect(({ demand }) => ({
   demand
 }))
 class Demand extends Component {
@@ -47,13 +48,13 @@ class Demand extends Component {
   handleFormMenuClick = (formType) => {
     this.props.dispatch({
       type: 'demand/setData',
-      payload: {formType: formType}
+      payload: { formType: formType }
     })
   }
 
 
   render() {
-    const {demand} = this.props
+    const { demand } = this.props
     const { formType } = demand
     const { visibleModal, modalTitle } = this.state
     const createModalProps = {
@@ -70,24 +71,41 @@ class Demand extends Component {
             type='create'
             title='创建需求'
           />
-          <div className={styles.switch}>
-            <span
-              onClick={() => this.handleFormMenuClick('board')}
-              className={
-                formType === 'board'
-                  ? styles.switch__left
-                  : styles.switch__right
-              }
-            >看板</span>
-            <span
-              onClick={() => this.handleFormMenuClick('list')}
-              className={
-                formType === 'list'
-                  ? styles.switch__left
-                  : styles.switch__right
-              }
-            >列表</span>
-          </div>
+          <div style={{ display: 'flex' }}>
+            <div className={styles.switch}>
+              <span
+                onClick={() => this.handleFormMenuClick('board')}
+                className={
+                  formType === 'board'
+                    ? styles.switch__left
+                    : styles.switch__right
+                }
+              >看板</span>
+              <span
+                onClick={() => this.handleFormMenuClick('list')}
+                className={
+                  formType === 'list'
+                    ? styles.switch__left
+                    : styles.switch__right
+                }
+              >列表</span>
+            </div>
+            <CustomBtn
+              onClick={() => this.handleViewModal(true, '创建')}
+              type='others'
+              title='发起OA审批'
+              style={{marginLeft: '16px'}}
+            />
+            <CustomBtn
+              onClick={() => this.handleViewModal(true, '创建')}
+              type='others'
+              // icon='gzIcon'
+              title='我的关注'
+              style={{marginLeft: '16px'}}
+            />
+            
+          </div >
+
         </div>
         {formType === 'list' && <DemandList />}
         {formType === 'board' && <DemandBoard />}
