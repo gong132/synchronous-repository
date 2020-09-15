@@ -17,7 +17,7 @@ const Index = props => {
 
   // 新增/编辑显示隐藏
   const [addModalVisible, setAddModalVisible] = useState(false);
-  const [detailModalVisible, setDetailModalVisible] = useState(false);
+  // const [detailModalVisible, setDetailModalVisible] = useState(false);
   // 选中行,有值时为选中某行
   const [selectedRow, setSelectedRow] = useState({});
 
@@ -57,12 +57,15 @@ const Index = props => {
   // 关闭Modal
   const handleCloseModalVisible = () => {
     setAddModalVisible(false);
-    setDetailModalVisible(false);
+    // setDetailModalVisible(false);
     setSelectedRow({})
   }
 
   useEffect(() => {
     handleQueryOrderList()
+    return () => {
+      // to do ...
+    }
   }, []);
 
   const columns = [
@@ -84,7 +87,10 @@ const Index = props => {
         <Fragment>
           <a onClick={() => { setAddModalVisible(true); setSelectedRow(rows) }}>编辑</a>
           <Divider type="vertical" />
-          <a onClick={() => { setDetailModalVisible(true); setSelectedRow(rows) }}>查看</a>
+          <a onClick={() => {
+            // setDetailModalVisible(true); setSelectedRow(rows)
+          }}
+          >查看</a>
         </Fragment>
       )
     }
@@ -98,7 +104,7 @@ const Index = props => {
           <FormItem {...formLayoutItem} label="订单ID">
             {form.getFieldDecorator('id',{
               // rules: [{required: true, message: '请选择类型'}]
-            })(<Input placeholder="请输入订单ID"/>)}
+            })(<Input placeholder="请输入订单ID" />)}
           </FormItem>
         </Col>
         <Col span={8}>

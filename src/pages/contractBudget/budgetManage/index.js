@@ -48,6 +48,7 @@ const Index = props => {
     {
       title: "预算编号",
       key: "number",
+      sorter: true,
       render: rows => {
         if (isEmpty(rows.number, true)) return "";
         return (
@@ -69,15 +70,15 @@ const Index = props => {
         )
       },
     },
-    TableColumnHelper.genSelectColumn('type', '项目类型', PROJECT_TYPE),
-    TableColumnHelper.genLangColumn('name', '项目名称', {}, 4),
-    TableColumnHelper.genPlanColumn('userName', '录入人'),
-    TableColumnHelper.genDateTimeColumn('createTime', '录入时间', "YYYY-MM-DD"),
-    TableColumnHelper.genPlanColumn('deptName', '需求部门'),
-    TableColumnHelper.genLangColumn('clusterName', '集群或板块', {}, 4),
-    TableColumnHelper.genDateTimeColumn('expectSetTime', '预计立项时间', "YYYY-MM-DD"),
-    TableColumnHelper.genMoneyColumn('expectTotalAmount', '预算总金额'),
-    TableColumnHelper.genMoneyColumn('hardwareExpectAmount', '硬件预算金额'),
+    TableColumnHelper.genSelectColumn('type', '项目类型', PROJECT_TYPE, { sorter: true }),
+    TableColumnHelper.genLangColumn('name', '預算名称', { sorter: true }, 4),
+    TableColumnHelper.genPlanColumn('userName', '录入人', { sorter: true }),
+    TableColumnHelper.genDateTimeColumn('createTime', '录入时间', "YYYY-MM-DD", { sorter: true }),
+    TableColumnHelper.genPlanColumn('deptName', '需求部门', { sorter: true }),
+    TableColumnHelper.genLangColumn('clusterName', '集群或板块', { sorter: true }, 4),
+    TableColumnHelper.genDateTimeColumn('expectSetTime', '预计立项时间', "YYYY-MM-DD", { sorter: true }),
+    TableColumnHelper.genMoneyColumn('expectTotalAmount', '预算总金额', { sorter: true }),
+    TableColumnHelper.genMoneyColumn('hardwareExpectAmount', '硬件预算金额', { sorter: true }),
     {
       title: '操作',
       width: 200,
@@ -96,31 +97,41 @@ const Index = props => {
               />
             )
           }
-          <OptButton
-            icon="eye"
-            text="查看"
-            onClick={() => {
-              props.history.push({
-                pathname: '/contract-budget/budget/detail',
-                query: {
-                  id: rows.id,
-                }
-              })
-            }}
-          />
+          {
+            authActions.includes(MENU_ACTIONS.CHECK) && (
+              <OptButton
+                icon="eye"
+                text="查看"
+                onClick={() => {
+                  props.history.push({
+                    pathname: '/contract-budget/budget/detail',
+                    query: {
+                      id: rows.id,
+                    }
+                  })
+                }}
+              />
+            )
+          }
         </Fragment>
       )
     },
   ];
 // 分页操作
-  const handleStandardTableChange = pagination => {
-    // const formValues = form.getFieldsValue();
+  const handleStandardTableChange = (pagination, filters, sorter) => {
+    const formValues = form.getFieldsValue();
     const params = {
       currentPage: pagination.current,
       pageSize: pagination.pageSize,
-      // ...formValues, // 添加已查询条件去获取分页
+      ...formValues, // 添加已查询条件去获取分页
     };
-    handleQueryBudgetData(params)
+
+    const sortParams = {
+      sortBy: sorter.columnKey,
+      orderFlag: sorter.order === "ascend" ? 1 : -1 ,
+    };
+
+    handleQueryBudgetData({...params, ...sortParams})
   };
 
   const handleResetForm = () => {
@@ -325,19 +336,27 @@ const Index = props => {
   return (
     <div className="main">
       <div style={{ marginBottom: 12 }} className="yCenter-between">
-        <Button
-          className={styles.addForm}
-          icon="plus"
-          onClick={() => setAddModalVisible(true)}
-        >
-          新建
-        </Button>
-        <Button
-          type="default"
-          onClick={() => handleDownLoad}
-        >
-          导出
-        </Button>
+        {
+          authActions.includes(MENU_ACTIONS.ADD) && (
+            <Button
+              className={styles.addForm}
+              icon="plus"
+              onClick={() => setAddModalVisible(true)}
+            >
+              新建
+            </Button>
+          )
+        }
+        {
+          authActions.includes(MENU_ACTIONS.EXPORT) && (
+            <Button
+              type="default"
+              onClick={() => handleDownLoad}
+            >
+              导出
+            </Button>
+          )
+        }
       </div>
       <div className={styles.tableList}>
         <div className={styles.tableListForm}>

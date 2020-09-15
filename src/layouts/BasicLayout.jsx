@@ -66,16 +66,13 @@ const BasicLayout = props => {
       },
     } = props;
     const newMenuList = [...menuList].filter(x => [...currentUserMenuList].some(y => y.url === x.path));
-    console.log(newMenuList, '111111')
     return newMenuList.map(item => {
       const localItem = { ...item, children: item.children ? menuDataRender(item.children) : [] };
       return Authorized.check(item.authority, localItem, null);
     })
   };
 
-
   useEffect(() => {
-
     // 判断是否登录了，未登录直接跳转登录
     const gdUser = storage.get('gd-user');
     if (gdUser) {

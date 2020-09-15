@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-filename-extension */
 import React, { Component, Fragment } from 'react'
 import CustomBtn from '@/components/commonUseModule/customBtn'
 import CreateDemand from './components/createModal'

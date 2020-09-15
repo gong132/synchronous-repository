@@ -74,12 +74,21 @@ module.exports = {
               path: '/contract-budget/budget',
               name: 'budgetManage',
               component: './contractBudget/budgetManage/index',
+              buttons: [
+                { name: '新建', key: 'add' },
+                { name: '编辑', key: 'edit' },
+                { name: '查看', key: 'check' },
+                { name: '导出', key: 'export' },
+              ],
             },
             {
               path: '/contract-budget/budget/detail',
               name: 'budgetDetail',
               hideInMenu: true,
               component: './contractBudget/budgetManage/details',
+              buttons: [
+                { name: '编辑', key: 'edit' },
+              ],
             },
           ],
         },
