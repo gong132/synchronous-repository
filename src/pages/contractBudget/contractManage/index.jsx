@@ -5,9 +5,10 @@ import { router } from 'umi'
 import moment from 'moment'
 import StandardTable from "@/components/StandardTable";
 import { DefaultPage, TableColumnHelper } from "@/utils/helper";
+import { formLayoutItem1, formLayoutItem } from '@/utils/constant'
 import CustomBtn from '@/components/commonUseModule/customBtn'
 import OptButton from "@/components/commonUseModule/optButton";
-// import SearchForm from '@/components/commonUseModule/searchForm'
+import SearchForm from '@/components/commonUseModule/searchForm'
 import editIcon from '@/assets/icon/Button_bj.svg'
 import downIcon from '@/assets/icon/drop_down.svg'
 import upIcon from '@/assets/icon/Pull_up.svg'
@@ -23,7 +24,7 @@ import {
   Button,
   DatePicker
 } from 'antd'
-import { MENU_ACTIONS, formLayoutItem1 } from "@/utils/constant"
+import { MENU_ACTIONS } from '@/utils/constant'
 import _ from 'lodash'
 import styles from './index.less'
 
