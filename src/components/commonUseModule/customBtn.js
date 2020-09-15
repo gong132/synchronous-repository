@@ -4,7 +4,7 @@ import { Icon, Button } from 'antd';
 import styles from './customBtn.less';
 
 const CustomBtn = props => {
-  const { type, style = {}, onClick, loading, title } = props;
+  const { type, style = {}, onClick, loading, title, icon } = props;
   return (
     <Fragment>
       {type === 'create' && (
@@ -56,6 +56,14 @@ const CustomBtn = props => {
           <span>导出</span>
         </div>
       )}
+      {
+        type === 'others' && (
+          <div className={styles.otherBtn} style={style} onClick={onClick}>
+            <Icon type={icon} component={icon} />
+            <span>{title || '按钮名未定义'}</span>
+          </div>
+        )
+      }
     </Fragment>
   );
 };
