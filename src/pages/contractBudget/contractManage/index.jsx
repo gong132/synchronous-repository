@@ -433,118 +433,35 @@ class ContractManage extends Component {
           </FormItem>
         </Col>
         <Col span={6}>
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <CustomBtn
-              onClick={() => this.handleResetSearch()}
-              style={{
-                display: 'inline-block'
-              }}
-              loading={loadingQueryData}
-              type='reset'
-            />
-            <Popover visible={searchMore} placement="bottomRight" content={content} trigger="click">
-              {
-                <div
-                  className="activeColor"
-                  onClick={() => this.setSearchMore(!searchMore)}
-                  style={{
-                    position: 'absolute',
-                    right: '16px',
-                    top: '30px'
-                  }}
-                >
-                  <div className={styles.moreBtn}>
-                    <Icon component={searchMore ? downIcon : upIcon} />
-                    <span>更多</span>
+            <FormItem>
+              <CustomBtn
+                onClick={() => this.handleResetSearch()}
+                style={{
+                  display: 'inline-block',
+                  marginRight: '5rem'
+                }}
+                loading={loadingQueryData}
+                type='reset'
+              />
+              <Popover visible={searchMore} placement="bottomRight" content={content} trigger="click">
+                {
+                  <div
+                    className="activeColor"
+                    onClick={() => this.setSearchMore(!searchMore)}
+                    style={{
+                      display: 'inline-block'
+                    }}
+                  >
+                    <div className={styles.moreBtn}>
+                      <Icon component={searchMore ? downIcon : upIcon} />
+                      <span>更多</span>
+                    </div>
                   </div>
-                </div>
-              }
-            </Popover>
-          </div>
+                }
+              </Popover>
+            </FormItem>
         </Col>
       </Row>
-      // <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-      //   <SearchForm
-      //     labelName="合同编号"
-      //   >
-
-      //   </SearchForm>
-      //   <SearchForm
-      //     labelName="所属部门"
-      //   >
-      // {getFieldDecorator('deptId', {
-      // })(
-      //   <Select
-      //     allowClear
-      //     placeholder='请输入所属部门'
-      //     onChange={_.debounce(this.saveParams, 500)}
-      //     style={{
-      //       width: '100%'
-      //     }}
-      //   >
-      //     {!_.isEmpty(deptList) && deptList.map(d => (
-      //       <Option key={d.deptId} value={d.deptId}>{d.deptName}</Option>
-      //     ))}
-      //   </Select>
-      // )}
-      //   </SearchForm>
-      //   <SearchForm
-      //     labelName="供应商"
-      //   >
-      // {getFieldDecorator('providerCompanyName', {
-      // })(
-      //   <Select
-      //     allowClear
-      //     // showSearch
-      //     style={{
-      //       width: '100%'
-      //     }}
-      //     onChange={_.debounce(this.saveParams, 500)}
-      //     placeholder="请输入供应商"
-      //   >
-      //     {!_.isEmpty(supplierList) && supplierList.map(d => (
-      //       <Option key={d.supplierId} value={d.supplierName}>{d.supplierName}</Option>
-      //     ))}
-      //   </Select>
-      // )}
-      //   </SearchForm>
-      //   <SearchForm
-      //     labelName="合同签订时间"
-      //   >
-      // {getFieldDecorator('signTime', {
-      // })(
-      //   <RangePicker
-      //     onChange={_.debounce(this.saveParams, 500)}
-      //   />
-      // )}
-      //   </SearchForm>
-      //   <CustomBtn
-      //     onClick={() => this.handleResetSearch()}
-      //     style={{
-      //       display: 'inline-block'
-      //     }}
-      //     loading={loadingQueryData}
-      //     type='reset'
-      //   />
-      //   <Popover visible={searchMore} placement="bottomRight" content={content} trigger="click">
-      //     {
-      //       <div
-      //         className="activeColor"
-      //         onClick={() => this.setSearchMore(!searchMore)}
-      //         style={{
-      //           position: 'absolute',
-      //           right: '16px',
-      //           top: '30px'
-      //         }}
-      //       >
-      //         <div className={styles.moreBtn}>
-      //           <Icon component={searchMore ? downIcon : upIcon} />
-      //           <span>更多</span>
-      //         </div>
-      //       </div>
-      //     }
-      //   </Popover>
-      // </div>
     )
   }
 
@@ -645,7 +562,7 @@ class ContractManage extends Component {
         >添加菜单</Button> */}
         {visibleModal && <CreateContract {...createProps} />}
         <Card>
-          <div style={{ marginBottom: '16px' }}>
+          <div className={styles.customSearchForm}>
             {this.renderSearchForm()}
           </div>
           <StandardTable

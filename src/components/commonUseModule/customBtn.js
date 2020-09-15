@@ -47,7 +47,7 @@ const CustomBtn = props => {
           type="default"
           loading={loading}
         >
-          <span>重置</span>
+          重置
         </Button>
       )}
       {type === 'export' && (

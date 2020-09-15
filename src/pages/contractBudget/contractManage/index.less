@@ -29,10 +29,12 @@
 .moreSearch {
   width: 270px;
   margin-top: 12px;
+  max-height: 350px;
+  overflow: auto;
 
   :global {
     .ant-form-item {
-      margin-bottom: 12px;
+      margin-bottom: 0;
     }
   }
 }
@@ -71,6 +73,14 @@
           max-width: 158px;
         }
       }
+    }
+  }
+}
+
+.customSearchForm {
+  :global {
+    .ant-form-item {
+      margin-bottom: 16px;
     }
   }
 }
