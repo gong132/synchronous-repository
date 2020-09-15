@@ -2,10 +2,20 @@ import React, { Fragment, memo, useState } from 'react';
 import { connect } from 'dva';
 import { withRouter } from 'umi/index';
 import { DefaultPage } from '@/utils/helper';
+// import _ from 'lodash'
 import CustomBtn from '@/components/commonUseModule/customBtn';
-import styles from '@/pages/demand/index.less';
+// import {
+//   Form,
+//   Select,
+//   DatePicker
+// } from 'antd'
 
 import CreateDemand from './components/createModal';
+import DemandBoard from './demandBoard'
+import DemandList from './demandList/index'
+import styles from './index.less'
+
+// import gzIcon from '@/assets/icon/Button_gz.svg'
 
 const demandroutes = {
   '/demand/myDemand': '我的需求',
@@ -33,6 +43,11 @@ const Index = memo(
         type: 'demand/setData',
         payload: { type },
       });
+      if(type === 'list') {
+        this.handleQueryList()
+      } else if(type === 'board') {
+        this.handleQueryBoard()
+      }
     };
 
     // 启动定时器
@@ -117,8 +132,8 @@ const Index = memo(
             />
           </div>
         </div>
-        {/* {formType === 'list' && <DemandList />} */}
-        {/* {formType === 'board' && <DemandBoard />} */}
+        { formType === 'list' && <DemandList /> }
+        { formType === 'board' && <DemandBoard /> }
       </Fragment>
     );
   }),

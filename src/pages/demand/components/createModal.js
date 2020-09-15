@@ -5,7 +5,7 @@ import CustomBtn from '@/components/commonUseModule/customBtn';
 import Editor from '@/components/TinyEditor';
 import moment from 'moment';
 // import UploadFile from '@/components/FileUpload'
-// import styles from '../index.less'
+// import styles from '../index.js.less'
 import { Modal, Form, Select, Input, DatePicker, Col, Row, message, Radio } from 'antd';
 import { demandTypeArr, demandPriorityArr, defaultDescription } from '../util/constant';
 

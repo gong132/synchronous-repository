@@ -1,13 +1,41 @@
 // 需求描述默认模板
-const defaultDescription =
-  '<h4>功能描述：</h4><span>简要描述要实现的功能</span><h4>范围和用户：</h4><span>明确的应用范围和目标用户使得团队有的放矢。</span><h4>预期效益：</h4>< span > 价值和可量化ROI或提升数字，需要明确的统计公式，如无法统计，则需要提数据埋点需求，通过数据量化收益。</span> ';
+const defaultDescription = '<h4>功能描述：</h4><span>简要描述要实现的功能</span><h4>范围和用户：</h4><span>明确的应用范围和目标用户使得团队有的放矢。</span><h4>预期效益：</h4>< span > 价值和可量化ROI或提升数字，需要明确的统计公式，如无法统计，则需要提数据埋点需求，通过数据量化收益。</span> '
 
 // 看板状态：暂存中，待指派、待受理、讨论中，待拆分，story技术评估，开发中，测试中，上线
 const boardTitle = [
   {
     name: '暂存中',
     boardId: '0',
-    sub: [],
+    sub:[
+      {
+        demandNumber: 'D20200915-001',
+        demandTitle: '需求001',
+        createUser: '胖胖1号',
+        createTime:'2020-09-15',
+        demandType:'p'
+      },
+      {
+        demandNumber: 'D20200915-002',
+        demandTitle: '需求002',
+        createUser: '胖胖2号',
+        createTime:'2020-09-15',
+        demandType:'u'
+      },
+      {
+        demandNumber: 'D20200915-003',
+        demandTitle: '需求003',
+        createUser: '胖胖3号',
+        createTime:'2020-09-15',
+        demandType:'p'
+      },
+      {
+        demandNumber: 'D20200915-004',
+        demandTitle: '需求004',
+        createUser: '胖胖4号',
+        createTime:'2020-09-15',
+        demandType:'u'
+      },
+    ]
   },
   {
     name: '待指派',
