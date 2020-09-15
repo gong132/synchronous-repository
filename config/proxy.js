@@ -7,18 +7,19 @@
  */
 const apiUrl = 'http://172.20.10.7:80'
 
-// const apiUrl = 'http://10.90.48.22:80'; // yw
+// sdsdsds
+const apiUrl = 'http://10.90.48.22:80'; // yw
 // const apiUrl = "http://10.90.48.40:80"; // zzp
 // const apiUrl = 'http://10.90.48.26:80'; // lqq
 
 export default {
   dev: {
-    "/server/": {
+    '/server/': {
       target: apiUrl,
       changeOrigin: true,
       pathRewrite: {
-        "/server": "",
-      }
+        '/server': '',
+      },
     },
   },
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Tooltip, Popover, Badge, Avatar, message} from 'antd';
+import { Tooltip, Popover, Badge, Avatar, message } from 'antd';
 import moment from 'moment';
 import numeral from 'numeral';
 import pathToRegexp from 'path-to-regexp';
@@ -70,6 +70,7 @@ const ALLButtons = [
 ];
 // Conversion router to menu.
 function formatter(data, parentName, parentPath) {
+  console.log(parentPath);
   return data
     .map(item => {
       if (!item.name || !item.path) {
@@ -120,7 +121,7 @@ const MenuActionHelper = { Buttons, CRUDButtons, ALLButtons, getMenuData, getFla
 
 // ===========================> Table Column <=========================== //
 function genPlanColumn(key, title, extend) {
-  return { key, title, dataIndex: key, align: 'center', ...extend, };
+  return { key, title, dataIndex: key, align: 'center', ...extend };
 }
 
 function getAvatarColumn(key, title, extend, props) {
@@ -199,17 +200,15 @@ function genNewlineColumn(key, title, len = 12, extend) {
       if (!text) return '';
       const arr = [];
       for (let i = 0; i < Math.ceil(text.length / len); i += 1) {
-        arr.push(text.substr(i * len, (i + 1) * len))
+        arr.push(text.substr(i * len, (i + 1) * len));
       }
       return (
         <div>
-          {
-            arr.map((v, i)=> (
-              <div key={v+i.toString()}>{v}</div>
-            ))
-          }
+          {arr.map((v, i) => (
+            <div key={v + i.toString()}>{v}</div>
+          ))}
         </div>
-      )
+      );
     },
   };
 }
@@ -337,9 +336,9 @@ const MaxPage = {
 
 function genPagination(page = DefaultPage, showSizeChanger = true) {
   return {
-    current: parseInt(page.currentPage, 0),
-    total: parseInt(page.records, 0),
-    pageSize: parseInt(page.pageSize, 0),
+    current: parseInt(page.currentPage, 10),
+    total: parseInt(page.records, 10),
+    pageSize: parseInt(page.pageSize, 10),
     showSizeChanger,
     showQuickJumper: true,
     showTotal: () => `共 ${page.records} 项`,
@@ -374,8 +373,11 @@ function resolveListState(payload) {
 function filterResolver(filter = {}, key, sub1, sub2, format = 'YYYY-MM-DD') {
   const resItem = filter[key];
   delete filter[key];
-  const finalFilter = { ...filter, [sub1]: (resItem && !isEmpty(resItem) && moment(resItem[0]).format(format)) || '',
-    [sub2]: (resItem && !isEmpty(resItem) && moment(resItem[1]).format(format)) || '', };
+  const finalFilter = {
+    ...filter,
+    [sub1]: (resItem && !isEmpty(resItem) && moment(resItem[0]).format(format)) || '',
+    [sub2]: (resItem && !isEmpty(resItem) && moment(resItem[1]).format(format)) || '',
+  };
   return finalFilter;
 }
 
@@ -452,14 +454,14 @@ const buildGoodsCategory = list => {
 const formatGoodsCategory = (categoryCode, goodsCategories) => {
   if (isEmpty(goodsCategories)) return {};
 
-  const category = goodsCategories.find(cate => cate.id === parseInt(categoryCode, 0)) || {};
+  const category = goodsCategories.find(cate => cate.id === parseInt(categoryCode, 10)) || {};
   const secondCategory = isEmpty(category)
     ? {}
-    : goodsCategories.find(cate => cate.id === parseInt(category.parentId, 0));
+    : goodsCategories.find(cate => cate.id === parseInt(category.parentId, 10));
 
   const firstCategory = isEmpty(secondCategory)
     ? {}
-    : goodsCategories.find(cate => cate.id === parseInt(secondCategory.parentId, 0));
+    : goodsCategories.find(cate => cate.id === parseInt(secondCategory.parentId, 10));
   return {
     firstCategory,
     secondCategory,
@@ -560,9 +562,8 @@ function findValueByArray(arr, preId, cruId, name) {
   if (isEmpty(findObj)) return false;
   const findName = findObj[name];
   if (!findName) return false;
-  return findName
+  return findName;
 }
-
 
 // 转换金额必须为两位小数点
 const toTwoDecimals = (value, key, fm, minus = false) => {
@@ -584,7 +585,7 @@ const toTwoDecimals = (value, key, fm, minus = false) => {
     fm.setFieldsValue({
       [key]: value,
     });
-    return String(value)
+    return String(value);
   }
 
   // 判断是否是数字 或者 数字类型的字符串
@@ -611,24 +612,30 @@ const toTwoDecimals = (value, key, fm, minus = false) => {
 
 // 转换金额必须为整数
 const toInteger = (value, key, fm, minus = false) => {
-
   // 默认金额大于0, 如果需要接收负数, 第四个参数传true
   // 如果minus 为true, 则忽略下面判断
   if (value * 1 < 0 && !minus) {
-    fm.setFieldsValue({ [key]: '0' });
-    return '0';
+    fm.setFieldsValue({ [key]: '' });
+    return '';
   }
   // 判断是否是数字 或者 数字类型的字符串
-  if (!Number(value) && value !== '0' ) {
-    fm.setFieldsValue({ [key]: '0' });
-    return '0';
+  if (!Number(value) && value !== '0') {
+    const val = !isEmpty(value)
+      ? value
+          .split('')
+          .filter(v => !Number.isNaN(v * 1))
+          .join('')
+      : '0';
+    fm.setFieldsValue({ [key]: String(val) });
+    return String(val);
   }
   // 判断出现多个小数点的异常数字, 比如 12.12.1
   if (String(value).split('.').length > 1) {
-    fm.setFieldsValue({ [key]: '0' });
-    return '0';
+    const val = !isEmpty(value) ? value.split('.')[0] : '0';
+    fm.setFieldsValue({ [key]: String(val) });
+    return String(val);
   }
-  return String(Number.parseInt(value));
+  return String(parseInt(value, 10));
 };
 
 export {
@@ -648,5 +655,5 @@ export {
   findValueByArray,
   moneyFormatAfter,
   toTwoDecimals,
-  toInteger
+  toInteger,
 };
