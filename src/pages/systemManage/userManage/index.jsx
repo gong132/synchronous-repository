@@ -7,7 +7,6 @@ import editIcon from '@/assets/icon/Button_bj.svg'
 import StandardTable from "@/components/StandardTable";
 import { DefaultPage, TableColumnHelper } from "@/utils/helper";
 import {
-  Table,
   Modal,
   Form,
   Input,
@@ -16,6 +15,7 @@ import {
   Col,
   Checkbox,
   Card,
+  Button
 } from 'antd'
 
 const FormItem = Form.Item
@@ -23,7 +23,7 @@ const { Option } = Select
 
 @Form.create()
 @connect(({ userManage, loading }) => ({
-  userList: userManage.userList,
+  userManage,
   loadingQueryUserData: loading.effects['userManage/fetchUserData']
 }))
 class UserManage extends Component {
@@ -36,22 +36,21 @@ class UserManage extends Component {
   }
 
   handleSearch = () => { }
+
   handleResetSearch = () => { }
+
   handleViewModal = (bool, record = {}) => {
     this.setState({
       modalVisible: bool,
       record,
     })
   }
+
   handleSubmit = () => {
     this.props.form.validateFields((err, values) => {
       if (err) return
       console.log(values)
     })
-  }
-
-  handleChangeChecked = (checkedValues) => {
-    console.log('checked = ', checkedValues);
   }
 
   renderSearchForm = () => {
@@ -138,6 +137,7 @@ class UserManage extends Component {
           roleName: `角色${i}`
         }
         arr.push(a)
+        return true
       })
       return arr
     }
@@ -157,7 +157,8 @@ class UserManage extends Component {
             />
             <CustomBtn
               onClick={() => this.handleSubmit()}
-              type='save' />
+              type='save'
+            />
           </div>}
       >
         <Row>
@@ -195,7 +196,7 @@ class UserManage extends Component {
                   initialValue: ["0", "6"]
                 })(
 
-                  <Checkbox.Group style={{ width: '100%' }} onChange={this.handleChangeChecked}>
+                  <Checkbox.Group style={{ width: '100%' }}>
                     <Row>
                       {data(18).map(v => (
                         <Col key={v.id} span={4}>
@@ -209,7 +210,7 @@ class UserManage extends Component {
             </FormItem>
           </Col>
         </Row>
-      </Modal >
+      </Modal>
     )
   }
 
@@ -218,6 +219,7 @@ class UserManage extends Component {
       <Fragment>
         {this.renderEditModal()}
         {this.renderSearchForm()}
+        <Button onClick={() => this.handleViewModal(true)}>新建</Button>
         <Card>
           <StandardTable
             rowKey={(record, index) => index}

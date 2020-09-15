@@ -1,15 +1,24 @@
 import request from '@/utils/request';
 
-export async function queryUserList(params) {
-  return request('/cluster/query', {
+// 新增
+export async function addUser(params) {
+  return request('/personnel/add', {
     method: 'post',
     params,
   });
 }
 
 export async function updateUser(params) {
-  return request('/cluster/all', {
-    method: 'get',
+  return request('/personnel/update', {
+    method: 'post',
+    params,
+  });
+}
+
+// 查询
+export async function queryUserList(params) {
+  return request('/personnel/queryPage', {
+    method: 'post',
     params,
   });
 }
