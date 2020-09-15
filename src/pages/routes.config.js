@@ -118,6 +118,15 @@ module.exports = {
               component: './systemManage/teamManage',
             },
             {
+              path: '/systemManage/teamManage/detail',
+              name: 'teamDetail',
+              hideInMenu: true,
+              component: './systemManage/teamManage/components/detail',
+              buttons: [
+                { name: '编辑', key: 'edit' },
+              ],
+            },
+            {
               path: '/systemManage/authorManage',
               name: 'authorManage',
               component: './systemManage/authorManage',
