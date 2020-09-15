@@ -30,6 +30,7 @@ const Index = props => {
         let params = {};
         const findSelectedMenu = localMenu.find(v => v.path === nodePath);
         // 如果key不存在, 则说明是增加一级菜单
+        console.log(values,findSelectedMenu, 'values')
         if (!values.key) {
           params = {
             name: findSelectedMenu.name,
@@ -38,7 +39,7 @@ const Index = props => {
             pid: 0,
           }
         }
-        if (!isEmpty(findSelectedMenu)&& !isEmpty(findSelectedMenu.children) && String(type) === "1") {
+        if (values.key && !isEmpty(findSelectedMenu) && String(type) === "1") {
           params = {
             name: findSelectedMenu.name,
             url: findSelectedMenu.path,
@@ -46,7 +47,7 @@ const Index = props => {
             pid: values.id,
           }
         }
-        if (isEmpty(findSelectedMenu) && String(type) === "2"){
+        if (values.key && isEmpty(findSelectedMenu) && String(type) === "2"){
           const buttons = getMenuNode().find(v => v.path === nodePath);
           params = {
             name: buttons.name,
