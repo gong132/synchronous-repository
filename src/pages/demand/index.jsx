@@ -2,28 +2,19 @@
 import React, { Component, Fragment } from 'react'
 import CustomBtn from '@/components/commonUseModule/customBtn'
 import CreateDemand from './components/createModal'
-import DemandBoard from './demandBoard/index'
+// import DemandBoard from './demandBoard/index'
 import DemandList from './demandList/index'
 // import gzIcon from '@/assets/icon/Button_gz.svg'
 import { connect } from 'dva'
 import {
   Form,
-  Input,
   Select,
-  Card,
-  Popover,
-  Icon,
-  Row,
-  Col,
-  Button,
   DatePicker
 } from 'antd'
 import _ from 'lodash'
 import styles from './index.less'
 
-const { Option } = Select
-const FormItem = Form.Item
-const { RangePicker } = DatePicker
+let count=0;
 @Form.create()
 @connect(({ demand }) => ({
   demand
@@ -48,10 +39,23 @@ class Demand extends Component {
   handleFormMenuClick = (formType) => {
     this.props.dispatch({
       type: 'demand/setData',
-      payload: { formType: formType }
+      payload: { formType }
     })
   }
 
+  // 启动定时器
+  startTimer = callback => {
+    this.timer = setInterval(() => {
+      count += 1
+      console.log(count, 'count')
+      callback && callback()
+    }, 100000000000);
+  }
+
+  // 关闭定时器
+  clearTimer = () => {
+    clearInterval(this.timer)
+  }
 
   render() {
     const { demand } = this.props
@@ -60,6 +64,8 @@ class Demand extends Component {
     const createModalProps = {
       visibleModal,
       modalTitle,
+      startTimer: this.startTimer,
+      clearTimer: this.clearTimer,
       handleViewModal: this.handleViewModal
     }
     return (
@@ -73,22 +79,22 @@ class Demand extends Component {
           />
           <div style={{ display: 'flex' }}>
             <div className={styles.switch}>
-              <span
+              <div
                 onClick={() => this.handleFormMenuClick('board')}
                 className={
                   formType === 'board'
                     ? styles.switch__left
                     : styles.switch__right
                 }
-              >看板</span>
-              <span
+              >看板</div>
+              <div
                 onClick={() => this.handleFormMenuClick('list')}
                 className={
                   formType === 'list'
                     ? styles.switch__left
                     : styles.switch__right
                 }
-              >列表</span>
+              >列表</div>
             </div>
             <CustomBtn
               onClick={() => this.handleViewModal(true, '创建')}
@@ -103,12 +109,11 @@ class Demand extends Component {
               title='我的关注'
               style={{marginLeft: '16px'}}
             />
-            
-          </div >
+          </div>
 
         </div>
         {formType === 'list' && <DemandList />}
-        {formType === 'board' && <DemandBoard />}
+        {/* {formType === 'board' && <DemandBoard />} */}
       </Fragment>
 
     )
