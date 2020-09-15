@@ -620,17 +620,20 @@ const toInteger = (value, key, fm, minus = false) => {
   }
   // 判断是否是数字 或者 数字类型的字符串
   if (!Number(value) && value !== '0') {
-    const val = value
-      .split('')
-      .filter(v => !Number.isNaN(v * 1))
-      .join('');
+    const val = !isEmpty(value)
+      ? value
+          .split('')
+          .filter(v => !Number.isNaN(v * 1))
+          .join('')
+      : '0';
     fm.setFieldsValue({ [key]: String(val) });
     return String(val);
   }
   // 判断出现多个小数点的异常数字, 比如 12.12.1
   if (String(value).split('.').length > 1) {
-    fm.setFieldsValue({ [key]: '' });
-    return '';
+    const val = !isEmpty(value) ? value.split('.')[0] : '0';
+    fm.setFieldsValue({ [key]: String(val) });
+    return String(val);
   }
   return String(parseInt(value, 10));
 };
