@@ -39,3 +39,4 @@ screenshot
 build
 # ignore proxy.js file, If changes, please comment this
 **/config/proxy.js
+proxy.js
