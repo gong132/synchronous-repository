@@ -16,6 +16,7 @@ const Demand = {
   state: {
     formType: 'list',
     demandList: PagerHelper.genListState(),
+    demandBoard: []
   },
   effects: {
     *addDemand({ payload }, { call }) {
@@ -25,7 +26,40 @@ const Demand = {
         return false;
       }
       return true;
-    }
+    },
+
+    *queryDemand({payload}, {call, put}) {
+      const { code, data, msg } = yield call(queryDemand, payload)
+      if (code !== 200) {
+        message.error(msg);
+        return
+      }
+      const { records, ...others } = data;
+      yield put({
+        type: 'setDemandData',
+        payload: {
+          filter: payload,
+          data: records,
+          ...others
+        },
+      })
+    },
+
+    *queryDemandBoard({payload}, {call, put}) {
+      const { code, data, msg } = yield call(queryDemandBoard, payload)
+      if (code !== 200) {
+        message.error(msg);
+        return
+      }
+      yield put({
+        type: 'setData',
+        // payload: {
+        //   filter: payload,
+        //   data: records,
+        //   ...others
+        // },
+      })
+    },
   },
   reducers: {
     setData(state, { payload }) {
@@ -33,7 +67,13 @@ const Demand = {
         ...state,
         ...payload,
       }
-    }
+    },
+    setDemandData(state, action) {
+      return {
+        ...state,
+        contractList: PagerHelper.resolveListState(action.payload),
+      };
+    },
   }
 }
 

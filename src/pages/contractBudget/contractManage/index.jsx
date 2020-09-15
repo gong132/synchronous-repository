@@ -36,7 +36,8 @@ const { RangePicker } = DatePicker;
 
 /* eslint-disable */
 @Form.create()
-@connect(({ contract, loading }) => ({
+@connect(({ contract, loading, global }) => ({
+  global,
   loadingQueryData: loading.effects['contract/queryData'],
   loadingCreateData: loading.effects['contract/addData'],
   loadingUpdateData: loading.effects['contract/updateData'],
@@ -362,6 +363,7 @@ class ContractManage extends Component {
   }
 
   genColumns = () => {
+    const {global: {authActions}} = this.props
     const columns = [
       {
         title: '合同编号',
@@ -397,6 +399,7 @@ class ContractManage extends Component {
         render: (text, record) => {
           return (
             <div>
+              {/* {authActions.includes()} */}
               <OptButton
                 style={{
                   marginRight: '12px'

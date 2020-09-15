@@ -69,6 +69,9 @@ module.exports = {
               name: 'contractDetail',
               hideInMenu: true,
               component: './contractBudget/contractManage/components/detail',
+              buttons: [
+                { name: '编辑', key: 'edit' },
+              ],
             },
             {
               path: '/contract-budget/budget',

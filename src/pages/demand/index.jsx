@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import CustomBtn from '@/components/commonUseModule/customBtn'
 import CreateDemand from './components/createModal'
+import { DefaultPage } from "@/utils/helper";
 // import DemandBoard from './demandBoard/index'
 import DemandList from './demandList/index'
 // import gzIcon from '@/assets/icon/Button_gz.svg'
@@ -56,6 +57,28 @@ class Demand extends Component {
     clearInterval(this.timer)
   }
 
+  // 查询列表
+  handleQueryList = (params = {}) => {
+    this.props.dispatch({
+      type: 'demand/queryDemand',
+      payload: {
+        ...DefaultPage,
+        ...params,
+      }
+    })
+  }
+
+  // 查询看板
+  handleQueryBoard = (params = {}) => {
+    this.props.dispatch({
+      type: 'demand/queryDemandBoard',
+      payload: {
+        ...DefaultPage,
+        ...params,
+      }
+    })
+  }
+
   render() {
     const { demand } = this.props
     const { formType } = demand
@@ -65,7 +88,9 @@ class Demand extends Component {
       modalTitle,
       startTimer: this.startTimer,
       clearTimer: this.clearTimer,
-      handleViewModal: this.handleViewModal
+      handleViewModal: this.handleViewModal,
+      handleQueryList: this.handleQueryList,
+      handleQueryBoard: this.handleQueryBoard,
     }
     return (
       <Fragment>

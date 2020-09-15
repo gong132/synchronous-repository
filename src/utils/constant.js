@@ -96,6 +96,7 @@ export const MENU_ACTIONS = {
 
 const imgTypes = ['JPG', 'JPEG', 'PNG', 'BMP']
 const fileTypes = ['TXT', 'XLS', 'EXCEL', 'DOC', 'XLSX', 'DOCX', 'PPT', 'PPTX', 'VSD', 'CVS', 'PDF']
+
 const judgeFileType = (file={}, fileArr = []) => {
   const {name } = file
   const arr = name ? name.split('.') : []

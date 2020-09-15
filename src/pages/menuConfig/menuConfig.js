@@ -24,7 +24,7 @@ const Index = props => {
   const localMenu = MenuActionHelper.getFlatMenus(MenuActionHelper.getMenuData(AdminRouters.routes[0].routes, '/'));
 
   // 递归找到当前节点的所有子节点(不包括当前节点)
-  const findChildMenu = (menuArray, id, newArr = [] ) => {
+  const findChildMenu = (menuArray, id, newArr = []) => {
     const menuJson = _filter(menuArray, o => String(o.pid) === String(id));
     if (isEmpty(menuJson)) {
       return null;
@@ -94,7 +94,7 @@ const Index = props => {
     })
   }
   const handleAddMenu = (params, callback) => {
-    if (isEmpty(params)){
+    if (isEmpty(params)) {
       message.error('请正确选择菜单及类型')
       return;
     }
@@ -124,7 +124,7 @@ const Index = props => {
           <Icon
             type="edit"
             title="编辑"
-            // onClick={() => this.handleUpdate(node)}
+          // onClick={() => this.handleUpdate(node)}
           />
           <Divider type="vertical" />
         </Fragment>
@@ -178,12 +178,12 @@ const Index = props => {
   return (
     <Card title="菜单配置">
       <div>
-      {localMenu && (
+        {localMenu && (
           <Tree>
-          <TreeNode title={getNodeTitle(firstNode)}>
-            {renderTreeNodes(generateAllMenu(allMenuList))}
-          </TreeNode>
-        </Tree>
+            <TreeNode title={getNodeTitle(firstNode)}>
+              {renderTreeNodes(generateAllMenu(allMenuList))}
+            </TreeNode>
+          </Tree>
         )}
         {
           // console.log(localMenu, currentUserMenuList, selectedNode, '11111111')
