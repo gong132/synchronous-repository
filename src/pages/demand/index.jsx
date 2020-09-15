@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react'
 import CustomBtn from '@/components/commonUseModule/customBtn'
 import CreateDemand from './components/createModal'
 import { DefaultPage } from "@/utils/helper";
-// import DemandBoard from './demandBoard/index'
+import DemandBoard from './demandBoard/index'
 import DemandList from './demandList/index'
 // import gzIcon from '@/assets/icon/Button_gz.svg'
 import { connect } from 'dva'
@@ -41,6 +41,11 @@ class Demand extends Component {
       type: 'demand/setData',
       payload: { formType }
     })
+    if(formType === 'list') {
+      this.handleQueryList()
+    } else if(formType === 'board') {
+      this.handleQueryBoard()
+    }
   }
 
   // 启动定时器
@@ -137,7 +142,7 @@ class Demand extends Component {
 
         </div>
         {formType === 'list' && <DemandList />}
-        {/* {formType === 'board' && <DemandBoard />} */}
+        {formType === 'board' && <DemandBoard />}
       </Fragment>
 
     )

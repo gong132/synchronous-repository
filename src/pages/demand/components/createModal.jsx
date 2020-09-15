@@ -268,6 +268,6 @@ const CreateDemand = (props) => {
 
 }
 
-export default connect((demand) => ({
+export default connect(({demand}) => ({
   demand,
 }))(Form.create()(CreateDemand));

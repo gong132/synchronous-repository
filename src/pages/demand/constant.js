@@ -6,7 +6,36 @@ const boardTitle = [
   {
     name: '暂存中',
     boardId: '0',
-    sub:[]
+    sub:[
+      {
+        demandNumber: 'D20200915-001',
+        demandTitle: '需求001',
+        createUser: '胖胖1号',
+        createTime:'2020-09-15',
+        demandType:'p'
+      },
+      {
+        demandNumber: 'D20200915-002',
+        demandTitle: '需求002',
+        createUser: '胖胖2号',
+        createTime:'2020-09-15',
+        demandType:'u'
+      },
+      {
+        demandNumber: 'D20200915-003',
+        demandTitle: '需求003',
+        createUser: '胖胖3号',
+        createTime:'2020-09-15',
+        demandType:'p'
+      },
+      {
+        demandNumber: 'D20200915-004',
+        demandTitle: '需求004',
+        createUser: '胖胖4号',
+        createTime:'2020-09-15',
+        demandType:'u'
+      },
+    ]
   },
   {
     name: '待指派',
