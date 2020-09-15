@@ -78,7 +78,6 @@ class ContractManage extends Component {
   }
 
   handleQueryData = (params = {}) => {
-    console.log('params: ', params)
     this.props.dispatch({
       type: 'contract/queryData',
       payload: {
@@ -425,7 +424,6 @@ class ContractManage extends Component {
 
   render() {
     const { contractList, loadingQueryData, contractInfo } = this.props
-    console.log(contractList)
     const { visibleModal, modalTitle } = this.state
     const createProps = {
       visibleModal,
@@ -446,9 +444,9 @@ class ContractManage extends Component {
             type='export'
           />
         </div>
-        <Button
+        {/* <Button
           onClick={() => this.handleAddMenu()}
-        >添加菜单</Button>
+        >添加菜单</Button> */}
         {visibleModal && <CreateContract {...createProps} />}
         <Card>
           {this.renderSearchForm()}
