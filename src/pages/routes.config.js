@@ -22,7 +22,25 @@ module.exports = {
           path: '/demand',
           name: 'demand',
           icon: 'appstore',
-          component: './demand',
+          // component: './demand',
+          routes: [
+            { path: '/demand', redirect: '/demand/myDemand' },
+            {
+              path: '/demand/myDemand',
+              name: 'myDemand',
+              component: './demand/index',
+            },
+            {
+              path: '/demand/generalDemand',
+              name: 'generalDemand',
+              component: './demand/index',
+            },
+            {
+              path: '/demand/projectDemand',
+              name: 'projectDemand',
+              component: './demand/index',
+            },
+          ],
         },
         {
           path: '/table',
@@ -69,9 +87,7 @@ module.exports = {
               name: 'contractDetail',
               hideInMenu: true,
               component: './contractBudget/contractManage/components/detail',
-              buttons: [
-                { name: '编辑', key: 'edit' },
-              ],
+              buttons: [{ name: '编辑', key: 'edit' }],
             },
             {
               path: '/contract-budget/budget',
@@ -89,9 +105,7 @@ module.exports = {
               name: 'budgetDetail',
               hideInMenu: true,
               component: './contractBudget/budgetManage/details',
-              buttons: [
-                { name: '编辑', key: 'edit' },
-              ],
+              buttons: [{ name: '编辑', key: 'edit' }],
             },
           ],
         },

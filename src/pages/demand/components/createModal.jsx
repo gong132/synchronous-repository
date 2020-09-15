@@ -1,22 +1,18 @@
-import React, { useState, useEffect } from 'react'
-import { connect } from 'dva'
-import { formLayoutItemAddDouble, formLayoutItemAddEdit } from "@/utils/constant";
-import CustomBtn from '@/components/commonUseModule/customBtn'
-import Editor from "@/components/TinyEditor"
-import moment from 'moment'
+import React, { useState, useEffect } from 'react';
+import { connect } from 'dva';
+import { formLayoutItemAddDouble, formLayoutItemAddEdit } from '@/utils/constant';
+import CustomBtn from '@/components/commonUseModule/customBtn';
+import Editor from '@/components/TinyEditor';
+import moment from 'moment';
 // import UploadFile from '@/components/FileUpload'
 // import styles from '../index.less'
-import { Modal, Form, Select, Input, DatePicker, Col, Row, message, Radio } from 'antd'
-import {
-  demandTypeArr,
-  demandPriorityArr,
-  defaultDescription,
-} from '../constant'
-const FormItem = Form.Item
-const { Option } = Select
-const RadioGroup = Radio.Group
+import { Modal, Form, Select, Input, DatePicker, Col, Row, message, Radio } from 'antd';
+import { demandTypeArr, demandPriorityArr, defaultDescription } from '../util/constant';
 
-const CreateDemand = (props) => {
+const FormItem = Form.Item;
+const { Option } = Select;
+const RadioGroup = Radio.Group;
+const CreateDemand = props => {
   const {
     visibleModal,
     modalTitle,
@@ -27,12 +23,10 @@ const CreateDemand = (props) => {
     startTimer,
     clearTimer,
     demand,
-    recordValue = {}
-  } = props
+    recordValue = {},
+  } = props;
 
-  const {
-    formType,
-  } = demand
+  const { formType } = demand;
 
   const {
     title,
@@ -43,7 +37,7 @@ const CreateDemand = (props) => {
     acceptTeam,
     receiver,
     communicate,
-  } = recordValue
+  } = recordValue;
 
   const [description, setDescription] = useState(defaultDescription);
 
@@ -51,46 +45,48 @@ const CreateDemand = (props) => {
     setDescription(recordValue.description);
   }, [recordValue.description]);
 
-  const createDemand = (values) => {
-    props.dispatch({
-      type: 'demand/addDemand',
-      payload: {
-        ...values
-      }
-    }).then(res =>{
-      if(res) {
-        handleViewModal(false)
-        console.log(formType)
-        if(formType === 'list') {
-          handleQueryList()
-        } else if(formType === 'board') {
-          handleQueryBoard()
+  const createDemand = values => {
+    props
+      .dispatch({
+        type: 'demand/addDemand',
+        payload: {
+          ...values,
+        },
+      })
+      .then(res => {
+        if (res) {
+          handleViewModal(false);
+          console.log(formType);
+          if (formType === 'list') {
+            handleQueryList();
+          } else if (formType === 'board') {
+            handleQueryBoard();
+          }
         }
-      }
-    })
-  }
+      });
+  };
 
   const handleSubmitForm = () => {
     form.validateFieldsAndScroll((err, values) => {
-      if (err) return
+      if (err) return;
       if (description.length < 1) {
-        message.error('请补全需求描述！')
-        return
+        message.error('请补全需求描述！');
+        return;
       }
-      values.expectedCompletionDate = moment(values.expectedCompletionDate).format('YYYY-MM-DD')
-      values.requirementDescription = description
-      console.log('values: ', values)
-      createDemand(values)
-    })
-  }
+      values.expectedCompletionDate = moment(values.expectedCompletionDate).format('YYYY-MM-DD');
+      values.requirementDescription = description;
+      console.log('values: ', values);
+      createDemand(values);
+    });
+  };
 
   useEffect(() => {
     startTimer(handleSubmitForm);
     return () => {
       // 销毁组件执行
-      clearTimer()
-    }
-  }, [])
+      clearTimer();
+    };
+  }, []);
 
   const renderForm = () => (
     <Form>
@@ -116,16 +112,20 @@ const CreateDemand = (props) => {
             {form.getFieldDecorator('introducer', {
               rules: [{ required: true, message: '请输入提出人' }],
               initialValue: introducer,
-            })(<Select
-              allowClear
-              // showSearch
-              placeholder="请输入提出人"
-            >
-              {/* {!_.isEmpty(headerList) && headerList.map(d => (
+            })(
+              <Select
+                allowClear
+                // showSearch
+                placeholder="请输入提出人"
+              >
+                {/* {!_.isEmpty(headerList) && headerList.map(d => (
                                 <Option key={d.leaderId} value={d.leaderId}>{d.leaderName}</Option>
                             ))} */}
-              <Option key='1' value='1'>{1}</Option>
-            </Select>)}
+                <Option key="1" value="1">
+                  {1}
+                </Option>
+              </Select>,
+            )}
           </FormItem>
         </Col>
         <Col span={12}>
@@ -133,15 +133,19 @@ const CreateDemand = (props) => {
             {form.getFieldDecorator('type', {
               rules: [{ required: true, message: '请输入需求类型' }],
               initialValue: type,
-            })(<Select
-              allowClear
-              // showSearch
-              placeholder="请输入需求类型"
-            >
-              {demandTypeArr.map(d => (
-                <Option key={d.key} value={d.key}>{d.val}</Option>
-              ))}
-            </Select>)}
+            })(
+              <Select
+                allowClear
+                // showSearch
+                placeholder="请输入需求类型"
+              >
+                {demandTypeArr.map(d => (
+                  <Option key={d.key} value={d.key}>
+                    {d.val}
+                  </Option>
+                ))}
+              </Select>,
+            )}
           </FormItem>
         </Col>
         <Col span={12}>
@@ -149,15 +153,19 @@ const CreateDemand = (props) => {
             {form.getFieldDecorator('priority', {
               rules: [{ required: true, message: '请输入优先级' }],
               initialValue: priority,
-            })(<Select
-              allowClear
-              // showSearch
-              placeholder="请输入优先级"
-            >
-              {demandPriorityArr.map(d => (
-                <Option key={d.key} value={d.key}>{d.val}</Option>
-              ))}
-            </Select>)}
+            })(
+              <Select
+                allowClear
+                // showSearch
+                placeholder="请输入优先级"
+              >
+                {demandPriorityArr.map(d => (
+                  <Option key={d.key} value={d.key}>
+                    {d.val}
+                  </Option>
+                ))}
+              </Select>,
+            )}
           </FormItem>
         </Col>
         <Col span={12}>
@@ -165,16 +173,20 @@ const CreateDemand = (props) => {
             {form.getFieldDecorator('acceptTeam', {
               rules: [{ required: false, message: '请输入受理团队' }],
               initialValue: acceptTeam,
-            })(<Select
-              allowClear
-              // showSearch
-              placeholder="请输入受理团队"
-            >
-              {/* {!_.isEmpty(headerList) && headerList.map(d => (
+            })(
+              <Select
+                allowClear
+                // showSearch
+                placeholder="请输入受理团队"
+              >
+                {/* {!_.isEmpty(headerList) && headerList.map(d => (
                                 <Option key={d.leaderId} value={d.leaderId}>{d.leaderName}</Option>
                             ))} */}
-              <Option key='1' value='1'>1</Option>
-            </Select>)}
+                <Option key="1" value="1">
+                  1
+                </Option>
+              </Select>,
+            )}
           </FormItem>
         </Col>
         <Col span={12}>
@@ -182,16 +194,20 @@ const CreateDemand = (props) => {
             {form.getFieldDecorator('receiver', {
               rules: [{ required: false, message: '请输入受理人' }],
               initialValue: receiver,
-            })(<Select
-              allowClear
-              // showSearch
-              placeholder="请输入受理人"
-            >
-              {/* {!_.isEmpty(headerList) && headerList.map(d => (
+            })(
+              <Select
+                allowClear
+                // showSearch
+                placeholder="请输入受理人"
+              >
+                {/* {!_.isEmpty(headerList) && headerList.map(d => (
                                 <Option key={d.leaderId} value={d.leaderId}>{d.leaderName}</Option>
                             ))} */}
-              <Option key='1' value='1'>{1}</Option>
-            </Select>)}
+                <Option key="1" value="1">
+                  {1}
+                </Option>
+              </Select>,
+            )}
           </FormItem>
         </Col>
         <Col span={12}>
@@ -201,21 +217,21 @@ const CreateDemand = (props) => {
               initialValue: communicate,
             })(
               <RadioGroup>
-                <Radio value='1' key='1'>是</Radio>
-                <Radio value='0' key='0'>否</Radio>
-              </RadioGroup>
+                <Radio value="1" key="1">
+                  是
+                </Radio>
+                <Radio value="0" key="0">
+                  否
+                </Radio>
+              </RadioGroup>,
             )}
           </FormItem>
         </Col>
 
         <Col span={24}>
-          <FormItem
-            {...formLayoutItemAddEdit}
-            label='需求描述'
-            required
-          >
+          <FormItem {...formLayoutItemAddEdit} label="需求描述" required>
             <Editor
-              editorKey='myContractAdd'
+              editorKey="myContractAdd"
               height={300}
               content={description}
               onContentChange={content => setDescription(content)}
@@ -238,7 +254,7 @@ const CreateDemand = (props) => {
             </Col> */}
       </Row>
     </Form>
-  )
+  );
 
   return (
     <Modal
@@ -252,22 +268,22 @@ const CreateDemand = (props) => {
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <CustomBtn
             onClick={() => handleViewModal(false)}
-            type='cancel'
+            type="cancel"
             style={{ marginRight: '18px' }}
           />
           <CustomBtn
             // loading={modalTitle === '编辑' ? loadingUpdate : loadingAdd}
             onClick={handleSubmitForm}
-            type='save'
+            type="save"
           />
-        </div>}
+        </div>
+      }
     >
       {renderForm()}
     </Modal>
-  )
+  );
+};
 
-}
-
-export default connect((demand) => ({
+export default connect(demand => ({
   demand,
 }))(Form.create()(CreateDemand));
