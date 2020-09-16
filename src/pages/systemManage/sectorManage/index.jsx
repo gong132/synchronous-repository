@@ -390,11 +390,6 @@ class SectorManage extends Component {
             columns={this.genColumns()}
             data={sectorList}
             loading={loadingQueryData}
-            // dataSource={[
-            //   { name: 'gong' },
-            //   { name: 'gong2' },
-            //   { name: 'gong3' }
-            // ]}
             onChange={this.handleStandardTableChange}
           />
         </Card>

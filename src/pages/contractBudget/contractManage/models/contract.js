@@ -3,15 +3,15 @@ import {
   queryContractInfo,
   createContract,
   editContract,
-  queryDept,
   queryProject,
   querySystem,
   querySupplier,
   queryHeaderGroup,
   queryBudgetNumber,
-  checkProject
+  checkProject,
+  queryAllCluster,
 } from '@/services/contractBudget/contract'
-import { addMenuList, queryLogList } from '@/services/global'
+import { queryLogList, queryDept, queryComp } from '@/services/global'
 import { PagerHelper } from "@/utils/helper";
 import { message } from "antd";
 
@@ -23,6 +23,8 @@ const Contract = {
     contractInfo: {},
     deptList: [],
     deptListMap: {},
+    companyList: [],
+    companyMap: {},
     projectList: [],
     projectMap: {},
     systemList: [],
@@ -34,16 +36,9 @@ const Contract = {
     groupMap: {},
     budgetList: [],
     budgetMap: {},
+    clusterList: []
   },
   effects: {
-    *addMenu({ payload }, { call }) {
-      const { code, msg } = yield call(addMenuList, payload)
-      if (!code || code !== 200) {
-        message.error(msg);
-        return false;
-      }
-      return true
-    },
     *fetchLogList({ payload }, { call, put }) {
       const { code, data, msg } = yield call(queryLogList, payload);
       if (code !== 200) {
@@ -60,6 +55,7 @@ const Contract = {
         },
       })
     },
+    
     *queryData({ payload }, { call, put }) {
       const { code, data, msg } = yield call(queryContractList, payload)
       if (code !== 200) {
@@ -76,6 +72,22 @@ const Contract = {
         },
       })
     },
+
+    // 查询所有集群板块
+    *queryAllCluster({ payload }, { call, put }) {
+      const { code, data, msg } = yield call(queryAllCluster, payload)
+      if (code !== 200) {
+        message.error(msg);
+        return
+      }
+      yield put({
+        type: 'saveData',
+        payload: {
+          clusterList: data
+        },
+      })
+    },
+
     *addData({ payload }, { call }) {
       const { code, msg } = yield call(createContract, payload)
       if (!code || code !== 200) {
@@ -112,7 +124,7 @@ const Contract = {
       }
       const obj = {}
       data.map(v => {
-        obj[v.deptId] = v.deptName
+        obj[v.id] = v.name
         return true
       })
       yield put({
@@ -120,6 +132,28 @@ const Contract = {
         payload: {
           deptList: data,
           deptListMap: obj
+        }
+      })
+      return true
+    },
+
+    // 查询公司
+    *queryComp({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(queryComp, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      const obj = {}
+      data.map(v => {
+        obj[v.id] = v.name
+        return true
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          companyList: data,
+          companyMap: obj
         }
       })
       return true

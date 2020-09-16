@@ -40,17 +40,9 @@ export async function checkProject(params) {
   });
 }
 
-// // 未被集群版块绑定的部门
-// export async function queryDept(params) {
-//   return request('/cluster/notBindDept', {
-//     method: 'get',
-//     params,
-//   });
-// }
-
-// 查询所有部门
-export async function queryDept(params) {
-  return request('/temp/dept', {
+// 查询所有集群板块
+export async function queryAllCluster(params) {
+  return request('/cluster/all', {
     method: 'get',
     params,
   });

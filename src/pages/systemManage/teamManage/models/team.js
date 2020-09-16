@@ -1,4 +1,4 @@
-import { queryTeamList } from '@/services/systemManage/userManage';
+import { queryTeamList, queryTeamBy } from '@/services/systemManage/teamManage';
 import {PagerHelper} from "@/utils/helper";
 import {message} from "antd";
 
@@ -17,20 +17,20 @@ const TeamModel = {
       }
       const { records, ...others } = data;
       yield put({
-        type: 'setUserData',
+        type: 'setTeamData',
         payload: {
           filter: payload,
           data: records,
-          ...others
+          ...others,
         },
-      })
+      });
     },
   },
   reducers: {
     saveData(state, action) {
       return { ...state, ...action };
     },
-    setUserData(state, action) {
+    setTeamData(state, action) {
       return {
         ...state,
         teamList: PagerHelper.resolveListState(action.payload),

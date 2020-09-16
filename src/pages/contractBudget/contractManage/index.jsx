@@ -5,10 +5,10 @@ import { router } from 'umi'
 import moment from 'moment'
 import StandardTable from "@/components/StandardTable";
 import { DefaultPage, TableColumnHelper } from "@/utils/helper";
-import { formLayoutItem1, formLayoutItem } from '@/utils/constant'
+import { formLayoutItem1, MENU_ACTIONS } from '@/utils/constant'
+import { exportExcel } from '@/utils/utils'
 import CustomBtn from '@/components/commonUseModule/customBtn'
 import OptButton from "@/components/commonUseModule/optButton";
-import SearchForm from '@/components/commonUseModule/searchForm'
 import editIcon from '@/assets/icon/Button_bj.svg'
 import downIcon from '@/assets/icon/drop_down.svg'
 import upIcon from '@/assets/icon/Pull_up.svg'
@@ -24,7 +24,6 @@ import {
   Button,
   DatePicker
 } from 'antd'
-import { MENU_ACTIONS } from '@/utils/constant'
 import _ from 'lodash'
 import styles from './index.less'
 
@@ -57,6 +56,7 @@ const { RangePicker } = DatePicker;
   headerList: contract.headerList,
   headerMap: contract.headerMap,
   groupMap: contract.groupMap,
+  clusterList: contract.clusterList,
 }))
 class ContractManage extends Component {
   constructor(props) {
@@ -77,6 +77,12 @@ class ContractManage extends Component {
     this.handleQuerySupplier()
     this.handleQueryGroup()
     this.handleQueryBudget()
+    this.handleQueryCluster()
+  }
+
+  // 导出
+  handleExportExcel = () => {
+    exportExcel({}, 'contract/export', 'get', '合同表单数据.xls')
   }
 
   handleQueryData = (params = {}) => {
@@ -105,6 +111,8 @@ class ContractManage extends Component {
     if (formValues.signTime && !_.isEmpty(formValues.signTime)) {
       formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYY-MM-DD')
       formValues.signingEndTime = moment(formValues.signTime[1]).format('YYYY-MM-DD')
+    } else if(formValues.defendPayTime) {
+      formValues.defendPayTime = moment(formValues.defendPayTime).format('YYYY-MM-DD')
     }
     this.handleDebounceQueryData(formValues)
   }
@@ -119,9 +127,12 @@ class ContractManage extends Component {
   }
 
   // 查部门
-  handleQueryDept = () => {
+  handleQueryDept = (value) => {
     this.props.dispatch({
       type: 'contract/fetchNotBindDept',
+      payload: {
+        deptName: value
+      }
     })
   }
 
@@ -133,9 +144,12 @@ class ContractManage extends Component {
   }
 
   // 查预算编号
-  handleQueryBudget = () => {
+  handleQueryBudget = (number) => {
     this.props.dispatch({
       type: 'contract/fetchBudgetNumber',
+      payload: {
+        number
+      }
     })
   }
 
@@ -160,8 +174,17 @@ class ContractManage extends Component {
     })
   }
 
+  // 查询集群列表
+  handleQueryCluster = (name) => {
+    this.props.dispatch({
+      type: 'contract/queryAllCluster',
+      payload: { name }
+    })
+  }
+
   // 分页操作
   handleStandardTableChange = (pagination, filters, sorter) => {
+    console.log(pagination, filters, sorter)
     const formValues = this.props.form.getFieldsValue();
     if (formValues.signTime && !_.isEmpty(formValues.signTime)) {
       formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYY-MM-DD')
@@ -233,7 +256,14 @@ class ContractManage extends Component {
 
   renderSearchForm = () => {
     const { searchMore } = this.state
-    const { deptList, projectList, supplierList, loadingQueryData, form: { getFieldDecorator } } = this.props;
+    const { deptList,
+      projectList,
+      supplierList,
+      clusterList,
+      budgetList,
+      loadingQueryData,
+      form: { getFieldDecorator }
+    } = this.props;
     const content = (
       <div className={styles.moreSearch}>
         <Row>
@@ -242,14 +272,25 @@ class ContractManage extends Component {
               {getFieldDecorator('budgetNumber', {
               })(<Select
                 allowClear
+                showSearch
+                onSearch={_.debounce(this.handleQueryBudget, 500)}
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  JSON.stringify(option.props.children)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
                 placeholder='请输入预算编号'
                 style={{
                   width: '100%'
                 }}
               >
-                {!_.isEmpty(deptList) && deptList.map(d => (
-                  <Option key={d.deptId} value={d.deptId}>{d.deptName}</Option>
-                ))}
+                {!_.isEmpty(budgetList) &&
+                  budgetList.map(d => (
+                    <Option key={d.number} value={d.number}>
+                      {d.number}
+                    </Option>
+                  ))}
               </Select>)}
             </FormItem>
           </Col>
@@ -268,13 +309,21 @@ class ContractManage extends Component {
               })(
                 <Select
                   allowClear
+                  showSearch
+                  onSearch={_.debounce(this.handleQueryDept, 500)}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
                   placeholder='请输入所属部门'
                   style={{
                     width: '100%'
                   }}
                 >
                   {!_.isEmpty(deptList) && deptList.map(d => (
-                    <Option key={d.deptId} value={d.deptId}>{d.deptName}</Option>
+                    <Option key={d.id} value={d.id}>{d.name}</Option>
                   ))}
                 </Select>
               )}
@@ -342,27 +391,16 @@ class ContractManage extends Component {
               {getFieldDecorator('signTime', {
               })(
                 <RangePicker
-                  onChange={_.debounce(this.saveParams, 500)}
+                  // onChange={_.debounce(this.saveParams, 500)}
                 />
               )}
             </FormItem>
           </Col>
           <Col span={24}>
             <FormItem colon={false} label="维保支付提醒日期">
-              {getFieldDecorator('providerCompanyName', {
+              {getFieldDecorator('defendPayTime', {
               })(
-                <Select
-                  allowClear
-                  // showSearch
-                  style={{
-                    width: '100%'
-                  }}
-                  placeholder="请输入供应商"
-                >
-                  {!_.isEmpty(supplierList) && supplierList.map(d => (
-                    <Option key={d.supplierId} value={d.supplierName}>{d.supplierName}</Option>
-                  ))}
-                </Select>
+                <DatePicker />
               )}
             </FormItem>
           </Col>
@@ -388,7 +426,7 @@ class ContractManage extends Component {
             })(<Input
               allowClear
               onChange={_.debounce(this.saveParams, 500)}
-              placeholder='请输入合同编号'
+              placeholder='请输入合同名称'
             />)}
           </FormItem>
         </Col>
@@ -398,6 +436,13 @@ class ContractManage extends Component {
             })(<Select
               allowClear
               // showSearch
+              onChange={_.debounce(this.saveParams, 500)}
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                JSON.stringify(option.props.children)
+                  .toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0
+              }
               style={{
                 width: '100%'
               }}
@@ -414,18 +459,26 @@ class ContractManage extends Component {
         </Col>
         <Col span={6}>
           <FormItem {...formLayoutItem1} colon={false} label="所属集群/板块">
-            {getFieldDecorator('projectNumber', {
+            {getFieldDecorator('clusterId', {
             })(<Select
               allowClear
-              // showSearch
+              showSearch
+              onChange={_.debounce(this.saveParams, 500)}
+              onSearch={_.debounce(this.handleQueryCluster, 500)}
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                JSON.stringify(option.props.children)
+                  .toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0
+              }
               style={{
                 width: '100%'
               }}
-              placeholder="请输入所属项目"
+              placeholder="请输入所属集群/板块"
             >
-              {!_.isEmpty(projectList) &&
-                projectList.map(d => (
-                  <Option key={d.number} value={d.number}>
+              {
+                clusterList.map(d => (
+                  <Option key={d.id} value={d.id}>
                     {d.name}
                   </Option>
                 ))}
@@ -433,33 +486,33 @@ class ContractManage extends Component {
           </FormItem>
         </Col>
         <Col span={6}>
-            <FormItem>
-              <CustomBtn
-                onClick={() => this.handleResetSearch()}
-                style={{
-                  display: 'inline-block',
-                  marginRight: '5rem'
-                }}
-                loading={loadingQueryData}
-                type='reset'
-              />
-              <Popover visible={searchMore} placement="bottomRight" content={content} trigger="click">
-                {
-                  <div
-                    className="activeColor"
-                    onClick={() => this.setSearchMore(!searchMore)}
-                    style={{
-                      display: 'inline-block'
-                    }}
-                  >
-                    <div className={styles.moreBtn}>
-                      <Icon component={searchMore ? downIcon : upIcon} />
-                      <span>更多</span>
-                    </div>
+          <FormItem>
+            <CustomBtn
+              onClick={() => this.handleResetSearch()}
+              style={{
+                display: 'inline-block',
+                marginRight: '4rem'
+              }}
+              loading={loadingQueryData}
+              type='reset'
+            />
+            <Popover visible={searchMore} placement="bottomRight" content={content} trigger="click">
+              {
+                <div
+                  className="activeColor"
+                  onClick={() => this.setSearchMore(!searchMore)}
+                  style={{
+                    display: 'inline-block'
+                  }}
+                >
+                  <div className={styles.moreBtn}>
+                    <Icon component={searchMore ? downIcon : upIcon} />
+                    <span>更多</span>
                   </div>
-                }
-              </Popover>
-            </FormItem>
+                </div>
+              }
+            </Popover>
+          </FormItem>
         </Col>
       </Row>
     )
@@ -505,7 +558,6 @@ class ContractManage extends Component {
         // fixed: 'right',
         width: 190,
         render: (text, record) => {
-          console.log('authActions:', authActions)
           return (
             <div>
               {authActions.includes(MENU_ACTIONS.EDIT) && <OptButton
@@ -544,6 +596,7 @@ class ContractManage extends Component {
       handleViewModal: this.handleViewModal,
       recordValue: contractInfo,
       handleQueryData: this.handleQueryData,
+      handleQueryBudget: this.handleQueryBudget,
     }
     return (
       <Fragment>
@@ -553,7 +606,7 @@ class ContractManage extends Component {
             type='create'
           />
           <CustomBtn
-            // onClick={() => this.handleViewModal(true, '新建')}
+            onClick={() => this.handleExportExcel()}
             type='export'
           />
         </div>

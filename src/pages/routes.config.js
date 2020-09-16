@@ -130,6 +130,9 @@ module.exports = {
               path: '/systemManage/teamManage',
               name: 'teamManage',
               component: './systemManage/teamManage',
+              buttons: [
+                { name: '查看', key: 'check' },
+              ],
             },
             {
               path: '/systemManage/teamManage/detail',

@@ -35,6 +35,7 @@ const CreateContract = props => {
     recordValue,
     handleViewModal,
     handleQueryData,
+    handleQueryBudget,
     loadingUpdate,
     loadingAdd,
   } = props;
@@ -218,7 +219,7 @@ const CreateContract = props => {
 
   // 格式化整数
   const formatCount = value => {
-    if (isEmpty(value) || value==='0') return '';
+    if (isEmpty(value) || value === '0') return '';
     return numeral(value).format();
   };
 
@@ -283,7 +284,17 @@ const CreateContract = props => {
               rules: [{ required: true, message: '请输入预算编号' }],
               initialValue: budgetNumber,
             })(
-              <Select placeholder="请输入预算编号">
+              <Select
+                showSearch
+                onSearch={_.debounce(handleQueryBudget, 500)}
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  JSON.stringify(option.props.children)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+                placeholder="请输入预算编号"
+              >
                 {!_.isEmpty(budgetList) &&
                   budgetList.map(d => (
                     <Option key={d.number} value={d.number}>
@@ -328,8 +339,8 @@ const CreateContract = props => {
               >
                 {!_.isEmpty(deptList) &&
                   deptList.map(d => (
-                    <Option key={d.deptId} value={d.deptId}>
-                      {d.deptName}
+                    <Option key={d.id} value={d.id}>
+                      {d.name}
                     </Option>
                   ))}
               </Select>,
@@ -517,7 +528,7 @@ const CreateContract = props => {
           <FormItem
             {...formLayoutItemAddEdit}
             label="合同描述"
-            // required={true}
+          // required={true}
           >
             <Editor
               editorKey="myContractAdd"

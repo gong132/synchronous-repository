@@ -1,15 +1,33 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
 import budget_xq from '@/assets/icon/modular_xq.svg';
-import { Descriptions } from 'antd'
+import { Descriptions, Tag } from 'antd'
+import { getParam, getUserInfo } from '@/utils/utils';
+import { connect } from 'dva'
+import _ from 'lodash'
 
-const TeamDetail = () => {
-
+const TeamDetail = (props) => {
+  const { teamManage } = props
+  const { teamList = [] } = teamManage
+  const [info, setInfo] = useState({})
+  const {
+    id,
+    name,
+    groupHeaderName,
+    personnels,
+  } = info
+  console.log(teamList, info)
+  useEffect(() => {
+    const teamId = getParam('teamId')
+    const i = _.findIndex(teamList.list, t => String(t.id) === String(teamId))
+    if (i < 0) return true
+    setInfo(teamList.list[i])
+  }, [])
   const detailList = [
-    { span: 1, required: false, name: '团队ID', value: 'name', dataIndex: 'name' },
-    { span: 1, required: false, name: '团队名称', value: 'str', dataIndex: 'deptName' },
-    { span: 1, required: false, name: '团队经理', value: 'createTime', dataIndex: 'createTime' },
-    { span: 3, required: false, name: '团队成员', value: 'updateTime', dataIndex: 'updateTime' },
+    { span: 1, required: false, name: '团队ID', value: id, dataIndex: 'id' },
+    { span: 1, required: false, name: '团队名称', value: name, dataIndex: 'name' },
+    { span: 1, required: false, name: '团队经理', value: groupHeaderName, dataIndex: 'groupHeaderName' },
+    { span: 3, required: false, name: '团队成员', value: personnels, dataIndex: 'personnels' },
   ];
   return (
     <GlobalSandBox
@@ -29,7 +47,12 @@ const TeamDetail = () => {
                 </>
               }
             >
-              {v.value}
+              {console.log(v.value)}
+              {
+                (_.isArray(v.value) && !_.isEmpty(v.value))
+                  ? v.value.map(n => <Tag>{n}</Tag>)
+                  : v.value
+              }
             </Descriptions.Item>
           ))
         }
@@ -38,4 +61,6 @@ const TeamDetail = () => {
   )
 }
 
-export default TeamDetail
+export default connect(({ teamManage }) => ({
+  teamManage
+}))(TeamDetail)
