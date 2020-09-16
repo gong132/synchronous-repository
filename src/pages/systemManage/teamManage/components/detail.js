@@ -30,10 +30,7 @@ const TeamDetail = (props) => {
     { span: 3, required: false, name: '团队成员', value: personnels, dataIndex: 'personnels' },
   ];
   return (
-    <GlobalSandBox
-      title='团队详情'
-      img={budget_xq}
-    >
+    <GlobalSandBox title="团队详情" img={budget_xq}>
       <Descriptions column={3} bordered>
         {
           detailList.map((v, i) => (
@@ -58,8 +55,8 @@ const TeamDetail = (props) => {
         }
       </Descriptions>
     </GlobalSandBox>
-  )
-}
+  );
+};
 
 export default connect(({ teamManage }) => ({
   teamManage

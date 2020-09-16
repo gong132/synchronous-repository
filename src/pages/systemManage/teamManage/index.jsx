@@ -90,29 +90,29 @@ class TeamManage extends Component {
     this.setState({
       modalVisible: bool,
       record,
-    })
-  }
+    });
+  };
 
   // 查看详情
-  handleViewDetail = (record) => {
+  handleViewDetail = record => {
     router.push({
       pathname: '/systemManage/teamManage/detail',
       query: {
         teamId: record.id,
       },
     });
-  }
+  };
 
   handleSubmit = () => {
     this.props.form.validateFields((err, values) => {
-      if (err) return
-      console.log(values)
-    })
-  }
+      if (err) return;
+      console.log(values);
+    });
+  };
 
-  handleChangeChecked = (checkedValues) => {
+  handleChangeChecked = checkedValues => {
     console.log('checked = ', checkedValues);
-  }
+  };
 
   // 分页操作
   handleStandardTableChange = (pagination, filters, sorter) => {
@@ -182,8 +182,8 @@ class TeamManage extends Component {
           </FormItem>
         </Col>
       </Row>
-    )
-  }
+    );
+  };
 
   genColumns = () => {
     const { global: { authActions } } = this.props
@@ -207,100 +207,97 @@ class TeamManage extends Component {
                 </Tooltip>}
             </div>
           );
-        }
+        },
       },
-    ]
-    return columns
-  }
+    ];
+    return columns;
+  };
 
   renderEditModal = () => {
-    const { modalVisible, record } = this.state
-    const { form } = this.props
-    const { name, account } = record
-    const data = (count) => {
-      const arr = []
-      Array(count).fill('').map((v, i) => {
-        const a = {
-          id: i.toString(),
-          roleName: `角色${i}`
-        }
-        arr.push(a)
-        return true
-      })
-      return arr
-    }
+    const { modalVisible, record } = this.state;
+    const { form } = this.props;
+    const { name, account } = record;
+    const data = count => {
+      const arr = [];
+      Array(count)
+        .fill('')
+        .map((v, i) => {
+          const a = {
+            id: i.toString(),
+            roleName: `角色${i}`,
+          };
+          arr.push(a);
+          return true;
+        });
+      return arr;
+    };
     return (
       <Modal
-        title='编辑'
+        title="编辑"
         visible={modalVisible}
         maskClosable={false}
         onCancel={() => this.handleViewModal(false)}
-        width='794px'
+        width="794px"
         footer={
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <CustomBtn
               onClick={() => this.handleViewModal(false)}
-              type='cancel'
+              type="cancel"
               style={{ marginRight: '18px' }}
             />
-            <CustomBtn
-              onClick={() => this.handleSubmit()}
-              type='save'
-            />
-          </div>}
+            <CustomBtn onClick={() => this.handleSubmit()} type="save" />
+          </div>
+        }
       >
         <Row>
           <Col span={24}>
-            <FormItem label='姓名' labelCol={{ span: 2 }} wrapperCol={{ span: 8 }}>
+            <FormItem label="姓名" labelCol={{ span: 2 }} wrapperCol={{ span: 8 }}>
               {form.getFieldDecorator('name', {
                 rules: [{ required: true, message: '请输入姓名!' }],
-                initialValue: name
-              })(
-                <Input placeholder='请输入姓名' />
-              )}
+                initialValue: name,
+              })(<Input placeholder="请输入姓名" />)}
             </FormItem>
           </Col>
           <Col span={24}>
-            <FormItem label='工号' labelCol={{ span: 2 }} wrapperCol={{ span: 8 }}>
+            <FormItem label="工号" labelCol={{ span: 2 }} wrapperCol={{ span: 8 }}>
               {form.getFieldDecorator('account', {
                 rules: [{ required: true, message: '请输入工号!' }],
-                initialValue: account
-              })(
-                <Input placeholder='请输入工号' />
-              )}
+                initialValue: account,
+              })(<Input placeholder="请输入工号" />)}
             </FormItem>
           </Col>
           <Col span={24}>
-            <FormItem label='角色' labelCol={{ span: 2 }} wrapperCol={{ span: 22 }}>
+            <FormItem label="角色" labelCol={{ span: 2 }} wrapperCol={{ span: 22 }}>
               <div
                 style={{
                   border: '1px solid #EBEEF5',
                   borderRadius: '2px',
-                  padding: '16px'
+                  padding: '16px',
                 }}
               >
                 {form.getFieldDecorator('role', {
                   rules: [{ required: true, message: '请至少选择一个角色！' }],
-                  initialValue: ["0", "6"]
+                  initialValue: ['0', '6'],
                 })(
-
                   <Checkbox.Group style={{ width: '100%' }} onChange={this.handleChangeChecked}>
                     <Row>
                       {data(18).map(v => (
                         <Col key={v.id} span={4}>
-                          <Checkbox key={v.id} value={v.id}>{v.roleName}</Checkbox>
+                          <Checkbox key={v.id} value={v.id}>
+                            {v.roleName}
+                          </Checkbox>
                         </Col>
                       ))}
                     </Row>
-                  </Checkbox.Group>
+                  </Checkbox.Group>,
                 )}
               </div>
             </FormItem>
           </Col>
         </Row>
       </Modal>
-    )
-  }
+    );
+  };
 
   render() {
     const { teamManage, loadingQueryTeamData } = this.props
@@ -310,9 +307,7 @@ class TeamManage extends Component {
     return (
       <Fragment>
         {this.renderEditModal()}
-        <div className={styles.customSearchForm}>
-          {this.renderSearchForm()}
-        </div>
+        <div className={styles.customSearchForm}>{this.renderSearchForm()}</div>
         <Card>
           <StandardTable
             rowKey={(record, index) => index}
@@ -323,8 +318,8 @@ class TeamManage extends Component {
           />
         </Card>
       </Fragment>
-    )
+    );
   }
 }
 
-export default TeamManage
+export default TeamManage;
