@@ -2,12 +2,11 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'dva'
 import CustomBtn from '@/components/commonUseModule/customBtn'
 import OptButton from "@/components/commonUseModule/optButton";
-import SearchForm from '@/components/commonUseModule/searchForm'
-import editIcon from '@/assets/icon/Button_bj.svg'
+import { formLayoutItem1 } from '@/utils/constant'
 import StandardTable from "@/components/StandardTable";
-import { DefaultPage, TableColumnHelper } from "@/utils/helper";
+import { TableColumnHelper } from "@/utils/helper";
+import { router } from 'umi'
 import {
-  Table,
   Modal,
   Form,
   Input,
@@ -17,9 +16,9 @@ import {
   Checkbox,
   Card
 } from 'antd'
+import styles from './index.less'
 
 const FormItem = Form.Item
-const { Option } = Select
 
 @Form.create()
 @connect(({ teamManage, loading }) => ({
@@ -36,13 +35,26 @@ class TeamManage extends Component {
   }
 
   handleSearch = () => { }
+
   handleResetSearch = () => { }
+
   handleViewModal = (bool, record = {}) => {
     this.setState({
       modalVisible: bool,
       record,
     })
   }
+
+  // 查看详情
+  handleViewDetail = (record) => {
+    router.push({
+      pathname: '/systemManage/teamManage/detail',
+      query: {
+        id: record.id,
+      },
+    });
+  }
+
   handleSubmit = () => {
     this.props.form.validateFields((err, values) => {
       if (err) return
@@ -55,48 +67,57 @@ class TeamManage extends Component {
   }
 
   renderSearchForm = () => {
+    const { form: { getFieldDecorator } } = this.props;
     return (
-      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-        <SearchForm
-          labelName="团队ID"
-        >
-          <Input placeholder='请输入团队ID' />
-        </SearchForm>
-        <SearchForm
-          labelName="团队名称"
-        >
-          <Select
-            allowClear
-            placeholder='请输入团队名称'
-            style={{
-              width: '100%'
-            }}
-          >
-            <Option key={1} value={1}>1</Option>
-          </Select>
-        </SearchForm>
-        <SearchForm
-          labelName="团队经理"
-        >
-          <Select
-            allowClear
-            placeholder='请输入团队经理'
-            style={{
-              width: '100%'
-            }}
-          >
-            <Option key={1} value={1}>1</Option>
-          </Select>
-        </SearchForm>
-        <div
-          onClick={() => this.handleResetSearch()}
-          style={{
-            display: 'inline-block'
-          }}
-        >
-          <CustomBtn type='reset' style={{ marginBottom: '16px' }} />
-        </div>
-      </div>
+      <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
+        <Col span={6}>
+          <FormItem {...formLayoutItem1} colon={false} label="团队ID">
+            {getFieldDecorator('name', {
+            })(<Input
+              allowClear
+              placeholder='请输入团队ID'
+            />)}
+          </FormItem>
+        </Col>
+        <Col span={6}>
+          <FormItem {...formLayoutItem1} colon={false} label="团队名称">
+            {getFieldDecorator('projectNumber', {
+            })(<Select
+              allowClear
+              // showSearch
+              style={{
+                width: '100%'
+              }}
+              placeholder="请输入团队名称"
+            />)}
+          </FormItem>
+        </Col>
+        <Col span={6}>
+          <FormItem {...formLayoutItem1} colon={false} label="团队经理">
+            {getFieldDecorator('projectNumber', {
+            })(<Select
+              allowClear
+              // showSearch
+              style={{
+                width: '100%'
+              }}
+              placeholder="请输入团队经理"
+            />)}
+          </FormItem>
+        </Col>
+        <Col span={6}>
+          <FormItem>
+            <CustomBtn
+              // onClick={() => this.handleResetSearch()}
+              style={{
+                display: 'inline-block',
+                marginRight: '5rem'
+              }}
+              type='reset'
+            />
+          </FormItem>
+        </Col>
+      </Row>
     )
   }
 
@@ -112,7 +133,7 @@ class TeamManage extends Component {
             <div>
               <OptButton
                 onClick={
-                  () => this.handleViewModal(true, record)
+                  () => this.handleViewDetail(true, record)
                 }
                 icon='eye'
                 text="查看"
@@ -137,6 +158,7 @@ class TeamManage extends Component {
           roleName: `角色${i}`
         }
         arr.push(a)
+        return true
       })
       return arr
     }
@@ -156,7 +178,8 @@ class TeamManage extends Component {
             />
             <CustomBtn
               onClick={() => this.handleSubmit()}
-              type='save' />
+              type='save'
+            />
           </div>}
       >
         <Row>
@@ -208,7 +231,7 @@ class TeamManage extends Component {
             </FormItem>
           </Col>
         </Row>
-      </Modal >
+      </Modal>
     )
   }
 
@@ -216,7 +239,9 @@ class TeamManage extends Component {
     return (
       <Fragment>
         {this.renderEditModal()}
-        {this.renderSearchForm()}
+        <div className={styles.customSearchForm}>
+          {this.renderSearchForm()}
+        </div>
         <Card>
           <StandardTable
             rowKey={(record, index) => index}

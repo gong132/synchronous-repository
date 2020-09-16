@@ -2,10 +2,10 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'dva'
 import CustomBtn from '@/components/commonUseModule/customBtn'
 import OptButton from "@/components/commonUseModule/optButton";
-import SearchForm from '@/components/commonUseModule/searchForm'
+import { formLayoutItem1 } from '@/utils/constant'
 import editIcon from '@/assets/icon/Button_bj.svg'
 import StandardTable from "@/components/StandardTable";
-import { DefaultPage, TableColumnHelper } from "@/utils/helper";
+import { TableColumnHelper } from "@/utils/helper";
 import {
   Modal,
   Form,
@@ -15,11 +15,10 @@ import {
   Col,
   Checkbox,
   Card,
-  Button
 } from 'antd'
+import styles from './index.less'
 
 const FormItem = Form.Item
-const { Option } = Select
 
 @Form.create()
 @connect(({ userManage, loading }) => ({
@@ -54,48 +53,57 @@ class UserManage extends Component {
   }
 
   renderSearchForm = () => {
+    const { form: { getFieldDecorator } } = this.props;
     return (
-      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-        <SearchForm
-          labelName="搜索人员"
-        >
-          <Input placeholder='请输入姓名或工号' />
-        </SearchForm>
-        <SearchForm
-          labelName="用户角色"
-        >
-          <Select
-            allowClear
-            placeholder='请输入用户角色'
-            style={{
-              width: '100%'
-            }}
-          >
-            <Option key={1} value={1}>1</Option>
-          </Select>
-        </SearchForm>
-        <SearchForm
-          labelName="所属团队"
-        >
-          <Select
-            allowClear
-            placeholder='请输入所属团队'
-            style={{
-              width: '100%'
-            }}
-          >
-            <Option key={1} value={1}>1</Option>
-          </Select>
-        </SearchForm>
-        <div
-          onClick={() => this.handleResetSearch()}
-          style={{
-            display: 'inline-block'
-          }}
-        >
-          <CustomBtn type='reset' style={{ marginBottom: '16px' }} />
-        </div>
-      </div>
+      <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
+        <Col span={6}>
+          <FormItem {...formLayoutItem1} colon={false} label="团队ID">
+            {getFieldDecorator('name', {
+            })(<Input
+              allowClear
+              placeholder='请输入团队ID'
+            />)}
+          </FormItem>
+        </Col>
+        <Col span={6}>
+          <FormItem {...formLayoutItem1} colon={false} label="团队名称">
+            {getFieldDecorator('projectNumber', {
+            })(<Select
+              allowClear
+              // showSearch
+              style={{
+                width: '100%'
+              }}
+              placeholder="请输入团队名称"
+            />)}
+          </FormItem>
+        </Col>
+        <Col span={6}>
+          <FormItem {...formLayoutItem1} colon={false} label="团队经理">
+            {getFieldDecorator('projectNumber', {
+            })(<Select
+              allowClear
+              // showSearch
+              style={{
+                width: '100%'
+              }}
+              placeholder="请输入团队经理"
+            />)}
+          </FormItem>
+        </Col>
+        <Col span={6}>
+          <FormItem>
+            <CustomBtn
+              // onClick={() => this.handleResetSearch()}
+              style={{
+                display: 'inline-block',
+                marginRight: '5rem'
+              }}
+              type='reset'
+            />
+          </FormItem>
+        </Col>
+      </Row>
     )
   }
 
@@ -218,8 +226,10 @@ class UserManage extends Component {
     return (
       <Fragment>
         {this.renderEditModal()}
-        {this.renderSearchForm()}
-        <Button onClick={() => this.handleViewModal(true)}>新建</Button>
+        <div className={styles.customSearchForm}>
+          {this.renderSearchForm()}
+        </div>
+        {/* <Button onClick={() => this.handleViewModal(true)}>新建</Button> */}
         <Card>
           <StandardTable
             rowKey={(record, index) => index}

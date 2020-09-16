@@ -44,6 +44,7 @@ module.exports = {
     'no-plusplus': 0,
     'react/jsx-closing-tag-location': 0,
     'compat/compat': 0,
+    'camelcase': 0
   },
   settings: {
     polyfills: ['fetch', 'promises', 'url'],

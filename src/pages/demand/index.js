@@ -38,33 +38,21 @@ const Index = memo(
       setModalTitle(title);
     };
 
-    const handleFormMenuClick = type => {
-      dispatch({
-        type: 'demand/setData',
-        payload: { type },
-      });
-      if(type === 'list') {
-        this.handleQueryList()
-      } else if(type === 'board') {
-        this.handleQueryBoard()
-      }
-    };
-
     // 启动定时器
     const startTimer = callback => {
-      this.timer = setInterval(() => {
+      window.timer = setInterval(() => {
         callback && callback();
-      }, 100000000000);
+      }, 1000);
     };
 
     // 关闭定时器
     const clearTimer = () => {
-      clearInterval(this.timer);
+      clearInterval(window.timer);
     };
 
     // 查询列表
     const handleQueryList = (params = {}) => {
-      this.props.dispatch({
+      props.dispatch({
         type: 'demand/queryDemand',
         payload: {
           ...DefaultPage,
@@ -75,13 +63,25 @@ const Index = memo(
 
     // 查询看板
     const handleQueryBoard = (params = {}) => {
-      this.props.dispatch({
+      props.dispatch({
         type: 'demand/queryDemandBoard',
         payload: {
           ...DefaultPage,
           ...params,
         },
       });
+    };
+
+    const handleFormMenuClick = type => {
+      dispatch({
+        type: 'demand/setData',
+        payload: { type },
+      });
+      if (type === 'list') {
+        handleQueryList()
+      } else if (type === 'board') {
+        handleQueryBoard()
+      }
     };
 
     const createModalProps = {
@@ -98,7 +98,7 @@ const Index = memo(
         {visibleModal && <CreateDemand {...createModalProps} />}
         <div className="yCenter-between">
           <CustomBtn
-            onClick={() => this.handleViewModal(true, '创建')}
+            onClick={() => handleViewModal(true, '创建')}
             type="create"
             title="创建需求"
           />
@@ -118,13 +118,13 @@ const Index = memo(
               </div>
             </div>
             <CustomBtn
-              onClick={() => this.handleViewModal(true, '创建')}
+              onClick={() => handleViewModal(true, '创建')}
               type="others"
               title="发起OA审批"
               style={{ marginLeft: '16px' }}
             />
             <CustomBtn
-              onClick={() => this.handleViewModal(true, '创建')}
+              onClick={() => handleViewModal(true, '创建')}
               type="others"
               // icon='gzIcon'
               title="我的关注"
@@ -132,8 +132,8 @@ const Index = memo(
             />
           </div>
         </div>
-        { formType === 'list' && <DemandList /> }
-        { formType === 'board' && <DemandBoard /> }
+        { formType === 'list' && <DemandList />}
+        { formType === 'board' && <DemandBoard />}
       </Fragment>
     );
   }),
