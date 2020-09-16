@@ -5,10 +5,11 @@ import StandardTable from '@/components/StandardTable';
 import { DefaultPage, TableColumnHelper } from '@/utils/helper';
 import CustomBtn from '@/components/commonUseModule/customBtn';
 import OptButton from '@/components/commonUseModule/optButton';
-import SearchForm from '@/components/commonUseModule/searchForm';
 import editIcon from '@/assets/icon/Button_bj.svg';
+import { formLayoutItem1 } from '@/utils/constant'
 import { Modal, Form, Input, Select, Card, Checkbox, Row, Col } from 'antd';
 import * as _ from 'lodash';
+import styles from './index.less'
 
 const { Option } = Select;
 const FormItem = Form.Item;
@@ -203,42 +204,50 @@ class SectorManage extends Component {
     const { searchParams } = this.state;
     const { allDept, loadingQueryData } = this.props;
     return (
-      <div style={{ display: 'flex' }}>
-        <SearchForm labelName="集群/板块名称">
-          <Input
-            allowClear
-            value={searchParams.name}
-            onChange={e => this.saveParams(e, 'name')}
-            placeholder="请输入集群/板块名称"
-          />
-        </SearchForm>
-        <SearchForm labelName="所属部门">
-          <Select
-            allowClear
-            value={searchParams.deptInfo}
-            placeholder="请输入所属部门"
-            onChange={val => this.saveParams(val, 'deptInfo')}
-            style={{
-              width: '100%',
-            }}
-          >
-            {!_.isEmpty(allDept) &&
-              allDept.map(d => (
-                <Option key={d.deptId} value={d.deptName}>
-                  {d.deptName}
-                </Option>
-              ))}
-          </Select>
-        </SearchForm>
-        <CustomBtn
-          onClick={() => this.handleResetSearch()}
-          style={{
-            display: 'inline-block',
-          }}
-          loading={loadingQueryData}
-          type="reset"
-        />
-      </div>
+      <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
+        <Col span={8}>
+          <FormItem {...formLayoutItem1} colon={false} label="集群/板块名称">
+            <Input
+              allowClear
+              value={searchParams.name}
+              onChange={e => this.saveParams(e, 'name')}
+              placeholder="请输入集群/板块名称"
+            />
+          </FormItem>
+        </Col>
+        <Col span={8}>
+          <FormItem {...formLayoutItem1} colon={false} label="所属部门">
+            <Select
+              allowClear
+              value={searchParams.deptInfo}
+              placeholder="请输入所属部门"
+              onChange={val => this.saveParams(val, 'deptInfo')}
+              style={{
+                width: '100%',
+              }}
+            >
+              {!_.isEmpty(allDept) &&
+                allDept.map(d => (
+                  <Option key={d.deptId} value={d.deptName}>
+                    {d.deptName}
+                  </Option>
+                ))}
+            </Select>
+          </FormItem>
+        </Col>
+        <Col span={6}>
+          <FormItem>
+            <CustomBtn
+              onClick={() => this.handleResetSearch()}
+              style={{
+                display: 'inline-block',
+              }}
+              loading={loadingQueryData}
+              type="reset"
+            />
+          </FormItem>
+        </Col>
+      </Row>
     );
   };
 
@@ -316,7 +325,7 @@ class SectorManage extends Component {
 
     return (
       <Fragment>
-        <div style={{display:'flex'}}>
+        <div style={{ display: 'flex' }}>
           <CustomBtn
             onClick={() => this.handleViewModal(true, '新建')}
             type="create"
@@ -384,7 +393,7 @@ class SectorManage extends Component {
               </Col>
             </Row>
           </Modal>
-          {this.renderSearchForm()}
+          <div className={styles.customSearchForm}>{this.renderSearchForm()}</div>
           <StandardTable
             rowKey={(r, index) => index}
             columns={this.genColumns()}
