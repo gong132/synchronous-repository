@@ -108,21 +108,61 @@ const Index = memo(
 
     const expandedRowRender = row => {
       if (isEmpty(row.aaa)) return null;
-      const USE_STATUS = [
-        { key: 0, value: '空置中' },
-        { key: 1, value: '已使用' },
-      ];
       const subColumns = [
-        TableColumnHelper.genPlanColumn('orgName', '所属机构'),
-        TableColumnHelper.genPlanColumn('storeyName', '所属楼宇'),
-        TableColumnHelper.genPlanColumn('floorName', '所属楼层'),
-        TableColumnHelper.genPlanColumn('firstOperationTypeName', '规划业态'),
-        TableColumnHelper.genPlanColumn('type', '铺位类型'),
-        TableColumnHelper.genPlanColumn('buildUnitNumber', '铺位号'),
-        TableColumnHelper.genPlanColumn('coveredArea', '建筑面积（㎡）'),
-        TableColumnHelper.genPlanColumn('buildRoomArea', '套内面积（㎡）'),
-        TableColumnHelper.genSelectColumn('status', '使用状态', USE_STATUS),
-        TableColumnHelper.genDateTimeColumn('auditTime', '生效时间'),
+        {
+          title: 'story编号',
+          key: 'demandNumber',
+          sorter: true,
+          render: rows => {
+            if (isEmpty(rows.demandNumber, true)) return '';
+            return (
+              <Tooltip placement="top" title={rows.demandNumber}>
+                <span
+                  style={{ color: '#2E5BFF' }}
+                  onClick={() => {
+                    props.history.push({
+                      pathname: '/contract-budget/budget/detail',
+                      query: {
+                        id: rows.id,
+                      },
+                    });
+                  }}
+                >
+                  {rows.demandNumber.length > 10
+                    ? `${rows.demandNumber.substring(0, 10)}...`
+                    : rows.demandNumber.substring(0, 10)}
+                </span>
+              </Tooltip>
+            );
+          },
+        },
+        TableColumnHelper.genPlanColumn('storyName', '标题'),
+        TableColumnHelper.genPlanColumn('floorName', '状态'),
+        TableColumnHelper.genPlanColumn('firstOperationTypeName', '优先级'),
+        TableColumnHelper.genPlanColumn('type', 'story类型'),
+        TableColumnHelper.genPlanColumn('buildUnitNumber', 'IT评估上线时间'),
+        TableColumnHelper.genPlanColumn('coveredArea', '开发预计工作量'),
+        TableColumnHelper.genPlanColumn('buildRoomArea', '测试预计工作量'),
+        TableColumnHelper.genPlanColumn('buildRoomArea1', '经办人'),
+        TableColumnHelper.genPlanColumn('buildRoomArea2', '创建人'),
+        TableColumnHelper.genPlanColumn('buildRoomArea3', '创建时间'),
+        {
+          title: '操作',
+          width: 200,
+          align: 'center',
+          render: () => (
+            <Fragment>
+              <OptButton
+                img={edit}
+                text="编辑"
+                onClick={() => {
+                  // setAddModalVisible(true);
+                  // setSelectedRows(rows)
+                }}
+              />
+            </Fragment>
+          ),
+        },
       ];
       return (
         <StandardTable rowKey="id" columns={subColumns} data={row.buildUnits} pagination={false} />

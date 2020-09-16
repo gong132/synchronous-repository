@@ -1,4 +1,4 @@
-import React, { Fragment, memo, useState } from 'react';
+import React, { Fragment, memo, useEffect, useState } from 'react';
 import { connect } from 'dva';
 import { withRouter } from 'umi/index';
 import { DefaultPage } from '@/utils/helper';
@@ -11,18 +11,17 @@ import CustomBtn from '@/components/commonUseModule/customBtn';
 // } from 'antd'
 
 import CreateDemand from './components/createModal';
-import DemandBoard from './demandBoard'
-import DemandList from './demandList/index'
-import styles from './index.less'
+import DemandBoard from './demandBoard';
+import DemandList from './demandList/index';
+import styles from './index.less';
 
 // import gzIcon from '@/assets/icon/Button_gz.svg'
 
-const demandroutes = {
+const demandRoutes = {
   '/demand/myDemand': '我的需求',
   '/demand/generalDemand': '一般需求',
   '/demand/projectDemand': '项目',
 };
-console.log(demandroutes);
 const Index = memo(
   withRouter(props => {
     const {
@@ -31,23 +30,12 @@ const Index = memo(
     } = props;
     const [visibleModal, setVisibleModal] = useState(false);
     const [modalTitle, setModalTitle] = useState('创建需求');
+
     // const [searchMore, setSearchMore] = useState(false)
 
     const handleViewModal = (bool, title) => {
       setVisibleModal(bool);
       setModalTitle(title);
-    };
-
-    const handleFormMenuClick = type => {
-      dispatch({
-        type: 'demand/setData',
-        payload: { type },
-      });
-      if(type === 'list') {
-        this.handleQueryList()
-      } else if(type === 'board') {
-        this.handleQueryBoard()
-      }
     };
 
     // 启动定时器
@@ -62,9 +50,9 @@ const Index = memo(
       clearInterval(this.timer);
     };
 
-    // 查询列表
+    // 查询我的需求列表
     const handleQueryList = (params = {}) => {
-      this.props.dispatch({
+      dispatch({
         type: 'demand/queryDemand',
         payload: {
           ...DefaultPage,
@@ -72,10 +60,29 @@ const Index = memo(
         },
       });
     };
+    // 查询项目,需求列表
+    const handleQueryDemandProject = params => {
+      dispatch({
+        type: 'demand/queryDemandProject',
+        payload: {
+          ...DefaultPage,
+          ...params,
+        },
+      });
+    };
+
+    // 根据路由查询不同接口
+    const handleQueryDemandList = params => {
+      if (demandRoutes[props.location.pathname] === '我的需求') {
+        handleQueryList(params);
+        return;
+      }
+      handleQueryDemandProject(params);
+    };
 
     // 查询看板
     const handleQueryBoard = (params = {}) => {
-      this.props.dispatch({
+      dispatch({
         type: 'demand/queryDemandBoard',
         payload: {
           ...DefaultPage,
@@ -84,13 +91,33 @@ const Index = memo(
       });
     };
 
+    const handleFormMenuClick = type => {
+      dispatch({
+        type: 'demand/setData',
+        payload: { formType: type },
+      });
+      if (type === 'list') {
+        handleQueryDemandList();
+      } else if (type === 'board') {
+        handleQueryBoard();
+      }
+    };
+
+    useEffect(() => {
+      if (formType === 'list') {
+        handleQueryDemandList();
+      } else if (formType === 'board') {
+        handleQueryBoard();
+      }
+    }, []);
+
     const createModalProps = {
       visibleModal,
       modalTitle,
       startTimer,
       clearTimer,
       handleViewModal,
-      handleQueryList,
+      handleQueryDemandList,
       handleQueryBoard,
     };
     return (
@@ -132,8 +159,8 @@ const Index = memo(
             />
           </div>
         </div>
-        { formType === 'list' && <DemandList /> }
-        { formType === 'board' && <DemandBoard /> }
+        {formType === 'list' && <DemandList />}
+        {formType === 'board' && <DemandBoard />}
       </Fragment>
     );
   }),
@@ -141,5 +168,5 @@ const Index = memo(
 export default connect(({ global, demand, loading }) => ({
   global,
   demand,
-  loading: loading.models.demand
+  loading: loading.models.demand,
 }))(Index);
