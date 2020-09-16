@@ -1,13 +1,12 @@
-
 import {
   addDemand,
-  updateDemand,
+  // updateDemand,
   queryDemand,
-  queryDemandDetail,
+  // queryDemandDetail,
   queryDemandProject,
   queryDemandBoard,
-  queryProjectDemandBoard,
-} from '@/services/demand/demand'
+  // queryProjectDemandBoard,
+} from '@/services/demand/demand';
 import { PagerHelper } from '@/utils/helper';
 import { message } from 'antd';
 
@@ -16,7 +15,7 @@ const Demand = {
   state: {
     formType: 'list',
     demandList: PagerHelper.genListState(),
-    demandBoard: []
+    demandBoard: [],
   },
   effects: {
     *addDemand({ payload }, { call }) {
@@ -28,11 +27,11 @@ const Demand = {
       return true;
     },
 
-    *queryDemand({payload}, {call, put}) {
-      const { code, data, msg } = yield call(queryDemand, payload)
+    *queryDemand({ payload }, { call, put }) {
+      const { code, data, msg } = yield call(queryDemand, payload);
       if (code !== 200) {
         message.error(msg);
-        return
+        return;
       }
       const { records, ...others } = data;
       yield put({
@@ -40,17 +39,34 @@ const Demand = {
         payload: {
           filter: payload,
           data: records,
-          ...others
+          ...others,
         },
-      })
+      });
     },
-
-    *queryDemandBoard({payload}, {call, put}) {
-      const { code, data, msg } = yield call(queryDemandBoard, payload)
+    *queryDemandProject({ payload }, { call, put }) {
+      const { code, data, msg } = yield call(queryDemandProject, payload);
       if (code !== 200) {
         message.error(msg);
-        return
+        return;
       }
+      const { records, ...others } = data;
+      yield put({
+        type: 'setDemandData',
+        payload: {
+          filter: payload,
+          data: records,
+          ...others,
+        },
+      });
+    },
+
+    *queryDemandBoard({ payload }, { call, put }) {
+      const { code, data, msg } = yield call(queryDemandBoard, payload);
+      if (code !== 200) {
+        message.error(msg);
+        return;
+      }
+      console.log(data);
       yield put({
         type: 'setData',
         // payload: {
@@ -58,7 +74,7 @@ const Demand = {
         //   data: records,
         //   ...others
         // },
-      })
+      });
     },
   },
   reducers: {
@@ -66,7 +82,7 @@ const Demand = {
       return {
         ...state,
         ...payload,
-      }
+      };
     },
     setDemandData(state, action) {
       return {
@@ -74,7 +90,7 @@ const Demand = {
         contractList: PagerHelper.resolveListState(action.payload),
       };
     },
-  }
-}
+  },
+};
 
-export default Demand
+export default Demand;
