@@ -40,14 +40,14 @@ const Index = memo(
 
     // 启动定时器
     const startTimer = callback => {
-      this.timer = setInterval(() => {
+      window.timer = setInterval(() => {
         callback && callback();
-      }, 100000000000);
+      }, 1000);
     };
 
     // 关闭定时器
     const clearTimer = () => {
-      clearInterval(this.timer);
+      clearInterval(window.timer);
     };
 
     // 查询我的需求列表
@@ -124,11 +124,7 @@ const Index = memo(
       <Fragment>
         {visibleModal && <CreateDemand {...createModalProps} />}
         <div className="yCenter-between">
-          <CustomBtn
-            onClick={() => this.handleViewModal(true, '创建')}
-            type="create"
-            title="创建需求"
-          />
+          <CustomBtn onClick={() => handleViewModal(true, '创建')} type="create" title="创建需求" />
           <div className="xCenter">
             <div className={styles.switch}>
               <div
@@ -145,13 +141,13 @@ const Index = memo(
               </div>
             </div>
             <CustomBtn
-              onClick={() => this.handleViewModal(true, '创建')}
+              onClick={() => handleViewModal(true, '创建')}
               type="others"
               title="发起OA审批"
               style={{ marginLeft: '16px' }}
             />
             <CustomBtn
-              onClick={() => this.handleViewModal(true, '创建')}
+              onClick={() => handleViewModal(true, '创建')}
               type="others"
               // icon='gzIcon'
               title="我的关注"

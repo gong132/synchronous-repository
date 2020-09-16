@@ -47,7 +47,7 @@ const CustomBtn = props => {
           type="default"
           loading={loading}
         >
-          <span>重置</span>
+          重置
         </Button>
       )}
       {type === 'export' && (
@@ -56,14 +56,12 @@ const CustomBtn = props => {
           <span>导出</span>
         </div>
       )}
-      {
-        type === 'others' && (
-          <div className={styles.otherBtn} style={style} onClick={onClick}>
-            <Icon type={icon} component={icon} />
-            <span>{title || '按钮名未定义'}</span>
-          </div>
-        )
-      }
+      {type === 'others' && (
+        <div className={styles.otherBtn} style={style} onClick={onClick}>
+          <Icon type={icon} component={icon} />
+          <span>{title || '按钮名未定义'}</span>
+        </div>
+      )}
     </div>
   );
 };
