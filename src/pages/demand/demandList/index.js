@@ -2,7 +2,7 @@ import React, {Fragment, memo, useEffect, useState} from 'react';
 import { connect } from 'dva';
 import { withRouter } from 'umi/index';
 import { isEmpty } from '@/utils/lang';
-import {Divider, Tooltip} from 'antd';
+import {Divider, message, Tooltip} from 'antd';
 import { DefaultPage, TableColumnHelper } from '@/utils/helper';
 // import {MENU_ACTIONS} from "@/utils/constant";
 import OptButton from '@/components/commonUseModule/optButton';
@@ -12,6 +12,8 @@ import StandardTable from '@/components/StandardTable';
 import AddStory from "../components/story/addStory"
 
 import styles from "../index.less"
+
+import deleteIcon from "@/assets/icon/Button_del.svg"
 
 const demandRoutes = {
   '/demand/myDemand': '我的需求',
@@ -37,6 +39,7 @@ const Index = memo(
         },
       });
     };
+
     const handleQueryDemandProject = params => {
       dispatch({
         type: 'demand/queryDemandProject',
@@ -54,6 +57,21 @@ const Index = memo(
       }
       handleQueryDemandProject(params);
     };
+
+    const handleUpdateStory = ids => {
+      dispatch({
+        type: "demand/updateStory",
+        payload: {
+          id: ids,
+          isDelete: 1,
+        },
+      }).then(sure => {
+        if (!sure) return;
+        message.success("删除成功" )
+        handleQueryDemandList()
+      })
+    };
+
     useEffect(() => {
       handleQueryDemandList();
     }, []);
@@ -185,6 +203,12 @@ const Index = memo(
                   // setSelectedRows(rows)
                 }}
               />
+              <Divider type="vertical" />
+              <OptButton
+                img={deleteIcon}
+                text="删除"
+                onClick={() => handleUpdateStory(rows.id)}
+              />
             </Fragment>
           ),
         },
@@ -225,7 +249,7 @@ const Index = memo(
           introducerId: "提出人id",
           storyList: [
             {
-              id: '1',
+              id: 7,
               number: "story编号",
               title: "story标题",
               status: '1',
