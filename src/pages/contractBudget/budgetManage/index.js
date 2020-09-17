@@ -17,7 +17,6 @@ import {
   Card,
 } from 'antd';
 import { isEmpty } from '@/utils/lang';
-import { config } from '@/utils/config';
 import { formLayoutItem, formLayoutItem2, MENU_ACTIONS } from '@/utils/constant';
 import { BUDGET_TYPE, PROJECT_TYPE } from '@/pages/contractBudget/util/constant';
 import OptButton from '@/components/commonUseModule/optButton';
@@ -27,7 +26,7 @@ import bottomIcon from '@/assets/icon/drop_down.svg';
 
 import AddForm from './addForm';
 import styles from '../index.less';
-import { downLoad } from '@/utils/utils';
+import { exportExcel } from '@/utils/utils';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -168,8 +167,8 @@ const Index = props => {
     const params = {
       ...formValues,
     };
-    const exportUrl = `${config.downloadUrl}/budget/export`;
-    downLoad(exportUrl, '预算管理表.xls', params);
+    const exportUrl = '/budget/export';
+    exportExcel(params, exportUrl, 'post', '预算管理表.xls');
   };
 
   const handleQueryClusterList = () => {

@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 export interface IGCustomBtnProps {
   type: 'create' | 'cancel' | 'save' | 'edit' | 'reset' | 'others';
   style?: React.CSSProperties;

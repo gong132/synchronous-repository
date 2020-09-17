@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 export interface IGOptButtonProps {
   style?: React.CSSProperties;
   text: React.ReactNode;
