@@ -4,8 +4,9 @@ import { router } from 'umi';
 import StandardTable from '@/components/StandardTable';
 import { DefaultPage, TableColumnHelper } from '@/utils/helper';
 import CustomBtn from '@/components/commonUseModule/customBtn';
-import OptButton from '@/components/commonUseModule/optButton';
-import editIcon from '@/assets/icon/Button_bj.svg';
+import ListOptBtn from '@/components/commonUseModule/listOptBtn'
+import editIcon from '@/assets/icon/cz_bj.svg';
+import eyeIcon from '@/assets/icon/cz_ck.svg'
 import { formLayoutItem1 } from '@/utils/constant'
 import { Modal, Form, Input, Select, Card, Checkbox, Row, Col } from 'antd';
 import * as _ from 'lodash';
@@ -294,15 +295,27 @@ class SectorManage extends Component {
         render: (text, record) => {
           return (
             <div>
-              <OptButton
-                style={{
-                  marginRight: '12px',
-                }}
+              <ListOptBtn
+                title="编辑"
                 onClick={() => this.handleViewModal(true, '编辑', record)}
-                img={editIcon}
-                text="编辑"
+                style={{
+                  fontSize: '20px',
+                  marginRight: '16px',
+                  position: 'relative',
+                  top:'1px'
+                }}
+                icon={editIcon}
               />
-              <OptButton icon="eye" onClick={() => this.handleViewDetail(record)} text="查看" />
+              <ListOptBtn
+                title="查看"
+                onClick={() => this.handleViewDetail(record)}
+                style={{
+                  fontSize: '24px',
+                  position: 'relative',
+                  top: '5px'
+                }}
+                icon={eyeIcon}
+              />
             </div>
           );
         },
@@ -329,6 +342,7 @@ class SectorManage extends Component {
           <CustomBtn
             onClick={() => this.handleViewModal(true, '新建')}
             type="create"
+            icon='plus'
           />
         </div>
         <Card>

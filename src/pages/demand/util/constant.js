@@ -8,6 +8,7 @@ const boardTitle = [
     boardId: '0',
     sub:[
       {
+        id: '1',
         demandNumber: 'D20200915-001',
         demandTitle: '需求001',
         createUser: '胖胖1号',
@@ -15,6 +16,7 @@ const boardTitle = [
         demandType:'p'
       },
       {
+        id: '2',
         demandNumber: 'D20200915-002',
         demandTitle: '需求002',
         createUser: '胖胖2号',
@@ -22,6 +24,7 @@ const boardTitle = [
         demandType:'u'
       },
       {
+        id: '3',
         demandNumber: 'D20200915-003',
         demandTitle: '需求003',
         createUser: '胖胖3号',
@@ -29,6 +32,7 @@ const boardTitle = [
         demandType:'p'
       },
       {
+        id: '4',
         demandNumber: 'D20200915-004',
         demandTitle: '需求004',
         createUser: '胖胖4号',
@@ -71,6 +75,18 @@ const boardTitle = [
   },
 ];
 
+// 详情页流程
+const flowStatus = [
+  { label: '暂存中', value: '0' },
+  { label: '待指派', value: '1' },
+  { label: '待受理', value: '2' },
+  { label: '讨论中', value: '3' },
+  { label: '待拆分', value: '4' },
+  { label: 'Story技术评估', value: '5' },
+  { label: '开发中', value: '6' },
+  { label: '上线', value: '7' },
+]
+
 // 需求类型
 const demandTypeArr = [
   { key: 'p', val: '项目需求（需要OA技术评审）' },
@@ -108,4 +124,5 @@ export {
   demandPriorityObj,
   isOrNot,
   defaultDescription,
+  flowStatus,
 };

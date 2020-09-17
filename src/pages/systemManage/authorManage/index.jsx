@@ -164,6 +164,7 @@ const AuthorManage = props => {
       <CustomBtn
         onClick={() => setAddModalVisible(true)}
         type='create'
+        icon='plus'
       />
       <div className={styles.tableList}>
         {/* <div className={styles.tableListForm}> */}

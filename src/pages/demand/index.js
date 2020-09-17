@@ -1,6 +1,6 @@
 import React, { Fragment, memo, useEffect, useState } from 'react';
 import { connect } from 'dva';
-import { withRouter } from 'umi/index';
+import { router, withRouter } from 'umi'
 import { DefaultPage } from '@/utils/helper';
 // import _ from 'lodash'
 import CustomBtn from '@/components/commonUseModule/customBtn';
@@ -111,6 +111,13 @@ const Index = memo(
       }
     }, []);
 
+    // 查看详情
+    const handleViewDetail = () => {
+      router.push({
+        pathname: '/demand/myDemand/detail',
+      });
+    };
+
     const createModalProps = {
       visibleModal,
       modalTitle,
@@ -124,7 +131,9 @@ const Index = memo(
       <Fragment>
         {visibleModal && <CreateDemand {...createModalProps} />}
         <div className="yCenter-between">
-          <CustomBtn onClick={() => handleViewModal(true, '创建')} type="create" title="创建需求" />
+          <CustomBtn onClick={() => handleViewModal(true, '创建')} icon='plus' type="create" title="创建需求" />
+          <CustomBtn onClick={handleViewDetail} type='create' title='详情' />
+
           <div className="xCenter">
             <div className={styles.switch}>
               <div

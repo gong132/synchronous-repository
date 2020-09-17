@@ -811,7 +811,6 @@ class Detail extends PureComponent {
             )}
           </Spin>
         </GlobalSandBox>
-        <div style={{ height: '16px' }} />
         <Spin spinning={loadingQueryInfo}>
           <GlobalSandBox
             img={payIcon}
@@ -825,7 +824,6 @@ class Detail extends PureComponent {
             <Table columns={payColumns} dataSource={payRecords} pagination={false} />
           </GlobalSandBox>
         </Spin>
-        <div style={{ height: '16px' }} />
         <GlobalSandBox img={budget_log} title="操作日志">
           <StandardTable
             rowKey={(record, index) => index}

@@ -1,10 +1,11 @@
 import React, { Component, Fragment } from 'react'
 import { boardTitle } from '../util/constant'
+import { Empty } from 'antd'
 // import InfiniteScroll from 'react-infinite-scroller'
 import {
   DragDropContext,
-  // Droppable,
-  // Draggable,
+  Droppable,
+  Draggable,
 } from "react-beautiful-dnd";
 import _ from 'lodash';
 // import moment from 'moment';
@@ -69,7 +70,7 @@ class DemandBoard extends Component {
                   {console.log(index)}
                   {droppableItem.name || '--'}
                 </div>
-                {/* <div
+                <div
                   className={styles.spectaculars__set}
                   style={{ height: ciHeight }}
                 >
@@ -86,109 +87,42 @@ class DemandBoard extends Component {
                           )}
                       >
                         <div style={{ height: ciHeight, overflowY: 'auto' }}>
-                          {_.isArray(droppableItem.sub) && !_.isEmpty(droppableItem.sub) ? droppableItem.sub.map((item, index) => (
+                          {_.isArray(droppableItem.sub) && !_.isEmpty(droppableItem.sub) ? droppableItem.sub.map((item, i) => (
                             <Draggable
                               key={item.id}
                               draggableId={String(item.id)}
-                              index={index}
+                              index={i}
                             >
-                              {(provided, snapshot) => (
+                              {(providedd, snapshott) => (
                                 <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
+                                  ref={providedd.innerRef}
+                                  {...providedd.draggableProps}
+                                  {...providedd.dragHandleProps}
                                   style={getItemStyle(
-                                    snapshot.isDragging,
-                                    provided.draggableProps.style
+                                    snapshott.isDragging,
+                                    providedd.draggableProps.style
                                   )}
                                 >
-                                  <div
-                                    className={this.handleRenderCardStyle(item.overTime)}
-                                    onClick={() => this.goToStoryDetail(item)}
-                                  >
-
-                                    {item.taskVOList.length > 0
-                                      ? <Fragment>
-                                        <div className={styles.unusualBox}>
-                                          <Popover
-                                            content={
-                                              this.renderUnusualContent(item.taskVOList, true)
-                                            }
-                                            trigger='hover'
-                                          >
-                                            <div className={styles.unusualBox__tooTip}>
-                                              异常单
-                                                      <span style={{ display: 'inline-block', marginLeft: 8 }}>
-                                                ( {this.renderUnusualContent(item.taskVOList)} )
-                                                      </span>
-                                            </div>
-                                          </Popover>
-                                          <div className={styles.unusualBox__items__content_id}>
-                                            {item.storyNo}
-                                          </div>
-                                          {droppaleItem.statusCode !== 11 && <div
-                                            onClick={(e) => this.stopPropogation(e)}
-                                            className={styles.unusuallittleMenu}
-                                          >
-                                            <Dropdown
-                                              overlay={this.renderBoardMenu(item, item.collectId)}
-                                              trigger='click'
-                                              onClick={(e) => this.stopPropogation(e)}
-                                            >
-                                              <Icon type='menu'
-                                                onClick={(e) => this.stopPropogation(e)}
-                                              />
-                                            </Dropdown>
-                                          </div>}
-                                          <div className={styles.unusualBox__items__content_flex}>
-                                            {
-                                              Boolean(item.collectId) && <Icon className={styles.littleStar} type='star' theme='filled' />
-                                            }
-                                            <div title={item.storyTitle} className={styles.unusualBox__items__content_title}>
-                                              {item.storyTitle ? item.storyTitle.length > 15 ? `${item.storyTitle.substring(0, 15)}...` : item.storyTitle : '--'}
-                                            </div>
-                                          </div>
-                                          <div className={secondFlexWrapper}>
-                                            <div className={styles.unusualBox__items__content_exhibitor}>
-                                              {item.cUserName || '--'} 于 {moment(item.createTime).format('YYYY-MM-DD') || '--'} 提交
-                                                          </div>
-                                          </div>
-                                        </div>
-                                      </Fragment>
-                                      : <Fragment>
-                                        <div
-                                          className={styles.spectaculars__items__content}>
-                                          <div className={styles.spectaculars__items__content_id}>
-                                            {item.storyNo}
-                                          </div>
-                                          {droppaleItem.statusCode !== 11 && <div
-                                            className={styles.littleMenu}
-                                            onClick={(e) => this.stopPropogation(e)}
-                                          >
-                                            <Dropdown
-                                              overlay={this.renderBoardMenu(item, item.collectId)}
-                                              trigger='click'
-                                            >
-                                              <Icon type='menu'
-                                                onClick={(e) => this.stopPropogation(e)}
-                                              />
-                                            </Dropdown>
-                                          </div>}
-                                          <div className={styles.spectaculars__items__content_flex}>
-                                            {
-                                              Boolean(item.collectId) && <Icon className={styles.littleStar} type='star' theme='filled' />
-                                            }
-                                            <div title={item.storyTitle} className={styles.spectaculars__items__content_title}>
-                                              {item.storyTitle ? item.storyTitle.length > 15 ? `${item.storyTitle.substring(0, 15)}...` : item.storyTitle : '--'}
-                                            </div>
-                                          </div>
-                                          <div className={secondFlexWrapper}>
-                                            <div className={styles.spectaculars__items__content_exhibitor}>
-                                              {item.cUserName || '--'} 于 {moment(item.createTime).format('YYYY-MM-DD') || '--'} 提交
-                                                        </div>
-                                          </div>
-                                        </div>
-                                      </Fragment>}
+                                  <div className={styles.dragBoard}>
+                                    <div className={styles.dragBoard_firstLine}>
+                                      <div className={styles.dragBoard_firstLine_no}>
+                                        {item.demandNumber}
+                                      </div>
+                                      {/* <div className={styles.dragBoard_firstLine_menu}></div> */}
+                                    </div>
+                                    <div className={styles.dragBoard_secondLine}>
+                                      {item.demandTitle}
+                                    </div>
+                                    <div className={styles.dragBoard_thirdLine}>
+                                      <div className={styles.dragBoard_thirdLine_time}>
+                                        {`${item.createUser}于${item.createTime}提交`}
+                                      </div>
+                                      <div className={styles.dragBoard_thirdLine_type}>
+                                        {item.demandType === 'p'
+                                          ? '项目'
+                                          : '一般需求'}
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
                               )}
@@ -199,7 +133,7 @@ class DemandBoard extends Component {
                       </div>
                     )}
                   </Droppable>
-                </div> */}
+                </div>
               </Fragment>
             </div>
           ))}
