@@ -51,14 +51,14 @@ export async function fetchDeptListByCluster(params) {
 }
 // 集团  暂用
 export async function fetchGroupList(params) {
-  return request('/temp/group', {
+  return request('/group/search', {
     method: 'get',
     params,
   });
 }
-// 部门  暂用
+// 部门
 export async function fetchDeptList(params) {
-  return request('/temp/dept', {
+  return request('/dept/search', {
     method: 'get',
     params,
   });
@@ -66,6 +66,13 @@ export async function fetchDeptList(params) {
 // 根据部门查询集群或者组
 export async function fetchGroupByDept(params) {
   return request('/cluster/byDept', {
+    method: 'get',
+    params,
+  });
+}
+// 查找团队
+export async function fetchAllTeam(params) {
+  return request('/group/search', {
     method: 'get',
     params,
   });

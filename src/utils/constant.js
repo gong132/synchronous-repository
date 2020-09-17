@@ -1,31 +1,35 @@
 const formLayoutItem = {
   labelCol: { span: 6 },
   wrapperCol: { span: 18 },
-}
+};
 const formLayoutItemAddDouble = {
   labelCol: { span: 8 },
   wrapperCol: { span: 16 },
-}
+};
 const formLayoutItem1 = {
   labelCol: { span: 10 },
   wrapperCol: { span: 14 },
-}
+};
+export const formLayoutItem2 = {
+  labelCol: { span: 24 },
+  wrapperCol: { span: 24 },
+};
 const formLayoutItemAddEdit = {
   labelCol: { span: 4 },
   wrapperCol: { span: 20 },
-}
+};
 const formLayout = {
   labelCol: {
-    span: 8
+    span: 8,
   },
   wrapperCol: {
-    span: 12
-  }
-}
+    span: 12,
+  },
+};
 export const formLayoutMenuItem = {
   labelCol: { span: 4 },
   wrapperCol: { span: 18 },
-}
+};
 
 const searchItemLayout = {
   labelCol: {
@@ -52,12 +56,12 @@ export {
   formLayout,
   searchItemLayout,
   formLayoutItemAddDouble,
-  formLayoutItemAddEdit
- }
+  formLayoutItemAddEdit,
+};
 
 export const COLOR_TYPY = {
-  activeColor: '#FF9716'
-}
+  activeColor: '#FF9716',
+};
 // 登陆入口
 export const LOGIN_ENTRY_TYPE = {
   BOSS: 'BOSS', // 运营管理
@@ -72,9 +76,9 @@ export const MENU_ITEM_TYPE = {
   ACTION: 2, // 功能
 };
 export const MENU_ITEM = [
-  { key: 1, value: '页面'},
-  { key: 2, value: '按钮'},
-  ];
+  { key: 1, value: '页面' },
+  { key: 2, value: '按钮' },
+];
 
 export const MENU_ACTIONS = {
   ADD: 'add', // 新增
@@ -94,24 +98,32 @@ export const MENU_ACTIONS = {
   BACK: 'back', // 返回
 };
 
-const imgTypes = ['JPG', 'JPEG', 'PNG', 'BMP']
-const fileTypes = ['TXT', 'XLS', 'EXCEL', 'DOC', 'XLSX', 'DOCX', 'PPT', 'PPTX', 'VSD', 'CVS', 'PDF']
+const imgTypes = ['JPG', 'JPEG', 'PNG', 'BMP'];
+const fileTypes = [
+  'TXT',
+  'XLS',
+  'EXCEL',
+  'DOC',
+  'XLSX',
+  'DOCX',
+  'PPT',
+  'PPTX',
+  'VSD',
+  'CVS',
+  'PDF',
+];
 
-const judgeFileType = (file={}, fileArr = []) => {
-  const {name } = file
-  const arr = name ? name.split('.') : []
-  let bool = false
-  let suffix = ''
-  if(arr.length> 0) {
-    suffix=arr[arr.length-1].toUpperCase()
+const judgeFileType = (file = {}, fileArr = []) => {
+  const { name } = file;
+  const arr = name ? name.split('.') : [];
+  let bool = false;
+  let suffix = '';
+  if (arr.length > 0) {
+    suffix = arr[arr.length - 1].toUpperCase();
   }
-  if(fileArr.indexOf(suffix) < 0) {
-    bool = true
+  if (fileArr.indexOf(suffix) < 0) {
+    bool = true;
   }
-  return bool
-}
-export {
-  imgTypes,
-  fileTypes,
-  judgeFileType,
-}
+  return bool;
+};
+export { imgTypes, fileTypes, judgeFileType };

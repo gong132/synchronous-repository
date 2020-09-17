@@ -1,29 +1,45 @@
-import React, {Fragment, useEffect, useState} from "react";
-import { connect } from "dva"
-import classNames from "classnames";
-import {DefaultPage, TableColumnHelper} from "@/utils/helper";
-import StandardTable from "@/components/StandardTable";
-import {Button, Col, Form, Input, Popover, Row, Select, Tooltip, DatePicker, Icon, Card} from "antd";
-import {isEmpty} from "@/utils/lang";
-import { config } from "@/utils/config";
-import {formLayoutItem, formLayoutItem1, MENU_ACTIONS} from "@/utils/constant";
-import {BUDGET_TYPE, PROJECT_TYPE} from "@/pages/contractBudget/util/constant";
-import OptButton from "@/components/commonUseModule/optButton";
-import edit from "@/assets/icon/Button_bj.svg"
-import upIcon from "@/assets/icon/Pull_up.svg"
-import bottomIcon from "@/assets/icon/drop_down.svg"
+import React, { Fragment, useEffect, useState } from 'react';
+import { connect } from 'dva';
+import classNames from 'classnames';
+import { DefaultPage, TableColumnHelper } from '@/utils/helper';
+import StandardTable from '@/components/StandardTable';
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  Popover,
+  Row,
+  Select,
+  Tooltip,
+  DatePicker,
+  Icon,
+  Card,
+} from 'antd';
+import { isEmpty } from '@/utils/lang';
+import { config } from '@/utils/config';
+import { formLayoutItem, formLayoutItem2, MENU_ACTIONS } from '@/utils/constant';
+import { BUDGET_TYPE, PROJECT_TYPE } from '@/pages/contractBudget/util/constant';
+import OptButton from '@/components/commonUseModule/optButton';
+import edit from '@/assets/icon/Button_bj.svg';
+import upIcon from '@/assets/icon/Pull_up.svg';
+import bottomIcon from '@/assets/icon/drop_down.svg';
 
-import AddForm from "./addForm"
-import styles from "../index.less";
-import { downLoad } from "@/utils/utils";
+import AddForm from './addForm';
+import styles from '../index.less';
+import { downLoad } from '@/utils/utils';
 
 const FormItem = Form.Item;
 const { Option } = Select;
 
+let timeout;
 const Index = props => {
-  const { dispatch, loading, form,
+  const {
+    dispatch,
+    loading,
+    form,
     global: { authActions },
-    budgetManage:{ budgetList },
+    budgetManage: { budgetList },
   } = props;
 
   // 查询更多
@@ -32,51 +48,56 @@ const Index = props => {
   const [addModalVisible, setAddModalVisible] = useState(false);
   // 选中行
   const [selectedRows, setSelectedRows] = useState({});
+  const [teamList, setTeamList] = useState([]);
+  const [allDeptList, setAllDeptList] = useState([]);
 
   const handleQueryBudgetData = params => {
     dispatch({
-      type: "budgetManage/fetchBudgetData",
+      type: 'budgetManage/fetchBudgetData',
       payload: {
         ...DefaultPage,
         ...params,
-        id: 1,
-      }
-    })
+      },
+    });
   };
 
   const columns = [
     {
-      title: "预算编号",
-      key: "number",
+      title: '预算编号',
+      key: 'number',
       sorter: true,
       render: rows => {
-        if (isEmpty(rows.number, true)) return "";
+        if (isEmpty(rows.number, true)) return '';
         return (
           <Tooltip placement="top" title={rows.number}>
             <span
-              style={{ color: "#2E5BFF" }}
+              style={{ color: '#2E5BFF' }}
               onClick={() => {
                 props.history.push({
-                  pathname: "/contract-budget/budget/detail",
+                  pathname: '/contract-budget/budget/detail',
                   query: {
                     id: rows.id,
-                  }
-                })
+                  },
+                });
               }}
             >
-              { rows.number.length > 10 ? `${rows.number.substring(0, 10)}...` : rows.number.substring(0, 10) }
+              {rows.number.length > 10
+                ? `${rows.number.substring(0, 10)}...`
+                : rows.number.substring(0, 10)}
             </span>
           </Tooltip>
-        )
+        );
       },
     },
     TableColumnHelper.genSelectColumn('type', '项目类型', PROJECT_TYPE, { sorter: true }),
     TableColumnHelper.genLangColumn('name', '預算名称', { sorter: true }, 4),
     TableColumnHelper.genPlanColumn('userName', '录入人', { sorter: true }),
-    TableColumnHelper.genDateTimeColumn('createTime', '录入时间', "YYYY-MM-DD", { sorter: true }),
+    TableColumnHelper.genDateTimeColumn('createTime', '录入时间', 'YYYY-MM-DD', { sorter: true }),
     TableColumnHelper.genPlanColumn('deptName', '需求部门', { sorter: true }),
     TableColumnHelper.genLangColumn('clusterName', '集群或板块', { sorter: true }, 4),
-    TableColumnHelper.genDateTimeColumn('expectSetTime', '预计立项时间', "YYYY-MM-DD", { sorter: true }),
+    TableColumnHelper.genDateTimeColumn('expectSetTime', '预计立项时间', 'YYYY-MM-DD', {
+      sorter: true,
+    }),
     TableColumnHelper.genMoneyColumn('expectTotalAmount', '预算总金额', { sorter: true }),
     TableColumnHelper.genMoneyColumn('hardwareExpectAmount', '硬件预算金额', { sorter: true }),
     {
@@ -85,39 +106,35 @@ const Index = props => {
       align: 'center',
       render: rows => (
         <Fragment>
-          {
-            authActions.includes(MENU_ACTIONS.EDIT) && (
-              <OptButton
-                img={edit}
-                text="编辑"
-                onClick={() => {
-                  setAddModalVisible(true);
-                  setSelectedRows(rows)
-                }}
-              />
-            )
-          }
-          {
-            authActions.includes(MENU_ACTIONS.CHECK) && (
-              <OptButton
-                icon="eye"
-                text="查看"
-                onClick={() => {
-                  props.history.push({
-                    pathname: '/contract-budget/budget/detail',
-                    query: {
-                      id: rows.id,
-                    }
-                  })
-                }}
-              />
-            )
-          }
+          {authActions.includes(MENU_ACTIONS.EDIT) && (
+            <OptButton
+              img={edit}
+              text="编辑"
+              onClick={() => {
+                setAddModalVisible(true);
+                setSelectedRows(rows);
+              }}
+            />
+          )}
+          {authActions.includes(MENU_ACTIONS.CHECK) && (
+            <OptButton
+              icon="eye"
+              text="查看"
+              onClick={() => {
+                props.history.push({
+                  pathname: '/contract-budget/budget/detail',
+                  query: {
+                    id: rows.id,
+                  },
+                });
+              }}
+            />
+          )}
         </Fragment>
-      )
+      ),
     },
   ];
-// 分页操作
+  // 分页操作
   const handleStandardTableChange = (pagination, filters, sorter) => {
     const formValues = form.getFieldsValue();
     const params = {
@@ -128,127 +145,226 @@ const Index = props => {
 
     const sortParams = {
       sortBy: sorter.columnKey,
-      orderFlag: sorter.order === "ascend" ? 1 : -1 ,
+      orderFlag: sorter.order === 'ascend' ? 1 : -1,
     };
 
-    handleQueryBudgetData({...params, ...sortParams})
+    handleQueryBudgetData({ ...params, ...sortParams });
   };
 
   const handleResetForm = () => {
     setSearchMore(true);
     form.resetFields();
     setSearchMore(false);
-    handleQueryBudgetData()
+    handleQueryBudgetData();
   };
 
   const handleSearchForm = () => {
     const formValues = form.getFieldsValue();
-    handleQueryBudgetData(formValues)
+    handleQueryBudgetData(formValues);
   };
 
   const handleDownLoad = () => {
     const formValues = form.getFieldsValue();
-      const params = {
-        ...formValues,
-      };
-      const exportUrl = `${config.uploadUrl}/budget/export`;
-      downLoad(exportUrl, '多经点位管理表.xls', params);
-  }
+    const params = {
+      ...formValues,
+    };
+    const exportUrl = `${config.downloadUrl}/budget/export`;
+    downLoad(exportUrl, '预算管理表.xls', params);
+  };
 
   const handleQueryClusterList = () => {
     dispatch({
       type: 'budgetManage/queryClusterList',
-      payload: {
-      }
-    })
+      payload: {},
+    });
   };
-  const handleQueryGroupList = () => {
+  const handleQueryGroupList = params => {
     dispatch({
       type: 'budgetManage/queryGroupList',
       payload: {
-      }
-    })
+        ...params,
+      },
+    });
+  };
+  const handleQueryAllTeam = params => {
+    dispatch({
+      type: 'budgetManage/queryAllTeam',
+      payload: {
+        ...params,
+      },
+    }).then(data => {
+      if (!data) return;
+      setTeamList(data);
+    });
+  };
+  const handleQueryDeptList = value => {
+    dispatch({
+      type: 'budgetManage/queryAllDeptList',
+      payload: {
+        deptName: value,
+      },
+    }).then(data => {
+      if (!data) return;
+      setAllDeptList(data);
+    });
   };
 
   useEffect(() => {
     handleQueryBudgetData();
     handleQueryClusterList();
     handleQueryGroupList();
+    handleQueryAllTeam();
+    handleQueryDeptList();
   }, []);
+
+  const handleSearch = fn => {
+    if (timeout) {
+      clearTimeout(timeout);
+      timeout = null;
+    }
+    timeout = setTimeout(fn && fn(), 300);
+  };
 
   const renderForm = () => {
     const { getFieldDecorator } = form;
     const content = (
-      <div className={styles.moreSearch}>
+      <div className={styles.moreSearch} style={{ width: 268 }}>
         <Row>
           <Col span={24}>
-            <FormItem {...formLayoutItem1} label="项目类型">
-              {getFieldDecorator('type', {
-              })(
-                <Select
-                  placeholder="请选择项目类型"
-                  allowClear
-                >
-                  {
-                    PROJECT_TYPE.map(v => (
-                      <Option value={v.key} key={v.key.toString()}>{v.value}</Option>
-                    ))
-                  }
-                </Select>
+            <FormItem {...formLayoutItem2} label="项目类型">
+              {getFieldDecorator(
+                'type',
+                {},
+              )(
+                <Select placeholder="请选择项目类型" allowClear>
+                  {PROJECT_TYPE.map(v => (
+                    <Option value={v.key} key={v.key.toString()}>
+                      {v.value}
+                    </Option>
+                  ))}
+                </Select>,
               )}
             </FormItem>
           </Col>
           <Col span={24}>
-            <FormItem {...formLayoutItem1} label="预算总金额">
-              {getFieldDecorator('expectTotalAmount', {
-              })(<Input
-                allowClear
-                placeholder="请输入预算总金额"
-              />)}
+            <FormItem {...formLayoutItem2} label="预计立项时间">
+              {getFieldDecorator(
+                'expectSetTime',
+                {},
+              )(<DatePicker allowClear format="YYYY-MM-DD" />)}
             </FormItem>
           </Col>
           <Col span={24}>
-            <FormItem {...formLayoutItem1} label="预算类型">
-              {getFieldDecorator('budgetType', {
-              })(
-                <Select
-                  placeholder="请选择预算类型"
-                  allowClear
-                >
-                  {
-                    BUDGET_TYPE.map(v => (
-                      <Option value={v.key} key={v.key.toString()}>{v.value}</Option>
-                    ))
-                  }
-                </Select>
+            <FormItem {...formLayoutItem2} label="预算总金额">
+              <div className="yCenter" style={{ height: 30 }}>
+                {getFieldDecorator(
+                  'expectTotalAmountLow',
+                  {},
+                )(<Input allowClear addonAfter="万" />)}
+                <span style={{ padding: '0 3px' }}>—</span>
+                {getFieldDecorator(
+                  'expectTotalAmountMax',
+                  {},
+                )(<Input allowClear addonAfter="万" />)}
+              </div>
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem {...formLayoutItem2} label="硬件预算总金额">
+              <div className="yCenter" style={{ height: 30 }}>
+                {getFieldDecorator(
+                  'hardwareExpectAmountLow',
+                  {},
+                )(<Input allowClear addonAfter="万" />)}
+                <span style={{ padding: '0 3px' }}>—</span>
+                {getFieldDecorator(
+                  'hardwareExpectAmountMax',
+                  {},
+                )(<Input allowClear addonAfter="万" />)}
+              </div>
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem {...formLayoutItem2} label="软件预算总金额">
+              <div className="yCenter" style={{ height: 30 }}>
+                {getFieldDecorator(
+                  'softwareExpectAmountLow',
+                  {},
+                )(<Input allowClear addonAfter="万" />)}
+                <span style={{ padding: '0 3px' }}>—</span>
+                {getFieldDecorator(
+                  'softwareExpectAmountMax',
+                  {},
+                )(<Input allowClear addonAfter="万" />)}
+              </div>
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem {...formLayoutItem2} label="其他预算总金额">
+              <div className="yCenter" style={{ height: 30 }}>
+                {getFieldDecorator(
+                  'otherExpectAmountLow',
+                  {},
+                )(<Input allowClear addonAfter="万" />)}
+                <span style={{ padding: '0 3px' }}>—</span>
+                {getFieldDecorator(
+                  'otherExpectAmountMax',
+                  {},
+                )(<Input allowClear addonAfter="万" />)}
+              </div>
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem {...formLayoutItem2} label="项目类型">
+              {getFieldDecorator(
+                'type',
+                {},
+              )(
+                <Select allowClear>
+                  {PROJECT_TYPE.map(v => (
+                    <Option value={v.key} key={v.key.toString()}>
+                      {v.value}
+                    </Option>
+                  ))}
+                </Select>,
               )}
             </FormItem>
           </Col>
           <Col span={24}>
-            <FormItem {...formLayoutItem1} label="预计立项时间">
-              {getFieldDecorator('expectSetTime', {
-              })(<DatePicker
-                allowClear
-                format="YYYY-MM-DD"
-              />)}
+            <FormItem {...formLayoutItem2} label="预算类型">
+              {getFieldDecorator(
+                'budgetType',
+                {},
+              )(
+                <Select allowClear>
+                  {BUDGET_TYPE.map(v => (
+                    <Option value={v.key} key={v.key.toString()}>
+                      {v.value}
+                    </Option>
+                  ))}
+                </Select>,
+              )}
             </FormItem>
           </Col>
           <Col span={24}>
-            <FormItem {...formLayoutItem1} label="承建团队">
-              {getFieldDecorator('receiveGroupId', {
-              })(<Input
-                allowClear
-                placeholder="请输入承建团队"
-              />)}
-            </FormItem>
-          </Col>
-          <Col span={24}>
-            <FormItem {...formLayoutItem1} label="所属集群或板块">
-              {getFieldDecorator('clusterId', {
-              })(<Input
-                allowClear
-                placeholder="请输入所属集群或板块"
-              />)}
+            <FormItem {...formLayoutItem2} label="承建团队">
+              {getFieldDecorator(
+                'receiveGroupId',
+                {},
+              )(
+                <Select
+                  allowClear
+                  showSearch
+                  onSearch={val => handleSearch(handleQueryGroupList({ deptName: val }))}
+                >
+                  {teamList &&
+                    teamList.map(v => (
+                      <Option value={v.id} key={v.id.toString()}>
+                        {v.name}
+                      </Option>
+                    ))}
+                </Select>,
+              )}
             </FormItem>
           </Col>
         </Row>
@@ -263,105 +379,101 @@ const Index = props => {
         <Row>
           <Col span={6}>
             <FormItem {...formLayoutItem} label="预算编号">
-              {getFieldDecorator('number', {
-              })(<Input
-                allowClear
-                onBlur={handleSearchForm}
-                placeholder="请输入预算编号"
-              />)}
+              {getFieldDecorator(
+                'number',
+                {},
+              )(<Input allowClear onBlur={handleSearchForm} placeholder="请输入预算编号" />)}
             </FormItem>
           </Col>
           <Col span={6}>
             <FormItem {...formLayoutItem} label="项目名称">
-              {getFieldDecorator('name', {
-              })(<Input
-                allowClear
-                onBlur={handleSearchForm}
-                placeholder="请输入项目名称"
-              />)}
+              {getFieldDecorator(
+                'name',
+                {},
+              )(<Input allowClear onBlur={handleSearchForm} placeholder="请输入项目名称" />)}
             </FormItem>
           </Col>
           <Col span={6}>
             <FormItem {...formLayoutItem} label="需求部门">
-              {getFieldDecorator('deptName', {
-              })(<Input
-                allowClear
-                onBlur={handleSearchForm}
-                placeholder="请输入需求部门"
-              />)}
+              {getFieldDecorator(
+                'deptId',
+                {},
+              )(
+                <Select
+                  allowClear
+                  showSearch
+                  onBlur={handleSearchForm}
+                  onSearch={val => handleSearch(handleQueryAllTeam({ groupName: val }))}
+                  placeholder="请输入需求部门"
+                >
+                  {allDeptList &&
+                    allDeptList.map(v => (
+                      <Option value={v.id} key={v.id.toString()}>
+                        {v.name}
+                      </Option>
+                    ))}
+                </Select>,
+              )}
             </FormItem>
           </Col>
           <Col span={6}>
-            <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <div
+              style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
               <Button
                 ghost
-                className={classNames('margin-right-6',styles.orangeForm)}
+                className={classNames('margin-right-6', styles.orangeForm)}
                 onClick={handleResetForm}
               >
                 重置
               </Button>
-              <Popover visible={searchMore} placement="bottomRight" content={content} trigger="click">
+              <Popover
+                visible={searchMore}
+                placement="bottomRight"
+                content={content}
+                trigger="click"
+              >
                 <div className="yCenter">
-                  {
-                    !searchMore ?
-                      <span
-                        className="activeColor"
-                        onClick={() => setSearchMore(true)}
-                      >
-                        <Icon
-                          style={{ verticalAlign: '-0.4em'}}
-                          component={bottomIcon}
-                        />
-                          更多
-                      </span> :
-                      <span
-                        className="activeColor"
-                        onClick={() => setSearchMore(false)}
-                      >
-                        <Icon
-                          style={{ verticalAlign: '-0.4em'}}
-                          component={upIcon}
-                        />
-                        隐藏
-                      </span>
-                  }
+                  {!searchMore ? (
+                    <span className="activeColor" onClick={() => setSearchMore(true)}>
+                      <Icon style={{ verticalAlign: '-0.4em' }} component={bottomIcon} />
+                      更多
+                    </span>
+                  ) : (
+                    <span className="activeColor" onClick={() => setSearchMore(false)}>
+                      <Icon style={{ verticalAlign: '-0.4em' }} component={upIcon} />
+                      隐藏
+                    </span>
+                  )}
                 </div>
               </Popover>
             </div>
           </Col>
         </Row>
       </Form>
-    )
+    );
   };
   return (
     <div className="main">
       <div style={{ marginBottom: 12 }} className="yCenter-between">
-        {
-          authActions.includes(MENU_ACTIONS.ADD) && (
-            <Button
-              className={styles.addForm}
-              icon="plus"
-              onClick={() => setAddModalVisible(true)}
-            >
-              新建
-            </Button>
-          )
-        }
-        {
-          authActions.includes(MENU_ACTIONS.EXPORT) && (
-            <Button
-              type="default"
-              onClick={() => handleDownLoad}
-            >
-              导出
-            </Button>
-          )
-        }
+        {authActions.includes(MENU_ACTIONS.ADD) && (
+          <Button className={styles.addForm} icon="plus" onClick={() => setAddModalVisible(true)}>
+            新建
+          </Button>
+        )}
+        {authActions.includes(MENU_ACTIONS.EXPORT) && (
+          <Button type="default" onClick={handleDownLoad}>
+            导出
+          </Button>
+        )}
       </div>
       <div className={styles.tableList}>
-        <div className={styles.tableListForm}>
-          {renderForm()}
-        </div>
+        <div className={styles.tableListForm}>{renderForm()}</div>
         <Card bordered={false}>
           <StandardTable
             rowKey="id"
@@ -372,12 +484,12 @@ const Index = props => {
             scroll={{ x: 1450 }}
           />
         </Card>
-        { addModalVisible && (
+        {addModalVisible && (
           <AddForm
             modalVisible={addModalVisible}
             handleModalVisible={() => {
               setAddModalVisible(false);
-              setSelectedRows({})
+              setSelectedRows({});
             }}
             handleQueryBudgetData={handleQueryBudgetData}
             values={selectedRows}
@@ -385,13 +497,11 @@ const Index = props => {
         )}
       </div>
     </div>
-  )
+  );
 };
 
-export default connect(
-  ({ budgetManage, global, loading }) => ({
-    budgetManage,
-    global,
-    loading: loading.models.budgetManage
-  })
-)(Form.create()(Index))
+export default connect(({ budgetManage, global, loading }) => ({
+  budgetManage,
+  global,
+  loading: loading.models.budgetManage,
+}))(Form.create()(Index));

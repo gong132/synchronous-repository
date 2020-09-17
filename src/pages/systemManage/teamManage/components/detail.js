@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react'
 import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
 import budget_xq from '@/assets/icon/modular_xq.svg';
 import { Descriptions, Tag } from 'antd'
-import { getParam, getUserInfo } from '@/utils/utils';
+import { getParam,
+  // getUserInfo
+} from '@/utils/utils';
 import { connect } from 'dva'
 import _ from 'lodash'
 

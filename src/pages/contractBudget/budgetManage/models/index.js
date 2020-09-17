@@ -1,9 +1,18 @@
-import { queryBudgetList, addBudget, updateBudget, fetchClusterList,
-  fetchDeptListByCluster, fetchGroupList, fetchBudgetDetails, fetchLogList,
-  fetchDeptList, fetchGroupByDept } from '@/services/contractBudget/budget';
-import {PagerHelper} from "@/utils/helper";
-import {message} from "antd";
-
+import {
+  queryBudgetList,
+  addBudget,
+  updateBudget,
+  fetchClusterList,
+  fetchDeptListByCluster,
+  fetchGroupList,
+  fetchBudgetDetails,
+  fetchLogList,
+  fetchDeptList,
+  fetchGroupByDept,
+  fetchAllTeam,
+} from '@/services/contractBudget/budget';
+import { PagerHelper } from '@/utils/helper';
+import { message } from 'antd';
 
 const budgetManage = {
   namespace: 'budgetManage',
@@ -14,6 +23,7 @@ const budgetManage = {
     allDeptList: [],
     groupList: [],
     groupByDept: {},
+    teamList: [],
     budgetDetails: {},
     budgetLogList: PagerHelper.genListState(),
   },
@@ -22,7 +32,7 @@ const budgetManage = {
       const { code, data, msg } = yield call(queryBudgetList, payload);
       if (code !== 200) {
         message.error(msg);
-        return
+        return;
       }
       data.currentPage = data.current;
       data.pageSize = data.size;
@@ -32,15 +42,15 @@ const budgetManage = {
         payload: {
           filter: payload,
           data: records,
-          ...others
+          ...others,
         },
-      })
+      });
     },
     *queryLogList({ payload }, { call, put }) {
       const { code, data, msg } = yield call(fetchLogList, payload);
       if (code !== 200) {
         message.error(msg);
-        return
+        return;
       }
       const { records, ...others } = data;
       yield put({
@@ -48,25 +58,25 @@ const budgetManage = {
         payload: {
           filter: payload,
           data: records,
-          ...others
+          ...others,
         },
-      })
+      });
     },
-    *addBudget({ payload }, { call, put }) {
-      const { code, msg, data } = yield call(addBudget, payload);
+    *addBudget({ payload }, { call }) {
+      const { code, msg } = yield call(addBudget, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
       }
-      return true
+      return true;
     },
-    *updateBudget({ payload }, { call, put }) {
-      const { code, msg, data } = yield call(updateBudget, payload);
+    *updateBudget({ payload }, { call }) {
+      const { code, msg } = yield call(updateBudget, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
       }
-      return true
+      return true;
     },
     *queryClusterList({ payload }, { call, put }) {
       const { code, msg, data } = yield call(fetchClusterList, payload);
@@ -77,7 +87,7 @@ const budgetManage = {
       yield put({
         type: 'saveData',
         payload: { clusterList: data },
-      })
+      });
     },
     *queryDeptList({ payload }, { call, put }) {
       const { code, msg, data } = yield call(fetchDeptListByCluster, payload);
@@ -88,7 +98,7 @@ const budgetManage = {
       yield put({
         type: 'saveData',
         payload: { deptList: data },
-      })
+      });
     },
     *queryGroupByDept({ payload }, { call, put }) {
       const { code, msg, data } = yield call(fetchGroupByDept, payload);
@@ -99,8 +109,8 @@ const budgetManage = {
       yield put({
         type: 'saveData',
         payload: { groupByDept: data },
-      })
-      return data
+      });
+      return data;
     },
     *queryGroupList({ payload }, { call, put }) {
       const { code, msg, data } = yield call(fetchGroupList, payload);
@@ -111,18 +121,19 @@ const budgetManage = {
       yield put({
         type: 'saveData',
         payload: { groupList: data },
-      })
+      });
     },
     *queryAllDeptList({ payload }, { call, put }) {
       const { code, msg, data } = yield call(fetchDeptList, payload);
       if (!code || code !== 200) {
         message.error(msg);
-        return;
+        return false;
       }
       yield put({
         type: 'saveData',
         payload: { allDeptList: data },
-      })
+      });
+      return data;
     },
     *queryBudgetDetails({ payload }, { call, put }) {
       const { code, msg, data } = yield call(fetchBudgetDetails, payload);
@@ -133,7 +144,19 @@ const budgetManage = {
       yield put({
         type: 'saveData',
         payload: { budgetDetails: data },
-      })
+      });
+    },
+    *queryAllTeam({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(fetchAllTeam, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      yield put({
+        type: 'saveData',
+        payload: { teamList: data },
+      });
+      return data;
     },
   },
   reducers: {
