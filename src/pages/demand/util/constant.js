@@ -126,3 +126,14 @@ export {
   defaultDescription,
   flowStatus,
 };
+
+export const STORY_TYPE = [
+  { key: 1, value: "新增" },
+  { key: 2, value: "优化" },
+  { key: 3, value: "变更" },
+]
+export const STORY_PRIORITY = [
+  { key: "h", value: "高" },
+  { key: "m", value: "中" },
+  { key: "l", value: "低" },
+]
