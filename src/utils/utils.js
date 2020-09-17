@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-console */
 import pathRegexp from 'path-to-regexp';
@@ -13,23 +12,23 @@ import storage from './storage';
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
 const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/;
 export const isUrl = path => reg.test(path);
-export const isAntDesignPro = () => {
-  if (ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site') {
-    return true;
-  }
+// export const isAntDesignPro = () => {
+//   if (ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site') {
+//     return true;
+//   }
+//
+//   return window.location.hostname === 'preview.pro.ant.design';
+// }; // 给官方演示站点用，用于关闭真实开发环境不需要使用的特性
 
-  return window.location.hostname === 'preview.pro.ant.design';
-}; // 给官方演示站点用，用于关闭真实开发环境不需要使用的特性
-
-export const isAntDesignProOrDev = () => {
-  const { NODE_ENV } = process.env;
-
-  if (NODE_ENV === 'development') {
-    return true;
-  }
-
-  return isAntDesignPro();
-};
+// export const isAntDesignProOrDev = () => {
+//   const { NODE_ENV } = process.env;
+//
+//   if (NODE_ENV === 'development') {
+//     return true;
+//   }
+//
+//   return isAntDesignPro();
+// };
 export const getPageQuery = () => parse(window.location.href.split('?')[1]);
 /**
  * props.route.routes
@@ -248,7 +247,6 @@ export function formatWan(val) {
 
 export function isTokenExpired(userInfo) {
   // eslint-disable-next-line camelcase
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   const { loginTime, expires_in } = userInfo;
   const expireDateTime = new Date(loginTime).setSeconds(
     // eslint-disable-next-line camelcase
@@ -262,10 +260,10 @@ export function yuan(text, prefix) {
 }
 
 export function downloadFile(downloadUrl, downloadFileName) {
-  const userInfo = storage.get('modoo-user') || {};
+  const userInfo = storage.get('gd-user', {});
   const xhr = new XMLHttpRequest();
   xhr.open('POST', downloadUrl, true);
-  xhr.setRequestHeader('Authorization', `Bearer ${userInfo.access_token}`);
+  xhr.setRequestHeader('Authorization', userInfo.token);
   xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
   xhr.responseType = 'blob';
   xhr.onload = function on() {
@@ -285,14 +283,13 @@ export function downloadFile(downloadUrl, downloadFileName) {
 
 // 文件下载, 参数 ( URL  文件名   查询参数)
 export function downLoad(downloadUrl, fileName, params) {
-  const userInfo = storage.get('modoo-user') || {};
+  const userInfo = storage.get('gd-user', {});
   fetch(downloadUrl, {
     method: 'POST',
     body: window.JSON.stringify(params),
-    credentials: 'include',
     headers: new Headers({
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${userInfo.access_token}`,
+      Authorization: userInfo.token,
     }),
   })
     .then(response => {
