@@ -44,7 +44,7 @@ export async function queryDemandProject(params) {
 // 查看需求看板
 export async function queryDemandBoard(params) {
   return request('/demand/queryBoard', {
-    method: 'get',
+    method: 'post',
     params,
   });
 }
@@ -52,6 +52,22 @@ export async function queryDemandBoard(params) {
 // 查看项目或一般需求看板
 export async function queryProjectDemandBoard(params) {
   return request('/demand/queryBoard', {
+    method: 'post',
+    params,
+  });
+}
+
+// 团队
+export async function queryGroup(params) {
+  return request('/group/query', {
+    method: 'post',
+    params,
+  });
+}
+
+// 查预算编号
+export async function queryBudgetNumber(params) {
+  return request('/budget/search', {
     method: 'get',
     params,
   });

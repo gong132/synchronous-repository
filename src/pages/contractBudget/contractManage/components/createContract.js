@@ -30,12 +30,14 @@ const CreateContract = props => {
     headerList,
     headerMap,
     groupMap,
+    groupList,
     visibleModal,
     modalTitle,
     recordValue,
     handleViewModal,
     handleQueryData,
     handleQueryBudget,
+    handleQueryGroup,
     loadingUpdate,
     loadingAdd,
   } = props;
@@ -439,7 +441,14 @@ const CreateContract = props => {
             })(
               <Select
                 allowClear
-                // showSearch
+                showSearch
+                onSearch={_.debounce(handleQueryGroup, 500)}
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  JSON.stringify(option.props.children)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
                 placeholder="请输入合同负责人"
               >
                 {!_.isEmpty(headerList) &&
@@ -460,12 +469,19 @@ const CreateContract = props => {
             })(
               <Select
                 allowClear
-                // showSearch
+                showSearch
+                onSearch={_.debounce(handleQueryGroup, 500)}
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  JSON.stringify(option.props.children)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
                 placeholder="请输入合同负责人团队"
               >
-                {!_.isEmpty(headerList) &&
-                  headerList.map(d => (
-                    <Option key={d.number} value={d.number}>
+                {!_.isEmpty(groupList) &&
+                  groupList.map(d => (
+                    <Option key={d.id} value={d.id}>
                       {d.name}
                     </Option>
                   ))}
@@ -597,6 +613,7 @@ export default connect(({ contract, loading }) => ({
   headerList: contract.headerList,
   headerMap: contract.headerMap,
   groupMap: contract.groupMap,
+  groupList: contract.groupList,
   deptList: contract.deptList,
   deptListMap: contract.deptListMap,
   loadingAdd: loading.effects['contract/addData'],

@@ -4,10 +4,11 @@ import { formLayoutItemAddDouble, formLayoutItemAddEdit } from '@/utils/constant
 import CustomBtn from '@/components/commonUseModule/customBtn';
 import Editor from '@/components/TinyEditor';
 import moment from 'moment';
+import _ from 'lodash'
 // import UploadFile from '@/components/FileUpload'
 // import styles from '../index.js.less'
 import { Modal, Form, Select, Input, DatePicker, Col, Row, message, Radio } from 'antd';
-import { demandTypeArr, demandPriorityArr, defaultDescription } from '../util/constant';
+import { DEMAND_TYPE_ARR, DEMAND_PRIORITY_ARR, DEFAULT_DESC } from '../util/constant';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -23,11 +24,16 @@ const CreateDemand = props => {
     startTimer,
     clearTimer,
     demand,
+    loadingAdd,
     recordValue = {},
   } = props;
 
-  const { formType } = demand;
+  const {
+    formType,
+    groupList,
+  } = demand;
 
+  console.log(demand)
   const {
     title,
     expectedCompletionDate,
@@ -39,11 +45,21 @@ const CreateDemand = props => {
     communicate,
   } = recordValue;
 
-  const [description, setDescription] = useState(defaultDescription);
+  const [description, setDescription] = useState(DEFAULT_DESC);
 
   useEffect(() => {
     setDescription(recordValue.description);
   }, [recordValue.description]);
+
+  // 查询团队
+  const handleQueryGroup = (params) => {
+    props.dispatch({
+      type: 'contract/fetchHeaderGroup',
+      payload: {
+        ...params
+      }
+    });
+  };
 
   const createDemand = values => {
     props
@@ -75,6 +91,7 @@ const CreateDemand = props => {
       }
       values.expectedCompletionDate = moment(values.expectedCompletionDate).format('YYYY-MM-DD');
       values.requirementDescription = description;
+
       console.log('values: ', values);
       createDemand(values);
     });
@@ -139,7 +156,7 @@ const CreateDemand = props => {
                 // showSearch
                 placeholder="请输入需求类型"
               >
-                {demandTypeArr.map(d => (
+                {DEMAND_TYPE_ARR.map(d => (
                   <Option key={d.key} value={d.key}>
                     {d.val}
                   </Option>
@@ -159,7 +176,7 @@ const CreateDemand = props => {
                 // showSearch
                 placeholder="请输入优先级"
               >
-                {demandPriorityArr.map(d => (
+                {DEMAND_PRIORITY_ARR.map(d => (
                   <Option key={d.key} value={d.key}>
                     {d.val}
                   </Option>
@@ -176,15 +193,19 @@ const CreateDemand = props => {
             })(
               <Select
                 allowClear
-                // showSearch
+                showSearch
+                onSearch={_.debounce(handleQueryGroup, 500)}
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  JSON.stringify(option.props.children)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
                 placeholder="请输入受理团队"
               >
-                {/* {!_.isEmpty(headerList) && headerList.map(d => (
-                                <Option key={d.leaderId} value={d.leaderId}>{d.leaderName}</Option>
-                            ))} */}
-                <Option key="1" value="1">
-                  1
-                </Option>
+                {!_.isEmpty(groupList) && groupList.map(d => (
+                  <Option key={d.id} value={d.id}>{d.name}</Option>
+                ))}
               </Select>,
             )}
           </FormItem>
@@ -213,14 +234,14 @@ const CreateDemand = props => {
         <Col span={12}>
           <FormItem {...formLayoutItemAddDouble} label="是否沟通">
             {form.getFieldDecorator('communicate', {
-              rules: [{ required: false, message: '请选择项目类型' }],
+              rules: [{ required: false, message: '请选择是否沟通' }],
               initialValue: communicate,
             })(
               <RadioGroup>
-                <Radio value="1" key="1">
+                <Radio value="y" key="y">
                   是
                 </Radio>
-                <Radio value="0" key="0">
+                <Radio value="n" key="n">
                   否
                 </Radio>
               </RadioGroup>,
@@ -263,7 +284,6 @@ const CreateDemand = props => {
       title={`${modalTitle}需求`}
       visible={visibleModal}
       onCancel={() => handleViewModal(false)}
-      // confirmLoading={loadingAdd || loadingUpdate}
       footer={
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <CustomBtn
@@ -273,6 +293,7 @@ const CreateDemand = props => {
           />
           <CustomBtn
             // loading={modalTitle === '编辑' ? loadingUpdate : loadingAdd}
+            loading={loadingAdd}
             onClick={handleSubmitForm}
             type="save"
           />
@@ -284,6 +305,7 @@ const CreateDemand = props => {
   );
 };
 
-export default connect(demand => ({
+export default connect(({demand, loading}) => ({
   demand,
+  loadingAdd: loading.effects['demand/addDemand']
 }))(Form.create()(CreateDemand));

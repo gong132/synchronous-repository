@@ -54,6 +54,7 @@ const { RangePicker } = DatePicker;
   headerList: contract.headerList,
   headerMap: contract.headerMap,
   groupMap: contract.groupMap,
+  groupList: contract.groupList,
   clusterList: contract.clusterList,
 }))
 class ContractManage extends Component {
@@ -166,9 +167,12 @@ class ContractManage extends Component {
   };
 
   // 查询负责人和团队
-  handleQueryGroup = () => {
+  handleQueryGroup = (params) => {
     this.props.dispatch({
       type: 'contract/fetchHeaderGroup',
+      payload: {
+        ...params
+      }
     });
   };
 
@@ -598,6 +602,7 @@ class ContractManage extends Component {
       recordValue: contractInfo,
       handleQueryData: this.handleQueryData,
       handleQueryBudget: this.handleQueryBudget,
+      handleQueryGroup: this.handleQueryGroup,
     }
     return (
       <Fragment>

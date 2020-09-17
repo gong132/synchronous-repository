@@ -1,10 +1,10 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'dva';
 import CustomBtn from '@/components/commonUseModule/customBtn';
-import OptButton from '@/components/commonUseModule/optButton';
 import { formLayoutItem1 } from '@/utils/constant';
-import editIcon from '@/assets/icon/Button_bj.svg';
+import editIcon from '@/assets/icon/cz_bj.svg';
 import StandardTable from '@/components/StandardTable';
+import ListOptBtn from '@/components/commonUseModule/listOptBtn'
 import { TableColumnHelper } from '@/utils/helper';
 import { Modal, Form, Input, Select, Row, Col, Checkbox, Card } from 'antd';
 import styles from './index.less';
@@ -25,9 +25,9 @@ class UserManage extends Component {
     };
   }
 
-  handleSearch = () => {};
+  handleSearch = () => { };
 
-  handleResetSearch = () => {};
+  handleResetSearch = () => { };
 
   handleViewModal = (bool, record = {}) => {
     this.setState({
@@ -115,10 +115,15 @@ class UserManage extends Component {
         render: (text, record) => {
           return (
             <div>
-              <OptButton
+              <ListOptBtn
+                title="编辑"
                 onClick={() => this.handleViewModal(true, record)}
-                img={editIcon}
-                text="编辑"
+                style={{
+                  fontSize: '24px',
+                  position: 'relative',
+                  top: '6px'
+                }}
+                icon={editIcon}
               />
             </div>
           );
@@ -226,7 +231,7 @@ class UserManage extends Component {
             columns={this.genColumns()}
             // dataSource={data}
             dataSource={[{ name: 'gong', account: '0001', role: '普通员工', team: '零售集群' }]}
-            // loading={loadingQueryData}
+          // loading={loadingQueryData}
           />
         </Card>
       </Fragment>

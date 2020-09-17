@@ -198,6 +198,29 @@
   }
 }
 
+.clearFormMargin {
+  :global {
+    .ant-descriptions-view {
+      .ant-descriptions-item-label,
+      .ant-descriptions-item-content {
+        padding: 7px 9px;
+        min-width: 136px;
+        max-width: 158px;
+      }
+      .ant-descriptions-item-label {
+        padding-left: 24px;
+      }
+    }
+
+    .ant-form-item {
+      margin-bottom: 0;
+    }
+    .ant-form-item-control {
+      line-height: unset;
+    }
+  }
+}
+
 .childrenTable {
   :global {
     tr.ant-table-expanded-row > td {
