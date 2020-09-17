@@ -1,20 +1,32 @@
-import React, { Component, Fragment } from 'react';
-import { connect } from 'dva';
-import CustomBtn from '@/components/commonUseModule/customBtn';
-import OptButton from '@/components/commonUseModule/optButton';
-import { formLayoutItem1 } from '@/utils/constant';
-import StandardTable from '@/components/StandardTable';
-import { TableColumnHelper } from '@/utils/helper';
-import { router } from 'umi';
-import { Modal, Form, Input, Select, Row, Col, Checkbox, Card } from 'antd';
-import styles from './index.less';
+import React, { Component, Fragment } from 'react'
+import { connect } from 'dva'
+import CustomBtn from '@/components/commonUseModule/customBtn'
+import { formLayoutItem1, MENU_ACTIONS } from '@/utils/constant'
+import StandardTable from "@/components/StandardTable";
+import { TableColumnHelper, DefaultPage } from "@/utils/helper";
+import { router } from 'umi'
+import {
+  Modal,
+  Form,
+  Input,
+  Select,
+  Row,
+  Col,
+  Checkbox,
+  Card,
+  Tooltip,
+  Icon
+} from 'antd'
+import _ from 'lodash'
+import styles from './index.less'
 
-const FormItem = Form.Item;
-
+const FormItem = Form.Item
+const { Option } = Select
 @Form.create()
-@connect(({ teamManage, loading }) => ({
-  userList: teamManage.userList,
-  loadingQueryTeamData: loading.effects['teamManage/fetchTeamData'],
+@connect(({ teamManage, loading, global }) => ({
+  global,
+  teamManage,
+  loadingQueryTeamData: loading.effects['teamManage/fetchTeamData']
 }))
 class TeamManage extends Component {
   constructor(props) {
@@ -22,12 +34,57 @@ class TeamManage extends Component {
     this.state = {
       modalVisible: false,
       record: {},
-    };
+      searchParams: {}
+    }
+    this.handleDebounceQueryData = _.debounce(this.handleDebounceQueryData, 500);
   }
 
-  handleSearch = () => {};
+  componentDidMount() {
+    this.handleQueryData()
+  }
 
-  handleResetSearch = () => {};
+  handleQueryData = (params = {}) => {
+    const { searchParams } = this.state;
+    this.props.dispatch({
+      type: 'teamManage/fetchTeamData',
+      payload: {
+        ...DefaultPage,
+        ...params,
+        ...searchParams,
+      },
+    });
+  };
+
+  // 搜索时防抖
+  handleDebounceQueryData = () => {
+    this.handleQueryData();
+  };
+
+  handleResetSearch = () => {
+    this.setState(
+      {
+        searchParams: {},
+      },
+      () => this.handleQueryData(),
+      500,
+    );
+  }
+
+  saveParams = (val, type) => {
+    const { searchParams } = this.state;
+    const obj = searchParams;
+    if (type === 'deptInfo') {
+      obj[type] = val;
+    } else if (type === 'name' || type === 'id') {
+      obj[type] = val.target.value;
+    }
+    this.setState(
+      {
+        searchParams: obj,
+      },
+      () => this.handleDebounceQueryData(),
+    );
+  };
 
   handleViewModal = (bool, record = {}) => {
     this.setState({
@@ -41,7 +98,7 @@ class TeamManage extends Component {
     router.push({
       pathname: '/systemManage/teamManage/detail',
       query: {
-        id: record.id,
+        teamId: record.id,
       },
     });
   };
@@ -57,61 +114,71 @@ class TeamManage extends Component {
     console.log('checked = ', checkedValues);
   };
 
+  // 分页操作
+  handleStandardTableChange = (pagination, filters, sorter) => {
+    // const formValues = form.getFieldsValue();
+    const params = {
+      currentPage: pagination.current,
+      pageSize: pagination.pageSize,
+      // ...formValues, // 添加已查询条件去获取分页
+    };
+    const sortParams = {
+      sortBy: sorter.columnKey,
+      orderFlag: sorter.order === "ascend" ? 1 : -1,
+    };
+
+    this.handleQueryData({ ...params, ...sortParams })
+  };
+
   renderSearchForm = () => {
-    const {
-      form: { getFieldDecorator },
-    } = this.props;
+    const { form: { getFieldDecorator }, loadingQueryTeamData } = this.props;
     return (
       <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
         <Col span={6}>
           <FormItem {...formLayoutItem1} colon={false} label="团队ID">
-            {getFieldDecorator('name', {})(<Input allowClear placeholder="请输入团队ID" />)}
+            {getFieldDecorator('id', {
+            })(<Input
+              allowClear
+              onChange={e => this.saveParams(e, 'id')}
+              placeholder='请输入团队ID'
+            />)}
           </FormItem>
         </Col>
         <Col span={6}>
           <FormItem {...formLayoutItem1} colon={false} label="团队名称">
-            {getFieldDecorator(
-              'projectNumber',
-              {},
-            )(
-              <Select
-                allowClear
-                // showSearch
-                style={{
-                  width: '100%',
-                }}
-                placeholder="请输入团队名称"
-              />,
-            )}
+            {getFieldDecorator('name', {
+            })(<Input
+              allowClear
+              onChange={e => this.saveParams(e, 'name')}
+              placeholder='请输入团队名称'
+            />)}
           </FormItem>
         </Col>
         <Col span={6}>
           <FormItem {...formLayoutItem1} colon={false} label="团队经理">
-            {getFieldDecorator(
-              'projectNumber',
-              {},
-            )(
-              <Select
-                allowClear
-                // showSearch
-                style={{
-                  width: '100%',
-                }}
-                placeholder="请输入团队经理"
-              />,
-            )}
+            {getFieldDecorator('headerId', {
+            })(<Select
+              placeholder='请输入团队经理'
+              style={{
+                width: '100%'
+              }}
+            >
+              <Option key='1' value='1'>未定义</Option>
+            </Select>)}
           </FormItem>
         </Col>
         <Col span={6}>
           <FormItem>
             <CustomBtn
-              // onClick={() => this.handleResetSearch()}
-              style={{
-                display: 'inline-block',
-                marginRight: '5rem',
-              }}
-              type="reset"
+              onClick={() => this.handleResetSearch()}
+              loading={loadingQueryTeamData}
+              // style={{
+              //   display: 'inline-block',
+              //   marginRight: '5rem'
+              // }}
+              type='reset'
             />
+            {/* <Button>重置</Button> */}
           </FormItem>
         </Col>
       </Row>
@@ -119,20 +186,25 @@ class TeamManage extends Component {
   };
 
   genColumns = () => {
+    const { global: { authActions } } = this.props
     const columns = [
       TableColumnHelper.genPlanColumn('id', '团队ID'),
       TableColumnHelper.genPlanColumn('name', '团队名称'),
-      TableColumnHelper.genPlanColumn('manager', '团队经理'),
+      TableColumnHelper.genPlanColumn('groupHeaderName', '团队经理'),
       {
         title: '操作',
         render: (text, record) => {
           return (
             <div>
-              <OptButton
-                onClick={() => this.handleViewDetail(true, record)}
-                icon="eye"
-                text="查看"
-              />
+              {authActions.includes(MENU_ACTIONS.CHECK)
+                && <Tooltip overlayStyle={{color:'red'}} overlayClassName='tooTipStyle' placement="top" title='查看'>
+                  <Icon
+                    onClick={
+                      () => this.handleViewDetail(record)
+                    }
+                    type='eye'
+                  />
+                </Tooltip>}
             </div>
           );
         },
@@ -228,6 +300,10 @@ class TeamManage extends Component {
   };
 
   render() {
+    const { teamManage, loadingQueryTeamData } = this.props
+    const {
+      teamList
+    } = teamManage
     return (
       <Fragment>
         {this.renderEditModal()}
@@ -236,9 +312,9 @@ class TeamManage extends Component {
           <StandardTable
             rowKey={(record, index) => index}
             columns={this.genColumns()}
-            // dataSource={data}
-            dataSource={[{ name: 'gong', account: '0001', role: '普通员工', team: '零售集群' }]}
-            // loading={loadingQueryData}
+            data={teamList}
+            loading={loadingQueryTeamData}
+            onChange={this.handleStandardTableChange}
           />
         </Card>
       </Fragment>

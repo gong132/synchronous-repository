@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import dcBtn from '@/assets/icon/Button_dc.svg';
 import { Icon, Button } from 'antd';
 import styles from './customBtn.less';
@@ -6,15 +6,14 @@ import styles from './customBtn.less';
 const CustomBtn = props => {
   const { type, style = {}, onClick, loading, title, icon } = props;
   return (
-    <div className="lFlex">
+    <Fragment>
       {type === 'create' && (
-        <div className={styles.createBtn} style={style} onClick={onClick}>
-          {/* <div className={styles.createBtn_icon}>
-          <span>+</span>
-        </div> */}
-          <div className={styles.createBtn_text}>
-            <Icon type="plus" className={styles.createBtn_text_icon} />
-            <span>{title || '新建'}</span>
+        <div className='lFlex'>
+          <div className={styles.createBtn} style={style} onClick={onClick}>
+            <div className={styles.createBtn_text}>
+              <Icon type="plus" className={styles.createBtn_text_icon} />
+              <span>{title || '新建'}</span>
+            </div>
           </div>
         </div>
       )}
@@ -56,13 +55,15 @@ const CustomBtn = props => {
           <span>导出</span>
         </div>
       )}
-      {type === 'others' && (
-        <div className={styles.otherBtn} style={style} onClick={onClick}>
-          <Icon type={icon} component={icon} />
-          <span>{title || '按钮名未定义'}</span>
-        </div>
-      )}
-    </div>
+      {
+        type === 'others' && (
+          <div className={styles.otherBtn} style={style} onClick={onClick}>
+            <Icon type={icon} component={icon} />
+            <span>{title || '按钮名未定义'}</span>
+          </div>
+        )
+      }
+    </Fragment>
   );
 };
 

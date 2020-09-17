@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 
-//查询日志
+// 查询日志
 export async function queryLogList(params) {
   return request('/log/query', {
     method: 'post',
@@ -8,10 +8,18 @@ export async function queryLogList(params) {
   });
 }
 
-// 新增权限菜单
-export async function addMenuList(params) {
-  return request('/resource/addResource', {
-    method: 'post',
+// 查询部门
+export async function queryDept(params) {
+  return request('/dept/search', {
+    method: 'get',
+    params,
+  });
+}
+
+// 查询公司
+export async function queryComp(params) {
+  return request('/company/search', {
+    method: 'get',
     params,
   });
 }

@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-console */
 import pathRegexp from 'path-to-regexp';
-
+import axios from 'axios'
 import moment from 'moment';
 import React from 'react';
 import { parse, stringify } from 'qs';
@@ -514,4 +514,55 @@ export function getUserInfo() {
   // const infoString = STORAGE ? localStorage.getItem('userInfo') : sessionStorage.getItem('userInfo')
   const info = infoString && JSON.parse(infoString);
   return info || [];
+}
+
+
+// 导出excel
+/**
+ * @description 平台需要导出调用此方法
+ * @todo
+ * @param {object} params - params是后端需要接收的参数
+ * @param {string} url - 导出的接口
+ * @param {string} type - 接口类型
+ * @param {string} name - 导出文件名
+ * @author gf
+ */
+export const exportExcel = (params = {}, url = '', type = 'get', name='') => {
+  type = type.toUpperCase()
+  function downLoadExcel(res) {
+    const link = document.createElement('a')
+    const blob = new Blob([res.data], { type: 'application/vnd.ms-excel' })
+    link.style.display = 'none'
+    link.href = URL.createObjectURL(blob)
+    if(name) {
+      link.download=name
+    }
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+  if (type === 'GET') {
+    axios({
+      method: type,
+      params,
+      url: `/server/${url}`,
+      // 二进制流文件，一定要设置成blob，默认是json
+      responseType: 'blob',
+      headers: { Authorization: getUserInfo().token },
+    }).then(res => {
+      downLoadExcel(res)
+    })
+  } else {
+    axios({
+      method: type,
+      data: { ...params },
+      url: `/server/${url}`,
+      // 二进制流文件，一定要设置成blob，默认是json
+      responseType: 'blob',
+      headers: { Authorization: getUserInfo().token },
+    }).then(res => {
+      downLoadExcel(res)
+    })
+  }
+  return true
 }
