@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable no-console */
 import pathRegexp from 'path-to-regexp';
-import axios from 'axios'
+import axios from 'axios';
 import moment from 'moment';
 import React from 'react';
 import { parse, stringify } from 'qs';
@@ -286,9 +286,9 @@ export function downLoad(downloadUrl, fileName, params) {
   const userInfo = storage.get('gd-user', {});
   fetch(downloadUrl, {
     method: 'POST',
+    responseType: 'blob',
     body: window.JSON.stringify(params),
     headers: new Headers({
-      'Content-Type': 'application/json',
       Authorization: userInfo.token,
     }),
   })
@@ -516,7 +516,6 @@ export function getUserInfo() {
   return info || [];
 }
 
-
 // 导出excel
 /**
  * @description 平台需要导出调用此方法
@@ -527,19 +526,19 @@ export function getUserInfo() {
  * @param {string} name - 导出文件名
  * @author gf
  */
-export const exportExcel = (params = {}, url = '', type = 'get', name='') => {
-  type = type.toUpperCase()
+export const exportExcel = (params = {}, url = '', type = 'get', name = '') => {
+  type = type.toUpperCase();
   function downLoadExcel(res) {
-    const link = document.createElement('a')
-    const blob = new Blob([res.data], { type: 'application/vnd.ms-excel' })
-    link.style.display = 'none'
-    link.href = URL.createObjectURL(blob)
-    if(name) {
-      link.download=name
+    const link = document.createElement('a');
+    const blob = new Blob([res.data], { type: 'application/vnd.ms-excel' });
+    link.style.display = 'none';
+    link.href = URL.createObjectURL(blob);
+    if (name) {
+      link.download = name;
     }
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
   if (type === 'GET') {
     axios({
@@ -550,8 +549,8 @@ export const exportExcel = (params = {}, url = '', type = 'get', name='') => {
       responseType: 'blob',
       headers: { Authorization: getUserInfo().token },
     }).then(res => {
-      downLoadExcel(res)
-    })
+      downLoadExcel(res);
+    });
   } else {
     axios({
       method: type,
@@ -561,8 +560,8 @@ export const exportExcel = (params = {}, url = '', type = 'get', name='') => {
       responseType: 'blob',
       headers: { Authorization: getUserInfo().token },
     }).then(res => {
-      downLoadExcel(res)
-    })
+      downLoadExcel(res);
+    });
   }
-  return true
-}
+  return true;
+};
