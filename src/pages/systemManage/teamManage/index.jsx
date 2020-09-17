@@ -3,7 +3,9 @@ import { connect } from 'dva'
 import CustomBtn from '@/components/commonUseModule/customBtn'
 import { formLayoutItem1, MENU_ACTIONS } from '@/utils/constant'
 import StandardTable from "@/components/StandardTable";
+import ListOptBtn from '@/components/commonUseModule/listOptBtn'
 import { TableColumnHelper, DefaultPage } from "@/utils/helper";
+import eyeIcon from '@/assets/icon/cz_ck.svg'
 import { router } from 'umi'
 import {
   Modal,
@@ -14,8 +16,6 @@ import {
   Col,
   Checkbox,
   Card,
-  Tooltip,
-  Icon
 } from 'antd'
 import _ from 'lodash'
 import styles from './index.less'
@@ -197,14 +197,17 @@ class TeamManage extends Component {
           return (
             <div>
               {authActions.includes(MENU_ACTIONS.CHECK)
-                && <Tooltip overlayStyle={{color:'red'}} overlayClassName='tooTipStyle' placement="top" title='查看'>
-                  <Icon
-                    onClick={
-                      () => this.handleViewDetail(record)
-                    }
-                    type='eye'
-                  />
-                </Tooltip>}
+                && <ListOptBtn
+                  title="查看"
+                  onClick={() => this.handleViewDetail(record)}
+                  style={{
+                    fontSize: '24px',
+                    position: 'relative',
+                    top: '6px'
+                  }}
+                  icon={eyeIcon}
+                />
+              }
             </div>
           );
         },

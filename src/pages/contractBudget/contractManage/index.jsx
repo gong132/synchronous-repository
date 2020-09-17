@@ -80,7 +80,7 @@ class ContractManage extends Component {
 
   // 导出
   handleExportExcel = () => {
-    exportExcel({}, 'contract/export', 'get', '合同表单数据.xls')
+    exportExcel({budgetNumber: '123'}, 'contract/export', 'post', '合同表单数据.xls')
   }
 
   handleQueryData = (params = {}) => {
@@ -602,7 +602,7 @@ class ContractManage extends Component {
     return (
       <Fragment>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <CustomBtn onClick={() => this.handleViewModal(true, '新建')} type="create" />
+          <CustomBtn onClick={() => this.handleViewModal(true, '新建')} icon='plus' type="create" />
           <CustomBtn
             onClick={() => this.handleExportExcel()}
             type='export'

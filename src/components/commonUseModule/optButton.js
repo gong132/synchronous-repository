@@ -3,7 +3,7 @@ import { Icon, Button } from "antd";
 import styles from  './index.less'
 
 const Index = props => {
-  const { style, text, img, onClick, icon } = props;
+  const { style, text, img, onClick, icon, disabled } = props;
 
   const headerRender = () => (
     <div className={styles.sandboxHead} style={titleStyle}>
@@ -17,8 +17,9 @@ const Index = props => {
         onClick={onClick}
         className={styles.operateBtn}
         style={style}
+        disabled={disabled}
       >
-        <Icon type={icon} component={img} style={{ fontSize: 14 }}/>
+        <Icon type={icon} component={img} style={{ fontSize: 14 }} />
         {text}
       </Button>
     </div>
