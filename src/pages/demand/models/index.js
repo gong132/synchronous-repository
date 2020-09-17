@@ -2,10 +2,12 @@ import {
   addDemand,
   // updateDemand,
   queryDemand,
+  queryGroup,
   // queryDemandDetail,
   queryDemandProject,
   queryDemandBoard,
   // queryProjectDemandBoard,
+  queryBudgetNumber,
 } from '@/services/demand/demand';
 import { PagerHelper } from '@/utils/helper';
 import { message } from 'antd';
@@ -16,6 +18,11 @@ const Demand = {
     formType: 'list',
     demandList: PagerHelper.genListState(),
     demandBoard: [],
+    demandInfo: {},
+    groupList: [],
+    groupMap: {},
+    budgetList: [],
+    budgetMap: {},
   },
   effects: {
     *addDemand({ payload }, { call }) {
@@ -25,6 +32,29 @@ const Demand = {
         return false;
       }
       return true;
+    },
+
+    // 查询负责人和团队
+    *fetchHeaderGroup({ payload }, { call, put }) {
+      const { code, msg, data: { data } } = yield call(queryGroup, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      const gObj = {}
+      if (data && data.length < 1) return ''
+      data.map(v => {
+        gObj[v.id] = v.name
+        return true
+      })
+      yield put({
+        type: 'setData',
+        payload: {
+          groupList: data,
+          groupMap: gObj
+        }
+      })
+      return true
     },
 
     *queryDemand({ payload }, { call, put }) {
@@ -69,12 +99,32 @@ const Demand = {
       console.log(data);
       yield put({
         type: 'setData',
-        // payload: {
-        //   filter: payload,
-        //   data: records,
-        //   ...others
-        // },
+        payload: {
+          demandBoard: data
+        },
       });
+    },
+
+    // 查询预算编号
+    *fetchBudgetNumber({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(queryBudgetNumber, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      const obj = {}
+      data.map(v => {
+        obj[v.number] = v.name
+        return true
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          budgetList: data,
+          budgetMap: obj
+        }
+      })
+      return true
     },
   },
   reducers: {

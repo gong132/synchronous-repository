@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
-import { boardTitle } from '../util/constant'
 import { Empty } from 'antd'
+import { connect } from 'dva'
 // import InfiniteScroll from 'react-infinite-scroller'
 import {
   DragDropContext,
@@ -19,7 +19,6 @@ const getItemStyle = (isDragging, draggableStyle) => ({
   // 将样式应用到拖动面板上
   ...draggableStyle,
 });
-console.log(getItemStyle)
 const getListStyle = isDraggingOver => ({
   background: isDraggingOver ? 'lightblue' : 'white',
   padding: grid,
@@ -27,7 +26,9 @@ const getListStyle = isDraggingOver => ({
   // height: '76vh',
   // overflowY: 'auto'
 });
-console.log(getListStyle)
+@connect(({demand}) =>({
+  demandBoard: demand.demandBoard
+}))
 class DemandBoard extends Component {
   constructor(props) {
     super(props)
@@ -43,14 +44,15 @@ class DemandBoard extends Component {
     const { clientHeight } = document.body
     iTop = dragDom.offsetTop
     this.setState({
-      iHeight: clientHeight - iTop,
+      iHeight: clientHeight - iTop - 88,
       ciHeight: clientHeight - iTop - 52 - 11
     })
   }
 
   render() {
     const { iHeight, ciHeight } = this.state
-    console.log(boardTitle, ciHeight)
+    const { demandBoard } = this.props
+    console.log(this.props)
     return (
       <div
         className={styles.drag}
@@ -60,14 +62,13 @@ class DemandBoard extends Component {
         id='dragContext'
       >
         <DragDropContext>
-          {!_.isEmpty(boardTitle) && boardTitle.map((droppableItem, index) => (
+          {!_.isEmpty(demandBoard) && demandBoard.map((droppableItem) => (
             <div
               key={droppableItem.boardId}
               className={styles.spectaculars}
             >
               <Fragment>
                 <div className={styles.cardTitle}>
-                  {console.log(index)}
                   {droppableItem.name || '--'}
                 </div>
                 <div
@@ -87,7 +88,7 @@ class DemandBoard extends Component {
                           )}
                       >
                         <div style={{ height: ciHeight, overflowY: 'auto' }}>
-                          {_.isArray(droppableItem.sub) && !_.isEmpty(droppableItem.sub) ? droppableItem.sub.map((item, i) => (
+                          {_.isArray(droppableItem.demandList) && !_.isEmpty(droppableItem.demandList) ? droppableItem.demandList.map((item, i) => (
                             <Draggable
                               key={item.id}
                               draggableId={String(item.id)}
@@ -106,19 +107,19 @@ class DemandBoard extends Component {
                                   <div className={styles.dragBoard}>
                                     <div className={styles.dragBoard_firstLine}>
                                       <div className={styles.dragBoard_firstLine_no}>
-                                        {item.demandNumber}
+                                        {item.demand_number}
                                       </div>
                                       {/* <div className={styles.dragBoard_firstLine_menu}></div> */}
                                     </div>
                                     <div className={styles.dragBoard_secondLine}>
-                                      {item.demandTitle}
+                                      {item.title}
                                     </div>
                                     <div className={styles.dragBoard_thirdLine}>
                                       <div className={styles.dragBoard_thirdLine_time}>
-                                        {`${item.createUser}于${item.createTime}提交`}
+                                        {`${item.creator}于${item.create_time}提交`}
                                       </div>
                                       <div className={styles.dragBoard_thirdLine_type}>
-                                        {item.demandType === 'p'
+                                        {item.type === 'p'
                                           ? '项目'
                                           : '一般需求'}
                                       </div>

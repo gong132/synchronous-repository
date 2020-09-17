@@ -249,24 +249,26 @@ const Contract = {
 
     // 查询负责人和团队
     *fetchHeaderGroup({ payload }, { call, put }) {
-      const { code, msg, data } = yield call(queryHeaderGroup, payload)
+      const { code, msg, data:{data} } = yield call(queryHeaderGroup, payload)
       if (!code || code !== 200) {
         message.error(msg);
         return false;
       }
       const obj = {}
       const gObj = {}
+      if(data&&data.length < 1) return ''
       data.map(v => {
-        obj[v.leaderId] = v.leaderName
+        obj[v.id] = v.name
         return true
       })
       data.map(v => {
-        gObj[v.number] = v.name
+        gObj[v.id] = v.name
         return true
       })
       yield put({
         type: 'saveData',
         payload: {
+          groupList: data,
           headerList: data,
           headerMap: obj,
           groupMap: gObj

@@ -85,6 +85,16 @@ class Detail extends PureComponent {
     });
   };
 
+  // 查预算编号
+  handleQueryBudget = (number) => {
+    this.props.dispatch({
+      type: 'contract/fetchBudgetNumber',
+      payload: {
+        number
+      }
+    })
+  }
+
   // 查日志
   handleQueryLogList = () => {
     const id = getParam('id');
@@ -369,14 +379,14 @@ class Detail extends PureComponent {
       <Fragment>
         <Websocket
           url={`ws://10.90.48.22:80/websocket/${token}`}
-          // onMessage={this.handleReceiveMessage}
-          // onOpen={this.handleOpen}
-          // onClose={this.handleClose}
-          // reconnect
-          // debug
-          // ref={Websocket => {
-          //   this.refWebSocket = Websocket;
-          // }}
+        // onMessage={this.handleReceiveMessage}
+        // onOpen={this.handleOpen}
+        // onClose={this.handleClose}
+        // reconnect
+        // debug
+        // ref={Websocket => {
+        //   this.refWebSocket = Websocket;
+        // }}
         />
         <GlobalSandBox
           img={budget_xq}
@@ -399,31 +409,31 @@ class Detail extends PureComponent {
                 text="编辑"
               />
             ) : (
-              <div>
-                <Button
-                  icon="close"
-                  onClick={() =>
-                    this.setState({
-                      editBool: false,
-                      freePayDay: '',
-                    })
-                  }
-                >
-                  取消
+                <div>
+                  <Button
+                    icon="close"
+                    onClick={() =>
+                      this.setState({
+                        editBool: false,
+                        freePayDay: '',
+                      })
+                    }
+                  >
+                    取消
                 </Button>
-                <Button
-                  style={{
-                    marginLeft: '16px',
-                  }}
-                  type="primary"
-                  ghost
-                  loading={loadingUpdate}
-                  onClick={() => this.handleSubmit()}
-                >
-                  保存
+                  <Button
+                    style={{
+                      marginLeft: '16px',
+                    }}
+                    type="primary"
+                    ghost
+                    loading={loadingUpdate}
+                    onClick={() => this.handleSubmit()}
+                  >
+                    保存
                 </Button>
-              </div>
-            )
+                </div>
+              )
           }
         >
           <Spin spinning={loadingQueryInfo}>
@@ -462,14 +472,24 @@ class Detail extends PureComponent {
                       rules: [{ required: true, message: '请输入预算编号' }],
                       initialValue: budgetNumber,
                     })(
-                      <Select placeholder="请输入预算编号" style={{ width: w }}>
+                      <Select
+                        showSearch
+                        onSearch={_.debounce(this.handleQueryBudget, 500)}
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                          JSON.stringify(option.props.children)
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
+                        placeholder="请输入预算编号"
+                      >
                         {!_.isEmpty(budgetList) &&
                           budgetList.map(d => (
                             <Option key={d.number} value={d.number}>
                               {d.number}
                             </Option>
                           ))}
-                      </Select>,
+                      </Select>
                     )}
                   </FormItem>
                 </DescriptionItem>
@@ -783,32 +803,32 @@ class Detail extends PureComponent {
                 </DescriptionItem>
               </Descriptions>
             ) : (
-              <Descriptions column={3} bordered className={styles.formatDetailDesc}>
-                {detailList.map((v, i) => (
-                  <DescriptionItem
-                    key={i.toString()}
-                    span={v.span}
-                    label={
-                      <>
-                        {v.required && <span style={{ color: 'red' }}>*</span>}
-                        {v.name}
-                      </>
-                    }
-                  >
-                    {v.dataIndex === 'description' ? (
-                      /* eslint-disable */
-                      <div
-                        className="infoDescription"
-                        style={{ border: 0 }}
-                        dangerouslySetInnerHTML={{ __html: v.value ? v.value : '--' }}
-                      /> /* eslint-disable */
-                    ) : (
-                      <div style={v.style}>{v.value}</div>
-                    )}
-                  </DescriptionItem>
-                ))}
-              </Descriptions>
-            )}
+                <Descriptions column={3} bordered className={styles.formatDetailDesc}>
+                  {detailList.map((v, i) => (
+                    <DescriptionItem
+                      key={i.toString()}
+                      span={v.span}
+                      label={
+                        <>
+                          {v.required && <span style={{ color: 'red' }}>*</span>}
+                          {v.name}
+                        </>
+                      }
+                    >
+                      {v.dataIndex === 'description' ? (
+                        /* eslint-disable */
+                        <div
+                          className="infoDescription"
+                          style={{ border: 0 }}
+                          dangerouslySetInnerHTML={{ __html: v.value ? v.value : '--' }}
+                        /> /* eslint-disable */
+                      ) : (
+                          <div style={v.style}>{v.value}</div>
+                        )}
+                    </DescriptionItem>
+                  ))}
+                </Descriptions>
+              )}
           </Spin>
         </GlobalSandBox>
         <Spin spinning={loadingQueryInfo}>

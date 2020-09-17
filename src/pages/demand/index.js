@@ -1,7 +1,6 @@
 import React, { Fragment, memo, useEffect, useState } from 'react';
 import { connect } from 'dva';
-import { withRouter } from 'umi/index';
-import { router } from 'umi'
+import { router, withRouter } from 'umi'
 import { DefaultPage } from '@/utils/helper';
 // import _ from 'lodash'
 import CustomBtn from '@/components/commonUseModule/customBtn';
@@ -43,7 +42,7 @@ const Index = memo(
     const startTimer = callback => {
       window.timer = setInterval(() => {
         callback && callback();
-      }, 1000);
+      }, 10000000);
     };
 
     // 关闭定时器
@@ -61,6 +60,7 @@ const Index = memo(
         },
       });
     };
+
     // 查询项目,需求列表
     const handleQueryDemandProject = params => {
       dispatch({
@@ -71,6 +71,26 @@ const Index = memo(
         },
       });
     };
+
+    // 查询团队
+    const handleQueryGroup = (params) => {
+      dispatch({
+        type: 'demand/fetchHeaderGroup',
+        payload: {
+          ...params
+        }
+      });
+    };
+
+    // 查预算编号
+    const handleQueryBudget = (number) => {
+      this.props.dispatch({
+        type: 'demand/fetchBudgetNumber',
+        payload: {
+          number
+        }
+      })
+    }
 
     // 根据路由查询不同接口
     const handleQueryDemandList = params => {
@@ -87,6 +107,7 @@ const Index = memo(
         type: 'demand/queryDemandBoard',
         payload: {
           ...DefaultPage,
+          ids: '1,2,3,4,5,6,7,8,9',
           ...params,
         },
       });
@@ -112,6 +133,11 @@ const Index = memo(
       }
     }, []);
 
+    useEffect(() => {
+      handleQueryGroup()
+      handleQueryBudget()
+    }, [])
+
     // 查看详情
     const handleViewDetail = () => {
       router.push({
@@ -127,6 +153,7 @@ const Index = memo(
       handleViewModal,
       handleQueryDemandList,
       handleQueryBoard,
+      handleQueryList,
     };
     return (
       <Fragment>
