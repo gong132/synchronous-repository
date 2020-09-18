@@ -177,14 +177,6 @@ const Index = props => {
       payload: {},
     });
   };
-  const handleQueryGroupList = params => {
-    dispatch({
-      type: 'budgetManage/fetchAllTeam',
-      payload: {
-        ...params,
-      },
-    });
-  };
   const handleQueryAllTeam = params => {
     dispatch({
       type: 'budgetManage/queryAllTeam',
@@ -211,7 +203,6 @@ const Index = props => {
   useEffect(() => {
     handleQueryBudgetData();
     handleQueryClusterList();
-    handleQueryGroupList();
     handleQueryAllTeam();
     handleQueryDeptList();
   }, []);
@@ -348,13 +339,13 @@ const Index = props => {
           <Col span={24}>
             <FormItem {...formLayoutItem2} label="承建团队">
               {getFieldDecorator(
-                'receiveGroupId',
+                'receiveTeamId',
                 {},
               )(
                 <Select
                   allowClear
                   showSearch
-                  onSearch={val => handleSearch(handleQueryGroupList({ deptName: val }))}
+                  onSearch={val => handleSearch(handleQueryAllTeam({ deptName: val }))}
                 >
                   {teamList &&
                     teamList.map(v => (
