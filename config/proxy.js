@@ -5,8 +5,8 @@
  * For details, please see
  * https://pro.ant.design/docs/deploy
  */
-// const apiUrl = 'http://172.20.10.8:80'
-const apiUrl = 'http://172.20.10.7:80';
+const apiUrl = 'http://172.20.10.8:80'
+// const apiUrl = 'http://172.20.10.7:80';
 
 // const apiUrl = 'http://10.90.48.22:80'; // yw
 // const apiUrl = "http://10.90.48.40:80"; // zzp

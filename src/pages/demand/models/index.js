@@ -1,6 +1,7 @@
 import {
   updateDemand,
   addDemand, fetchSystemList, fetchUserList, addStory,
+  tempAddDemand,
   updateStory,
   // updateDemand,
   queryDemand,
@@ -29,6 +30,7 @@ const Demand = {
     budgetMap: {},
     systemList: [],
     userList: [],
+    tempDemandId: ''
   },
   effects: {
     *fetchLogList({ payload }, { call, put }) {
@@ -57,6 +59,25 @@ const Demand = {
       return true;
     },
 
+    // 暂存需求
+    *tempAddDemand({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(tempAddDemand, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      console.log(payload, 'payload')
+      if (payload.autoSave) {
+        yield put({
+          type: 'saveData',
+          payload: {
+            tempDemandId: data
+          }
+        })
+      }
+      return true;
+    },
+
     *updateDemand({ payload }, { call }) {
       const { code, msg } = yield call(updateDemand, payload);
       if (!code || code !== 200) {
@@ -76,6 +97,7 @@ const Demand = {
       const gObj = {}
       if (data && data.length < 1) return ''
       data.map(v => {
+        v.id = String(v.id)
         gObj[v.id] = v.name
         return true
       })

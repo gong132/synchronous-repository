@@ -134,7 +134,7 @@ class TeamManage extends Component {
     const { form: { getFieldDecorator }, loadingQueryTeamData } = this.props;
     return (
       <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
-        <Col span={6}>
+        {/* <Col span={6}>
           <FormItem {...formLayoutItem} labelCol={{ span: 5 }} colon={false} label="团队ID">
             {getFieldDecorator('id', {
             })(<Input
@@ -143,7 +143,7 @@ class TeamManage extends Component {
               placeholder='请输入团队ID'
             />)}
           </FormItem>
-        </Col>
+        </Col> */}
         <Col span={6}>
           <FormItem {...formLayoutItem} colon={false} label="团队名称">
             {getFieldDecorator('name', {

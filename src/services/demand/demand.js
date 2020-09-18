@@ -8,6 +8,14 @@ export async function addDemand(params) {
   });
 }
 
+// 暂存需求
+export async function tempAddDemand(params) {
+  return request('/demand/ts', {
+    method: 'post',
+    params,
+  });
+}
+
 // 编辑需求
 export async function updateDemand(params) {
   return request('/demand/update', {
@@ -107,3 +115,4 @@ export async function updateStory(params) {
     params,
   });
 }
+

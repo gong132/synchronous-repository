@@ -6,14 +6,16 @@ import StandardTable from '@/components/StandardTable';
 import { DefaultPage, TableColumnHelper } from '@/utils/helper';
 import OptButton from '@/components/commonUseModule/optButton';
 import editIcon from '@/assets/icon/Button_bj.svg';
-import budget_xq from '@/assets/icon/modular_xq.svg';
-import budget_log from '@/assets/icon/modular_czrz.svg';
-import { Descriptions, Spin, Input, Row, Col, Checkbox, Button, Form } from 'antd';
+import budgetXq from '@/assets/icon/modular_xq.svg';
+import budgetLog from '@/assets/icon/modular_czrz.svg';
+import { Descriptions, Spin, Input, Row, Col, Checkbox, Form } from 'antd';
 import { getParam } from '@/utils/utils';
+import { MENU_ACTIONS } from '@/utils/constant'
 import styles from '../index.less';
 
 @Form.create()
-@connect(({ sector, loading }) => ({
+@connect(({ sector, loading, global }) => ({
+  global,
   loadingQueryLogData: loading.effects['sector/fetchLogList'],
   loadingQueryInfo: loading.effects['sector/fetchSectorInfo'],
   loadingUpdate: loading.effects['sector/updateData'],
@@ -136,6 +138,7 @@ class SectorDetail extends PureComponent {
       form,
       deptList,
       loadingUpdate,
+      global: { authActions }
     } = this.props;
     const {
       name,
@@ -187,14 +190,20 @@ class SectorDetail extends PureComponent {
       TableColumnHelper.genPlanColumn('content', '操作内容'),
       TableColumnHelper.genPlanColumn('updateTime', '操作时间', { width: '100px' }),
     ];
+
+    const btnStyle = {
+      border: '1px solid #D63649',
+      borderRadius: '2px',
+      color: '#D63649',
+    };
     return (
       <Fragment>
         <GlobalSandBox
-          img={budget_xq}
+          img={budgetXq}
           title="板块详情"
           optNode={
             !editBool ? (
-              <OptButton
+              authActions.includes(MENU_ACTIONS.EDIT) && <OptButton
                 style={{
                   backgroundColor: 'white',
                 }}
@@ -208,30 +217,30 @@ class SectorDetail extends PureComponent {
                 text="编辑"
               />
             ) : (
-              <div>
-                <Button
-                  icon="close"
-                  onClick={() =>
-                    this.setState({
-                      editBool: false,
-                    })
-                  }
-                >
-                  取消
-                </Button>
-                <Button
-                  style={{
-                    marginLeft: '16px',
-                  }}
-                  type="primary"
-                  ghost
-                  onClick={() => this.handleSubmit()}
-                  loading={loadingUpdate}
-                >
-                  保存
-                </Button>
-              </div>
-            )
+                <div>
+                  <OptButton
+                    style={{
+                      ...btnStyle,
+                      backgroundColor: 'white',
+                    }}
+                    icon="close"
+                    onClick={() =>
+                      this.setState({
+                        editBool: false,
+                      })
+                    }
+                    text="取消"
+                  />
+                  <OptButton
+                    style={{
+                      marginLeft: '16px',
+                    }}
+                    onClick={() => this.handleSubmit()}
+                    loading={loadingUpdate}
+                    text="保存"
+                  />
+                </div>
+              )
           }
         >
           <Spin spinning={loadingQueryInfo}>
@@ -338,26 +347,26 @@ class SectorDetail extends PureComponent {
                   </Descriptions.Item> */}
                 </Fragment>
               ) : (
-                detailList.map((v, i) => (
-                  <Descriptions.Item
-                    key={i.toString()}
-                    span={v.span}
-                    label={
-                      <>
-                        {v.required && <span style={{ color: 'red' }}>*</span>}
-                        {v.name}
-                      </>
-                    }
-                  >
-                    {v.value}
-                  </Descriptions.Item>
-                ))
-              )}
+                  detailList.map((v, i) => (
+                    <Descriptions.Item
+                      key={i.toString()}
+                      span={v.span}
+                      label={
+                        <>
+                          {v.required && <span style={{ color: 'red' }}>*</span>}
+                          {v.name}
+                        </>
+                      }
+                    >
+                      {v.value}
+                    </Descriptions.Item>
+                  ))
+                )}
             </Descriptions>
           </Spin>
         </GlobalSandBox>
         <div style={{ height: '16px' }} />
-        <GlobalSandBox img={budget_log} title="操作日志">
+        <GlobalSandBox img={budgetLog} title="操作日志">
           <StandardTable
             loading={loadingQueryLogData}
             rowKey={(record, index) => index}

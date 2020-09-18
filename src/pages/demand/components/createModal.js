@@ -25,15 +25,16 @@ const CreateDemand = props => {
     clearTimer,
     demand,
     loadingAdd,
+    loadingTempAdd,
     recordValue = {},
   } = props;
 
   const {
     formType,
     groupList,
+    tempDemandId,
   } = demand;
 
-  console.log(demand)
   const {
     title,
     expectedCompletionDate,
@@ -46,10 +47,22 @@ const CreateDemand = props => {
   } = recordValue;
 
   const [description, setDescription] = useState(DEFAULT_DESC);
+  useEffect(() => {
+    console.log('页面挂载****************88')
+    // 清除可能存在的自动保存的id
+    props.dispatch({
+      type: 'demand/saveData',
+      payload: { tempDemandId: '' }
+    })
+  }, [])
+  console.log('tempDemandId:', tempDemandId)
 
   useEffect(() => {
-    setDescription(recordValue.description);
-  }, [recordValue.description]);
+    if (recordValue.requirementDescription) {
+      setDescription(recordValue.requirementDescription);
+    }
+  }, [recordValue.requirementDescription]);
+  console.log('tempDemandId:', tempDemandId)
 
   // 查询团队
   const handleQueryGroup = (params) => {
@@ -72,7 +85,6 @@ const CreateDemand = props => {
       .then(res => {
         if (res) {
           handleViewModal(false);
-          console.log(formType);
           if (formType === 'list') {
             handleQueryList();
           } else if (formType === 'board') {
@@ -82,27 +94,97 @@ const CreateDemand = props => {
       });
   };
 
-  const handleSubmitForm = () => {
-    form.validateFieldsAndScroll((err, values) => {
-      if (err) return;
-      if (description.length < 1) {
-        message.error('请补全需求描述！');
-        return;
-      }
-      values.expectedCompletionDate = moment(values.expectedCompletionDate).format('YYYY-MM-DD');
-      values.requirementDescription = description;
+  // 暂存需求（自动保存）
+  const tempCreateDemand = values => {
+    props
+      .dispatch({
+        type: 'demand/tempAddDemand',
+        payload: {
+          ...values,
+        },
+      }).then((res) => {
+        if (res && !values.autoSave) {
+          handleViewModal(false);
+          if (formType === 'list') {
+            handleQueryList();
+          } else if (formType === 'board') {
+            handleQueryBoard();
+          }
+        }
+      })
+  };
 
-      console.log('values: ', values);
-      createDemand(values);
+  const editDemand = params => {
+    props.dispatch({
+      type: 'demand/updateDemand',
+      payload: {
+        ...params,
+      },
+    })
+      .then(res => {
+        if (res) {
+          handleViewModal(false);
+          if (formType === 'list') {
+            handleQueryList();
+          } else if (formType === 'board') {
+            handleQueryBoard();
+          }
+        }
+      });
+  };
+
+  const handleSubmitForm = (saveType) => {
+    form.validateFieldsAndScroll((err, values) => {
+      if (saveType === 'clickBtn') {
+        if (err) return;
+        if (description.length < 1) {
+          message.error('请补全需求描述！');
+          return;
+        }
+      }
+      values.expectedCompletionDate = values.expectedCompletionDate ? moment(values.expectedCompletionDate).format('YYYY-MM-DD') : '';
+      values.requirementDescription = description;
+      if (saveType === 'clickBtn') {
+        // 如果是编辑页面走编辑接口
+        if (modalTitle === '编辑') {
+          values.id = recordValue.id
+          editDemand(values)
+          return true
+        }
+        // 点击保存时暂存id已经获取到了
+        if (tempDemandId) {
+          values.id = tempDemandId
+          editDemand(values)
+          return true
+        }
+        // 保存
+        createDemand(values);
+        return true
+      }
+      // 如果需求标题没输入就不能往下走
+      if (!values.title) {
+        message.warning('请填写需求标题')
+        return true
+      }
+
+      if (saveType !== 'tempSave') {
+        // 自动保存
+        values.id = tempDemandId
+        values.autoSave = true
+      }
+      console.log(saveType, tempDemandId)
+      tempCreateDemand(values)
     });
   };
 
   useEffect(() => {
-    startTimer(handleSubmitForm);
-    return () => {
-      // 销毁组件执行
-      clearTimer();
-    };
+    if (modalTitle === '创建') {
+      startTimer(handleSubmitForm);
+      return () => {
+        // 销毁组件执行
+        clearTimer();
+      };
+    }
   }, []);
 
   const renderForm = () => (
@@ -293,8 +375,19 @@ const CreateDemand = props => {
           />
           <CustomBtn
             // loading={modalTitle === '编辑' ? loadingUpdate : loadingAdd}
+            loading={loadingTempAdd}
+            onClick={() => handleSubmitForm('tempSave')}
+            style={{
+              background: 'rgba(46, 91, 255, 0.1)',
+              color: '#2E5BFF'
+            }}
+            type="save"
+            title='暂存'
+          />
+          <CustomBtn
+            // loading={modalTitle === '编辑' ? loadingUpdate : loadingAdd}
             loading={loadingAdd}
-            onClick={handleSubmitForm}
+            onClick={() => handleSubmitForm('clickBtn')}
             type="save"
           />
         </div>
@@ -305,7 +398,8 @@ const CreateDemand = props => {
   );
 };
 
-export default connect(({demand, loading}) => ({
+export default connect(({ demand, loading }) => ({
   demand,
-  loadingAdd: loading.effects['demand/addDemand']
+  loadingAdd: loading.effects['demand/addDemand'],
+  loadingTempAdd: loading.effects['demand/tempAddDemand']
 }))(Form.create()(CreateDemand));

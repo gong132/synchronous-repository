@@ -156,12 +156,20 @@ module.exports = {
               path: '/systemManage/sectorManage',
               name: 'sectorManage',
               component: './systemManage/sectorManage',
+              buttons: [
+                { name: '新建', key: 'add' },
+                { name: '编辑', key: 'edit' },
+                { name: '查看', key: 'check' },
+              ],
             },
             {
               path: '/systemManage/sectorManage/detail',
               name: 'detail',
               hideInMenu: true,
               component: './systemManage/sectorManage/components/detail',
+              buttons: [
+                { name: '编辑', key: 'edit' },
+              ],
             },
           ],
         },

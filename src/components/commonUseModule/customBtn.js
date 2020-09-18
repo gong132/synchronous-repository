@@ -30,7 +30,7 @@ const CustomBtn = props => {
           style={style}
           onClick={onClick}
         >
-          <span>保存</span>
+          <span>{title || '保存'}</span>
         </Button>
       )}
       {type === 'edit' && (
