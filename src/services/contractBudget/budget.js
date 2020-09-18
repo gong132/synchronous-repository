@@ -72,7 +72,7 @@ export async function fetchGroupByDept(params) {
 }
 // 查找团队
 export async function fetchAllTeam(params) {
-  return request('/group/search', {
+  return request('/team/search', {
     method: 'get',
     params,
   });

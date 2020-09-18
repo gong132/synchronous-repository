@@ -41,11 +41,6 @@ module.exports = {
     'import/extensions': 0,
     'react/sort-comp': 0,
     'import/order': 0,
-    'no-plusplus': 0,
-    'react/jsx-closing-tag-location': 0,
-    'compat/compat': 0,
-    'camelcase': 0,
-    'no-nested-ternary': 0,
   },
   settings: {
     polyfills: ['fetch', 'promises', 'url'],

@@ -179,7 +179,7 @@ const Index = props => {
   };
   const handleQueryGroupList = params => {
     dispatch({
-      type: 'budgetManage/queryGroupList',
+      type: 'budgetManage/fetchAllTeam',
       payload: {
         ...params,
       },
