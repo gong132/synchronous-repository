@@ -5,18 +5,22 @@ import moment from 'moment';
 import Editor from '@/components/TinyEditor';
 import CustomBtn from '@/components/commonUseModule/customBtn';
 import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
+import ListOptBtn from '@/components/commonUseModule/listOptBtn'
 import StandardTable from '@/components/StandardTable';
+import ChartCard from './chartCard'
 import { TableColumnHelper, DefaultPage } from '@/utils/helper';
 import OptButton from '@/components/commonUseModule/optButton';
+import flowIcon from '@/assets/icon/modular_lcjd.svg'
+import sdIcon from '@/assets/icon/modular_xtxq.svg'
+import editIcon from '@/assets/icon/Button_bj.svg';
+import editIconList from '@/assets/icon/cz_bj.svg'
+import delIcon from '@/assets/icon/cz_del.svg'
+
+import psIcon from '@/assets/icon/nav_xqgl.svg'
+import apsIcon from '@/assets/icon/nav_xqgl_hover.svg'
+import xqIcon from '@/assets/icon/xq.svg'
 import budgetLogIcon from '@/assets/icon/modular_czrz.svg';
 import budgetXqIcon from '@/assets/icon/modular_xq.svg';
-import flowIcon from '@/assets/icon/modular_lcjd.svg';
-import sdIcon from '@/assets/icon/modular_xtxq.svg';
-import msgIcon from '@/assets/icon/modular_xx.svg';
-import editIcon from '@/assets/icon/Button_bj.svg';
-import psIcon from '@/assets/icon/nav_xqgl.svg';
-import apsIcon from '@/assets/icon/nav_xqgl_hover.svg';
-import xqIcon from '@/assets/icon/xq.svg';
 // import xmIcon from '@/assets/icon/xm.svg'
 
 import {
@@ -95,8 +99,17 @@ class Detail extends Component {
     });
   };
 
-  // 分页操作
+  // 日志分页操作
   handleStandardTableChange = pagination => {
+    const params = {
+      currentPage: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+    this.handleQueryLogList(params);
+  };
+
+  // 项目里程碑分页
+  handleStandardTableChangePro = pagination => {
     const params = {
       currentPage: pagination.current,
       pageSize: pagination.pageSize,
@@ -330,6 +343,50 @@ class Detail extends Component {
       TableColumnHelper.genPlanColumn('operateUserName', '操作人', { width: '100px' }),
       TableColumnHelper.genPlanColumn('content', '操作内容'),
       TableColumnHelper.genPlanColumn('updateTime', '操作时间', { width: '100px' }),
+    ];
+
+    const proColumns = [
+      TableColumnHelper.genPlanColumn('operateUserName', '里程碑阶段'),
+      TableColumnHelper.genPlanColumn('content', '负责人'),
+      TableColumnHelper.genPlanColumn('updateTime', '计划完成日期'),
+      TableColumnHelper.genPlanColumn('content', '创建人'),
+      TableColumnHelper.genPlanColumn('content', '创建时间'),
+      TableColumnHelper.genPlanColumn('content', '修改人'),
+      TableColumnHelper.genPlanColumn('content', '修改时间'),
+      {
+        title: '操作',
+        align: 'left',
+        width: 190,
+        render: () => {
+          return (
+            <div>
+              <ListOptBtn
+                title="编辑"
+                style={{
+                  fontSize: '20px',
+                  marginRight: '16px',
+                  position: 'relative',
+                  top: '1px'
+                }}
+                // onClick={() => this.handleViewModal(true, '编辑', record)}
+                icon={editIconList}
+              />
+
+              <ListOptBtn
+                icon={delIcon}
+                style={{
+                  fontSize: '20px',
+                  marginRight: '16px',
+                  position: 'relative',
+                  top: '1px'
+                }}
+                // onClick={() => this.handleViewDetail(record)}
+                title="删除"
+              />
+            </div>
+          );
+        },
+      },
     ];
 
     return (
@@ -851,8 +908,31 @@ class Detail extends Component {
           </GlobalSandBox>
         </Spin>
 
+        <GlobalSandBox
+          title='项目里程碑'
+          img={sdIcon}
+          optNode={
+            <OptButton
+              style={{
+                backgroundColor: 'white',
+                color: '#B0BAC9',
+                borderColor: '#B0BAC9'
+              }}
+              icon='plus'
+              text="新建"
+            />
+          }
+        >
+          <StandardTable
+            rowKey={(record, index) => index}
+            columns={proColumns}
+            // data={logList}
+            // loading={loadingQueryLogData}
+            onChange={this.handleStandardTableChangePro}
+          />
+        </GlobalSandBox>
+        <ChartCard />
         <GlobalSandBox title="系统需求" img={sdIcon}></GlobalSandBox>
-        <GlobalSandBox title="评论" img={msgIcon}></GlobalSandBox>
         <GlobalSandBox img={budgetLogIcon} title="操作日志">
           <StandardTable
             rowKey={(record, index) => index}

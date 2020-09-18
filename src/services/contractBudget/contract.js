@@ -74,7 +74,7 @@ export async function querySupplier(params) {
 
 // 负责人和团队
 export async function queryHeaderGroup(params) {
-  return request('/group/query', {
+  return request('/team/query', {
     method: 'post',
     params,
   });

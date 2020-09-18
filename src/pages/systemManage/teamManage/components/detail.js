@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
-import budget_xq from '@/assets/icon/modular_xq.svg';
+import budgetIcon from '@/assets/icon/modular_xq.svg';
 import { Descriptions } from 'antd'
 import { getParam,
   // getUserInfo
@@ -15,7 +15,7 @@ const TeamDetail = (props) => {
   const {
     id,
     name,
-    groupHeaderName,
+    teamHeaderName,
     personnels,
   } = info
   console.log(teamList, info)
@@ -28,11 +28,11 @@ const TeamDetail = (props) => {
   const detailList = [
     { span: 1, required: false, name: '团队ID', value: id, dataIndex: 'id' },
     { span: 1, required: false, name: '团队名称', value: name, dataIndex: 'name' },
-    { span: 1, required: false, name: '团队经理', value: groupHeaderName, dataIndex: 'groupHeaderName' },
+    { span: 1, required: false, name: '团队经理', value: teamHeaderName, dataIndex: 'teamHeaderName' },
     { span: 3, required: false, name: '团队成员', value: personnels, dataIndex: 'personnels' },
   ];
   return (
-    <GlobalSandBox title="团队详情" img={budget_xq}>
+    <GlobalSandBox title="团队详情" img={budgetIcon}>
       <Descriptions column={3} bordered>
         {
           detailList.map((v, i) => (

@@ -124,6 +124,7 @@ const Contract = {
       }
       const obj = {}
       data.map(v => {
+        v.id = String(v.id)
         obj[v.id] = v.name
         return true
       })
@@ -258,11 +259,12 @@ const Contract = {
       const gObj = {}
       if(data&&data.length < 1) return ''
       data.map(v => {
-        obj[v.id] = v.name
+        v.id = String(v.id)
+        obj[String(v.id)] = v.name
         return true
       })
       data.map(v => {
-        gObj[v.id] = v.name
+        gObj[String(v.id)] = v.name
         return true
       })
       yield put({

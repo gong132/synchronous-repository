@@ -51,7 +51,7 @@ export async function fetchDeptListByCluster(params) {
 }
 // 集团  暂用
 export async function fetchGroupList(params) {
-  return request('/group/search', {
+  return request('/team/search', {
     method: 'get',
     params,
   });

@@ -27,7 +27,7 @@ const CreateContract = props => {
     systemMap,
     supplierList,
     supplierMap,
-    headerList,
+    // headerList,
     headerMap,
     groupMap,
     groupList,
@@ -58,7 +58,7 @@ const CreateContract = props => {
     providerCompanyId,
     signingTime,
     headerId,
-    headerGroupId,
+    headerTeamId,
     payRecords,
   } = recordValue;
 
@@ -255,7 +255,7 @@ const CreateContract = props => {
       values.deptName = deptListMap[values.deptId];
       values.providerCompanyName = supplierMap[values.providerCompanyId];
       values.headerName = headerMap[values.headerId];
-      values.headerGroupName = groupMap[values.headerGroupId];
+      values.headerTeamName = groupMap[values.headerTeamId];
       values.signingTime = moment(values.signingTime).format('YYYY-MM-DD');
       values.description = description;
       values.payRecords = data;
@@ -451,21 +451,22 @@ const CreateContract = props => {
                 }
                 placeholder="请输入合同负责人"
               >
-                {!_.isEmpty(headerList) &&
-                  headerList.map(d => (
-                    <Option key={d.leaderId} value={d.leaderId}>
-                      {d.leaderName}
+                {!_.isEmpty(groupList) &&
+                  groupList.map(d => (
+                    <Option key={d.id} value={d.id}>
+                      {d.name}
                     </Option>
                   ))}
+                {/* <Option key='1' value='fuzerne'>未定义</Option> */}
               </Select>,
             )}
           </FormItem>
         </Col>
         <Col span={12}>
           <FormItem {...formLayoutItemAddDouble} label="合同负责人团队">
-            {form.getFieldDecorator('headerGroupId', {
+            {form.getFieldDecorator('headerTeamId', {
               rules: [{ required: true, message: '请输入合同负责人团队' }],
-              initialValue: headerGroupId,
+              initialValue: headerTeamId,
             })(
               <Select
                 allowClear
@@ -479,6 +480,7 @@ const CreateContract = props => {
                 }
                 placeholder="请输入合同负责人团队"
               >
+                {console.log(groupList)}
                 {!_.isEmpty(groupList) &&
                   groupList.map(d => (
                     <Option key={d.id} value={d.id}>
@@ -491,7 +493,7 @@ const CreateContract = props => {
         </Col>
         {/* <Col span={12}>
           <FormItem {...formLayoutItemAddDouble} label="免费维保期">
-            {form.getFieldDecorator('headerGroupId', {
+            {form.getFieldDecorator('headerTeamId ', {
               rules: [{ required: true, message: '请输入免费维保期' }],
               // initialValue: values && values.name,
             })(<Input placeholder='请输入免费维保期' addonAfter='月' />)}

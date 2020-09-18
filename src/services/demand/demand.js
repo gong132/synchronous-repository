@@ -66,7 +66,7 @@ export async function queryProjectDemandBoard(params) {
 
 // 团队
 export async function queryGroup(params) {
-  return request('/group/query', {
+  return request('/team/query', {
     method: 'post',
     params,
   });

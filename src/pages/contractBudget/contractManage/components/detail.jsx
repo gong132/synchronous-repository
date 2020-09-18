@@ -96,7 +96,7 @@ class Detail extends PureComponent {
   }
 
   // 查日志
-  handleQueryLogList = (obj={}) => {
+  handleQueryLogList = (obj = {}) => {
     const id = getParam('id');
     const params = {
       linkId: id,
@@ -149,7 +149,7 @@ class Detail extends PureComponent {
       values.deptName = deptListMap[values.deptId];
       values.providerCompanyName = supplierMap[values.providerCompanyId];
       values.headerName = headerMap[values.headerId];
-      values.headerGroupName = groupMap[values.headerGroupId];
+      values.headerTeamName = groupMap[values.headerTeamId];
       values.projectCheckTime = values.projectCheckTimeEdit
         ? moment(values.projectCheckTimeEdit).format('YYYY-MM-DD')
         : '';
@@ -312,8 +312,8 @@ class Detail extends PureComponent {
       signingTime,
       headerId,
       headerName,
-      headerGroupId,
-      headerGroupName,
+      headerTeamId,
+      headerTeamName,
       projectCheckTime,
       freeDefendDate,
       defendPayTime,
@@ -363,7 +363,7 @@ class Detail extends PureComponent {
       { span: 1, required: false, name: '首次报价金额', value: firstOfferAmount },
       { span: 1, required: false, name: '合同成交金额', value: transactionAmount },
       { span: 1, required: false, name: '合同负责人', value: headerName },
-      { span: 1, required: false, name: '合同负责人团队', value: headerGroupName },
+      { span: 1, required: false, name: '合同负责人团队', value: headerTeamName },
       { span: 1, required: false, name: '合同签订时间', value: signingTime },
       { span: 1, required: false, name: '录入人', value: userName },
       { span: 1, required: false, name: '录入时间', value: createTime },
@@ -562,8 +562,8 @@ class Detail extends PureComponent {
                       >
                         {!_.isEmpty(deptList) &&
                           deptList.map(d => (
-                            <Option key={d.deptId} value={d.deptId}>
-                              {d.deptName}
+                            <Option key={d.id} value={d.id}>
+                              {d.name}
                             </Option>
                           ))}
                       </Select>,
@@ -631,10 +631,11 @@ class Detail extends PureComponent {
                         placeholder="请输入合同负责人"
                         style={{ width: w }}
                       >
+                        {console.log(headerList, headerId)}
                         {!_.isEmpty(headerList) &&
                           headerList.map(d => (
-                            <Option key={d.leaderId} value={d.leaderId}>
-                              {d.leaderName}
+                            <Option key={d.id} value={d.id}>
+                              {d.name}
                             </Option>
                           ))}
                       </Select>,
@@ -646,9 +647,9 @@ class Detail extends PureComponent {
                   label={<>{<span style={{ color: 'red' }}>*</span>}合同负责人团队</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('headerGroupId', {
+                    {form.getFieldDecorator('headerTeamId ', {
                       rules: [{ required: true, message: '请输入合同负责人团队' }],
-                      initialValue: headerGroupId,
+                      initialValue: headerTeamId,
                     })(
                       <Select
                         allowClear
@@ -658,7 +659,7 @@ class Detail extends PureComponent {
                       >
                         {!_.isEmpty(headerList) &&
                           headerList.map(d => (
-                            <Option key={d.number} value={d.number}>
+                            <Option key={d.id} value={d.id}>
                               {d.name}
                             </Option>
                           ))}

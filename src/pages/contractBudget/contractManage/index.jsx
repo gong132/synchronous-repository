@@ -384,7 +384,7 @@ class ContractManage extends Component {
           <Col span={24}>
             <FormItem colon={false} label="合同负责人团队">
               {getFieldDecorator(
-                'headerGroupId',
+                'headerTeamId ',
                 {},
               )(
                 <Select
@@ -471,8 +471,8 @@ class ContractManage extends Component {
             </Select>)}
           </FormItem>
         </Col>
-        <Col span={6}>
-          <FormItem {...formLayoutItem} colon={false} label="所属集群/板块">
+        <Col span={8}>
+          <FormItem labelCol={{span: 10}} wrapperCol={{span: 14}} colon={false} label="所属集群/板块">
             {getFieldDecorator('clusterId', {
             })(<Select
               allowClear
@@ -499,13 +499,13 @@ class ContractManage extends Component {
             </Select>)}
           </FormItem>
         </Col>
-        <Col span={6}>
+        <Col span={4}>
           <FormItem>
             <CustomBtn
               onClick={() => this.handleResetSearch()}
               style={{
                 display: 'inline-block',
-                marginRight: '4rem'
+                marginRight: '2rem'
               }}
               loading={loadingQueryData}
               type='reset'
@@ -559,7 +559,7 @@ class ContractManage extends Component {
       TableColumnHelper.genPlanColumn('projectCheckTime', '项目验收日期', { sorter: true }, ''),
       TableColumnHelper.genPlanColumn('budgetNumber', '预算编号', { sorter: true }),
       TableColumnHelper.genPlanColumn('headerName', '合同负责人', { sorter: true }),
-      TableColumnHelper.genPlanColumn('headerGroupName', '合同负责团队', { sorter: true }),
+      TableColumnHelper.genPlanColumn('headerTeamName', '合同负责团队', { sorter: true }),
       TableColumnHelper.genPlanColumn('signingTime', '合同签订日期', { sorter: true }),
       TableColumnHelper.genPlanColumn('userName', '录入人', { sorter: true }),
       TableColumnHelper.genDateTimeColumn('createTime', '录入时间', 'YYYY-MM-DD', { sorter: true }),
