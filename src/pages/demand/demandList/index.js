@@ -1,19 +1,19 @@
-import React, {Fragment, memo, useEffect, useState} from 'react';
+import React, { Fragment, memo, useEffect, useState } from 'react';
 import { connect } from 'dva';
 import { withRouter } from 'umi/index';
 import { isEmpty } from '@/utils/lang';
-import {Divider, message, Tooltip} from 'antd';
+import { Divider, message, Tooltip } from 'antd';
 import { DefaultPage, TableColumnHelper } from '@/utils/helper';
 // import {MENU_ACTIONS} from "@/utils/constant";
 import OptButton from '@/components/commonUseModule/optButton';
 import edit from '@/assets/icon/Button_bj.svg';
 import StandardTable from '@/components/StandardTable';
 
-import AddStory from "../components/story/addStory"
+import AddStory from '../components/story/addStory';
 
-import styles from "../index.less"
+import styles from '../index.less';
 
-import deleteIcon from "@/assets/icon/Button_del.svg"
+import deleteIcon from '@/assets/icon/Button_del.svg';
 
 const demandRoutes = {
   '/demand/myDemand': '我的需求',
@@ -27,8 +27,8 @@ const Index = memo(
       // demand: { demandList },
     } = props;
 
-    const [addModalVisible, setAddModalVisible] = useState(false)
-    const [selectedRows, setSelectedRows] = useState({})
+    const [addModalVisible, setAddModalVisible] = useState(false);
+    const [selectedRows, setSelectedRows] = useState({});
 
     const handleQueryMyDemand = params => {
       dispatch({
@@ -60,16 +60,16 @@ const Index = memo(
 
     const handleUpdateStory = ids => {
       dispatch({
-        type: "demand/updateStory",
+        type: 'demand/updateStory',
         payload: {
           id: ids,
           isDelete: 1,
         },
       }).then(sure => {
         if (!sure) return;
-        message.success("删除成功" )
-        handleQueryDemandList()
-      })
+        message.success('删除成功');
+        handleQueryDemandList();
+      });
     };
 
     useEffect(() => {
@@ -120,6 +120,7 @@ const Index = memo(
           <Fragment>
             <OptButton
               img={edit}
+              showText={false}
               text="编辑"
               onClick={() => {
                 // setAddModalVisible(true);
@@ -179,16 +180,18 @@ const Index = memo(
             <Fragment>
               <OptButton
                 img={edit}
+                showText={false}
                 text="编辑"
                 onClick={() => {
                   setAddModalVisible(true);
-                  setSelectedRows(rows)
+                  setSelectedRows(rows);
                 }}
               />
               <Divider type="vertical" />
               <OptButton
                 icon="eye"
                 text="查看"
+                showText={false}
                 onClick={() => {
                   // setAddModalVisible(true);
                   // setSelectedRows(rows)
@@ -198,6 +201,7 @@ const Index = memo(
               <OptButton
                 icon="sync"
                 text="同步"
+                showText={false}
                 onClick={() => {
                   // setAddModalVisible(true);
                   // setSelectedRows(rows)
@@ -206,6 +210,7 @@ const Index = memo(
               <Divider type="vertical" />
               <OptButton
                 img={deleteIcon}
+                showText={false}
                 text="删除"
                 onClick={() => handleUpdateStory(rows.id)}
               />
@@ -214,7 +219,12 @@ const Index = memo(
         },
       ];
       return (
-        <StandardTable rowKey="id" columns={subColumns} data={{list: row.storyList}} pagination={false} />
+        <StandardTable
+          rowKey="id"
+          columns={subColumns}
+          data={{ list: row.storyList }}
+          pagination={false}
+        />
       );
     };
 
@@ -222,38 +232,38 @@ const Index = memo(
       list: [
         {
           id: '1',
-          title: "标题",
-          demandNumber: "需求编号",
-          creator: "创建人",
-          createTime: "2020-9-17",
-          type: "p",
+          title: '标题',
+          demandNumber: '需求编号',
+          creator: '创建人',
+          createTime: '2020-9-17',
+          type: 'p',
           status: 1,
-          priority: "P1",
-          introducer: "提出人",
-          acceptTeam: "受理团队",
-          receiverId: "受理人",
-          requirementDescription: "需求描述",
-          communicate: "n",
-          expectedCompletionDate: "2020-9-17",
-          plannedLaunchDate: "2020-9-17",
-          actualLineDate: "2020-9-17",
-          estimatedDevelopmentEffort: "1",
-          estimatedTestWorkload: "2",
-          demandUrgency: "1",
-          riskControlFunction: "y",
-          budgetNumbers: "预算编号",
-          projectNo: "所属项目编号",
-          ts: "1",
-          creatorId: "创建人id",
-          acceptTeamId: "受理团队id",
-          introducerId: "提出人id",
+          priority: 'P1',
+          introducer: '提出人',
+          acceptTeam: '受理团队',
+          receiverId: '受理人',
+          requirementDescription: '需求描述',
+          communicate: 'n',
+          expectedCompletionDate: '2020-9-17',
+          plannedLaunchDate: '2020-9-17',
+          actualLineDate: '2020-9-17',
+          estimatedDevelopmentEffort: '1',
+          estimatedTestWorkload: '2',
+          demandUrgency: '1',
+          riskControlFunction: 'y',
+          budgetNumbers: '预算编号',
+          projectNo: '所属项目编号',
+          ts: '1',
+          creatorId: '创建人id',
+          acceptTeamId: '受理团队id',
+          introducerId: '提出人id',
           storyList: [
             {
               id: 7,
-              number: "story编号",
-              title: "story标题",
+              number: 'story编号',
+              title: 'story标题',
               status: '1',
-              priority: "高",
+              priority: '高',
               type: 1,
               evaluateTime: '2020-09-17',
               developWorkload: 12,
@@ -266,18 +276,18 @@ const Index = memo(
               userId: '43',
               startTime: '2020-09-17',
               endTime: '2020-09-17',
-              systemId: "21345rty",
-              systemName: "esfzf",
-              systemLinkProjectKey: "系统对应的项目空间",
-              issueId: "2q3wertfg",
-              self: "werghj",
-              createTime: "2020-09-17",
-              isDelete: "123456",
-            }
-          ]
-        }
-      ]
-    }
+              systemId: '21345rty',
+              systemName: 'esfzf',
+              systemLinkProjectKey: '系统对应的项目空间',
+              issueId: '2q3wertfg',
+              self: 'werghj',
+              createTime: '2020-09-17',
+              isDelete: '123456',
+            },
+          ],
+        },
+      ],
+    };
     return (
       <div className={styles.childrenTable}>
         <StandardTable
@@ -286,18 +296,16 @@ const Index = memo(
           columns={columns}
           data={list}
         />
-        {
-          addModalVisible && (
-            <AddStory
-              values={selectedRows}
-              modalVisible={addModalVisible}
-              handleModalVisible={() => {
-                setAddModalVisible(false)
-                setSelectedRows({})
-              }}
-            />
-          )
-        }
+        {addModalVisible && (
+          <AddStory
+            values={selectedRows}
+            modalVisible={addModalVisible}
+            handleModalVisible={() => {
+              setAddModalVisible(false);
+              setSelectedRows({});
+            }}
+          />
+        )}
       </div>
     );
   }),

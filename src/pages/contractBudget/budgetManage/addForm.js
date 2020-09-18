@@ -22,7 +22,7 @@ const Index = props => {
     addLoading,
     updateLoading,
     form,
-    budgetManage: { clusterList, allDeptList, groupList, groupByDept },
+    budgetManage: { clusterList, allDeptList, allTeamList, groupByDept },
     handleQueryBudgetData,
   } = props;
 
@@ -52,7 +52,7 @@ const Index = props => {
             ? allDeptList.find(v => v.deptId === fieldsValue.deptId).deptName
             : null,
           receiveGroupName: fieldsValue.receiveGroupId
-            ? groupList.find(v => v.number === fieldsValue.receiveGroupId).name
+            ? allTeamList.find(v => v.number === fieldsValue.receiveGroupId).name
             : null,
           hardwareExpectAmount: Number(fieldsValue.hardwareExpectAmount),
           softwareExpectAmount: Number(fieldsValue.softwareExpectAmount),
@@ -252,8 +252,8 @@ const Index = props => {
               initialValue: values && values.receiveGroupId,
             })(
               <Select placeholder="请选择承建团队">
-                {groupList &&
-                  groupList.map(v => (
+                {allTeamList &&
+                  allTeamList.map(v => (
                     <Option value={v.number} key={v.number}>
                       {v.name}
                     </Option>

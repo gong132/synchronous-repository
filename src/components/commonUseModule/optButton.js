@@ -1,18 +1,17 @@
-import React from "react";
-import { Icon, Button } from "antd";
-import styles from  './index.less'
+import React from 'react';
+import { Icon, Button } from 'antd';
+import styles from './index.less';
 
 const Index = props => {
-  const { style, text, img, onClick, icon, disabled, showText = false } = props;
+  const { style, text, img, onClick, icon, disabled, showText } = props;
 
-
-  return !showText ? (
+  return showText ? (
     <Icon
       type={icon}
       component={img}
       title={text}
       onClick={onClick}
-      style={{ cursor: "pointer", color: "#2E5BFF" }}
+      style={{ cursor: 'pointer', color: '#2E5BFF' }}
     />
   ) : (
     <div className={styles.operateBtnBox}>
@@ -24,9 +23,9 @@ const Index = props => {
         title={text}
       >
         <Icon type={icon} component={img} style={{ fontSize: 14 }} />
-        {showText && text}
+        {text}
       </Button>
     </div>
-  )
+  );
 };
-export default Index
+export default Index;

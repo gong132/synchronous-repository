@@ -135,7 +135,7 @@ class TeamManage extends Component {
     return (
       <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
         <Col span={6}>
-          <FormItem {...formLayoutItem} labelCol={{span: 5}} colon={false} label="团队ID">
+          <FormItem {...formLayoutItem} labelCol={{ span: 5 }} colon={false} label="团队ID">
             {getFieldDecorator('id', {
             })(<Input
               allowClear
@@ -157,14 +157,16 @@ class TeamManage extends Component {
         <Col span={6}>
           <FormItem {...formLayoutItem} colon={false} label="团队经理">
             {getFieldDecorator('headerId', {
-            })(<Select
-              placeholder='请输入团队经理'
-              style={{
-                width: '100%'
-              }}
-            >
-              <Option key='1' value='1'>未定义</Option>
-            </Select>)}
+            })(
+              <Select
+                placeholder='请输入团队经理'
+                style={{
+                  width: '100%'
+                }}
+              >
+                <Option key='1' value='1'>未定义</Option>
+                <Option key='2' value='2'>未定义</Option>
+              </Select>)}
           </FormItem>
         </Col>
         <Col span={6}>
@@ -222,16 +224,15 @@ class TeamManage extends Component {
     const { name, account } = record;
     const data = count => {
       const arr = [];
-      Array(count)
-        .fill('')
-        .map((v, i) => {
-          const a = {
-            id: i.toString(),
-            roleName: `角色${i}`,
-          };
-          arr.push(a);
-          return true;
-        });
+      Array(count).map((v, i) => {
+        const a = {
+          id: i.toString(),
+          roleName: `角色${i}`,
+        };
+        arr.push(a);
+        return true;
+      });
+      console.log(arr, 'v')
       return arr;
     };
     return (
