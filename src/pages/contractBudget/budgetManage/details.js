@@ -19,7 +19,7 @@ const Index = props => {
   const {
     form,
     dispatch,
-    budgetManage: { budgetDetails, budgetLogList, clusterList, allDeptList, groupList },
+    budgetManage: { budgetDetails, budgetLogList, clusterList, allDeptList, teamList },
     editLoading,
     loading,
     global: { authActions },
@@ -98,6 +98,7 @@ const Index = props => {
         message.error('总金额必须大于0');
         return;
       }
+      console.log(allDeptList, fieldsValue.deptId, 'allDeptList');
       dispatch({
         type: 'budgetManage/updateBudget',
         payload: {
@@ -111,10 +112,10 @@ const Index = props => {
             ? clusterList.find(v => v.id === fieldsValue.clusterId).name
             : null,
           deptName: fieldsValue.deptId
-            ? allDeptList.find(v => v.deptId === fieldsValue.deptId).deptName
+            ? allDeptList.find(v => v.id === fieldsValue.deptId).name
             : null,
-          receiveGroupName: fieldsValue.receiveGroupId
-            ? groupList.find(v => v.number === fieldsValue.receiveGroupId).name
+          receiveTeamName: fieldsValue.receiveTeamId
+            ? teamList.find(v => v.id === fieldsValue.receiveTeamId).name
             : null,
           hardwareExpectAmount: Number(fieldsValue.hardwareExpectAmount),
           softwareExpectAmount: Number(fieldsValue.softwareExpectAmount),
@@ -130,10 +131,12 @@ const Index = props => {
     });
   };
 
-  const handleQueryGroupList = () => {
+  const handleQueryAllTeam = params => {
     dispatch({
-      type: 'budgetManage/fetchAllTeam',
-      payload: {},
+      type: 'budgetManage/queryAllTeam',
+      payload: {
+        ...params,
+      },
     });
   };
   // 分页操作
@@ -150,7 +153,7 @@ const Index = props => {
     handleQueryBudgetLog();
     handleQueryDeptList();
     handleQueryClusterList();
-    handleQueryGroupList();
+    handleQueryAllTeam();
   }, []);
 
   // 详情描述列表
@@ -195,7 +198,7 @@ const Index = props => {
       name: '预算类型',
       value: findValueByArray(BUDGET_TYPE, 'key', budgetDetails.budgetType, 'value'),
     },
-    { span: 1, required: false, name: '承建团队', value: budgetDetails.receiveGroupName },
+    { span: 1, required: false, name: '承建团队', value: budgetDetails.receiveTeamName },
     { span: 1, required: false, name: '录入人', value: budgetDetails.userName },
     { span: 1, required: false, name: '所属集群或板块', value: budgetDetails.clusterName },
     { span: 3, required: false, name: '录入时间', value: budgetDetails.createTime },
@@ -244,8 +247,8 @@ const Index = props => {
                 <Select onChange={val => handleQueryGroupByDept(val)} placeholder="请选择需求部门">
                   {allDeptList &&
                     allDeptList.map(v => (
-                      <Option value={v.deptId} key={v.deptId}>
-                        {v.deptName}
+                      <Option value={v.id} key={v.id}>
+                        {v.name}
                       </Option>
                     ))}
                 </Select>,
@@ -376,14 +379,14 @@ const Index = props => {
           </Descriptions.Item>
           <Descriptions.Item span={1} label="承建团队">
             <FormItem>
-              {form.getFieldDecorator('receiveGroupId', {
+              {form.getFieldDecorator('receiveTeamId', {
                 rules: [{ required: true, message: '请选择承建团队' }],
-                initialValue: budgetDetails && budgetDetails.receiveGroupId,
+                initialValue: budgetDetails && budgetDetails.receiveTeamId,
               })(
                 <Select placeholder="请选择承建团队">
-                  {groupList &&
-                    groupList.map(v => (
-                      <Option value={v.number} key={v.number}>
+                  {teamList &&
+                    teamList.map(v => (
+                      <Option value={v.id.toString()} key={v.id}>
                         {v.name}
                       </Option>
                     ))}

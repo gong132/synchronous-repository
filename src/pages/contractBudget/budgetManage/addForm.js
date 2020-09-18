@@ -22,7 +22,7 @@ const Index = props => {
     addLoading,
     updateLoading,
     form,
-    budgetManage: { clusterList, allDeptList, allTeamList, groupByDept },
+    budgetManage: { clusterList, allDeptList, teamList, groupByDept },
     handleQueryBudgetData,
   } = props;
 
@@ -49,10 +49,10 @@ const Index = props => {
             ? clusterList.find(v => v.id === fieldsValue.clusterId).name
             : null,
           deptName: fieldsValue.deptId
-            ? allDeptList.find(v => v.deptId === fieldsValue.deptId).deptName
+            ? allDeptList.find(v => v.id === fieldsValue.deptId).name
             : null,
-          receiveGroupName: fieldsValue.receiveGroupId
-            ? allTeamList.find(v => v.number === fieldsValue.receiveGroupId).name
+          receiveTeamName: fieldsValue.receiveTeamId
+            ? teamList.find(v => v.id === fieldsValue.receiveTeamId).name
             : null,
           hardwareExpectAmount: Number(fieldsValue.hardwareExpectAmount),
           softwareExpectAmount: Number(fieldsValue.softwareExpectAmount),
@@ -87,8 +87,17 @@ const Index = props => {
       form.setFieldsValue({ clusterId: data.id });
     });
   };
+  const handleQueryAllTeam = params => {
+    dispatch({
+      type: 'budgetManage/queryAllTeam',
+      payload: {
+        ...params,
+      },
+    });
+  };
   useEffect(() => {
     handleQueryDeptList();
+    handleQueryAllTeam();
   }, []);
 
   const calculateAmount = (val, id) => {
@@ -174,8 +183,8 @@ const Index = props => {
               <Select onChange={val => handleQueryGroupByDept(val)} placeholder="请选择需求部门">
                 {allDeptList &&
                   allDeptList.map(v => (
-                    <Option value={v.deptId} key={v.deptId}>
-                      {v.deptName}
+                    <Option value={v.id} key={v.id}>
+                      {v.name}
                     </Option>
                   ))}
               </Select>,
@@ -247,14 +256,14 @@ const Index = props => {
         </Col>
         <Col span={12}>
           <FormItem {...formLayoutItemAddDouble} label="承建团队">
-            {form.getFieldDecorator('receiveGroupId', {
+            {form.getFieldDecorator('receiveTeamId', {
               rules: [{ required: true, message: '请选择承建团队' }],
-              initialValue: values && values.receiveGroupId,
+              initialValue: values && values.receiveTeamId,
             })(
               <Select placeholder="请选择承建团队">
-                {allTeamList &&
-                  allTeamList.map(v => (
-                    <Option value={v.number} key={v.number}>
+                {teamList &&
+                  teamList.map(v => (
+                    <Option value={v.id} key={v.id}>
                       {v.name}
                     </Option>
                   ))}
