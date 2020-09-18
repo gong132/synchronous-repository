@@ -1,6 +1,8 @@
 import {
-  addDemand,
   updateDemand,
+  addDemand, fetchSystemList, fetchUserList, addStory,
+  updateStory,
+  // updateDemand,
   queryDemand,
   queryGroup,
   queryDemandInfo,
@@ -25,6 +27,8 @@ const Demand = {
     groupMap: {},
     budgetList: [],
     budgetMap: {},
+    systemList: [],
+    userList: [],
   },
   effects: {
     *fetchLogList({ payload }, { call, put }) {
@@ -171,8 +175,60 @@ const Demand = {
       })
       return true
     },
+    // 查询系统列表
+    *querySystemList({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(fetchSystemList, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return;
+      }
+      yield put({
+        type: 'saveData',
+        payload: {
+          systemList: data,
+        }
+      })
+    },
+    // 查询人员列表
+    *queryUserList({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(fetchUserList, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return;
+      }
+      yield put({
+        type: 'saveData',
+        payload: {
+          userList: data.data,
+        }
+      })
+    },
+    // 新增story
+    *addStory({ payload }, { call }) {
+      const { code, msg } = yield call(addStory, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    },
+    // 编辑story
+    *updateStory({ payload }, { call }) {
+      const { code, msg } = yield call(updateStory, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    },
   },
   reducers: {
+    saveData(state, { payload }) {
+      return {
+        ...state,
+        ...payload,
+      };
+    },
     setData(state, { payload }) {
       return {
         ...state,

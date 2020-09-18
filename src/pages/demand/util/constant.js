@@ -105,3 +105,16 @@ export {
   FLOW_STATUS,
   BOARD_TITLE_OBJ,
 };
+
+export const STORY_TYPE = [
+  { key: 1, value: "新增" },
+  { key: 2, value: "优化" },
+  { key: 3, value: "变更" },
+]
+export const STORY_PRIORITY = [
+  { key: "最高", value: "最高" },
+  { key: "高", value: "高" },
+  { key: "中", value: "中" },
+  { key: "低", value: "低" },
+  { key: "最低", value: "最低" },
+]

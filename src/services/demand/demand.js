@@ -79,3 +79,31 @@ export async function queryBudgetNumber(params) {
     params,
   });
 }
+// 系统列表  临时暂用
+export async function fetchSystemList(params) {
+  return request('/temp/system', {
+    method: 'get',
+    params,
+  });
+}
+// 人员列表
+export async function fetchUserList(params) {
+  return request('/personnel/queryPage', {
+    method: 'post',
+    params,
+  });
+}
+// 新增Story
+export async function addStory(params) {
+  return request('/story/add', {
+    method: 'post',
+    params,
+  });
+}
+// 编辑Story
+export async function updateStory(params) {
+  return request('/story/update', {
+    method: 'post',
+    params,
+  });
+}
