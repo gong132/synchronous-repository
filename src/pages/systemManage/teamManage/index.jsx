@@ -190,7 +190,7 @@ class TeamManage extends Component {
     const columns = [
       TableColumnHelper.genPlanColumn('id', '团队ID'),
       TableColumnHelper.genPlanColumn('name', '团队名称'),
-      TableColumnHelper.genPlanColumn('groupHeaderName', '团队经理'),
+      TableColumnHelper.genPlanColumn('teamHeaderName', '团队经理'),
       {
         title: '操作',
         render: (text, record) => {

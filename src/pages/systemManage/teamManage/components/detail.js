@@ -15,7 +15,7 @@ const TeamDetail = (props) => {
   const {
     id,
     name,
-    groupHeaderName,
+    teamHeaderName,
     personnels,
   } = info
   console.log(teamList, info)
@@ -28,7 +28,7 @@ const TeamDetail = (props) => {
   const detailList = [
     { span: 1, required: false, name: '团队ID', value: id, dataIndex: 'id' },
     { span: 1, required: false, name: '团队名称', value: name, dataIndex: 'name' },
-    { span: 1, required: false, name: '团队经理', value: groupHeaderName, dataIndex: 'groupHeaderName' },
+    { span: 1, required: false, name: '团队经理', value: teamHeaderName, dataIndex: 'teamHeaderName' },
     { span: 3, required: false, name: '团队成员', value: personnels, dataIndex: 'personnels' },
   ];
   return (

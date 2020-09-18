@@ -46,6 +46,7 @@ module.exports = {
     'compat/compat': 0,
     'camelcase': 0,
     'no-nested-ternary': 0,
+    'no-shadow': 0,
   },
   settings: {
     polyfills: ['fetch', 'promises', 'url'],
