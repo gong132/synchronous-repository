@@ -14,7 +14,7 @@ import CreateDemand from './components/createModal';
 import DemandBoard from './demandBoard';
 import DemandList from './demandList/index';
 import styles from './index.less';
-
+import spIcon from '@/assets/icon/Button_oajssp.svg'
 // import gzIcon from '@/assets/icon/Button_gz.svg'
 
 const demandRoutes = {
@@ -84,7 +84,7 @@ const Index = memo(
 
     // 查预算编号
     const handleQueryBudget = (number) => {
-      this.props.dispatch({
+      dispatch({
         type: 'demand/fetchBudgetNumber',
         payload: {
           number
@@ -181,6 +181,7 @@ const Index = memo(
               onClick={() => handleViewModal(true, '创建')}
               type="others"
               title="发起OA审批"
+              icon={spIcon}
               style={{ marginLeft: '16px' }}
             />
             <CustomBtn

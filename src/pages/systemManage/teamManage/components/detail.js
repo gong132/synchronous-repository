@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
 import budget_xq from '@/assets/icon/modular_xq.svg';
-import { Descriptions, Tag } from 'antd'
+import { Descriptions } from 'antd'
 import { getParam,
   // getUserInfo
 } from '@/utils/utils';
@@ -49,7 +49,7 @@ const TeamDetail = (props) => {
               {console.log(v.value)}
               {
                 (_.isArray(v.value) && !_.isEmpty(v.value))
-                  ? v.value.map(n => <Tag>{n}</Tag>)
+                  ? v.value.map(n => `${n} `)
                   : v.value
               }
             </Descriptions.Item>

@@ -96,7 +96,7 @@ class Detail extends PureComponent {
   }
 
   // 查日志
-  handleQueryLogList = () => {
+  handleQueryLogList = (obj={}) => {
     const id = getParam('id');
     const params = {
       linkId: id,
@@ -107,6 +107,7 @@ class Detail extends PureComponent {
       payload: {
         ...DefaultPage,
         ...params,
+        ...obj
       },
     });
   };
@@ -347,9 +348,9 @@ class Detail extends PureComponent {
       },
     ];
     const columns = [
-      TableColumnHelper.genPlanColumn('operateUserName', '修改人', { width: '100px' }),
-      TableColumnHelper.genPlanColumn('content', '修改内容'),
-      TableColumnHelper.genPlanColumn('updateTime', '修改时间', { width: '100px' }),
+      TableColumnHelper.genPlanColumn('operateUserName', '操作人', { width: '100px' }),
+      TableColumnHelper.genPlanColumn('content', '操作内容'),
+      TableColumnHelper.genPlanColumn('updateTime', '操作时间', { width: '100px' }),
     ];
     const detailList = [
       { span: 3, required: false, name: '合同名称', value: name, style: { whiteSpace: 'pre' } },
@@ -392,7 +393,7 @@ class Detail extends PureComponent {
           img={budget_xq}
           title="合同详情"
           optNode={
-            authActions.includes(MENU_ACTIONS.EDIT) && !editBool ? (
+            authActions.includes(MENU_ACTIONS.EDIT) && !editBool ?
               <OptButton
                 style={{
                   backgroundColor: 'white',
@@ -408,32 +409,31 @@ class Detail extends PureComponent {
                 img={editIcon}
                 text="编辑"
               />
-            ) : (
-                <div>
-                  <Button
-                    icon="close"
-                    onClick={() =>
-                      this.setState({
-                        editBool: false,
-                        freePayDay: '',
-                      })
-                    }
-                  >
-                    取消
+              :
+              <div>
+                <Button
+                  icon="close"
+                  onClick={() =>
+                    this.setState({
+                      editBool: false,
+                      freePayDay: '',
+                    })
+                  }
+                >
+                  取消
                 </Button>
-                  <Button
-                    style={{
-                      marginLeft: '16px',
-                    }}
-                    type="primary"
-                    ghost
-                    loading={loadingUpdate}
-                    onClick={() => this.handleSubmit()}
-                  >
-                    保存
+                <Button
+                  style={{
+                    marginLeft: '16px',
+                  }}
+                  type="primary"
+                  ghost
+                  loading={loadingUpdate}
+                  onClick={() => this.handleSubmit()}
+                >
+                  保存
                 </Button>
-                </div>
-              )
+              </div>
           }
         >
           <Spin spinning={loadingQueryInfo}>
@@ -802,33 +802,33 @@ class Detail extends PureComponent {
                   </FormItem>
                 </DescriptionItem>
               </Descriptions>
-            ) : (
-                <Descriptions column={3} bordered className={styles.formatDetailDesc}>
-                  {detailList.map((v, i) => (
-                    <DescriptionItem
-                      key={i.toString()}
-                      span={v.span}
-                      label={
-                        <>
-                          {v.required && <span style={{ color: 'red' }}>*</span>}
-                          {v.name}
-                        </>
-                      }
-                    >
-                      {v.dataIndex === 'description' ? (
-                        /* eslint-disable */
-                        <div
-                          className="infoDescription"
-                          style={{ border: 0 }}
-                          dangerouslySetInnerHTML={{ __html: v.value ? v.value : '--' }}
-                        /> /* eslint-disable */
-                      ) : (
-                          <div style={v.style}>{v.value}</div>
-                        )}
-                    </DescriptionItem>
-                  ))}
-                </Descriptions>
-              )}
+            ) :
+              <Descriptions column={3} bordered className={styles.formatDetailDesc}>
+                {detailList.map((v, i) => (
+                  <DescriptionItem
+                    key={i.toString()}
+                    span={v.span}
+                    label={
+                      <>
+                        {v.required && <span style={{ color: 'red' }}>*</span>}
+                        {v.name}
+                      </>
+                    }
+                  >
+                    {v.dataIndex === 'description' ? (
+                      /* eslint-disable */
+                      <div
+                        className="infoDescription"
+                        style={{ border: 0 }}
+                        dangerouslySetInnerHTML={{ __html: v.value ? v.value : '--' }}
+                      /> /* eslint-disable */
+                    ) : (
+                        <div style={v.style}>{v.value}</div>
+                      )}
+                  </DescriptionItem>
+                ))}
+              </Descriptions>
+            }
           </Spin>
         </GlobalSandBox>
         <Spin spinning={loadingQueryInfo}>

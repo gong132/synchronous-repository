@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { Empty } from 'antd'
 import { connect } from 'dva'
+import { router } from 'umi'
 // import InfiniteScroll from 'react-infinite-scroller'
 import {
   DragDropContext,
@@ -26,7 +27,7 @@ const getListStyle = isDraggingOver => ({
   // height: '76vh',
   // overflowY: 'auto'
 });
-@connect(({demand}) =>({
+@connect(({ demand }) => ({
   demandBoard: demand.demandBoard
 }))
 class DemandBoard extends Component {
@@ -45,9 +46,18 @@ class DemandBoard extends Component {
     iTop = dragDom.offsetTop
     this.setState({
       iHeight: clientHeight - iTop - 88,
-      ciHeight: clientHeight - iTop - 52 - 11
+      ciHeight: clientHeight - iTop - 52 - 11 - 100
     })
   }
+
+  handleViewDetail = (id) => {
+    router.push({
+      pathname: '/demand/myDemand/detail',
+      query: {
+        id
+      }
+    });
+  };
 
   render() {
     const { iHeight, ciHeight } = this.state
@@ -104,7 +114,10 @@ class DemandBoard extends Component {
                                     providedd.draggableProps.style
                                   )}
                                 >
-                                  <div className={styles.dragBoard}>
+                                  <div
+                                    className={styles.dragBoard}
+                                    onClick={() => this.handleViewDetail(item.id)}
+                                  >
                                     <div className={styles.dragBoard_firstLine}>
                                       <div className={styles.dragBoard_firstLine_no}>
                                         {item.demand_number}

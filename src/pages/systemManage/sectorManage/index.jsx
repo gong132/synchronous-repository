@@ -7,7 +7,7 @@ import CustomBtn from '@/components/commonUseModule/customBtn';
 import ListOptBtn from '@/components/commonUseModule/listOptBtn'
 import editIcon from '@/assets/icon/cz_bj.svg';
 import eyeIcon from '@/assets/icon/cz_ck.svg'
-import { formLayoutItem1 } from '@/utils/constant'
+import { formLayoutItem } from '@/utils/constant'
 import { Modal, Form, Input, Select, Card, Checkbox, Row, Col } from 'antd';
 import * as _ from 'lodash';
 import styles from './index.less'
@@ -207,7 +207,7 @@ class SectorManage extends Component {
     return (
       <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
         <Col span={8}>
-          <FormItem {...formLayoutItem1} colon={false} label="集群/板块名称">
+          <FormItem wrapperCol={{span: 17}} labelCol={{span: 7}} colon={false} label="集群/板块名称">
             <Input
               allowClear
               value={searchParams.name}
@@ -217,7 +217,7 @@ class SectorManage extends Component {
           </FormItem>
         </Col>
         <Col span={8}>
-          <FormItem {...formLayoutItem1} colon={false} label="所属部门">
+          <FormItem {...formLayoutItem} labelCol={{span: 5}} colon={false} label="所属部门">
             <Select
               allowClear
               value={searchParams.deptInfo}

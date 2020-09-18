@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'dva';
 import CustomBtn from '@/components/commonUseModule/customBtn';
-import { formLayoutItem1 } from '@/utils/constant';
+import { formLayoutItem } from '@/utils/constant';
 import editIcon from '@/assets/icon/cz_bj.svg';
 import StandardTable from '@/components/StandardTable';
 import ListOptBtn from '@/components/commonUseModule/listOptBtn'
@@ -50,12 +50,12 @@ class UserManage extends Component {
     return (
       <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
         <Col span={6}>
-          <FormItem {...formLayoutItem1} colon={false} label="团队ID">
+          <FormItem {...formLayoutItem} colon={false} label="团队ID">
             {getFieldDecorator('name', {})(<Input allowClear placeholder="请输入团队ID" />)}
           </FormItem>
         </Col>
         <Col span={6}>
-          <FormItem {...formLayoutItem1} colon={false} label="团队名称">
+          <FormItem {...formLayoutItem} colon={false} label="团队名称">
             {getFieldDecorator(
               'projectNumber',
               {},
@@ -72,7 +72,7 @@ class UserManage extends Component {
           </FormItem>
         </Col>
         <Col span={6}>
-          <FormItem {...formLayoutItem1} colon={false} label="团队经理">
+          <FormItem {...formLayoutItem} colon={false} label="团队经理">
             {getFieldDecorator(
               'projectNumber',
               {},

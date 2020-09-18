@@ -3,12 +3,13 @@ import { connect } from 'dva'
 import { router } from 'umi'
 import moment from 'moment'
 import StandardTable from "@/components/StandardTable";
+import ListOptBtn from '@/components/commonUseModule/listOptBtn'
 import { DefaultPage, TableColumnHelper } from "@/utils/helper";
-import { formLayoutItem1, MENU_ACTIONS } from '@/utils/constant'
+import { formLayoutItem, MENU_ACTIONS } from '@/utils/constant'
 import { exportExcel } from '@/utils/utils'
 import CustomBtn from '@/components/commonUseModule/customBtn'
-import OptButton from "@/components/commonUseModule/optButton";
-import editIcon from '@/assets/icon/Button_bj.svg'
+import editIcon from '@/assets/icon/cz_bj.svg'
+import eyeIcon from '@/assets/icon/cz_ck.svg'
 import downIcon from '@/assets/icon/drop_down.svg'
 import upIcon from '@/assets/icon/Pull_up.svg'
 import {
@@ -81,7 +82,7 @@ class ContractManage extends Component {
 
   // 导出
   handleExportExcel = () => {
-    exportExcel({budgetNumber: '123'}, 'contract/export', 'post', '合同表单数据.xls')
+    exportExcel({ budgetNumber: '123' }, 'contract/export', 'post', '合同表单数据.xls')
   }
 
   handleQueryData = (params = {}) => {
@@ -110,7 +111,7 @@ class ContractManage extends Component {
     if (formValues.signTime && !_.isEmpty(formValues.signTime)) {
       formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYY-MM-DD')
       formValues.signingEndTime = moment(formValues.signTime[1]).format('YYYY-MM-DD')
-    } else if(formValues.defendPayTime) {
+    } else if (formValues.defendPayTime) {
       formValues.defendPayTime = moment(formValues.defendPayTime).format('YYYY-MM-DD')
     }
     this.handleDebounceQueryData(formValues);
@@ -409,7 +410,7 @@ class ContractManage extends Component {
               {getFieldDecorator('signTime', {
               })(
                 <RangePicker
-                  // onChange={_.debounce(this.saveParams, 500)}
+                // onChange={_.debounce(this.saveParams, 500)}
                 />
               )}
             </FormItem>
@@ -434,7 +435,7 @@ class ContractManage extends Component {
     return (
       <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
         <Col span={6}>
-          <FormItem {...formLayoutItem1} colon={false} label="合同名称">
+          <FormItem {...formLayoutItem} colon={false} label="合同名称">
             {getFieldDecorator('name', {
             })(<Input
               allowClear
@@ -444,7 +445,7 @@ class ContractManage extends Component {
           </FormItem>
         </Col>
         <Col span={6}>
-          <FormItem {...formLayoutItem1} colon={false} label="所属项目">
+          <FormItem {...formLayoutItem} colon={false} label="所属项目">
             {getFieldDecorator('projectNumber', {
             })(<Select
               allowClear
@@ -471,7 +472,7 @@ class ContractManage extends Component {
           </FormItem>
         </Col>
         <Col span={6}>
-          <FormItem {...formLayoutItem1} colon={false} label="所属集群/板块">
+          <FormItem {...formLayoutItem} colon={false} label="所属集群/板块">
             {getFieldDecorator('clusterId', {
             })(<Select
               allowClear
@@ -553,8 +554,8 @@ class ContractManage extends Component {
       TableColumnHelper.genPlanColumn('projectName', '所属项目', { sorter: true }),
       TableColumnHelper.genPlanColumn('clusterName', '所属集群/板块', { sorter: true }),
       TableColumnHelper.genPlanColumn('transactionAmount', '合同成交金额（元）', { sorter: true, width: 180 }),
-      TableColumnHelper.genPlanColumn('payAmount', '合同已支付金额（元）', { sorter: true, width: 200  }, ''),
-      TableColumnHelper.genPlanColumn('notPayAmount', '合同待支付金额（元）', { sorter: true, width: 200  }, ''),
+      TableColumnHelper.genPlanColumn('payAmount', '合同已支付金额（元）', { sorter: true, width: 200 }, ''),
+      TableColumnHelper.genPlanColumn('notPayAmount', '合同待支付金额（元）', { sorter: true, width: 200 }, ''),
       TableColumnHelper.genPlanColumn('projectCheckTime', '项目验收日期', { sorter: true }, ''),
       TableColumnHelper.genPlanColumn('budgetNumber', '预算编号', { sorter: true }),
       TableColumnHelper.genPlanColumn('headerName', '合同负责人', { sorter: true }),
@@ -571,18 +572,29 @@ class ContractManage extends Component {
           return (
             <div>
               {authActions.includes(MENU_ACTIONS.EDIT) && (
-                <OptButton
+                <ListOptBtn
+                  title="编辑"
                   style={{
-                    marginRight: '12px',
+                    fontSize: '20px',
+                    marginRight: '16px',
+                    position: 'relative',
+                    top: '1px'
                   }}
                   onClick={() => this.handleViewModal(true, '编辑', record)}
-                  img={editIcon}
-                  text="编辑"
+                  icon={editIcon}
                 />
               )}
 
               {authActions.includes(MENU_ACTIONS.CHECK) && (
-                <OptButton icon="eye" onClick={() => this.handleViewDetail(record)} text="查看" />
+                <ListOptBtn
+                  icon={eyeIcon}
+                  style={{
+                    fontSize: '24px',
+                    position: 'relative',
+                    top: '5px'
+                  }}
+                  onClick={() => this.handleViewDetail(record)}
+                  title="查看" />
               )}
             </div>
           );

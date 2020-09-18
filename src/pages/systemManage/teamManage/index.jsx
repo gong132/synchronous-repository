@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'dva'
 import CustomBtn from '@/components/commonUseModule/customBtn'
-import { formLayoutItem1, MENU_ACTIONS } from '@/utils/constant'
+import { formLayoutItem, MENU_ACTIONS } from '@/utils/constant'
 import StandardTable from "@/components/StandardTable";
 import ListOptBtn from '@/components/commonUseModule/listOptBtn'
 import { TableColumnHelper, DefaultPage } from "@/utils/helper";
@@ -135,7 +135,7 @@ class TeamManage extends Component {
     return (
       <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
         <Col span={6}>
-          <FormItem {...formLayoutItem1} colon={false} label="团队ID">
+          <FormItem {...formLayoutItem} labelCol={{span: 5}} colon={false} label="团队ID">
             {getFieldDecorator('id', {
             })(<Input
               allowClear
@@ -145,7 +145,7 @@ class TeamManage extends Component {
           </FormItem>
         </Col>
         <Col span={6}>
-          <FormItem {...formLayoutItem1} colon={false} label="团队名称">
+          <FormItem {...formLayoutItem} colon={false} label="团队名称">
             {getFieldDecorator('name', {
             })(<Input
               allowClear
@@ -155,7 +155,7 @@ class TeamManage extends Component {
           </FormItem>
         </Col>
         <Col span={6}>
-          <FormItem {...formLayoutItem1} colon={false} label="团队经理">
+          <FormItem {...formLayoutItem} colon={false} label="团队经理">
             {getFieldDecorator('headerId', {
             })(<Select
               placeholder='请输入团队经理'

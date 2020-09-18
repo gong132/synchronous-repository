@@ -1,14 +1,15 @@
 import {
   addDemand,
-  // updateDemand,
+  updateDemand,
   queryDemand,
   queryGroup,
-  // queryDemandDetail,
+  queryDemandInfo,
   queryDemandProject,
   queryDemandBoard,
   // queryProjectDemandBoard,
   queryBudgetNumber,
 } from '@/services/demand/demand';
+import { queryLogList } from '@/services/global'
 import { PagerHelper } from '@/utils/helper';
 import { message } from 'antd';
 
@@ -17,6 +18,7 @@ const Demand = {
   state: {
     formType: 'list',
     demandList: PagerHelper.genListState(),
+    logList: PagerHelper.genListState(),
     demandBoard: [],
     demandInfo: {},
     groupList: [],
@@ -25,8 +27,34 @@ const Demand = {
     budgetMap: {},
   },
   effects: {
+    *fetchLogList({ payload }, { call, put }) {
+      const { code, data, msg } = yield call(queryLogList, payload);
+      if (code !== 200) {
+        message.error(msg);
+        return
+      }
+      const { records, ...others } = data;
+      yield put({
+        type: 'setLogData',
+        payload: {
+          filter: payload,
+          data: records,
+          ...others
+        },
+      })
+    },
+
     *addDemand({ payload }, { call }) {
       const { code, msg } = yield call(addDemand, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    },
+
+    *updateDemand({ payload }, { call }) {
+      const { code, msg } = yield call(updateDemand, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
@@ -73,6 +101,23 @@ const Demand = {
         },
       });
     },
+
+    // 查询需求详情
+    *queryDemandInfo({ payload }, { call, put }) {
+      const { code, data, msg } = yield call(queryDemandInfo, payload);
+      if (code !== 200) {
+        message.error(msg);
+        return;
+      }
+      yield put({
+        type: 'setData',
+        payload: {
+          demandInfo: data,
+        },
+      });
+      return data
+    },
+
     *queryDemandProject({ payload }, { call, put }) {
       const { code, data, msg } = yield call(queryDemandProject, payload);
       if (code !== 200) {
@@ -138,6 +183,12 @@ const Demand = {
       return {
         ...state,
         contractList: PagerHelper.resolveListState(action.payload),
+      };
+    },
+    setLogData(state, action) {
+      return {
+        ...state,
+        logList: PagerHelper.resolveListState(action.payload),
       };
     },
   },

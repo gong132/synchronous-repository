@@ -156,28 +156,55 @@
 
 .stepSet {
   margin-top: 16px;
+
   :global {
-    .ant-steps-item-icon > .ant-steps-icon {
+    .ant-steps-item-icon>.ant-steps-icon {
       position: relative;
-      top: -6px;
-      left: -5px;
+      top: -10px;
+      font-size: 24px;
     }
-    .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title {
-      color: #1890ff;
+
+    .ant-steps-item-process>.ant-steps-item-container>.ant-steps-item-content>.ant-steps-item-title {
+      color: #2E5BFF;
     }
-    .ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title {
-      color: #1890ff;
+
+    .ant-steps-item-finish>.ant-steps-item-container>.ant-steps-item-content>.ant-steps-item-title {
+      color: #2E5BFF;
     }
+
+    .ant-steps-item-wait>.ant-steps-item-container>.ant-steps-item-content>.ant-steps-item-title {
+      color: #2E384D;
+    }
+
+    .ant-steps-item-title {
+      position: relative;
+      left: 8px;
+      font-weight: 700 !important;
+    }
+    .ant-steps-item-description {
+      position: relative;
+      left: 8px;
+      top: 4px;
+      color: #8798AD !important;
+      font-size: 12px !important;
+    }
+    
     .ant-steps-item {
       flex: none;
       justify-content: space-between;
       flex-grow: 1;
-      left: -5vh;
+      left: -30px;
+
+      .ant-steps-item-content {
+        width: 155px;
+      }
+
       .ant-steps-item-container {
-        width: 10vh
+        width: 10vw
       }
     }
-    .ant-steps-item-container > .ant-steps-item-tail {
+
+    .ant-steps-item-container>.ant-steps-item-tail {
       margin-left: 75px !important;
     }
   }
@@ -187,6 +214,7 @@
   :global {
     .ant-descriptions-view {
       .ant-descriptions-row {
+
         .ant-descriptions-item-label,
         .ant-descriptions-item-colon {
           padding: 10px 24px;
@@ -201,12 +229,14 @@
 .clearFormMargin {
   :global {
     .ant-descriptions-view {
+
       .ant-descriptions-item-label,
       .ant-descriptions-item-content {
         padding: 7px 9px;
         min-width: 136px;
         max-width: 158px;
       }
+
       .ant-descriptions-item-label {
         padding-left: 24px;
       }
@@ -215,6 +245,7 @@
     .ant-form-item {
       margin-bottom: 0;
     }
+
     .ant-form-item-control {
       line-height: unset;
     }

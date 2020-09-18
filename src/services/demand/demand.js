@@ -8,7 +8,7 @@ export async function addDemand(params) {
   });
 }
 
-// 新增
+// 编辑需求
 export async function updateDemand(params) {
   return request('/demand/update', {
     method: 'post',
@@ -40,11 +40,18 @@ export async function queryDemandProject(params) {
   });
 }
 
-
 // 查看需求看板
 export async function queryDemandBoard(params) {
   return request('/demand/queryBoard', {
     method: 'post',
+    params,
+  });
+}
+
+// 查看详情
+export async function queryDemandInfo(params) {
+  return request('/demand/selectOne', {
+    method: 'get',
     params,
   });
 }

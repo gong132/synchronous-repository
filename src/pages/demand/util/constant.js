@@ -41,9 +41,21 @@ const BOARD_TITLE = [
   },
 ];
 
+const BOARD_TITLE_OBJ = {
+  '1': '暂存中',
+  '2': '待指派',
+  '3': '待受理',
+  '4': '讨论中',
+  '5': '待拆分',
+  '6': 'story技术评估',
+  '7': '开发中',
+  '8': '测试中',
+  '9': '上线',
+}
+
 // 详情页流程
 const FLOW_STATUS = [
-  { label: '暂存中', value: '0' },
+  { label: '暂存中', value: '0', userName: '胖胖hhhhhhhhhh', time:'2020-09-17' },
   { label: '待指派', value: '1' },
   { label: '待受理', value: '2' },
   { label: '讨论中', value: '3' },
@@ -91,4 +103,5 @@ export {
   IS_OR_NOT,
   DEFAULT_DESC,
   FLOW_STATUS,
+  BOARD_TITLE_OBJ,
 };
