@@ -1,5 +1,5 @@
 import path from 'path';
-
+// import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 function getModulePackageName(module) {
   if (!module.context) return null;
   const nodeModulesPath = path.join(__dirname, '../node_modules/');
@@ -64,7 +64,8 @@ const webpackPlugin = config => {
       },
     });
 
-  config.module.rule('svg')
+  config.module
+    .rule('svg')
     .test(/\.svg(\?v=\d+\.\d+\.\d+)?$/)
     .use([
       {
@@ -77,7 +78,20 @@ const webpackPlugin = config => {
           icon: true,
         },
       },
-    ]).loader(require.resolve('@svgr/webpack'));
+    ])
+    .loader(require.resolve('@svgr/webpack'));
+
+  // config
+  //   .plugin('uglifyjs-webpack-plugin')
+  //   .use('uglifyjs-webpack-plugin',[{}])
+  //   .tap(options => {
+  //     options.parallel = true
+  //     options.uglifyOptions = {
+  //       warnings: false
+  //     }
+  //     console.log(options)
+  //     return options
+  //   })
 };
 
 export default webpackPlugin;
