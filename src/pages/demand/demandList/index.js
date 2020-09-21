@@ -1,6 +1,6 @@
 import React, { Fragment, memo, useEffect, useState } from 'react';
 import { connect } from 'dva';
-import {router, withRouter} from 'umi/index';
+import { router, withRouter } from 'umi/index';
 import { isEmpty } from '@/utils/lang';
 import { Divider, message, Tooltip } from 'antd';
 import { DefaultPage, TableColumnHelper } from '@/utils/helper';
@@ -128,19 +128,12 @@ const Index = memo(
                   pathname: `${props.location.pathname}/detail`,
                   query: {
                     id: rows.id,
-                  }
+                  },
                 });
               }}
             />
             <Divider type="vertical" />
-            <OptButton
-              img={assignIcon}
-              showText={false}
-              text="指派"
-              onClick={() => {
-
-              }}
-            />
+            <OptButton img={assignIcon} showText={false} text="指派" onClick={() => {}} />
           </Fragment>
         ),
       },
@@ -242,67 +235,15 @@ const Index = memo(
       );
     };
 
-    const list = {
-      list: [
-        {
-          id: '1',
-          title: '标题',
-          demandNumber: '需求编号',
-          creator: '创建人',
-          createTime: '2020-9-17',
-          type: 'p',
-          status: 1,
-          priority: 'P1',
-          introducer: '提出人',
-          acceptTeam: '受理团队',
-          receiverId: '受理人',
-          requirementDescription: '需求描述',
-          communicate: 'n',
-          expectedCompletionDate: '2020-9-17',
-          plannedLaunchDate: '2020-9-17',
-          actualLineDate: '2020-9-17',
-          estimatedDevelopmentEffort: '1',
-          estimatedTestWorkload: '2',
-          demandUrgency: '1',
-          riskControlFunction: 'y',
-          budgetNumbers: '预算编号',
-          projectNo: '所属项目编号',
-          ts: '1',
-          creatorId: '创建人id',
-          acceptTeamId: '受理团队id',
-          introducerId: '提出人id',
-          storyList: [
-            {
-              id: 7,
-              number: 'story编号',
-              title: 'story标题',
-              status: '1',
-              priority: '高',
-              type: 1,
-              evaluateTime: '2020-09-17',
-              developWorkload: 12,
-              testWorkload: 13,
-              assignee: '123',
-              assigneeName: '123',
-              assessor: '123',
-              assessorName: '123',
-              description: '123',
-              userId: '43',
-              startTime: '2020-09-17',
-              endTime: '2020-09-17',
-              systemId: '21345rty',
-              systemName: 'esfzf',
-              systemLinkProjectKey: '系统对应的项目空间',
-              issueId: '2q3wertfg',
-              self: 'werghj',
-              createTime: '2020-09-17',
-              isDelete: '123456',
-            },
-          ],
-        },
-      ],
+    const handleDemandTableChange = pagination => {
+      // const formValues = form.getFieldsValue();
+      const params = {
+        currentPage: pagination.current,
+        pageSize: pagination.pageSize,
+        // ...formValues, // 添加已查询条件去获取分页
+      };
+      handleQueryDemandList(params);
     };
-    console.log(list, 'list')
     return (
       <div className={styles.childrenTable}>
         <StandardTable
@@ -310,6 +251,7 @@ const Index = memo(
           expandedRowRender={expandedRowRender}
           columns={columns}
           data={demandList}
+          onChange={handleDemandTableChange}
         />
         {addModalVisible && (
           <AddStory

@@ -1,7 +1,14 @@
 import {
   updateDemand,
-  addDemand, fetchSystemList, fetchUserList, addStory,
-  updateStory, fetchStoryList, tempAddDemand,
+  addDemand,
+  fetchSystemList,
+  fetchUserList,
+  addStory,
+  updateStory,
+  fetchStoryList,
+  tempAddDemand,
+  copyStory,
+  searchStory,
   // updateDemand,
   queryDemand,
   queryGroup,
@@ -11,7 +18,7 @@ import {
   // queryProjectDemandBoard,
   queryBudgetNumber,
 } from '@/services/demand/demand';
-import { queryLogList } from '@/services/global'
+import { queryLogList } from '@/services/global';
 import { PagerHelper } from '@/utils/helper';
 import { message } from 'antd';
 
@@ -30,14 +37,14 @@ const Demand = {
     budgetMap: {},
     systemList: [],
     userList: [],
-    tempDemandId: ''
+    tempDemandId: '',
   },
   effects: {
     *fetchLogList({ payload }, { call, put }) {
       const { code, data, msg } = yield call(queryLogList, payload);
       if (code !== 200) {
         message.error(msg);
-        return
+        return;
       }
       const { records, ...others } = data;
       yield put({
@@ -45,16 +52,16 @@ const Demand = {
         payload: {
           filter: payload,
           data: records,
-          ...others
+          ...others,
         },
-      })
+      });
     },
 
     *queryStoryList({ payload }, { call, put }) {
       const res = yield call(fetchStoryList, payload);
       if (!res || res.code !== 200) {
         message.error(res.msg);
-        return
+        return;
       }
       const { data, ...others } = res.data;
       yield put({
@@ -62,9 +69,9 @@ const Demand = {
         payload: {
           filter: payload,
           data,
-          ...others
+          ...others,
         },
-      })
+      });
     },
 
     *addDemand({ payload }, { call }) {
@@ -83,14 +90,14 @@ const Demand = {
         message.error(msg);
         return false;
       }
-      console.log(payload, 'payload')
+      console.log(payload, 'payload');
       if (payload.autoSave) {
         yield put({
           type: 'saveData',
           payload: {
-            tempDemandId: data
-          }
-        })
+            tempDemandId: data,
+          },
+        });
       }
       return true;
     },
@@ -106,26 +113,30 @@ const Demand = {
 
     // 查询负责人和团队
     *fetchHeaderGroup({ payload }, { call, put }) {
-      const { code, msg, data: { data } } = yield call(queryGroup, payload)
+      const {
+        code,
+        msg,
+        data: { data },
+      } = yield call(queryGroup, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
       }
-      const gObj = {}
-      if (data && data.length < 1) return ''
+      const gObj = {};
+      if (data && data.length < 1) return '';
       data.map(v => {
-        v.id = String(v.id)
-        gObj[v.id] = v.name
-        return true
-      })
+        v.id = String(v.id);
+        gObj[v.id] = v.name;
+        return true;
+      });
       yield put({
         type: 'setData',
         payload: {
           groupList: data,
-          groupMap: gObj
-        }
-      })
-      return true
+          groupMap: gObj,
+        },
+      });
+      return true;
     },
 
     *queryDemand({ payload }, { call, put }) {
@@ -158,7 +169,7 @@ const Demand = {
           demandInfo: data,
         },
       });
-      return data
+      return data;
     },
 
     *queryDemandProject({ payload }, { call, put }) {
@@ -188,35 +199,35 @@ const Demand = {
       yield put({
         type: 'setData',
         payload: {
-          demandBoard: data
+          demandBoard: data,
         },
       });
     },
 
     // 查询预算编号
     *fetchBudgetNumber({ payload }, { call, put }) {
-      const { code, msg, data } = yield call(queryBudgetNumber, payload)
+      const { code, msg, data } = yield call(queryBudgetNumber, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
       }
-      const obj = {}
+      const obj = {};
       data.map(v => {
-        obj[v.number] = v.name
-        return true
-      })
+        obj[v.number] = v.name;
+        return true;
+      });
       yield put({
         type: 'saveData',
         payload: {
           budgetList: data,
-          budgetMap: obj
-        }
-      })
-      return true
+          budgetMap: obj,
+        },
+      });
+      return true;
     },
     // 查询系统列表
     *querySystemList({ payload }, { call, put }) {
-      const { code, msg, data } = yield call(fetchSystemList, payload)
+      const { code, msg, data } = yield call(fetchSystemList, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return;
@@ -225,12 +236,12 @@ const Demand = {
         type: 'saveData',
         payload: {
           systemList: data,
-        }
-      })
+        },
+      });
     },
     // 查询人员列表
     *queryUserList({ payload }, { call, put }) {
-      const { code, msg, data } = yield call(fetchUserList, payload)
+      const { code, msg, data } = yield call(fetchUserList, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return;
@@ -239,12 +250,12 @@ const Demand = {
         type: 'saveData',
         payload: {
           userList: data.data,
-        }
-      })
+        },
+      });
     },
     // 新增story
     *addStory({ payload }, { call }) {
-      const { code, msg } = yield call(addStory, payload)
+      const { code, msg } = yield call(addStory, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
@@ -253,7 +264,25 @@ const Demand = {
     },
     // 编辑story
     *updateStory({ payload }, { call }) {
-      const { code, msg } = yield call(updateStory, payload)
+      const { code, msg } = yield call(updateStory, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    },
+    // 复制story
+    *copyStory({ payload }, { call }) {
+      const { code, msg } = yield call(copyStory, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    },
+    // 查询story
+    *searchStory({ payload }, { call }) {
+      const { code, msg } = yield call(searchStory, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;

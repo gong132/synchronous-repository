@@ -8,7 +8,7 @@ import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
 import ListOptBtn from '@/components/commonUseModule/listOptBtn';
 import StandardTable from '@/components/StandardTable';
 import ChartCard from './chartCard';
-import { TableColumnHelper, DefaultPage } from '@/utils/helper';
+import { TableColumnHelper, DefaultPage, PagerHelper } from '@/utils/helper';
 import OptButton from '@/components/commonUseModule/optButton';
 import flowIcon from '@/assets/icon/modular_lcjd.svg';
 import sdIcon from '@/assets/icon/modular_xtxq.svg';
@@ -49,7 +49,7 @@ import {
 import { getParam } from '@/utils/utils';
 import styles from '../index.less';
 
-import StoryList from "./story/storyList"
+import AddStory from '@/pages/demand/components/story/addStory';
 
 const { Step } = Steps;
 const RadioGroup = Radio.Group;
@@ -62,6 +62,7 @@ const { Option } = Select;
   demand,
   loadingQueryInfo: loading.effects['demand/queryDemandInfo'],
   loadingQueryLogData: loading.effects['demand/fetchLogList'],
+  loadingQueryStoryData: loading.effects['demand/queryStoryList'],
 }))
 class Detail extends Component {
   constructor(props) {
@@ -69,6 +70,8 @@ class Detail extends Component {
     this.state = {
       editBool: false,
       descriptionState: '',
+      addStoryModalVisible: false,
+      selectedStoryRows: [],
     };
   }
 
@@ -131,12 +134,13 @@ class Detail extends Component {
         },
       })
       .then(res => {
-        if (!res) return
-        console.log(1, '1')
+        if (!res) return;
+        console.log(1, '1');
         const { requirementDescription } = res || {};
         this.setState({
           descriptionState: requirementDescription,
         });
+        this.handleQueryStoryList();
       });
   };
 
@@ -204,7 +208,6 @@ class Detail extends Component {
   handleRenderStepIcon = arg => {
     if (arg.status === 'finish') return <Icon component={xqIcon} />;
     if (arg.status === 'process') return <Icon component={waitIcon} />;
-    console.log(arg, 'arg');
     if (arg.status === 'wait')
       return (
         <div
@@ -225,10 +228,67 @@ class Detail extends Component {
       );
   };
 
+  handleQueryStoryList = params => {
+    const {
+      dispatch,
+      demand: {
+        demandInfo: { demandNumber },
+      },
+    } = this.props;
+    dispatch({
+      type: 'demand/queryStoryList',
+      payload: {
+        demandNumber,
+        ...PagerHelper.DefaultPage,
+        ...params,
+      },
+    });
+  };
+
+  handleSelectedStoryRows = rows => {
+    this.setState({
+      selectedStoryRows: rows,
+    });
+  };
+
+  handleCopyStory = () => {
+    const { dispatch } = this.props;
+    const { selectedStoryRows } = this.state;
+
+    dispatch({
+      type: 'demand/copyStory',
+      payload: {
+        storyIds: selectedStoryRows.map(v => v.id),
+      },
+    }).then(res => {
+      if (!res) return;
+      message.success(`成功复制${selectedStoryRows.length}条story`);
+      this.setState({
+        selectedStoryRows: [],
+      });
+      this.handleQueryStoryList();
+    });
+  };
+
+  handleStoryTableChange = pagination => {
+    // const formValues = form.getFieldsValue();
+    const params = {
+      currentPage: pagination.current,
+      pageSize: pagination.pageSize,
+      // ...formValues, // 添加已查询条件去获取分页
+    };
+    this.handleQueryStoryList(params);
+  };
+
   render() {
-    const { editBool, descriptionState } = this.state;
-    const { form, demand, loadingQueryInfo, loadingQueryLogData } = this.props;
-    const { budgetList, demandInfo, groupList, logList } = demand;
+    const { editBool, descriptionState, addStoryModalVisible, selectedStoryRows } = this.state;
+    const {
+      form,
+      loadingQueryInfo,
+      loadingQueryLogData,
+      loadingQueryStoryData,
+      demand: { budgetList, demandInfo, groupList, logList, storyList },
+    } = this.props;
     const w = '100%';
     const {
       title,
@@ -392,6 +452,21 @@ class Detail extends Component {
           );
         },
       },
+    ];
+
+    const storyColumns = [
+      TableColumnHelper.genPlanColumn('number', 'story编号'),
+      TableColumnHelper.genPlanColumn('title', '标题'),
+      TableColumnHelper.genPlanColumn('status', '状态'),
+      TableColumnHelper.genPlanColumn('priority', '优先级'),
+      TableColumnHelper.genPlanColumn('type', 'story类型'),
+      TableColumnHelper.genPlanColumn('systemName', '所属系统'),
+      TableColumnHelper.genDateTimeColumn('evaluateTime', 'IT预计上线时间'),
+      TableColumnHelper.genPlanColumn('developWorkload', '开发预计测试工作量'),
+      TableColumnHelper.genPlanColumn('testWorkload', '测试预计测试工作量'),
+      TableColumnHelper.genPlanColumn('assessor', '评估人'),
+      TableColumnHelper.genPlanColumn('userName', '创建人'),
+      TableColumnHelper.genDateTimeColumn('createTime', '创建时间'),
     ];
 
     return (
@@ -915,20 +990,64 @@ class Detail extends Component {
         <GlobalSandBox
           title="新建story"
           img={sdIcon}
-          optNode={<div>
-            <OptButton
-              style={{ backgroundColor: "unset" }}
-              icon='plus'
-              text="新建Story"
-            />
-            <OptButton
-              style={{ backgroundColor: "unset" }}
-              icon='plus'
-              text="复制Story"
-            />
-          </div>}
+          optNode={
+            <div>
+              <OptButton
+                style={{ backgroundColor: 'unset' }}
+                icon="plus"
+                onClick={() => {
+                  this.setState({
+                    addStoryModalVisible: true,
+                  });
+                }}
+                text="新建Story"
+              />
+              <OptButton
+                style={{ backgroundColor: 'unset' }}
+                icon="plus"
+                text="复制Story"
+                onClick={this.handleCopyStory}
+              />
+            </div>
+          }
         >
-          <StoryList done={loadingQueryInfo}/>
+          {/*<StoryList*/}
+          {/*  addStoryModalVisible={this.state.addStoryModalVisible}*/}
+          {/*  handleAddStoryModalVisible={() =>{*/}
+          {/*    this.setState({*/}
+          {/*      addStoryModalVisible: false,*/}
+          {/*    })*/}
+          {/*  }}*/}
+          {/*  values={demandInfo}*/}
+          {/*  done={loadingQueryInfo}*/}
+          {/*/>*/}
+
+          <div className={styles.tableList}>
+            {/*<div className={styles.tableListForm}>{renderForm()}</div>*/}
+            <StandardTable
+              rowKey="id"
+              selectedRows={selectedStoryRows}
+              onSelectRow={this.handleSelectedStoryRows}
+              columns={storyColumns}
+              data={storyList}
+              loading={loadingQueryStoryData}
+              onChange={this.handleStoryTableChange}
+            />
+
+            {addStoryModalVisible && (
+              <AddStory
+                type="add"
+                modalVisible={addStoryModalVisible}
+                handleModalVisible={() => {
+                  this.setState({
+                    addStoryModalVisible: false,
+                  });
+                }}
+                values={demandInfo}
+                handleQueryStoryList={this.handleQueryStoryList}
+              />
+            )}
+          </div>
         </GlobalSandBox>
         <GlobalSandBox
           title="项目里程碑"
