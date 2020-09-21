@@ -18,6 +18,7 @@ import {
   queryDemandBoard,
   // queryProjectDemandBoard,
   queryBudgetNumber,
+  queryFlow,
 } from '@/services/demand/demand';
 import { queryLogList } from '@/services/global';
 import { PagerHelper } from '@/utils/helper';
@@ -40,6 +41,7 @@ const Demand = {
     systemList: [],
     userList: [],
     tempDemandId: '',
+    flowList: []
   },
   effects: {
     *fetchLogList({ payload }, { call, put }) {
@@ -173,6 +175,22 @@ const Demand = {
       });
       return data;
     },
+
+    // 查询流程进度
+    *queryFlow({payload}, { call, put }) {
+      const { code, data, msg } = yield call(queryFlow, payload);
+      if (code !== 200) {
+        message.error(msg);
+        return;
+      }
+      yield put({
+        type: 'setData',
+        payload: {
+          flowList: data,
+        },
+      });
+      return data
+    },  
 
     *queryDemandProject({ payload }, { call, put }) {
       const res = yield call(queryDemand, payload);

@@ -49,16 +49,16 @@ class Websocket extends React.Component {
 
     websocket.onmessage = evt => {
       const receiveData = JSON.parse(evt.data)
-      const heartCheck = receiveData.heartCheck
+      const {heartCheck} = receiveData
       console.log('heartCheck:', heartCheck)
       if (heartCheck === '0') {
         this.heartCheckReset()
         this.props.onMessage(JSON.stringify(receiveData));
-        return;
+        return true;
       }
-      else if (heartCheck === '1') {
+      if (heartCheck === '1') {
         this.heartCheckReset()
-        return;
+        return true;
       }
     };
 
@@ -78,7 +78,8 @@ class Websocket extends React.Component {
         }
         const time = this.generateInterval(this.state.attempts);
         this.timeoutID = setTimeout(() => {
-          this.setState({ attempts: this.state.attempts + 1 });
+          const {attempts} = this.state
+          this.setState({ attempts: attempts + 1 });
           this.setState({
             ws: window.WebSocket
               ? new window.WebSocket(this.props.url, this.props.protocol)
@@ -148,8 +149,8 @@ class Websocket extends React.Component {
     }
   }
 
-  sendMessage(message) {
-    let msg = JSON.parse(message)
+  sendMessage(messages) {
+    let msg = JSON.parse(messages)
     msg.heartCheck = '0' // 心跳检测默认传0
     msg = JSON.stringify(msg)
     console.log('msg', msg)
@@ -158,7 +159,7 @@ class Websocket extends React.Component {
   }
 
   render() {
-    return <div></div>;
+    return <div />;
   }
 }
 
@@ -170,13 +171,13 @@ Websocket.defaultProps = {
 Websocket.propTypes = {
   url: PropTypes.string.isRequired,
   onMessage: PropTypes.func.isRequired,
-  onOpen: PropTypes.func,
-  onClose: PropTypes.func,
-  onError: PropTypes.func,
+  // onOpen: PropTypes.func,
+  // onClose: PropTypes.func,
+  // onError: PropTypes.func,
   debug: PropTypes.bool,
   reconnect: PropTypes.bool,
-  protocol: PropTypes.string,
-  reconnectIntervalInMilliSeconds: PropTypes.number,
+  // protocol: PropTypes.string,
+  // reconnectIntervalInMilliSeconds: PropTypes.number,
 };
 
 export default Websocket;

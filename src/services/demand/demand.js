@@ -40,6 +40,14 @@ export async function queryDemandDetail(params) {
   });
 }
 
+// 查看流程进度接口
+export async function queryFlow(params) {
+  return request('/process/list', {
+    method: 'get',
+    params,
+  });
+}
+
 // 查看项目或一般需求列表
 export async function queryDemandProject(params) {
   return request('/demand/queryListByType', {

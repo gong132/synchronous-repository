@@ -81,6 +81,7 @@ class Detail extends Component {
     this.handleQueryBudget();
     this.handleQueryDetail();
     this.handleQueryLogList();
+    this.handleQueryFlowList()
   }
 
   // 更改描述
@@ -106,6 +107,17 @@ class Detail extends Component {
       },
     });
   };
+
+  // 查流程进度
+  handleQueryFlowList = () => {
+    const no = getParam('no');
+    this.props.dispatch({
+      type: 'demand/queryFlow',
+      payload: {
+        demandNumber: no
+      }
+    })
+  }
 
   // 日志分页操作
   handleStandardTableChange = pagination => {
@@ -201,6 +213,7 @@ class Detail extends Component {
             () => {
               this.handleQueryDetail();
               this.handleQueryLogList();
+              this.handleQueryFlowList()
             },
           );
         }
@@ -295,7 +308,7 @@ class Detail extends Component {
       loadingQueryInfo,
       loadingQueryLogData,
       loadingQueryStoryData,
-      demand: { budgetList, demandInfo, groupList, logList, storyList },
+      demand: { budgetList, demandInfo, groupList, logList, storyList, flowList },
     } = this.props;
     const w = '100%';
     const {
@@ -445,6 +458,25 @@ class Detail extends Component {
       },
     ];
 
+    const resolveFlowData = (arr, index, typeFlow) => {
+      let str = ''
+      if (arr[index] && typeFlow === 'name') {
+        if (arr[index].processUsers) {
+          if (arr[index].processUsers[0]) {
+            str = arr[index].processUsers[0].userName
+          }
+        }
+      }
+      if (arr[index] && typeFlow === 'time') {
+        if (String(arr[index].status) === '2') {
+          str = arr[index].handleTime
+        } else {
+          str = arr[index].createTime
+        }
+      }
+
+      return str
+    }
     const storyColumns = [
       TableColumnHelper.genPlanColumn('number', 'story编号'),
       TableColumnHelper.genPlanColumn('title', '标题'),
@@ -478,24 +510,20 @@ class Detail extends Component {
             // current={
             //   judgeCurrentDot(allStoryStatus, curStatus)
             // }
-            current={4}
+            current={!_.isEmpty(flowList) ? flowList.length - 1 : 0}
           >
             {FLOW_STATUS &&
               FLOW_STATUS.length > 0 &&
-              FLOW_STATUS.map(v => (
+              FLOW_STATUS.map((v, index) => (
                 <Step
                   key={v.value}
                   title={<div className={styles.step}>{v.label}</div>}
                   description={
                     <div className={styles.stepContent}>
-                      <div className={styles.stepContent_userName} title={v.userName}>
-                        {v.userName && v.userName.length > 4 ? (
-                          <div title={v.userName}>{`${v.userName.substr(0, 4)}...`}</div>
-                        ) : (
-                          v.userName
-                        )}
+                      <div className={styles.stepContent_userName} title={resolveFlowData(flowList, index, 'name')}>
+                        {resolveFlowData(flowList, index, 'name')}
                       </div>
-                      <div title={v.time}>{v.time}</div>
+                      <div title={resolveFlowData(flowList, index, 'time')}>{resolveFlowData(flowList, index, 'time')}</div>
                     </div>
                   }
                 />
@@ -532,23 +560,23 @@ class Detail extends Component {
                   <Fragment>
                     <OptButton
                       style={{
-                        backgroundColor: 'white',
-                        color: '#B0BAC9',
-                        borderColor: '#B0BAC9',
-                      }}
+                          backgroundColor: 'white',
+                          color: '#B0BAC9',
+                          borderColor: '#B0BAC9',
+                        }}
                       disabled
                       img={psIcon}
                       text="已提交OA审批"
                     />
                     <OptButton
                       style={{
-                        backgroundColor: 'white',
-                      }}
+                          backgroundColor: 'white',
+                        }}
                       img={apsIcon}
                       text="提交OA审批"
                     />
                   </Fragment>
-                )}
+                  )}
                 {editBool ? (
                   <Fragment>
                     <OptButton
@@ -575,17 +603,17 @@ class Detail extends Component {
                 ) : (
                   <OptButton
                     onClick={() =>
-                      this.setState({
-                        editBool: true,
-                      })
-                    }
+                        this.setState({
+                          editBool: true,
+                        })
+                      }
                     style={{
-                      backgroundColor: 'white',
-                    }}
+                        backgroundColor: 'white',
+                      }}
                     img={editIcon}
                     text="编辑"
                   />
-                )}
+                  )}
               </Fragment>
             }
           >
@@ -948,36 +976,61 @@ class Detail extends Component {
             ) : (
               <Descriptions column={3} bordered className={styles.formatDetailDesc}>
                 {detailList.map(
-                  (v, i) =>
-                    (v.type === type || v.type === 'p') && (
-                      <DescriptionItem
-                        key={i.toString()}
-                        span={v.span}
-                        label={
-                          <>
-                            {v.required && <span style={{ color: 'red' }}>*</span>}
-                            {v.name}
-                          </>
-                        }
-                      >
-                        {(v.dataIndex === 'description' && (
-                          /* eslint-disable */
-                          <div
-                            className="infoDescription"
-                            style={{ border: 0 }}
-                            dangerouslySetInnerHTML={{ __html: v.value ? v.value : '--' }}
-                          /> /* eslint-disable */
-                        )) ||
-                          (v.arrDict && <div style={v.style}>{v.arrDict[v.value]}</div>) || (
-                            <div style={v.style}>{v.value}</div>
-                          )}
-                      </DescriptionItem>
-                    ),
-                )}
-              </Descriptions>
-            )}
+                    (v, i) =>
+                      (v.type === type || v.type === 'p') && (
+                        <DescriptionItem
+                          key={i.toString()}
+                          span={v.span}
+                          label={
+                            <>
+                              {v.required && <span style={{ color: 'red' }}>*</span>}
+                              {v.name}
+                            </>
+                          }
+                        >
+                          {(v.dataIndex === 'description' && (
+                            /* eslint-disable */
+                            <div
+                              className="infoDescription"
+                              style={{ border: 0 }}
+                              dangerouslySetInnerHTML={{ __html: v.value ? v.value : '--' }}
+                            /> /* eslint-disable */
+                          )) ||
+                            (v.arrDict && <div style={v.style}>{v.arrDict[v.value]}</div>) || (
+                              <div style={v.style}>{v.value}</div>
+                            )}
+                        </DescriptionItem>
+                      ),
+                  )}
+                </Descriptions>
+              )}
           </GlobalSandBox>
         </Spin>
+        {
+          type === 'p' && <GlobalSandBox
+            title="项目里程碑"
+            img={sdIcon}
+            optNode={
+              <OptButton
+                style={{
+                  backgroundColor: 'white',
+                  color: '#B0BAC9',
+                  borderColor: '#B0BAC9',
+                }}
+                icon="plus"
+                text="新建"
+              />
+            }
+          >
+            <StandardTable
+              rowKey={(record, index) => index}
+              columns={proColumns}
+              // data={logList}
+              // loading={loadingQueryLogData}
+              onChange={this.handleStandardTableChangePro}
+            />
+          </GlobalSandBox>
+        }
         <GlobalSandBox
           title="新建story"
           img={sdIcon}
@@ -1032,29 +1085,6 @@ class Detail extends Component {
             )}
           </div>
         </GlobalSandBox>
-        <GlobalSandBox
-          title="项目里程碑"
-          img={sdIcon}
-          optNode={
-            <OptButton
-              style={{
-                backgroundColor: 'white',
-                color: '#B0BAC9',
-                borderColor: '#B0BAC9',
-              }}
-              icon="plus"
-              text="新建"
-            />
-          }
-        >
-          <StandardTable
-            rowKey={(record, index) => index}
-            columns={proColumns}
-            // data={logList}
-            // loading={loadingQueryLogData}
-            onChange={this.handleStandardTableChangePro}
-          />
-        </GlobalSandBox>
         <ChartCard handleModalVisible={this.handleModalVisible}/>
         <GlobalSandBox title="系统需求" img={sdIcon}></GlobalSandBox>
         <GlobalSandBox img={budgetLogIcon} title="操作日志">
@@ -1063,10 +1093,10 @@ class Detail extends Component {
             columns={columns}
             data={logList}
             loading={loadingQueryLogData}
-            // onChange={this.handleStandardTableChange}
+          // onChange={this.handleStandardTableChange}
           />
         </GlobalSandBox>
-      </Fragment>
+      </Fragment >
     );
   }
 }

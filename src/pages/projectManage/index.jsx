@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
-import { router } from 'umi'
+import moment from 'moment'
 import StandardTable from "@/components/StandardTable";
-import { DefaultPage, TableColumnHelper } from "@/utils/helper";
-import OptButton from "@/components/commonUseModule/optButton";
-import { formLayoutItem1 } from '@/utils/constant'
-import editIcon from '@/assets/icon/Button_bj.svg'
+import { TableColumnHelper } from "@/utils/helper";
+import ListOptBtn from '@/components/commonUseModule/listOptBtn'
+import editIcon from '@/assets/icon/cz_bj.svg';
+import eyeIcon from '@/assets/icon/cz_ck.svg'
+import { formLayoutItem } from '@/utils/constant'
 import downIcon from '@/assets/icon/drop_down.svg'
 import upIcon from '@/assets/icon/Pull_up.svg'
-import SearchForm from '@/components/commonUseModule/searchForm'
 import CustomBtn from '@/components/commonUseModule/customBtn'
 import {
   Form,
@@ -29,66 +29,354 @@ const { Option } = Select
 const FormItem = Form.Item
 const { RangePicker } = DatePicker
 @Form.create()
+@connect(({ project }) => ({
+  project
+}))
 class ProjectManage extends Component {
   constructor(props) {
     super(props)
     this.state = {
-
+      searchMore: false,
     }
+  }
+
+  // 查询集群列表
+  handleQueryCluster = (name) => {
+    this.props.dispatch({
+      type: 'project/queryAllCluster',
+      payload: { name }
+    })
   }
 
   saveParams = () => { }
 
+  // 更多查询
+  moreQuery = () => {
+    const formValues = this.props.form.getFieldsValue();
+    if (formValues.signTime && !_.isEmpty(formValues.signTime)) {
+      formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYY-MM-DD')
+      formValues.signingEndTime = moment(formValues.signTime[1]).format('YYYY-MM-DD')
+    } else if (formValues.defendPayTime) {
+      formValues.defendPayTime = moment(formValues.defendPayTime).format('YYYY-MM-DD')
+    }
+    this.handleDebounceQueryData(formValues);
+  };
+
+  saveParams = () => {
+    this.moreQuery();
+  };
+
+  setSearchMore = bool => {
+    this.setState({
+      searchMore: bool,
+    });
+  };
+
+  renderSearchForm = () => {
+    const { searchMore } = this.state
+    const { project, form } = this.props
+    const {
+      loadingQueryData,
+      clusterList,
+    } = project;
+    const { getFieldDecorator } = form
+    const content = (
+      <div className={styles.moreSearch}>
+        <Row>
+          <Col span={24}>
+            <FormItem colon={false} label="所属需求编号">
+              {getFieldDecorator('budgetNumber', {
+              })(<Input allowClear placeholder="请输入所属需求编号" />)}
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem colon={false} label="项目编号">
+              {getFieldDecorator(
+                'description',
+                {},
+              )(<Input allowClear placeholder="请输入项目编号" />)}
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem colon={false} label="项目进度百分比">
+              <div className="yCenter" style={{ height: 30 }}>
+                {getFieldDecorator(
+                  'expectTotalAmountLow',
+                  {},
+                )(<Input allowClear addonAfter="%" />)}
+                <span style={{ padding: '0 3px' }}>—</span>
+                {getFieldDecorator(
+                  'expectTotalAmountMax',
+                  {},
+                )(<Input allowClear addonAfter="%" />)}
+              </div>
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem colon={false} label="项目进度偏差">
+              <div className="yCenter" style={{ height: 30 }}>
+                {getFieldDecorator(
+                  'expectTotalAmountLow',
+                  {},
+                )(<Input allowClear addonAfter="%" />)}
+                <span style={{ padding: '0 3px' }}>—</span>
+                {getFieldDecorator(
+                  'expectTotalAmountMax',
+                  {},
+                )(<Input allowClear addonAfter="%" />)}
+              </div>
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem colon={false} label="项目健康状态">
+              {getFieldDecorator(
+                'providerCompanyName',
+                {},
+              )(
+                <Select
+                  allowClear
+                  // showSearch
+                  style={{
+                    width: '100%',
+                  }}
+                  placeholder="请输入项目健康状态"
+                >
+                  <Option key='p' value='p'>未定义</Option>
+                </Select>,
+              )}
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem colon={false} label="项目优先级">
+              {getFieldDecorator(
+                'headerId',
+                {},
+              )(
+                <Select
+                  allowClear
+                  // showSearch
+                  style={{
+                    width: '100%',
+                  }}
+                  placeholder="请输入供应商"
+                >
+                  {/* {!_.isEmpty(supplierList) &&
+                    supplierList.map(d => (
+                      <Option key={d.supplierId} value={d.supplierName}>
+                        {d.supplierName}
+                      </Option>
+                    ))} */}
+                  <Option key='p' value='p'>未定义</Option>
+                </Select>,
+              )}
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem colon={false} label="合同负责人团队">
+              {getFieldDecorator(
+                'headerTeamId ',
+                {},
+              )(
+                <Select
+                  allowClear
+                  // showSearch
+                  style={{
+                    width: '100%',
+                  }}
+                  placeholder="请输入供应商"
+                >
+                  {/* {!_.isEmpty(supplierList) &&
+                    supplierList.map(d => (
+                      <Option key={d.supplierId} value={d.supplierName}>
+                        {d.supplierName}
+                      </Option>
+                    ))} */}
+                  <Option key='p' value='p'>未定义</Option>
+                </Select>,
+              )}
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem colon={false} label="合同签订日期">
+              {getFieldDecorator('signTime', {
+              })(
+                <RangePicker />
+              )}
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem colon={false} label="维保支付提醒日期">
+              {getFieldDecorator('defendPayTime', {
+              })(
+                <DatePicker />
+              )}
+            </FormItem>
+          </Col>
+        </Row>
+        <div className={styles.moreSearchButton}>
+          <Button onClick={() => this.moreQuery()} loading={loadingQueryData} type="primary" ghost>
+            查询
+          </Button>
+          <Button onClick={() => this.setSearchMore(false)}>取消</Button>
+        </div>
+      </div>
+    );
+    return (
+      <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
+        <Col span={7}>
+          <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} colon={false} label="项目名称和描述">
+            {getFieldDecorator('name', {
+            })(<Input
+              allowClear
+              onChange={_.debounce(this.saveParams, 500)}
+              placeholder='请输入项目名称和描述'
+            />)}
+          </FormItem>
+        </Col>
+        <Col span={6}>
+          <FormItem {...formLayoutItem} colon={false} label="项目状态">
+            {getFieldDecorator('projectNumber', {
+            })(
+              <Select
+                allowClear
+                // showSearch
+                onChange={_.debounce(this.saveParams, 500)}
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  JSON.stringify(option.props.children)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+                style={{
+                  width: '100%'
+                }}
+                placeholder="请输入项目状态"
+              >
+                {/* {!_.isEmpty(projectList) &&
+                projectList.map(d => (
+                  <Option key={d.number} value={d.number}>
+                    {d.name}
+                  </Option>
+                ))} */}
+                <Option key='p' value='p'>未定义</Option>
+              </Select>
+            )}
+          </FormItem>
+        </Col>
+        <Col span={7}>
+          <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 14 }} colon={false} label="业务集群/板块">
+            {getFieldDecorator('clusterId', {
+            })(
+              <Select
+                allowClear
+                showSearch
+                onChange={_.debounce(this.saveParams, 500)}
+                onSearch={_.debounce(this.handleQueryCluster, 500)}
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  JSON.stringify(option.props.children)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+                style={{
+                  width: '100%'
+                }}
+                placeholder="请输入业务集群/板块"
+              >
+                {
+                  clusterList.map(d => (
+                    <Option key={d.id} value={d.id}>
+                      {d.name}
+                    </Option>
+                  ))}
+              </Select>
+            )}
+          </FormItem>
+        </Col>
+        <Col span={4}>
+          <FormItem>
+            <CustomBtn
+              onClick={() => this.handleResetSearch()}
+              loading={loadingQueryData}
+              type='reset'
+            />
+            <Popover visible={searchMore} placement="bottomRight" content={content} trigger="click">
+              {
+                <div
+                  className="activeColor"
+                  onClick={() => this.setSearchMore(!searchMore)}
+                  style={{
+                    float: 'right'
+                  }}
+                >
+                  <div className={styles.moreBtn}>
+                    <Icon component={searchMore ? downIcon : upIcon} />
+                    <span>更多</span>
+                  </div>
+                </div>
+              }
+            </Popover>
+          </FormItem>
+        </Col>
+      </Row>
+    );
+  };
+
   genColumns = () => {
     const columns = [
       {
-        title: '合同编号',
+        title: '项目编号',
         dataIndex: 'number',
         key: 'number',
+        sorter: true,
         render: (text, record) => {
           return (
             <span
-              // onClick={
-              //   () => this.handleViewDetail(record)
-              // }
-              className='globalStyle'>
+              onClick={
+                () => this.handleViewDetail(record)
+              }
+              className='globalStyle'
+            >
               {text}
             </span>
           )
         }
       },
-      TableColumnHelper.genPlanColumn('deptName', '所属部门'),
-      TableColumnHelper.genLangColumn('systemName', '涉及系统', {}, 6),
-      TableColumnHelper.genPlanColumn('userName', '录入人'),
-      TableColumnHelper.genDateTimeColumn('createTime', '录入时间', "YYYY-MM-DD"),
-      TableColumnHelper.genPlanColumn('headerName', '合同负责人'),
-      TableColumnHelper.genPlanColumn('providerCompanyName', '供应商'),
-      TableColumnHelper.genPlanColumn('signingTime', '合同签订时间'),
-      TableColumnHelper.genDiscountMoneyColumn('payAmount', '合同已支付金额', {}, ''),
-      TableColumnHelper.genDiscountMoneyColumn('notPayAmount', '合同待支付金额', {}, ''),
+      TableColumnHelper.genPlanColumn('deptName', '项目名称'),
+      TableColumnHelper.genLangColumn('systemName', '项目状态'),
+      TableColumnHelper.genPlanColumn('userName', '项目进度'),
+      TableColumnHelper.genPlanColumn('userName', '项目优先级'),
+      TableColumnHelper.genPlanColumn('userName', '立项金额'),
+      TableColumnHelper.genPlanColumn('userName', '业务集群/板块'),
+      TableColumnHelper.genPlanColumn('userName', '商务状态'),
+      TableColumnHelper.genPlanColumn('userName', '立项申请团队'),
       {
         title: '操作',
         align: 'left',
         render: (text, record) => {
           return (
             <div>
-              <OptButton
+              {<ListOptBtn
+                title="编辑"
+                onClick={() => this.handleViewModal(true, '编辑', record)}
                 style={{
-                  marginRight: '12px'
+                  fontSize: '20px',
+                  marginRight: '16px',
+                  position: 'relative',
+                  top: '1px'
                 }}
-                onClick={
-                  () => this.handleViewModal(true, '编辑', record)
-                }
-                img={editIcon}
-                text="编辑"
-              />
-              <OptButton
-                icon='eye'
-                onClick={
-                  () => this.handleViewDetail(record)
-                }
-                text="查看"
-              />
+                icon={editIcon}
+              />}
+              {<ListOptBtn
+                title="查看"
+                onClick={() => this.handleViewDetail(record)}
+                style={{
+                  fontSize: '24px',
+                  position: 'relative',
+                  top: '5px'
+                }}
+                icon={eyeIcon}
+              />}
             </div>
           );
         }
@@ -97,131 +385,7 @@ class ProjectManage extends Component {
     return columns
   }
 
-  renderSearchForm = () => {
-    const { searchMore } = this.state
-    const { deptList, loadingQueryData, form: { getFieldDecorator } } = this.props
-    const content = (
-      <div className={styles.moreSearch}>
-        <Row>
-          <Col span={24}>
-            <FormItem {...formLayoutItem1} label="名称">
-              {getFieldDecorator('name', {
-              })(<Input
-                allowClear
-                placeholder="请输入名称" />)}
-            </FormItem>
-          </Col>
-          <Col span={24}>
-            <FormItem {...formLayoutItem1} label="预算编号">
-              {getFieldDecorator('budgetNumber', {
-              })(<Input
-                allowClear
-                placeholder="请输入预算编号" />)}
-            </FormItem>
-          </Col>
-          <Col span={24}>
-            <FormItem {...formLayoutItem1} label="项目编号">
-              {getFieldDecorator('projectNumber', {
-              })(<Input
-                allowClear
-                placeholder="请输入项目编号" />)}
-            </FormItem>
-          </Col>
-        </Row>
-        <div className={styles.moreSearchButton}>
-          <Button onClick={() => this.moreQuery()}>查询</Button>
-          <Button onClick={() => this.setSearchMore(false)}>取消</Button>
-        </div>
-      </div>
-    );
-    return (
-      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-        <SearchForm
-          labelName="合同编号"
-        >
-          {getFieldDecorator('number', {
-          })(<Input
-            allowClear
-            onChange={_.debounce(this.saveParams, 500)}
-            placeholder='请输入合同编号' />)}
-        </SearchForm>
-        <SearchForm
-          labelName="所属部门"
-        >
-          {getFieldDecorator('deptId', {
-          })(<Select
-            allowClear
-            placeholder='请输入所属部门'
-            onChange={_.debounce(this.saveParams, 500)}
-            style={{
-              width: '100%'
-            }}
-          >
-            {!_.isEmpty(deptList) && deptList.map(d => (
-              <Option key={d.number} value={d.name}>{d.name}</Option>
-            ))}
-          </Select>)}
-        </SearchForm>
-        <SearchForm
-          labelName="供应商"
-        >
-          {getFieldDecorator('providerCompanyName', {
-          })(
-            <Select
-              allowClear
-              placeholder='请输入供应商'
-              onChange={_.debounce(this.saveParams, 500)}
-              style={{
-                width: '100%'
-              }}
-            >
-              <Option key={1} value={1}>自定义</Option>
-              {/* {!_.isEmpty(deptList) && deptList.map(d => (
-              <Option key={d.number} value={d.name}>{d.name}</Option>
-            ))} */}
-            </Select>
-          )}
-        </SearchForm>
-        <SearchForm
-          labelName="合同签订时间"
-        >
-          {getFieldDecorator('signTime', {
-          })(
-            <RangePicker
-              onChange={_.debounce(this.saveParams, 500)}
-            />
-          )}
-        </SearchForm>
-        <CustomBtn
-          onClick={() => this.handleResetSearch()}
-          style={{
-            display: 'inline-block'
-          }}
-          // loading={loadingQueryData}
-          type='reset' />
-        <Popover visible={searchMore} placement="bottomRight" content={content} trigger="click">
-          {
-            <div
-              className="activeColor"
-              // onClick={() => this.setSearchMore(!searchMore)}
-              style={{
-                position: 'absolute',
-                right: '16px',
-                top: '30px'
-              }}
-            >
-              <div className={styles.moreBtn}>
-                <Icon component={searchMore ? downIcon : upIcon} />
-                <span>更多</span>
-              </div>
-            </div>
-          }
-        </Popover>
-      </div>
-    )
-  }
   render() {
-
     return (
       <Card>
         {this.renderSearchForm()}
@@ -235,8 +399,8 @@ class ProjectManage extends Component {
             { number: 'gong2', systemName: 'gg' },
             { number: 'gong3', systemName: 'gg' }
           ]}
-          // onChange={this.handleStandardTableChange}
-          scroll={{ x: 1800 }}
+        // onChange={this.handleStandardTableChange}
+        // scroll={{ x: 1800 }}
         />
       </Card>
     );
