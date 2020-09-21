@@ -12,13 +12,12 @@ import { MENU_ACTIONS } from '@/utils/constant';
 import Editor from '@/components/TinyEditor';
 import OptButton from '@/components/commonUseModule/optButton';
 import CustomBtn from '@/components/commonUseModule/customBtn';
-import Websocket from '@/components/Websocket';
 import editIcon from '@/assets/icon/Button_bj.svg';
 import budget_xq from '@/assets/icon/modular_xq.svg';
 import budget_log from '@/assets/icon/modular_czrz.svg';
 import payIcon from '@/assets/icon/modular_zfmx.svg';
 import { Descriptions, Spin, Form, Button, Table, Input, Select, DatePicker, Modal } from 'antd';
-import { getParam, getUserInfo } from '@/utils/utils';
+import { getParam } from '@/utils/utils';
 import { isEmpty } from '@/utils/lang';
 import styles from '../index.less';
 
@@ -375,20 +374,8 @@ class Detail extends PureComponent {
       { span: 3, required: false, name: '合同描述', value: description, dataIndex: 'description' },
       // { span: 3, required: false, name: '附件', value: name },
     ];
-    const { token } = getUserInfo();
     return (
       <Fragment>
-        <Websocket
-          url={`ws://10.90.48.22:80/websocket/${token}`}
-        // onMessage={this.handleReceiveMessage}
-        // onOpen={this.handleOpen}
-        // onClose={this.handleClose}
-        // reconnect
-        // debug
-        // ref={Websocket => {
-        //   this.refWebSocket = Websocket;
-        // }}
-        />
         <GlobalSandBox
           img={budget_xq}
           title="合同详情"

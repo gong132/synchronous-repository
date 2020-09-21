@@ -1,6 +1,6 @@
 import React, { Fragment, memo, useEffect, useState } from 'react';
 import { connect } from 'dva';
-import { router, withRouter } from 'umi'
+import { withRouter } from 'umi'
 import { DefaultPage } from '@/utils/helper';
 // import _ from 'lodash'
 import CustomBtn from '@/components/commonUseModule/customBtn';
@@ -14,7 +14,7 @@ import CreateDemand from './components/createModal';
 import DemandBoard from './demandBoard';
 import DemandList from './demandList/index';
 import styles from './index.less';
-import spIcon from '@/assets/icon/Button_oajssp.svg'
+// import spIcon from '@/assets/icon/Button_oajssp.svg'
 // import gzIcon from '@/assets/icon/Button_gz.svg'
 
 const demandRoutes = {
@@ -139,11 +139,11 @@ const Index = memo(
     }, [])
 
     // 查看详情
-    const handleViewDetail = () => {
-      router.push({
-        pathname: '/demand/myDemand/detail',
-      });
-    };
+    // const handleViewDetail = () => {
+    //   router.push({
+    //     pathname: '/demand/myDemand/detail',
+    //   });
+    // };
 
     const createModalProps = {
       visibleModal,
@@ -160,7 +160,7 @@ const Index = memo(
         {visibleModal && <CreateDemand {...createModalProps} />}
         <div className="yCenter-between">
           <CustomBtn onClick={() => handleViewModal(true, '创建')} icon='plus' type="create" title="创建需求" />
-          <CustomBtn onClick={handleViewDetail} type='create' title='详情' />
+          {/* <CustomBtn onClick={handleViewDetail} type='create' title='详情' /> */}
 
           <div className="xCenter">
             <div className={styles.switch}>
@@ -177,13 +177,13 @@ const Index = memo(
                 列表
               </div>
             </div>
-            <CustomBtn
+            {/* <CustomBtn
               onClick={() => handleViewModal(true, '创建')}
               type="others"
               title="发起OA审批"
               icon={spIcon}
               style={{ marginLeft: '16px' }}
-            />
+            /> */}
             <CustomBtn
               onClick={() => handleViewModal(true, '创建')}
               type="others"

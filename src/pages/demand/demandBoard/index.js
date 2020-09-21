@@ -55,11 +55,13 @@ class DemandBoard extends Component {
     })
   }
 
-  handleViewDetail = (id) => {
+  handleViewDetail = (item) => {
+    const {id,demandNumber} = item
     router.push({
       pathname: '/demand/myDemand/detail',
       query: {
-        id
+        id,
+        no: demandNumber
       }
     });
   };
@@ -200,7 +202,7 @@ class DemandBoard extends Component {
                                   >
                                     <div
                                       className={styles.dragBoard}
-                                      onClick={() => this.handleViewDetail(item.id)}
+                                      onClick={() => this.handleViewDetail(item)}
                                     >
                                       <div className={styles.dragBoard_firstLine}>
                                         <div className={styles.dragBoard_firstLine_no}>

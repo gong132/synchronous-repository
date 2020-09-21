@@ -2,11 +2,13 @@ import React, { PureComponent } from 'react';
 import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
 import CustomBtn from '@/components/commonUseModule/customBtn';
 import OptButton from '@/components/commonUseModule/optButton';
+import Websocket from '@/components/Websocket';
 import itIcon from '@/assets/icon/Button_itpg.svg';
 import turnIcon from '@/assets/icon/Button_zpg.svg';
-import backIcon from '@/assets/icon/Button_xqth.svg';
+// import backIcon from '@/assets/icon/Button_xqth.svg';
 import msgIcon from '@/assets/icon/modular_xx.svg';
 import _ from 'lodash';
+import { getUserInfo, getParam } from '@/utils/utils';
 import { Row, Col, Mentions, message } from 'antd';
 import styles from './chartCard.less';
 
@@ -91,8 +93,19 @@ class ChartCard extends PureComponent {
       message.error('您未选中任何文字');
       return;
     }
-    console.log('保存内容：', comLang);
+    console.log('保存内容：', comLang); 
   };
+
+  // 发消息
+  handleSendMsg = () => {
+    const { sendData } = this.state
+    console.log('sendData:', sendData)
+  }
+
+  // 接消息
+  handleReceiveMessage = (msg) => {
+    console.log('msg:', msg)
+  }
 
   render() {
     const { sendData, contextMenuVisible, textContent } = this.state;
@@ -109,6 +122,8 @@ class ChartCard extends PureComponent {
         time: '2020-05-24   00：32：43',
       },
     ];
+    const { userInfo: { userId, userName } } = getUserInfo();
+    const id = getParam('id')
     return (
       <GlobalSandBox title="评论" img={msgIcon}>
         <div className={styles.msgContext} id="messageArea">
@@ -171,6 +186,7 @@ class ChartCard extends PureComponent {
                     color: 'white',
                     marginLeft: '16px',
                   }}
+                  onClick={this.handleSendMsg}
                 />
               </div>
             </div>
@@ -193,7 +209,7 @@ class ChartCard extends PureComponent {
                 img={turnIcon}
                 text="转评估人"
               />
-              <OptButton
+              {/* <OptButton
                 style={{
                   backgroundColor: 'white',
                   borderColor: '#F44A5E',
@@ -202,10 +218,21 @@ class ChartCard extends PureComponent {
                 }}
                 img={backIcon}
                 text="需求退回"
-              />
+              /> */}
             </div>
           </Col>
         </Row>
+        <Websocket
+          url={`ws://10.90.48.22:80/websocket/${userName}-${userId}&${id}`}
+          onMessage={this.handleReceiveMessage}
+          // onOpen={this.handleOpen}
+          // onClose={this.handleClose}
+          // reconnect
+          // debug
+          ref={WebsocketRef => {
+            this.refWebSocket = WebsocketRef;
+          }}
+        />
       </GlobalSandBox>
     );
   }
