@@ -107,3 +107,11 @@ export async function updateStory(params) {
     params,
   });
 }
+
+// story list
+export async function fetchStoryList(params) {
+  return request('/story/list', {
+    method: 'post',
+    params,
+  });
+}

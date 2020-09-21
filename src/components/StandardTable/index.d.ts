@@ -1,11 +1,12 @@
 import * as React from 'react';
+
 export interface ILoginItemProps {
   rowKey: string | Function;
   columns: Array;
-  data: object;
+  data: Object;
   loading: boolean;
-  scroll?: object;
-  showHeader: boolean;
+  scroll?: Object;
+  showHeader?: boolean;
   size?: 'default' | 'middle' | 'small';
   title?: Function;
   selectedRowKeys?: Array;
@@ -30,7 +31,7 @@ export interface ILoginItemProps {
   expandIconColumnIndex?: number;
   footer?: Function;
   indentSize?: number;
-  locale?: object;
+  locale?: Object;
   pagination?: any;
   rowClassName?: Function | string;
 

@@ -48,6 +48,8 @@ import {
 import { getParam } from '@/utils/utils';
 import styles from '../index.less';
 
+import StoryList from "./story/storyList"
+
 const { Step } = Steps;
 const RadioGroup = Radio.Group;
 const DescriptionItem = Descriptions.Item;
@@ -128,6 +130,8 @@ class Detail extends Component {
         },
       })
       .then(res => {
+        if (!res) return
+        console.log(1, '1')
         const { requirementDescription } = res || {};
         this.setState({
           descriptionState: requirementDescription,
@@ -199,7 +203,6 @@ class Detail extends Component {
   handleRenderStepIcon = arg => {
     if (arg.status === 'finish') return <Icon component={xqIcon} />;
     // if (arg.status === 'process') return <CustomIcon type={progressIcon} size="middle" />
-    console.log(arg, 'arg');
     if (arg.status === 'wait')
       return (
         <div
@@ -347,12 +350,12 @@ class Detail extends Component {
 
     const proColumns = [
       TableColumnHelper.genPlanColumn('operateUserName', '里程碑阶段'),
-      TableColumnHelper.genPlanColumn('content', '负责人'),
+      TableColumnHelper.genPlanColumn('content1', '负责人'),
       TableColumnHelper.genPlanColumn('updateTime', '计划完成日期'),
-      TableColumnHelper.genPlanColumn('content', '创建人'),
-      TableColumnHelper.genPlanColumn('content', '创建时间'),
-      TableColumnHelper.genPlanColumn('content', '修改人'),
-      TableColumnHelper.genPlanColumn('content', '修改时间'),
+      TableColumnHelper.genPlanColumn('content2', '创建人'),
+      TableColumnHelper.genPlanColumn('content3', '创建时间'),
+      TableColumnHelper.genPlanColumn('content4', '修改人'),
+      TableColumnHelper.genPlanColumn('content5', '修改时间'),
       {
         title: '操作',
         align: 'left',
@@ -907,7 +910,24 @@ class Detail extends Component {
             )}
           </GlobalSandBox>
         </Spin>
-
+        <GlobalSandBox
+          title="新建story"
+          img={sdIcon}
+          optNode={<div>
+            <OptButton
+              style={{ backgroundColor: "unset" }}
+              icon='plus'
+              text="新建Story"
+            />
+            <OptButton
+              style={{ backgroundColor: "unset" }}
+              icon='plus'
+              text="复制Story"
+            />
+          </div>}
+        >
+          <StoryList done={loadingQueryInfo}/>
+        </GlobalSandBox>
         <GlobalSandBox
           title='项目里程碑'
           img={sdIcon}

@@ -1,12 +1,12 @@
 import {
   updateDemand,
   addDemand, fetchSystemList, fetchUserList, addStory,
-  updateStory,
+  updateStory, fetchStoryList,
   // updateDemand,
   queryDemand,
   queryGroup,
   queryDemandInfo,
-  queryDemandProject,
+  // queryDemandProject,
   queryDemandBoard,
   // queryProjectDemandBoard,
   queryBudgetNumber,
@@ -21,6 +21,7 @@ const Demand = {
     formType: 'list',
     demandList: PagerHelper.genListState(),
     logList: PagerHelper.genListState(),
+    storyList: PagerHelper.genListState(),
     demandBoard: [],
     demandInfo: {},
     groupList: [],
@@ -43,6 +44,23 @@ const Demand = {
         payload: {
           filter: payload,
           data: records,
+          ...others
+        },
+      })
+    },
+
+    *queryStoryList({ payload }, { call, put }) {
+      const res = yield call(fetchStoryList, payload);
+      if (!res || res.code !== 200) {
+        message.error(res.msg);
+        return
+      }
+      const { data, ...others } = res.data;
+      yield put({
+        type: 'setStoryData',
+        payload: {
+          filter: payload,
+          data,
           ...others
         },
       })
@@ -90,17 +108,17 @@ const Demand = {
     },
 
     *queryDemand({ payload }, { call, put }) {
-      const { code, data, msg } = yield call(queryDemand, payload);
-      if (code !== 200) {
-        message.error(msg);
+      const res = yield call(queryDemand, payload);
+      if (!res || res.code !== 200) {
+        message.error(res.msg);
         return;
       }
-      const { records, ...others } = data;
+      const { data, ...others } = res.data;
       yield put({
         type: 'setDemandData',
         payload: {
           filter: payload,
-          data: records,
+          data,
           ...others,
         },
       });
@@ -123,17 +141,17 @@ const Demand = {
     },
 
     *queryDemandProject({ payload }, { call, put }) {
-      const { code, data, msg } = yield call(queryDemandProject, payload);
-      if (code !== 200) {
-        message.error(msg);
+      const res = yield call(queryDemand, payload);
+      if (!res || res.code !== 200) {
+        message.error(res.msg);
         return;
       }
-      const { records, ...others } = data;
+      const { data, ...others } = res.data;
       yield put({
         type: 'setDemandData',
         payload: {
           filter: payload,
-          data: records,
+          data,
           ...others,
         },
       });
@@ -238,13 +256,19 @@ const Demand = {
     setDemandData(state, action) {
       return {
         ...state,
-        contractList: PagerHelper.resolveListState(action.payload),
+        demandList: PagerHelper.resolveListState(action.payload),
       };
     },
     setLogData(state, action) {
       return {
         ...state,
         logList: PagerHelper.resolveListState(action.payload),
+      };
+    },
+    setStoryData(state, action) {
+      return {
+        ...state,
+        storyList: PagerHelper.resolveListState(action.payload),
       };
     },
   },

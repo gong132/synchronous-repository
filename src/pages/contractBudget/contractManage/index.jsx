@@ -33,30 +33,13 @@ const { Option } = Select;
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 
-/* eslint-disable */
 @Form.create()
 @connect(({ contract, loading, global }) => ({
   global,
+  contract,
   loadingQueryData: loading.effects['contract/queryData'],
   loadingCreateData: loading.effects['contract/addData'],
   loadingUpdateData: loading.effects['contract/updateData'],
-  contractList: contract.contractList,
-  deptList: contract.deptList,
-  deptListMap: contract.deptListMap,
-  contractInfo: contract.contractInfo,
-  budgetList: contract.budgetList,
-  budgetMap: contract.budgetMap,
-  projectList: contract.projectList,
-  projectMap: contract.projectMap,
-  systemList: contract.systemList,
-  systemMap: contract.systemMap,
-  supplierList: contract.supplierList,
-  supplierMap: contract.supplierMap,
-  headerList: contract.headerList,
-  headerMap: contract.headerMap,
-  groupMap: contract.groupMap,
-  groupList: contract.groupList,
-  clusterList: contract.clusterList,
 }))
 class ContractManage extends Component {
   constructor(props) {
@@ -82,7 +65,7 @@ class ContractManage extends Component {
 
   // 导出
   handleExportExcel = () => {
-    exportExcel({ budgetNumber: '123' }, 'contract/export', 'post', '合同表单数据.xls')
+    exportExcel({ budgetNumber: '20A001-001-002' }, 'contract/export', 'post', '合同表单数据.xls')
   }
 
   handleQueryData = (params = {}) => {
@@ -259,11 +242,8 @@ class ContractManage extends Component {
 
   renderSearchForm = () => {
     const { searchMore } = this.state
-    const { deptList,
-      projectList,
-      supplierList,
-      clusterList,
-      budgetList,
+    const {
+      contract: { deptList, projectList, supplierList, clusterList, budgetList },
       loadingQueryData,
       form: { getFieldDecorator }
     } = this.props;
@@ -273,28 +253,30 @@ class ContractManage extends Component {
           <Col span={24}>
             <FormItem colon={false} label="预算编号">
               {getFieldDecorator('budgetNumber', {
-              })(<Select
-                allowClear
-                showSearch
-                onSearch={_.debounce(this.handleQueryBudget, 500)}
-                optionFilterProp="children"
-                filterOption={(input, option) =>
-                  JSON.stringify(option.props.children)
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
-                placeholder='请输入预算编号'
-                style={{
-                  width: '100%'
-                }}
-              >
-                {!_.isEmpty(budgetList) &&
+              })(
+                <Select
+                  allowClear
+                  showSearch
+                  onSearch={_.debounce(this.handleQueryBudget, 500)}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  placeholder='请输入预算编号'
+                  style={{
+                    width: '100%'
+                  }}
+                >
+                  {!_.isEmpty(budgetList) &&
                   budgetList.map(d => (
                     <Option key={d.number} value={d.number}>
                       {d.number}
                     </Option>
                   ))}
-              </Select>)}
+                </Select>
+              )}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -409,9 +391,7 @@ class ContractManage extends Component {
             <FormItem colon={false} label="合同签订日期">
               {getFieldDecorator('signTime', {
               })(
-                <RangePicker
-                // onChange={_.debounce(this.saveParams, 500)}
-                />
+                <RangePicker />
               )}
             </FormItem>
           </Col>
@@ -447,56 +427,60 @@ class ContractManage extends Component {
         <Col span={6}>
           <FormItem {...formLayoutItem} colon={false} label="所属项目">
             {getFieldDecorator('projectNumber', {
-            })(<Select
-              allowClear
-              // showSearch
-              onChange={_.debounce(this.saveParams, 500)}
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                JSON.stringify(option.props.children)
-                  .toLowerCase()
-                  .indexOf(input.toLowerCase()) >= 0
-              }
-              style={{
-                width: '100%'
-              }}
-              placeholder="请输入所属项目"
-            >
-              {!_.isEmpty(projectList) &&
+            })(
+              <Select
+                allowClear
+                // showSearch
+                onChange={_.debounce(this.saveParams, 500)}
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  JSON.stringify(option.props.children)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+                style={{
+                  width: '100%'
+                }}
+                placeholder="请输入所属项目"
+              >
+                {!_.isEmpty(projectList) &&
                 projectList.map(d => (
                   <Option key={d.number} value={d.number}>
                     {d.name}
                   </Option>
                 ))}
-            </Select>)}
+              </Select>
+            )}
           </FormItem>
         </Col>
         <Col span={8}>
           <FormItem labelCol={{span: 10}} wrapperCol={{span: 14}} colon={false} label="所属集群/板块">
             {getFieldDecorator('clusterId', {
-            })(<Select
-              allowClear
-              showSearch
-              onChange={_.debounce(this.saveParams, 500)}
-              onSearch={_.debounce(this.handleQueryCluster, 500)}
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                JSON.stringify(option.props.children)
-                  .toLowerCase()
-                  .indexOf(input.toLowerCase()) >= 0
-              }
-              style={{
-                width: '100%'
-              }}
-              placeholder="请输入所属集群/板块"
-            >
-              {
-                clusterList.map(d => (
-                  <Option key={d.id} value={d.id}>
-                    {d.name}
-                  </Option>
-                ))}
-            </Select>)}
+            })(
+              <Select
+                allowClear
+                showSearch
+                onChange={_.debounce(this.saveParams, 500)}
+                onSearch={_.debounce(this.handleQueryCluster, 500)}
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  JSON.stringify(option.props.children)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+                style={{
+                  width: '100%'
+                }}
+                placeholder="请输入所属集群/板块"
+              >
+                {
+                  clusterList && clusterList.map(d => (
+                    <Option key={d.id} value={d.id}>
+                      {d.name}
+                    </Option>
+                  ))}
+              </Select>
+            )}
           </FormItem>
         </Col>
         <Col span={4}>
@@ -594,7 +578,8 @@ class ContractManage extends Component {
                     top: '5px'
                   }}
                   onClick={() => this.handleViewDetail(record)}
-                  title="查看" />
+                  title="查看"
+                />
               )}
             </div>
           );
@@ -605,7 +590,7 @@ class ContractManage extends Component {
   };
 
   render() {
-    const { contractList, loadingQueryData, contractInfo } = this.props;
+    const { contract: { contractList, contractInfo }, loadingQueryData } = this.props;
     const { visibleModal, modalTitle } = this.state;
     const createProps = {
       visibleModal,

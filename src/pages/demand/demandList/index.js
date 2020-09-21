@@ -1,6 +1,6 @@
 import React, { Fragment, memo, useEffect, useState } from 'react';
 import { connect } from 'dva';
-import { withRouter } from 'umi/index';
+import {router, withRouter} from 'umi/index';
 import { isEmpty } from '@/utils/lang';
 import { Divider, message, Tooltip } from 'antd';
 import { DefaultPage, TableColumnHelper } from '@/utils/helper';
@@ -14,6 +14,7 @@ import AddStory from '../components/story/addStory';
 import styles from '../index.less';
 
 import deleteIcon from '@/assets/icon/Button_del.svg';
+import assignIcon from '@/assets/icon/cz_zp.svg';
 
 const demandRoutes = {
   '/demand/myDemand': '我的需求',
@@ -24,7 +25,7 @@ const Index = memo(
   withRouter(props => {
     const {
       dispatch,
-      // demand: { demandList },
+      demand: { demandList },
     } = props;
 
     const [addModalVisible, setAddModalVisible] = useState(false);
@@ -116,15 +117,28 @@ const Index = memo(
         title: '操作',
         width: 200,
         align: 'center',
-        render: () => (
+        render: rows => (
           <Fragment>
             <OptButton
-              img={edit}
+              icon="eye"
               showText={false}
-              text="编辑"
+              text="查看"
               onClick={() => {
-                // setAddModalVisible(true);
-                // setSelectedRows(rows)
+                router.push({
+                  pathname: `${props.location.pathname}/detail`,
+                  query: {
+                    id: rows.id,
+                  }
+                });
+              }}
+            />
+            <Divider type="vertical" />
+            <OptButton
+              img={assignIcon}
+              showText={false}
+              text="指派"
+              onClick={() => {
+
               }}
             />
           </Fragment>
@@ -288,13 +302,14 @@ const Index = memo(
         },
       ],
     };
+    console.log(list, 'list')
     return (
       <div className={styles.childrenTable}>
         <StandardTable
           rowKey="id"
           expandedRowRender={expandedRowRender}
           columns={columns}
-          data={list}
+          data={demandList}
         />
         {addModalVisible && (
           <AddStory
