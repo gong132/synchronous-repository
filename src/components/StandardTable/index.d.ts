@@ -37,4 +37,4 @@ export interface ILoginItemProps {
 
 }
 
-export class StandardTable extends React.Component<ILoginItemProps, any> {}
+export default class StandardTable extends React.Component<ILoginItemProps, any> {}

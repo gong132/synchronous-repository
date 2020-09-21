@@ -89,8 +89,10 @@ const Index = memo(
               <span
                 style={{ color: '#2E5BFF' }}
                 onClick={() => {
+                  const pathname = props?.location?.pathname;
+                  if (!pathname) return
                   props.history.push({
-                    pathname: '/contract-budget/budget/detail',
+                    pathname: `${pathname}/detail`,
                     query: {
                       id: rows.id,
                     },

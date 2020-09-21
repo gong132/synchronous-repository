@@ -96,6 +96,7 @@ class ChartCard extends PureComponent {
 
   render() {
     const { sendData, contextMenuVisible, textContent } = this.state;
+    const { handleModalVisible } = this.props;
     const styleObj = {
       backgroundColor: 'white',
       borderColor: '#2E5BFF',
@@ -183,6 +184,7 @@ class ChartCard extends PureComponent {
                   marginTop: '12px',
                 }}
                 img={itIcon}
+                onClick={() => handleModalVisible(true, "itAssessModalVisible")}
                 text="IT评估"
               />
               <OptButton

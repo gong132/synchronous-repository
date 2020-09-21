@@ -50,6 +50,7 @@ import { getParam } from '@/utils/utils';
 import styles from '../index.less';
 
 import AddStory from '@/pages/demand/components/story/addStory';
+import ITAssess from '@/pages/demand/components/story/ITAssess';
 
 const { Step } = Steps;
 const RadioGroup = Radio.Group;
@@ -71,6 +72,7 @@ class Detail extends Component {
       editBool: false,
       descriptionState: '',
       addStoryModalVisible: false,
+      itAssessModalVisible: false,
       selectedStoryRows: [],
     };
   }
@@ -280,8 +282,14 @@ class Detail extends Component {
     this.handleQueryStoryList(params);
   };
 
+  handleModalVisible = (flag, tag) => {
+    this.setState({
+      [tag]: !!flag
+    })
+  }
+
   render() {
-    const { editBool, descriptionState, addStoryModalVisible, selectedStoryRows } = this.state;
+    const { editBool, descriptionState, addStoryModalVisible, selectedStoryRows, itAssessModalVisible } = this.state;
     const {
       form,
       loadingQueryInfo,
@@ -291,26 +299,9 @@ class Detail extends Component {
     } = this.props;
     const w = '100%';
     const {
-      title,
-      demandNumber,
-      status,
-      budgetNumbers,
-      type = 'u',
-      priority,
-      introducer,
-      acceptTeam,
-      receiver,
-      communicate,
-      expectedCompletionDate,
-      plannedLaunchDate,
-      actualLineDate,
-      projectNo,
-      demandUrgency,
-      businessCompliance,
-      riskControlFunction,
-      creator,
-      createTime,
-      requirementDescription,
+      title, demandNumber, status, budgetNumbers, type = 'u', priority, introducer, acceptTeam, receiver,
+      communicate, expectedCompletionDate, plannedLaunchDate, actualLineDate, projectNo, demandUrgency,
+      businessCompliance, riskControlFunction, creator, createTime, requirementDescription,
     } = demandInfo || {};
     const btnStyle = {
       border: '1px solid #D63649',
@@ -461,7 +452,7 @@ class Detail extends Component {
       TableColumnHelper.genPlanColumn('priority', '优先级'),
       TableColumnHelper.genPlanColumn('type', 'story类型'),
       TableColumnHelper.genPlanColumn('systemName', '所属系统'),
-      TableColumnHelper.genDateTimeColumn('evaluateTime', 'IT预计上线时间'),
+      TableColumnHelper.genDateTimeColumn('evaluateTime', 'IT预计上线时间', "YYYY-MM-DD"),
       TableColumnHelper.genPlanColumn('developWorkload', '开发预计测试工作量'),
       TableColumnHelper.genPlanColumn('testWorkload', '测试预计测试工作量'),
       TableColumnHelper.genPlanColumn('assessor', '评估人'),
@@ -1011,17 +1002,6 @@ class Detail extends Component {
             </div>
           }
         >
-          {/*<StoryList*/}
-          {/*  addStoryModalVisible={this.state.addStoryModalVisible}*/}
-          {/*  handleAddStoryModalVisible={() =>{*/}
-          {/*    this.setState({*/}
-          {/*      addStoryModalVisible: false,*/}
-          {/*    })*/}
-          {/*  }}*/}
-          {/*  values={demandInfo}*/}
-          {/*  done={loadingQueryInfo}*/}
-          {/*/>*/}
-
           <div className={styles.tableList}>
             {/*<div className={styles.tableListForm}>{renderForm()}</div>*/}
             <StandardTable
@@ -1038,13 +1018,16 @@ class Detail extends Component {
               <AddStory
                 type="add"
                 modalVisible={addStoryModalVisible}
-                handleModalVisible={() => {
-                  this.setState({
-                    addStoryModalVisible: false,
-                  });
-                }}
+                handleModalVisible={() => this.handleModalVisible(false, "addStoryModalVisible")}
                 values={demandInfo}
                 handleQueryStoryList={this.handleQueryStoryList}
+              />
+            )}
+            {itAssessModalVisible && (
+              <ITAssess
+                modalVisible={itAssessModalVisible}
+                handleModalVisible={() => this.handleModalVisible(false, "itAssessModalVisible")}
+                values={demandInfo}
               />
             )}
           </div>
@@ -1072,7 +1055,7 @@ class Detail extends Component {
             onChange={this.handleStandardTableChangePro}
           />
         </GlobalSandBox>
-        <ChartCard />
+        <ChartCard handleModalVisible={this.handleModalVisible}/>
         <GlobalSandBox title="系统需求" img={sdIcon}></GlobalSandBox>
         <GlobalSandBox img={budgetLogIcon} title="操作日志">
           <StandardTable
