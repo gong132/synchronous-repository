@@ -5,23 +5,24 @@ import moment from 'moment';
 import Editor from '@/components/TinyEditor';
 import CustomBtn from '@/components/commonUseModule/customBtn';
 import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
-import ListOptBtn from '@/components/commonUseModule/listOptBtn'
+import ListOptBtn from '@/components/commonUseModule/listOptBtn';
 import StandardTable from '@/components/StandardTable';
-import ChartCard from './chartCard'
+import ChartCard from './chartCard';
 import { TableColumnHelper, DefaultPage } from '@/utils/helper';
 import OptButton from '@/components/commonUseModule/optButton';
-import flowIcon from '@/assets/icon/modular_lcjd.svg'
-import sdIcon from '@/assets/icon/modular_xtxq.svg'
+import flowIcon from '@/assets/icon/modular_lcjd.svg';
+import sdIcon from '@/assets/icon/modular_xtxq.svg';
 import editIcon from '@/assets/icon/Button_bj.svg';
-import editIconList from '@/assets/icon/cz_bj.svg'
-import delIcon from '@/assets/icon/cz_del.svg'
-
-import psIcon from '@/assets/icon/nav_xqgl.svg'
-import apsIcon from '@/assets/icon/nav_xqgl_hover.svg'
-import xqIcon from '@/assets/icon/xq.svg'
+import editIconList from '@/assets/icon/cz_bj.svg';
+import delIcon from '@/assets/icon/cz_del.svg';
+import waitIcon from '@/assets/icon/xq_jxz.svg';
+import psIcon from '@/assets/icon/nav_xqgl.svg';
+import apsIcon from '@/assets/icon/nav_xqgl_hover.svg';
+import xqIcon from '@/assets/icon/xq.svg';
 import budgetLogIcon from '@/assets/icon/modular_czrz.svg';
 import budgetXqIcon from '@/assets/icon/modular_xq.svg';
 // import xmIcon from '@/assets/icon/xm.svg'
+// import xmwaitIcon from '@/assets/icon/xm_jxz.svg'
 
 import {
   Steps,
@@ -202,7 +203,8 @@ class Detail extends Component {
 
   handleRenderStepIcon = arg => {
     if (arg.status === 'finish') return <Icon component={xqIcon} />;
-    // if (arg.status === 'process') return <CustomIcon type={progressIcon} size="middle" />
+    if (arg.status === 'process') return <Icon component={waitIcon} />;
+    console.log(arg, 'arg');
     if (arg.status === 'wait')
       return (
         <div
@@ -369,7 +371,7 @@ class Detail extends Component {
                   fontSize: '20px',
                   marginRight: '16px',
                   position: 'relative',
-                  top: '1px'
+                  top: '1px',
                 }}
                 // onClick={() => this.handleViewModal(true, '编辑', record)}
                 icon={editIconList}
@@ -381,7 +383,7 @@ class Detail extends Component {
                   fontSize: '20px',
                   marginRight: '16px',
                   position: 'relative',
-                  top: '1px'
+                  top: '1px',
                 }}
                 // onClick={() => this.handleViewDetail(record)}
                 title="删除"
@@ -397,7 +399,7 @@ class Detail extends Component {
         <div className="yCenter-between">
           <CustomBtn type="create" title="下一节点" />
           <div className="yCenter">
-            <CustomBtn type="others" title="关闭" style={{ ...btnStyle, marginRight: '16px' }} />
+            <CustomBtn type="others" title="取消" style={{ ...btnStyle, marginRight: '16px' }} />
             <CustomBtn type="others" title="打回" style={btnStyle} />
           </div>
         </div>
@@ -929,16 +931,16 @@ class Detail extends Component {
           <StoryList done={loadingQueryInfo}/>
         </GlobalSandBox>
         <GlobalSandBox
-          title='项目里程碑'
+          title="项目里程碑"
           img={sdIcon}
           optNode={
             <OptButton
               style={{
                 backgroundColor: 'white',
                 color: '#B0BAC9',
-                borderColor: '#B0BAC9'
+                borderColor: '#B0BAC9',
               }}
-              icon='plus'
+              icon="plus"
               text="新建"
             />
           }

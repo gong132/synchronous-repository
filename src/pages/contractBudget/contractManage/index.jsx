@@ -66,6 +66,14 @@ class ContractManage extends Component {
   // 导出
   handleExportExcel = () => {
     exportExcel({ budgetNumber: '20A001-001-002' }, 'contract/export', 'post', '合同表单数据.xls')
+    const formValues = this.props.form.getFieldsValue();
+    if (formValues.signTime && !_.isEmpty(formValues.signTime)) {
+      formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYY-MM-DD')
+      formValues.signingEndTime = moment(formValues.signTime[1]).format('YYYY-MM-DD')
+    } else if (formValues.defendPayTime) {
+      formValues.defendPayTime = moment(formValues.defendPayTime).format('YYYY-MM-DD')
+    }
+    exportExcel(formValues, 'contract/export', 'post', '合同表单数据.xls')
   }
 
   handleQueryData = (params = {}) => {
@@ -454,7 +462,7 @@ class ContractManage extends Component {
           </FormItem>
         </Col>
         <Col span={8}>
-          <FormItem labelCol={{span: 10}} wrapperCol={{span: 14}} colon={false} label="所属集群/板块">
+          <FormItem labelCol={{ span: 7 }} wrapperCol={{ span: 14 }} colon={false} label="所属集群/板块">
             {getFieldDecorator('clusterId', {
             })(
               <Select
@@ -487,10 +495,6 @@ class ContractManage extends Component {
           <FormItem>
             <CustomBtn
               onClick={() => this.handleResetSearch()}
-              style={{
-                display: 'inline-block',
-                marginRight: '2rem'
-              }}
               loading={loadingQueryData}
               type='reset'
             />
@@ -500,7 +504,7 @@ class ContractManage extends Component {
                   className="activeColor"
                   onClick={() => this.setSearchMore(!searchMore)}
                   style={{
-                    display: 'inline-block'
+                    float: 'right'
                   }}
                 >
                   <div className={styles.moreBtn}>

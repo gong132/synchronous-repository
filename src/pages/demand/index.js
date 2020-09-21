@@ -42,7 +42,7 @@ const Index = memo(
     const startTimer = callback => {
       window.timer = setInterval(() => {
         callback && callback();
-      }, 10000000);
+      }, 20000);
     };
 
     // 关闭定时器
@@ -194,7 +194,7 @@ const Index = memo(
           </div>
         </div>
         {formType === 'list' && <DemandList />}
-        {formType === 'board' && <DemandBoard />}
+        {formType === 'board' && <DemandBoard handleQueryBoard={handleQueryBoard} />}
       </Fragment>
     );
   }),

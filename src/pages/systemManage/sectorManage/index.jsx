@@ -7,7 +7,7 @@ import CustomBtn from '@/components/commonUseModule/customBtn';
 import ListOptBtn from '@/components/commonUseModule/listOptBtn'
 import editIcon from '@/assets/icon/cz_bj.svg';
 import eyeIcon from '@/assets/icon/cz_ck.svg'
-import { formLayoutItem } from '@/utils/constant'
+import { formLayoutItem, MENU_ACTIONS } from '@/utils/constant'
 import { Modal, Form, Input, Select, Card, Checkbox, Row, Col } from 'antd';
 import * as _ from 'lodash';
 import styles from './index.less'
@@ -16,7 +16,8 @@ const { Option } = Select;
 const FormItem = Form.Item;
 
 @Form.create()
-@connect(({ sector, loading }) => ({
+@connect(({ sector, loading, global }) => ({
+  global,
   loadingQueryData: loading.effects['sector/queryData'],
   loadingCreateData: loading.effects['sector/addData'],
   loadingUpdateData: loading.effects['sector/updateData'],
@@ -207,7 +208,7 @@ class SectorManage extends Component {
     return (
       <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
         <Col span={8}>
-          <FormItem wrapperCol={{span: 17}} labelCol={{span: 7}} colon={false} label="集群/板块名称">
+          <FormItem wrapperCol={{ span: 17 }} labelCol={{ span: 7 }} colon={false} label="集群/板块名称">
             <Input
               allowClear
               value={searchParams.name}
@@ -217,7 +218,7 @@ class SectorManage extends Component {
           </FormItem>
         </Col>
         <Col span={8}>
-          <FormItem {...formLayoutItem} labelCol={{span: 5}} colon={false} label="所属部门">
+          <FormItem {...formLayoutItem} labelCol={{ span: 5 }} colon={false} label="所属部门">
             <Select
               allowClear
               value={searchParams.deptInfo}
@@ -253,6 +254,7 @@ class SectorManage extends Component {
   };
 
   genColumns = () => {
+    const { global: { authActions } } = this.props
     const columns = [
       {
         title: '集群/模块名称',
@@ -295,18 +297,18 @@ class SectorManage extends Component {
         render: (text, record) => {
           return (
             <div>
-              <ListOptBtn
+              {authActions.includes(MENU_ACTIONS.EDIT) && <ListOptBtn
                 title="编辑"
                 onClick={() => this.handleViewModal(true, '编辑', record)}
                 style={{
                   fontSize: '20px',
                   marginRight: '16px',
                   position: 'relative',
-                  top:'1px'
+                  top: '1px'
                 }}
                 icon={editIcon}
-              />
-              <ListOptBtn
+              />}
+              {authActions.includes(MENU_ACTIONS.CHECK) && <ListOptBtn
                 title="查看"
                 onClick={() => this.handleViewDetail(record)}
                 style={{
@@ -315,7 +317,7 @@ class SectorManage extends Component {
                   top: '5px'
                 }}
                 icon={eyeIcon}
-              />
+              />}
             </div>
           );
         },
@@ -326,7 +328,7 @@ class SectorManage extends Component {
 
   render() {
     const { modalVisible, modalTitle, record } = this.state;
-    const { sectorList, form, loadingQueryData, deptList, loadingCreateData } = this.props;
+    const { sectorList, form, loadingQueryData, deptList, loadingCreateData, global: {authActions} } = this.props;
     const { name, clusterLinkDepts } = record;
     const arr = [];
     if (clusterLinkDepts) {
@@ -339,11 +341,11 @@ class SectorManage extends Component {
     return (
       <Fragment>
         <div style={{ display: 'flex' }}>
-          <CustomBtn
+          {authActions.includes(MENU_ACTIONS.ADD) &&  <CustomBtn
             onClick={() => this.handleViewModal(true, '新建')}
             type="create"
             icon='plus'
-          />
+          />}
         </div>
         <Card>
           <Modal

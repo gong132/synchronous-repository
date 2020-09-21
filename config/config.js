@@ -1,7 +1,6 @@
 import slash from 'slash2';
 import defaultSettings from './defaultSettings'; // https://umijs.org/config/
-import PagesRoutes from './routers.config'
-
+import PagesRoutes from './routers.config';
 import themePluginConfig from './themePluginConfig';
 import proxy from './proxy';
 import webpackPlugin from './plugin.config';
@@ -12,7 +11,7 @@ const { pwa } = defaultSettings; // preview.pro.ant.design only do not use in yo
 const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION, REACT_APP_ENV } = process.env;
 const isAntDesignProPreview = ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site';
 
-console.log(process.env, 'process.env,')
+// console.log(process.env, 'process.env,')
 const plugins = [
   ['umi-plugin-antd-icon-config', {}],
   [

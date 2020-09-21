@@ -1,0 +1,74 @@
+// 消息展示部分样式
+.msgContext {
+  margin-bottom: 16px;
+}
+
+.msgContent {
+  margin-bottom: 16px;
+
+  &_head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+
+    &_name {
+      padding: 8px 12px;
+      color: #2e5bff;
+      background: rgba(46, 91, 255, 0.1);
+    }
+
+    &_time {
+      color: #606266;
+    }
+  }
+}
+
+// 发消息部分样式
+.sendContext {
+  position: relative;
+
+  &_btn {
+    position: absolute;
+    display: flex;
+    bottom: -2px;
+    right: 14px;
+  }
+}
+
+.sideBtn {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+// 右键出现的按钮样式
+.contextMenu_wrap {
+  z-index: 100;
+  position: fixed;
+  background: linear-gradient(to right, #c6c7cf, #f0f0f0);
+  // box-shadow: 0 2px 5px #999;
+  border-radius: 4px;
+  // padding-top: 5px;
+  .contextMenu_option {
+    padding: 0 15px 2px 15px;
+    min-width: 120px;
+    cursor: default;
+    font-size: 14px;
+    &:hover {
+      background: #388bfe;
+      color: white;
+      border-radius: 4px;
+    }
+    &:active {
+      color: #b5b7be;
+      background: linear-gradient(to top, #555, #444);
+    }
+    .contextMenu_separator {
+      width: 100%;
+      height: 1px;
+      background: #b5b7be;
+      margin: 2px 0;
+    }
+  }
+}

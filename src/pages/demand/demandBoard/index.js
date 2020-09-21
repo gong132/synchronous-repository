@@ -1,7 +1,8 @@
 import React, { Component, Fragment } from 'react'
-import { Empty } from 'antd'
+import { Empty, Dropdown, Icon, Menu, Spin } from 'antd'
 import { connect } from 'dva'
 import { router } from 'umi'
+import { BOARD_TITLE } from '../util/constant'
 // import InfiniteScroll from 'react-infinite-scroller'
 import {
   DragDropContext,
@@ -9,6 +10,7 @@ import {
   Draggable,
 } from "react-beautiful-dnd";
 import _ from 'lodash';
+import EditModal from '../components/createModal'
 // import moment from 'moment';
 import styles from '../index.less'
 
@@ -27,8 +29,9 @@ const getListStyle = isDraggingOver => ({
   // height: '76vh',
   // overflowY: 'auto'
 });
-@connect(({ demand }) => ({
-  demandBoard: demand.demandBoard
+@connect(({ demand, loading }) => ({
+  demandBoard: demand.demandBoard,
+  loadingQueryBoard: loading.effects['demand/queryDemandBoard']
 }))
 class DemandBoard extends Component {
   constructor(props) {
@@ -36,6 +39,8 @@ class DemandBoard extends Component {
     this.state = {
       iHeight: 0, // 看板整体高度
       ciHeight: 0, // 每列下的高度
+      showEditModal: false,
+      propValue: {}
     }
   }
 
@@ -59,10 +64,84 @@ class DemandBoard extends Component {
     });
   };
 
+  stopPropogation = (e) => {
+    if (e.stopPropagation) {
+      e.stopPropagation()
+    } else {
+      window.event.cancelBubble === true;
+    }
+  }
+
+  handleViewModal = (bool, val) => {
+    this.setState({
+      showEditModal: bool,
+      propValue: val,
+    })
+  }
+
+  renderBoardMenu = (record, boardId) => {
+    const { collectId } = record
+    return (
+      <Menu onClick={({ item, key, keyPath, domEvent }) => this.quickResolveStory(item, key, keyPath, domEvent, record)}>
+        {boardId !== 1 && <Menu.Item key='appointFocus'>指派关注人</Menu.Item>}
+        {boardId === 2 && <Menu.Item key='appointAccept'>指派受理人</Menu.Item>}
+        {(boardId === 1 || boardId === 3) && <Menu.Item key='edit'>编辑</Menu.Item>}
+        {boardId === 3 && <Menu.Item key='accept'>受理</Menu.Item>}
+        {(boardId === 1 || boardId === 2) && <Menu.Item key='del'>删除</Menu.Item>}
+        {
+          collectId ?
+            <Menu.Item key='cancelFocus'>取消关注</Menu.Item>
+            : <Menu.Item key='focus'>关注</Menu.Item>
+        }
+      </Menu>
+    )
+  }
+
+  quickResolveStory = async (item, key, keyPath, domEvent, editValue) => {
+    if (domEvent.stopPropagation) {
+      domEvent.stopPropagation()
+    } else {
+      window.event.cancelBubble === true;
+    }
+    switch (key) {
+      case 'focus':
+        console.log('focus');
+        break;
+      case 'cancelFocus':
+        console.log('cancelFocus');
+        break;
+      case 'edit':
+        this.handleViewModal(true, editValue)
+        break;
+      case 'del':
+        console.log('del')
+        break;
+      case 'appointFocus':
+        console.log('appointFocus')
+        break;
+      case 'appointAccept':
+        console.log('appointAccept')
+        break;
+      case 'accept':
+        console.log('accept')
+        break;
+      default:
+        break;
+    }
+  }
+
+
   render() {
-    const { iHeight, ciHeight } = this.state
-    const { demandBoard } = this.props
-    console.log(this.props)
+    const { iHeight, ciHeight, showEditModal, propValue } = this.state
+    const { demandBoard, handleQueryBoard, loadingQueryBoard } = this.props
+    const editModalProps = {
+      visibleModal: showEditModal,
+      modalTitle: '编辑',
+      handleViewModal: this.handleViewModal,
+      handleQueryBoard,
+      recordValue: propValue,
+    }
+    const arr = _.isEmpty(demandBoard) ? BOARD_TITLE : demandBoard
     return (
       <div
         className={styles.drag}
@@ -71,82 +150,103 @@ class DemandBoard extends Component {
         }}
         id='dragContext'
       >
+        {showEditModal && <EditModal {...editModalProps} />}
         <DragDropContext>
-          {!_.isEmpty(demandBoard) && demandBoard.map((droppableItem) => (
+          {!_.isEmpty(arr) && arr.map((droppableItem) => (
             <div
               key={droppableItem.boardId}
               className={styles.spectaculars}
             >
               <Fragment>
                 <div className={styles.cardTitle}>
-                  {droppableItem.name || '--'}
+                  {!_.isEmpty(droppableItem.demandList)
+                    ? <Fragment><span>{droppableItem.name}</span><span className={styles.cardTitle_count}>({droppableItem.demandList.length})</span></Fragment>
+                    : <span>{droppableItem.name}</span>}
                 </div>
                 <div
                   className={styles.spectaculars__set}
                   style={{ height: ciHeight }}
                 >
-                  <Droppable
-                    droppableId={String(droppableItem.boardId)}
-                  >
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        style={
-                          getListStyle(
-                            snapshot.isDraggingOver,
-                          )}
-                      >
-                        <div style={{ height: ciHeight, overflowY: 'auto' }}>
-                          {_.isArray(droppableItem.demandList) && !_.isEmpty(droppableItem.demandList) ? droppableItem.demandList.map((item, i) => (
-                            <Draggable
-                              key={item.id}
-                              draggableId={String(item.id)}
-                              index={i}
-                            >
-                              {(providedd, snapshott) => (
-                                <div
-                                  ref={providedd.innerRef}
-                                  {...providedd.draggableProps}
-                                  {...providedd.dragHandleProps}
-                                  style={getItemStyle(
-                                    snapshott.isDragging,
-                                    providedd.draggableProps.style
-                                  )}
-                                >
+                  <Spin spinning={loadingQueryBoard}>
+                    <Droppable
+                      droppableId={String(droppableItem.boardId)}
+                    >
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          style={
+                            getListStyle(
+                              snapshot.isDraggingOver,
+                            )}
+                        >
+
+                          <div style={{ height: ciHeight, overflowY: 'auto' }}>
+                            {_.isArray(droppableItem.demandList) && !_.isEmpty(droppableItem.demandList) ? droppableItem.demandList.map((item, i) => (
+                              <Draggable
+                                key={item.id}
+                                draggableId={String(item.id)}
+                                index={i}
+                              >
+                                {(providedd, snapshott) => (
                                   <div
-                                    className={styles.dragBoard}
-                                    onClick={() => this.handleViewDetail(item.id)}
+                                    ref={providedd.innerRef}
+                                    {...providedd.draggableProps}
+                                    {...providedd.dragHandleProps}
+                                    style={getItemStyle(
+                                      snapshott.isDragging,
+                                      providedd.draggableProps.style
+                                    )}
                                   >
-                                    <div className={styles.dragBoard_firstLine}>
-                                      <div className={styles.dragBoard_firstLine_no}>
-                                        {item.demand_number}
+                                    <div
+                                      className={styles.dragBoard}
+                                      onClick={() => this.handleViewDetail(item.id)}
+                                    >
+                                      <div className={styles.dragBoard_firstLine}>
+                                        <div className={styles.dragBoard_firstLine_no}>
+                                          {item.demandNumber}
+                                        </div>
+                                        <div className={styles.dragBoard_firstLine_menu}>
+                                          <div
+                                            onClick={(e) => this.stopPropogation(e)}
+                                          >
+                                            <Dropdown
+                                              overlay={this.renderBoardMenu(item, droppableItem.boardId)}
+                                              trigger='click'
+                                              onClick={(e) => this.stopPropogation(e)}
+                                            >
+                                              <Icon
+                                                type='menu'
+                                                onClick={(e) => this.stopPropogation(e)}
+                                              />
+                                            </Dropdown>
+                                          </div>
+                                        </div>
                                       </div>
-                                      {/* <div className={styles.dragBoard_firstLine_menu}></div> */}
-                                    </div>
-                                    <div className={styles.dragBoard_secondLine}>
-                                      {item.title}
-                                    </div>
-                                    <div className={styles.dragBoard_thirdLine}>
-                                      <div className={styles.dragBoard_thirdLine_time}>
-                                        {`${item.creator}于${item.create_time}提交`}
+                                      <div className={styles.dragBoard_secondLine}>
+                                        {item.title}
                                       </div>
-                                      <div className={styles.dragBoard_thirdLine_type}>
-                                        {item.type === 'p'
-                                          ? '项目'
-                                          : '一般需求'}
+                                      <div className={styles.dragBoard_thirdLine}>
+                                        <div className={styles.dragBoard_thirdLine_time}>
+                                          {`${item.creator}于${item.create_time}提交`}
+                                        </div>
+                                        <div className={styles.dragBoard_thirdLine_type}>
+                                          {item.type === 'p'
+                                            ? '项目'
+                                            : '一般需求'}
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
-                                </div>
-                              )}
-                            </Draggable>
-                          )) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
-                          {provided.placeholder}
+                                )}
+                              </Draggable>
+                            )) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
+                            {provided.placeholder}
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </Droppable>
+                      )}
+                    </Droppable>
+                  </Spin>
                 </div>
               </Fragment>
             </div>
