@@ -42,9 +42,21 @@ module.exports = {
               component: './demand/index.js',
             },
             {
+              path: '/demand/generalDemand/detail',
+              name: 'generalDemandDetail',
+              hideInMenu: true,
+              component: './demand/components/demandDetail',
+            },
+            {
               path: '/demand/projectDemand',
               name: 'projectDemand',
               component: './demand/index.js',
+            },
+            {
+              path: '/demand/projectDemand/detail',
+              name: 'projectDemandDetail',
+              hideInMenu: true,
+              component: './demand/components/demandDetail',
             },
           ],
         },

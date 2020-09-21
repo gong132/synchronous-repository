@@ -124,3 +124,26 @@ export async function updateStory(params) {
   });
 }
 
+// story list
+export async function fetchStoryList(params) {
+  return request('/story/list', {
+    method: 'post',
+    params,
+  });
+}
+
+// 复制story
+export async function copyStory(params) {
+  return request('/story/copy', {
+    method: 'post',
+    params,
+  });
+}
+
+// 查询story
+export async function searchStory(params) {
+  return request('/story/search', {
+    method: 'post',
+    params,
+  });
+}

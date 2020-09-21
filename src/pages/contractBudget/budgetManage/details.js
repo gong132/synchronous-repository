@@ -34,7 +34,7 @@ const Index = props => {
   ];
 
   // 描述
-  const [description, setDescription] = useState(budgetDetails.description || '');
+  const [description, setDescription] = useState(budgetDetails?.description || '');
 
   // edit
   const [editModalVisible, setEditModalVisible] = useState(false);
@@ -158,50 +158,50 @@ const Index = props => {
 
   // 详情描述列表
   const detailsList = [
-    { span: 2, required: false, name: '项目名称', value: budgetDetails.name },
-    { span: 1, required: true, name: '预算编号', value: budgetDetails.number },
-    { span: 1, required: false, name: '需求部门', value: budgetDetails.deptName },
-    { span: 1, required: false, name: '预计立项时间', value: budgetDetails.expectSetTime },
+    { span: 2, required: false, name: '项目名称', value: budgetDetails?.name },
+    { span: 1, required: true, name: '预算编号', value: budgetDetails?.number },
+    { span: 1, required: false, name: '需求部门', value: budgetDetails?.deptName },
+    { span: 1, required: false, name: '预计立项时间', value: budgetDetails?.expectSetTime },
     {
       span: 1,
       required: false,
-      name: '其他预算金额',
-      value: `${budgetDetails.otherExpectAmount} (万元)`,
+      name: '其他预算金额 (万)',
+      value: `${budgetDetails?.otherExpectAmount || ''}`,
     },
     {
       span: 1,
       required: false,
-      name: '预算总金额',
-      value: `${budgetDetails.expectTotalAmount} (万元)`,
+      name: '预算总金额 (万)',
+      value: `${budgetDetails?.expectTotalAmount || ''}`,
     },
     {
       span: 1,
       required: false,
-      name: '硬件预算金额',
-      value: `${budgetDetails.hardwareExpectAmount} (万元)`,
+      name: '硬件预算金额 (万)',
+      value: `${budgetDetails?.hardwareExpectAmount || ''}`,
     },
     {
       span: 1,
       required: false,
-      name: '软件预算金额',
-      value: `${budgetDetails.softwareExpectAmount} (万元)`,
+      name: '软件预算金额 (万)',
+      value: `${budgetDetails?.softwareExpectAmount || ''}`,
     },
     {
       span: 1,
       required: true,
       name: '项目类型',
-      value: findValueByArray(PROJECT_TYPE, 'key', budgetDetails.type, 'value'),
+      value: findValueByArray(PROJECT_TYPE, 'key', budgetDetails?.type, 'value'),
     },
     {
       span: 1,
       required: true,
       name: '预算类型',
-      value: findValueByArray(BUDGET_TYPE, 'key', budgetDetails.budgetType, 'value'),
+      value: findValueByArray(BUDGET_TYPE, 'key', budgetDetails?.budgetType, 'value'),
     },
-    { span: 1, required: false, name: '承建团队', value: budgetDetails.receiveTeamName },
-    { span: 1, required: false, name: '录入人', value: budgetDetails.userName },
-    { span: 1, required: false, name: '所属集群或板块', value: budgetDetails.clusterName },
-    { span: 3, required: false, name: '录入时间', value: budgetDetails.createTime },
+    { span: 1, required: false, name: '承建团队', value: budgetDetails?.receiveTeamName },
+    { span: 1, required: false, name: '录入人', value: budgetDetails?.userName },
+    { span: 1, required: false, name: '所属集群或板块', value: budgetDetails?.clusterName },
+    { span: 3, required: false, name: '录入时间', value: budgetDetails?.createTime },
   ];
 
   const renderEditForm = () => {
@@ -475,7 +475,7 @@ const Index = props => {
                   </Descriptions.Item>
                 ))}
                 <Descriptions.Item span={3} label="项目描述">
-                  <div dangerouslySetInnerHTML={{ __html: budgetDetails.description }} />
+                  <div dangerouslySetInnerHTML={{ __html: budgetDetails?.description }} />
                 </Descriptions.Item>
               </Descriptions>
             )}
