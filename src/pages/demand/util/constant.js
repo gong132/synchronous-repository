@@ -120,10 +120,23 @@ export const STORY_TYPE = [
   { key: 2, value: "优化" },
   { key: 3, value: "变更" },
 ]
+
 export const STORY_PRIORITY = [
   { key: "最高", value: "最高" },
   { key: "高", value: "高" },
   { key: "中", value: "中" },
   { key: "低", value: "低" },
   { key: "最低", value: "最低" },
+]
+
+export const DEMAND_STATUS = [
+  { key: "1", value: "暂存中" },
+  { key: "2", value: "待指派" },
+  { key: "3", value: "待受理" },
+  { key: "4", value: "讨论中" },
+  { key: "5", value: "待拆分" },
+  { key: "6", value: "story技术评估" },
+  { key: "7", value: "开发中" },
+  { key: "8", value: "测试中" },
+  { key: "9", value: "上线" },
 ]

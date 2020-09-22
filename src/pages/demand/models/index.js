@@ -10,6 +10,8 @@ import {
   copyStory,
   searchStory,
   batchAssessStory,
+  fetchStoryDetails,
+  syncStory,
   // updateDemand,
   queryDemand,
   queryGroup,
@@ -41,7 +43,8 @@ const Demand = {
     systemList: [],
     userList: [],
     tempDemandId: '',
-    flowList: []
+    flowList: [],
+    storyDetails: {},
   },
   effects: {
     *queryFile({ payload }, { call}) {
@@ -332,6 +335,27 @@ const Demand = {
     // 批量评估、转评估story
     *batchAssessStory({ payload }, { call }) {
       const { code, msg } = yield call(batchAssessStory, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    },
+    // story详情
+    *queryStoryDetails({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(fetchStoryDetails, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return;
+      }
+      yield put({
+        type: "saveData",
+        payload: { storyDetails: data }
+      })
+    },
+    // 同步story
+    *syncStory({ payload }, { call }) {
+      const { code, msg } = yield call(syncStory, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;

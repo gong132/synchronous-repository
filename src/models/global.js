@@ -3,7 +3,7 @@ import {router} from "umi";
 import storage from "@/utils/storage";
 import {PagerHelper} from "@/utils/helper";
 import { isEmpty } from "@/utils/lang";
-import { queryLogList, saveFile } from '@/services/global'
+import { queryLogList, fetchUserList, saveFile } from '@/services/global'
 import { queryNotices, fetchMenuList, fetchCurrentUserInfo, fetchListByRoleId } from '@/services/user';
 
 const GlobalModel = {
@@ -12,6 +12,7 @@ const GlobalModel = {
     collapsed: false,
     notices: [],
     logList: PagerHelper.genListState(),
+    userList: PagerHelper.genListState(),
     allMenuList: [],
     currentUserMenuList: [],
     authActions: [],
@@ -100,7 +101,23 @@ const GlobalModel = {
         return false;
       }
       return true;
-    }
+    },
+    *queryUserList({payload}, {call, put}) {
+      const res = yield call(fetchUserList, payload);
+      if (!res || res.code !== 200) {
+        message.error(msg);
+        return
+      }
+      const { data, ...others } = res.data;
+      yield put({
+        type: 'setUserData',
+        payload: {
+          filter: payload,
+          data,
+          ...others
+        },
+      })
+    },
   },
   reducers: {
     saveData(state, { payload }) {
@@ -132,6 +149,13 @@ const GlobalModel = {
       return {
         ...state,
         logList: PagerHelper.resolveListState(action.payload),
+      };
+    },
+
+    setUserData(state, action) {
+      return {
+        ...state,
+        userList: PagerHelper.resolveListState(action.payload),
       };
     },
 
@@ -204,14 +228,15 @@ const GlobalModel = {
         // console.log(currentUserMenuList, 'currentUserMenuList')
         const findCurrentPage = currentUserMenuList && currentUserMenuList.filter(v => !!v ).find(v => v.url === pathname );
         // console.log(currentUserMenuList, pathname, findCurrentPage, 'findCurrentPage')
+
         // 监听当前页面路由是否在菜单池, 如果不在, 并且不是异常页面和登陆页时, 跳转到403页面
         // 异常页面不监听路由
         if (!isEmpty(currentUserMenuList) && !findCurrentPage && pathname.indexOf('/exception') < 0 && pathname !== '/user/login' && pathname !== '/menuConfig' && pathname !== '/') {
           router.replace('/exception/403');
         }
-        // if (!findCurrentPage || pathname !== '/user/login') {
-        //   router.replace('/');
-        // }
+        if (isEmpty(findCurrentPage) && pathname.indexOf('/exception') < 0 && pathname !== '/user/login' && pathname !== '/menuConfig' && pathname !== '/') {
+          router.replace('/exception/403');
+        }
         // 如果路径名为' / '，则触发' load '操作
         if (typeof window.ga !== 'undefined') {
           window.ga('send', 'pageview', pathname + search);

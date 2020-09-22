@@ -40,3 +40,10 @@ export async function saveFile(params) {
   });
 }
 
+// 查询人员
+export async function fetchUserList(params) {
+  return request('/personnel/queryPage', {
+    method: 'post',
+    params,
+  });
+}

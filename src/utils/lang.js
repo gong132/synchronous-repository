@@ -98,4 +98,9 @@ function trim(str) {
   return str;
 }
 
-export { isString, isObject, isArray, isEmpty, objectHandler, trim, getValue, compare };
+function statusToValue(targetArr = [], status) {
+  const findObj = targetArr.find(v => String(v.key) === String(status))
+  return findObj?.value
+}
+
+export { isString, isObject, isArray, isEmpty, objectHandler, trim, getValue, compare, statusToValue };

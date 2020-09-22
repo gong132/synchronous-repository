@@ -59,7 +59,7 @@ module.exports = {
               component: './demand/components/demandDetail',
             },
             {
-              path: '/demand/demand/stoyDetail',
+              path: '/demand/storyDetail',
               name: 'storyDetail',
               hideInMenu: true,
               component: './demand/components/story/storyDetails',

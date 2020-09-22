@@ -7,6 +7,7 @@ export interface IGOptButtonProps {
   img?: string;
   disabled?: boolean;
   showText?: boolean;
+  loading?: boolean;
   onClick?: React.MouseEventHandler<any>;
 }
 

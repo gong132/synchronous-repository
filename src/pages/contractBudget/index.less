@@ -1,5 +1,5 @@
 @import '~antd/lib/style/themes/default.less';
-@import '~@/utils/utils.less';
+@import '~@/utils/utils.less'; // eslint-disable-line
 
 .main {
   padding: 16px;
@@ -39,14 +39,6 @@
     display: block;
     white-space: nowrap;
     margin-bottom: 12px;
-  }
-}
-
-.moreSearch {
-  :global {
-    .ant-select {
-      width: 100%;
-    }
   }
 }
 
@@ -94,6 +86,9 @@
   :global {
     .ant-form-item {
       margin-bottom: 12px;
+    }
+    .ant-select {
+      width: 100%;
     }
   }
 }
