@@ -154,3 +154,19 @@ export async function batchAssessStory(params) {
     params,
   });
 }
+
+// story详情
+export async function fetchStoryDetails(params) {
+  return request('/story/info', {
+    method: 'get',
+    params,
+  });
+}
+
+// 同步story
+export async function syncStory(params) {
+  return request('/story/sync', {
+    method: 'get',
+    params,
+  });
+}

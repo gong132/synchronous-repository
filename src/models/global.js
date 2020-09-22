@@ -3,7 +3,7 @@ import {router} from "umi";
 import storage from "@/utils/storage";
 import {PagerHelper} from "@/utils/helper";
 import { isEmpty } from "@/utils/lang";
-import { queryLogList } from '@/services/global'
+import { queryLogList, fetchUserList } from '@/services/global'
 import { queryNotices, fetchMenuList, fetchCurrentUserInfo, fetchListByRoleId } from '@/services/user';
 
 const GlobalModel = {
@@ -12,6 +12,7 @@ const GlobalModel = {
     collapsed: false,
     notices: [],
     logList: PagerHelper.genListState(),
+    userList: PagerHelper.genListState(),
     allMenuList: [],
     currentUserMenuList: [],
     authActions: [],
@@ -91,7 +92,24 @@ const GlobalModel = {
           ...others
         },
       })
-    }
+    },
+    *queryUserList({payload}, {call, put}) {
+      const res = yield call(fetchUserList, payload);
+      if (!res || res.code !== 200) {
+        message.error(msg);
+        return
+      }
+      const { data, ...others } = res.data;
+      console.log(res.data, "res.data")
+      yield put({
+        type: 'setUserData',
+        payload: {
+          filter: payload,
+          data,
+          ...others
+        },
+      })
+    },
   },
   reducers: {
     saveData(state, { payload }) {
@@ -123,6 +141,13 @@ const GlobalModel = {
       return {
         ...state,
         logList: PagerHelper.resolveListState(action.payload),
+      };
+    },
+
+    setUserData(state, action) {
+      return {
+        ...state,
+        userList: PagerHelper.resolveListState(action.payload),
       };
     },
 

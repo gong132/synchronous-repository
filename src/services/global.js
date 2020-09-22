@@ -23,3 +23,11 @@ export async function queryComp(params) {
     params,
   });
 }
+
+// 查询人员
+export async function fetchUserList(params) {
+  return request('/personnel/queryPage', {
+    method: 'post',
+    params,
+  });
+}

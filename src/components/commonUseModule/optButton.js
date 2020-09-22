@@ -3,7 +3,7 @@ import { Icon, Button } from 'antd';
 import styles from './index.less';
 
 const Index = props => {
-  const { style, text, img, onClick, icon, disabled, showText = true } = props;
+  const { style, text, img, onClick, icon, disabled, showText = true, loading } = props;
 
   return !showText ? (
     <Icon
@@ -21,6 +21,7 @@ const Index = props => {
         style={style}
         disabled={disabled}
         title={text}
+        loading={loading}
       >
         <Icon type={icon} component={img} style={{ fontSize: 14 }} />
         {text}

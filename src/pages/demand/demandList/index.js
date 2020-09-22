@@ -133,6 +133,7 @@ const Index = memo(
                   },
                 });
               }}
+
             />
             <Divider type="vertical" />
             <OptButton img={assignIcon} showText={false} text="指派" onClick={() => {}} />
@@ -202,8 +203,12 @@ const Index = memo(
                 text="查看"
                 showText={false}
                 onClick={() => {
-                  // setAddModalVisible(true);
-                  // setSelectedRows(rows)
+                  router.push({
+                    pathname: "/demand/storyDetail",
+                    query: {
+                      id: rows.id,
+                    },
+                  });
                 }}
               />
               <Divider type="vertical" />
