@@ -6,6 +6,7 @@ import { TableColumnHelper } from "@/utils/helper";
 import ListOptBtn from '@/components/commonUseModule/listOptBtn'
 import editIcon from '@/assets/icon/cz_bj.svg';
 import eyeIcon from '@/assets/icon/cz_ck.svg'
+import lcbIcon from '@/assets/icon/cz_lcbjh.svg'
 import { formLayoutItem } from '@/utils/constant'
 import downIcon from '@/assets/icon/drop_down.svg'
 import upIcon from '@/assets/icon/Pull_up.svg'
@@ -71,6 +72,12 @@ class ProjectManage extends Component {
       searchMore: bool,
     });
   };
+
+  handlePlan = () => {
+
+  }
+
+  handleViewDetail = () => {}
 
   renderSearchForm = () => {
     const { searchMore } = this.state
@@ -369,10 +376,23 @@ class ProjectManage extends Component {
                 style={{
                   fontSize: '24px',
                   position: 'relative',
+                  marginRight: '16px',
                   top: '5px'
                 }}
                 icon={eyeIcon}
               />}
+              {
+                <ListOptBtn
+                  title='里程碑计划'
+                    onClick={() => this.handlePlan()}
+                  style={{
+                    fontSize: '20px',
+                    position: 'relative',
+                    top: '1px'
+                  }}
+                  icon={lcbIcon}
+                />
+              }
             </div>
           );
         }
