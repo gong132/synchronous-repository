@@ -79,4 +79,5 @@ export default {
   'menu.demand.generalDemandDetail': '一般需求详情',
   'menu.demand.projectDemand': '项目需求',
   'menu.demand.projectDemandDetail': '项目需求详情',
+  'menu.demand.storyDetail': 'story详情',
 };

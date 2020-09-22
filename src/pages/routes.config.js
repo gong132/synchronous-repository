@@ -58,6 +58,12 @@ module.exports = {
               hideInMenu: true,
               component: './demand/components/demandDetail',
             },
+            {
+              path: '/demand/demand/stoyDetail',
+              name: 'storyDetail',
+              hideInMenu: true,
+              component: './demand/components/story/storyDetails',
+            },
           ],
         },
         {
@@ -148,9 +154,7 @@ module.exports = {
               path: '/systemManage/teamManage',
               name: 'teamManage',
               component: './systemManage/teamManage',
-              buttons: [
-                { name: '查看', key: 'check' },
-              ],
+              buttons: [{ name: '查看', key: 'check' }],
             },
             {
               path: '/systemManage/teamManage/detail',
@@ -179,9 +183,7 @@ module.exports = {
               name: 'detail',
               hideInMenu: true,
               component: './systemManage/sectorManage/components/detail',
-              buttons: [
-                { name: '编辑', key: 'edit' },
-              ],
+              buttons: [{ name: '编辑', key: 'edit' }],
             },
           ],
         },
