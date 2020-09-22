@@ -147,3 +147,10 @@ export async function searchStory(params) {
     params,
   });
 }
+// 批量评估、转评估story
+export async function batchAssessStory(params) {
+  return request('/story/batch', {
+    method: 'post',
+    params,
+  });
+}

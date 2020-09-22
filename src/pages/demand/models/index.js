@@ -9,6 +9,7 @@ import {
   tempAddDemand,
   copyStory,
   searchStory,
+  batchAssessStory,
   // updateDemand,
   queryDemand,
   queryGroup,
@@ -30,6 +31,7 @@ const Demand = {
     demandList: PagerHelper.genListState(),
     logList: PagerHelper.genListState(),
     storyList: PagerHelper.genListState(),
+    assessStoryList: PagerHelper.genListState(),
     demandBoard: [],
     demandInfo: {},
     groupList: [],
@@ -299,8 +301,28 @@ const Demand = {
       return true;
     },
     // 查询story
-    *searchStory({ payload }, { call }) {
-      const { code, msg } = yield call(searchStory, payload);
+    *searchStory({ payload }, { call, put }) {
+      const res = yield call(searchStory, payload);
+      if (!res.code || res.code !== 200) {
+        message.error(res.msg);
+        return;
+      }
+      const { data, ...others } = res.data;
+      yield put({
+        type: 'saveData',
+        payload: {
+          assessStoryList: PagerHelper.resolveListState({
+            filter: payload,
+            data,
+            ...others,
+          })
+        },
+      });
+    },
+
+    // 批量评估、转评估story
+    *batchAssessStory({ payload }, { call }) {
+      const { code, msg } = yield call(batchAssessStory, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;

@@ -243,57 +243,61 @@ class ProjectManage extends Component {
         <Col span={6}>
           <FormItem {...formLayoutItem} colon={false} label="项目状态">
             {getFieldDecorator('projectNumber', {
-            })(<Select
-              allowClear
-              // showSearch
-              onChange={_.debounce(this.saveParams, 500)}
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                JSON.stringify(option.props.children)
-                  .toLowerCase()
-                  .indexOf(input.toLowerCase()) >= 0
-              }
-              style={{
-                width: '100%'
-              }}
-              placeholder="请输入项目状态"
-            >
-              {/* {!_.isEmpty(projectList) &&
+            })(
+              <Select
+                allowClear
+                // showSearch
+                onChange={_.debounce(this.saveParams, 500)}
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  JSON.stringify(option.props.children)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+                style={{
+                  width: '100%'
+                }}
+                placeholder="请输入项目状态"
+              >
+                {/* {!_.isEmpty(projectList) &&
                 projectList.map(d => (
                   <Option key={d.number} value={d.number}>
                     {d.name}
                   </Option>
                 ))} */}
-              <Option key='p' value='p'>未定义</Option>
-            </Select>)}
+                <Option key='p' value='p'>未定义</Option>
+              </Select>
+            )}
           </FormItem>
         </Col>
         <Col span={7}>
           <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 14 }} colon={false} label="业务集群/板块">
             {getFieldDecorator('clusterId', {
-            })(<Select
-              allowClear
-              showSearch
-              onChange={_.debounce(this.saveParams, 500)}
-              onSearch={_.debounce(this.handleQueryCluster, 500)}
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                JSON.stringify(option.props.children)
-                  .toLowerCase()
-                  .indexOf(input.toLowerCase()) >= 0
-              }
-              style={{
-                width: '100%'
-              }}
-              placeholder="请输入业务集群/板块"
-            >
-              {
-                clusterList.map(d => (
-                  <Option key={d.id} value={d.id}>
-                    {d.name}
-                  </Option>
-                ))}
-            </Select>)}
+            })(
+              <Select
+                allowClear
+                showSearch
+                onChange={_.debounce(this.saveParams, 500)}
+                onSearch={_.debounce(this.handleQueryCluster, 500)}
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  JSON.stringify(option.props.children)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+                style={{
+                  width: '100%'
+                }}
+                placeholder="请输入业务集群/板块"
+              >
+                {
+                  clusterList.map(d => (
+                    <Option key={d.id} value={d.id}>
+                      {d.name}
+                    </Option>
+                  ))}
+              </Select>
+            )}
           </FormItem>
         </Col>
         <Col span={4}>
