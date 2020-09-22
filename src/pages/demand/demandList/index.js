@@ -2,8 +2,22 @@ import React, { Fragment, memo, useEffect, useState } from 'react';
 import { connect } from 'dva';
 import { router, withRouter } from 'umi/index';
 import { isEmpty } from '@/utils/lang';
-import { Divider, message, Tooltip } from 'antd';
-import { DefaultPage, TableColumnHelper } from '@/utils/helper';
+import {
+  Button,
+  Col,
+  DatePicker,
+  Divider,
+  Form,
+  Icon,
+  Input,
+  message,
+  Popconfirm,
+  Popover,
+  Row,
+  Select,
+  Tooltip
+} from 'antd';
+import {DefaultPage, PagerHelper, TableColumnHelper} from '@/utils/helper';
 // import {MENU_ACTIONS} from "@/utils/constant";
 import OptButton from '@/components/commonUseModule/optButton';
 import edit from '@/assets/icon/Button_bj.svg';
@@ -15,21 +29,31 @@ import styles from '../index.less';
 
 import deleteIcon from '@/assets/icon/Button_del.svg';
 import assignIcon from '@/assets/icon/cz_zp.svg';
+import {formLayoutItem, formLayoutItem2} from "@/utils/constant";
+import classNames from "classnames";
+import bottomIcon from "@/assets/icon/drop_down.svg";
+import upIcon from "@/assets/icon/Pull_up.svg";
+import {DEMAND_STATUS} from "@/pages/demand/util/constant";
 
 const demandRoutes = {
   '/demand/myDemand': '我的需求',
   '/demand/generalDemand': '一般需求',
   '/demand/projectDemand': '项目',
 };
+const FormItem = Form.Item;
+const { Option } = Select;
 const Index = memo(
   withRouter(props => {
     const {
       dispatch,
+      form,
       demand: { demandList },
+      global: { userList }
     } = props;
 
     const [addModalVisible, setAddModalVisible] = useState(false);
     const [selectedRows, setSelectedRows] = useState({});
+    const [searchMore, setSearchMore] = useState(false);
 
     const handleQueryMyDemand = params => {
       dispatch({
@@ -59,6 +83,16 @@ const Index = memo(
       handleQueryDemandProject(params);
     };
 
+
+    const handleQueryUserList = () => {
+      dispatch({
+        type: "global/queryUserList",
+        payload: {
+          ...PagerHelper.MaxPage,
+        },
+      })
+    }
+
     const handleUpdateStory = ids => {
       dispatch({
         type: 'demand/updateStory',
@@ -75,6 +109,7 @@ const Index = memo(
 
     useEffect(() => {
       handleQueryDemandList();
+      handleQueryUserList()
     }, []);
 
     const columns = [
@@ -109,7 +144,7 @@ const Index = memo(
       },
       TableColumnHelper.genPlanColumn('title', '标题'),
       TableColumnHelper.genPlanColumn('type', '需求类型'),
-      TableColumnHelper.genPlanColumn('status', '状态'),
+      TableColumnHelper.genSelectColumn('status', '状态', DEMAND_STATUS),
       TableColumnHelper.genPlanColumn('priority', '优先级'),
       TableColumnHelper.genPlanColumn('acceptTeam', '受理团队'),
       TableColumnHelper.genPlanColumn('receiverId', '受理人'),
@@ -149,6 +184,7 @@ const Index = memo(
           title: 'story编号',
           key: 'number',
           sorter: true,
+          width: 120,
           render: rows => {
             if (isEmpty(rows.number, true)) return '';
             return (
@@ -157,35 +193,36 @@ const Index = memo(
                   style={{ color: '#2E5BFF' }}
                   onClick={() => {
                     props.history.push({
-                      pathname: '/contract-budget/budget/detail',
+                      pathname: '/demand/storyDetail',
                       query: {
                         id: rows.id,
                       },
                     });
                   }}
                 >
-                  {rows.number.length > 10
-                    ? `${rows.number.substring(0, 10)}...`
-                    : rows.number.substring(0, 10)}
+                  {rows.number.length > 8
+                    ? `${rows.number.substring(0, 8)}...`
+                    : rows.number.substring(0, 8)}
                 </span>
               </Tooltip>
             );
           },
         },
-        TableColumnHelper.genPlanColumn('title', '标题'),
+        TableColumnHelper.genLangColumn('title', '标题', { width: 150 }, 10),
         TableColumnHelper.genPlanColumn('status', '状态'),
         TableColumnHelper.genPlanColumn('priority', '优先级'),
         TableColumnHelper.genPlanColumn('type', 'story类型'),
-        TableColumnHelper.genDateTimeColumn('evaluateTime', 'IT评估上线时间'),
-        TableColumnHelper.genPlanColumn('developWorkload', '开发预计工作量'),
-        TableColumnHelper.genPlanColumn('testWorkload', '测试预计工作量'),
+        TableColumnHelper.genPlanColumn('evaluateTime', 'IT评估上线时间', { width: 170 }),
+        TableColumnHelper.genPlanColumn('developWorkload', '开发预计工作量', { width: 130 }),
+        TableColumnHelper.genPlanColumn('testWorkload', '测试预计工作量', { width: 130 }),
         TableColumnHelper.genPlanColumn('assigneeName', '经办人'),
         TableColumnHelper.genPlanColumn('userName', '创建人'),
-        TableColumnHelper.genPlanColumn('createTime', '创建时间'),
+        TableColumnHelper.genPlanColumn('createTime', '创建时间', { width: 170 }),
         {
           title: '操作',
-          width: 200,
+          width: 170,
           align: 'center',
+          fixed: "right",
           render: rows => (
             <Fragment>
               <OptButton
@@ -222,12 +259,19 @@ const Index = memo(
                 }}
               />
               <Divider type="vertical" />
-              <OptButton
-                img={deleteIcon}
-                showText={false}
-                text="删除"
-                onClick={() => handleUpdateStory(rows.id)}
-              />
+
+              <Popconfirm
+                title={`确定要删除${row.title}吗?`}
+                onConfirm={() => handleUpdateStory(rows.id)}
+                okText="确定"
+                cancelText="取消"
+              >
+                <OptButton
+                  img={deleteIcon}
+                  showText={false}
+                  text="删除"
+                />
+              </Popconfirm>
             </Fragment>
           ),
         },
@@ -238,6 +282,7 @@ const Index = memo(
           columns={subColumns}
           data={{ list: row.storyList }}
           pagination={false}
+          scroll={{ x: 1550, y: 550 }}
         />
       );
     };
@@ -251,15 +296,328 @@ const Index = memo(
       };
       handleQueryDemandList(params);
     };
+
+    const handleSearchForm = () => {
+
+    }
+
+    const handleResetForm = () => {
+
+    }
+
+    const renderForm = () => {
+      const { getFieldDecorator } = form;
+      const content = (
+        <div className={styles.moreSearch} style={{ width: 268 }}>
+          <Row>
+            <Col span={24}>
+              <FormItem {...formLayoutItem2} label="所属预算">
+                {getFieldDecorator('type')(
+                  <Select placeholder="请选择项目类型" allowClear>
+                    {[].map(v => (
+                      <Option value={v.key} key={v.key.toString()}>
+                        {v.value}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+            <Col span={24}>
+              <FormItem {...formLayoutItem2} label="需求类型">
+                {getFieldDecorator('type')(
+                  <Select placeholder="请选择项目类型" allowClear>
+                    {[].map(v => (
+                      <Option value={v.key} key={v.key.toString()}>
+                        {v.value}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+            <Col span={24}>
+              <FormItem {...formLayoutItem2} label="状态">
+                {getFieldDecorator('type')(
+                  <Select placeholder="请选择项目类型" allowClear>
+                    {[].map(v => (
+                      <Option value={v.key} key={v.key.toString()}>
+                        {v.value}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+            <Col span={24}>
+              <FormItem {...formLayoutItem2} label="优先级">
+                {getFieldDecorator('type')(
+                  <Select placeholder="请选择项目类型" allowClear>
+                    {[].map(v => (
+                      <Option value={v.key} key={v.key.toString()}>
+                        {v.value}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+            <Col span={24}>
+              <FormItem {...formLayoutItem2} label="需求提出人">
+                {getFieldDecorator('type')(
+                  <Select placeholder="请选择项目类型" allowClear>
+                    {[].map(v => (
+                      <Option value={v.key} key={v.key.toString()}>
+                        {v.value}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+            <Col span={24}>
+              <FormItem {...formLayoutItem2} label="受理团队">
+                {getFieldDecorator('type')(
+                  <Select placeholder="请选择项目类型" allowClear>
+                    {[].map(v => (
+                      <Option value={v.key} key={v.key.toString()}>
+                        {v.value}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+            <Col span={24}>
+              <FormItem {...formLayoutItem2} label="受理人">
+                {getFieldDecorator('type')(
+                  <Select placeholder="请选择项目类型" allowClear>
+                    {[].map(v => (
+                      <Option value={v.key} key={v.key.toString()}>
+                        {v.value}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+            <Col span={24}>
+              <FormItem {...formLayoutItem2} label="需求描述">
+                {getFieldDecorator('type')(
+                  <Select placeholder="请选择项目类型" allowClear>
+                    {[].map(v => (
+                      <Option value={v.key} key={v.key.toString()}>
+                        {v.value}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+            <Col span={24}>
+              <FormItem {...formLayoutItem2} label="期望完成日期">
+                {getFieldDecorator('type')(
+                  <Select placeholder="请选择项目类型" allowClear>
+                    {[].map(v => (
+                      <Option value={v.key} key={v.key.toString()}>
+                        {v.value}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+            <Col span={24}>
+              <FormItem {...formLayoutItem2} label="计划上线日期">
+                {getFieldDecorator('type')(
+                  <Select placeholder="请选择项目类型" allowClear>
+                    {[].map(v => (
+                      <Option value={v.key} key={v.key.toString()}>
+                        {v.value}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+            <Col span={24}>
+              <FormItem {...formLayoutItem2} label="实际上线日期">
+                {getFieldDecorator('type')(
+                  <Select placeholder="请选择项目类型" allowClear>
+                    {[].map(v => (
+                      <Option value={v.key} key={v.key.toString()}>
+                        {v.value}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+            <Col span={24}>
+              <FormItem {...formLayoutItem2} label="需求紧迫性">
+                {getFieldDecorator('type')(
+                  <Select placeholder="请选择项目类型" allowClear>
+                    {[].map(v => (
+                      <Option value={v.key} key={v.key.toString()}>
+                        {v.value}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+            <Col span={24}>
+              <FormItem {...formLayoutItem2} label="是否涉及业务风控功能">
+                {getFieldDecorator('type')(
+                  <Select placeholder="请选择项目类型" allowClear>
+                    {[].map(v => (
+                      <Option value={v.key} key={v.key.toString()}>
+                        {v.value}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+            <Col span={24}>
+              <FormItem {...formLayoutItem2} label="是否涉及业务合规性">
+                {getFieldDecorator('type')(
+                  <Select placeholder="请选择项目类型" allowClear>
+                    {[].map(v => (
+                      <Option value={v.key} key={v.key.toString()}>
+                        {v.value}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+          </Row>
+          <div className={styles.moreSearchButton}>
+            <Button onClick={handleSearchForm}>查询</Button>
+            <Button onClick={() => setSearchMore(false)}>取消</Button>
+          </div>
+        </div>
+      );
+      return (
+        <Form layout="inline">
+          <Row>
+            <Col span={6}>
+              <FormItem {...formLayoutItem} label="需求标题和描述">
+                {getFieldDecorator('number')(
+                  <Input
+                    allowClear
+                    onBlur={handleSearchForm}
+                    placeholder="请输入需求标题和描述"
+                  />)}
+              </FormItem>
+            </Col>
+            <Col span={4}>
+              <FormItem {...formLayoutItem} label="创建人">
+                {getFieldDecorator('deptId',{
+                })(
+                  <Select
+                    allowClear
+                    showSearch
+                    onBlur={handleSearchForm}
+                    // onSearch={val => handleSearch(handleQueryAllTeam({ groupName: val }))}
+                    placeholder="请输入创建人"
+                  >
+                    {userList?.list &&
+                    userList.list.map(v => (
+                      <Option value={v.id} key={v.id.toString()}>
+                        {v.name}
+                      </Option>
+                    ))}
+                  </Select>,
+                )}
+              </FormItem>
+            </Col>
+            <Col span={4}>
+              <FormItem {...formLayoutItem} label="状态">
+                {getFieldDecorator('deptId',{
+                })(
+                  <Select
+                    allowClear
+                    showSearch
+                    onBlur={handleSearchForm}
+                    // onSearch={val => handleSearch(handleQueryAllTeam({ groupName: val }))}
+                    placeholder="请选择状态"
+                  >
+                    {DEMAND_STATUS.map(v => (
+                      <Option value={v.key} key={v.key.toString()}>
+                        {v.value}
+                      </Option>
+                    ))}
+                  </Select>,
+                )}
+              </FormItem>
+            </Col>
+            <Col span={4}>
+              <FormItem {...formLayoutItem} label="创建日期">
+                {getFieldDecorator('deptId',{
+                })(
+                  <DatePicker
+                    format="YYYY-MM-DD"
+                  />
+                )}
+              </FormItem>
+            </Col>
+            <Col span={6}>
+              <div
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <Button
+                  ghost
+                  className={classNames('margin-right-6', styles.orangeForm)}
+                  onClick={handleResetForm}
+                >
+                  重置
+                </Button>
+                <Popover
+                  visible={searchMore}
+                  placement="bottomRight"
+                  content={content}
+                  trigger="click"
+                >
+                  <div className="yCenter">
+                    {!searchMore ? (
+                      <span className="activeColor" onClick={() => setSearchMore(true)}>
+                        <Icon style={{ verticalAlign: '-0.4em' }} component={bottomIcon} />
+                        更多
+                      </span>
+                    ) : (
+                      <span className="activeColor" onClick={() => setSearchMore(false)}>
+                        <Icon style={{ verticalAlign: '-0.4em' }} component={upIcon} />
+                        隐藏
+                      </span>
+                    )}
+                  </div>
+                </Popover>
+              </div>
+            </Col>
+          </Row>
+        </Form>
+      );
+    };
     return (
       <div className={styles.childrenTable}>
-        <StandardTable
-          rowKey="id"
-          expandedRowRender={expandedRowRender}
-          columns={columns}
-          data={demandList}
-          onChange={handleDemandTableChange}
-        />
+        <div className={styles.tableList}>
+          <div className={styles.tableListForm}>{renderForm()}</div>
+          <StandardTable
+            rowKey="id"
+            expandedRowRender={expandedRowRender}
+            columns={columns}
+            data={demandList}
+            onChange={handleDemandTableChange}
+            scroll={{ x: 1350 }}
+          />
+        </div>
         {addModalVisible && (
           <AddStory
             values={selectedRows}
@@ -279,4 +637,4 @@ export default connect(({ global, demand, loading }) => ({
   global,
   demand,
   loading: loading.models.demand,
-}))(Index);
+}))(Form.create()(Index));
