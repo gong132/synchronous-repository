@@ -19,11 +19,17 @@
 
 .moreSearch {
   width: 270px;
+  height: 400px;
   margin-top: 12px;
+  overflow-y: auto;
 
   :global {
     .ant-form-item {
+      width: 230px;
       margin-bottom: 12px;
+    }
+    .ant-select-selection {
+      width: 230px;
     }
   }
 }
@@ -314,4 +320,28 @@
     white-space: nowrap;
     margin-bottom: 12px;
   }
+}
+
+.deleteButton {
+  cursor: pointer;
+  position: relative;
+  top: 4px;
+  font-size: 24px;
+  color: #999;
+  transition: all 0.3s;
+}
+.addForm, .addForm:hover, .addForm:active, .addForm:focus, .addForm:visited {
+  background: #fff;
+  opacity:1;
+  border-radius:2px;
+  color: #2E5BFF;
+  border: 1px solid #2E5BFF;
+}
+.orangeForm, .orangeForm:hover, .orangeForm:active, .orangeForm:focus, .orangeForm:visited {
+  width: 80px;
+  background: #fff;
+  opacity:1;
+  border-radius:2px;
+  border: 1px solid #2E5BFF;
+  color: #2E5BFF;
 }
