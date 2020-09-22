@@ -145,16 +145,22 @@ class ContractManage extends Component {
   }
 
   // 查询系统
-  handleQuerySystem = () => {
+  handleQuerySystem = (val) => {
     this.props.dispatch({
       type: 'contract/fetchSystem',
+      payload: {
+        name: val,
+      }
     });
   };
 
   // 查询供应商
-  handleQuerySupplier = () => {
+  handleQuerySupplier = (value) => {
     this.props.dispatch({
       type: 'contract/fetchSupplier',
+      payload: {
+        name: value
+      }
     });
   };
 
@@ -278,11 +284,11 @@ class ContractManage extends Component {
                   }}
                 >
                   {!_.isEmpty(budgetList) &&
-                  budgetList.map(d => (
-                    <Option key={d.number} value={d.number}>
-                      {d.number}
-                    </Option>
-                  ))}
+                    budgetList.map(d => (
+                      <Option key={d.number} value={d.number}>
+                        {d.number}
+                      </Option>
+                    ))}
                 </Select>
               )}
             </FormItem>
@@ -331,7 +337,15 @@ class ContractManage extends Component {
               )(
                 <Select
                   allowClear
-                  // showSearch
+                  showSearch
+                  onSearch={_.debounce(this.handleQuerySupplier, 500)}
+                  onFocus={this.handleQuerySupplier}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
                   style={{
                     width: '100%',
                   }}
@@ -339,8 +353,8 @@ class ContractManage extends Component {
                 >
                   {!_.isEmpty(supplierList) &&
                     supplierList.map(d => (
-                      <Option key={d.supplierId} value={d.supplierName}>
-                        {d.supplierName}
+                      <Option key={d.id} value={d.name}>
+                        {d.name}
                       </Option>
                     ))}
                 </Select>,
@@ -452,11 +466,11 @@ class ContractManage extends Component {
                 placeholder="请输入所属项目"
               >
                 {!_.isEmpty(projectList) &&
-                projectList.map(d => (
-                  <Option key={d.number} value={d.number}>
-                    {d.name}
-                  </Option>
-                ))}
+                  projectList.map(d => (
+                    <Option key={d.number} value={d.number}>
+                      {d.name}
+                    </Option>
+                  ))}
               </Select>
             )}
           </FormItem>
@@ -495,7 +509,7 @@ class ContractManage extends Component {
           <FormItem>
             <CustomBtn
               onClick={() => this.handleResetSearch()}
-              loading={loadingQueryData}
+              // loading={loadingQueryData}
               type='reset'
             />
             <Popover visible={searchMore} placement="bottomRight" content={content} trigger="click">
@@ -604,6 +618,9 @@ class ContractManage extends Component {
       handleQueryData: this.handleQueryData,
       handleQueryBudget: this.handleQueryBudget,
       handleQueryGroup: this.handleQueryGroup,
+      handleQuerySupplier: this.handleQuerySupplier,
+      handleQuerySystem: this.handleQuerySystem,
+      handleQueryDept: this.handleQueryDept,
     }
     return (
       <Fragment>

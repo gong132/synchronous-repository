@@ -42,7 +42,8 @@ const Index = memo(
     const startTimer = callback => {
       window.timer = setInterval(() => {
         callback && callback();
-      }, 20000);
+        // 自动保存功能暂时不上
+      }, 2000000000);
     };
 
     // 关闭定时器

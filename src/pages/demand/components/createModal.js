@@ -14,7 +14,8 @@ const FormItem = Form.Item;
 const { Option } = Select;
 const RadioGroup = Radio.Group;
 @Form.create()
-@connect(({ demand, loading }) => ({
+@connect(({ demand, loading, global }) => ({
+  global,
   demand,
   loadingAdd: loading.effects['demand/addDemand'],
   loadingTempAdd: loading.effects['demand/tempAddDemand']
@@ -23,14 +24,15 @@ class CreateDemand extends PureComponent {
   constructor(props) {
     super(props)
     this.state = {
-      description: ''
+      description: '',
+      // urls: ''
     }
     this.handleSubmitForm = this.handleSubmitForm.bind(this)
   }
 
   componentDidMount() {
-    const { recordValue={}, modalTitle, startTimer } = this.props
-    const {requirementDescription} = recordValue
+    const { recordValue = {}, modalTitle, startTimer } = this.props
+    const { requirementDescription } = recordValue
     this.props.dispatch({
       type: 'demand/saveData',
       payload: { tempDemandId: '' }
@@ -50,8 +52,10 @@ class CreateDemand extends PureComponent {
   }
 
   componentWillUnmount() {
-    const { clearTimer } = this.props
-    clearTimer()
+    const { clearTimer, modalTitle } = this.props
+    if (modalTitle === '创建') {
+      clearTimer()
+    }
     console.log('销毁组件执行****************88')
     this.props.dispatch({
       type: 'demand/saveData',
@@ -64,6 +68,12 @@ class CreateDemand extends PureComponent {
       description: content
     })
   }
+
+  // handleSaveFileUrl = (fileUrl) => {
+  //   this.setState({
+  //     urls: fileUrl
+  //   })
+  // }
 
   // 查询团队
   handleQueryGroup = (params) => {
@@ -99,7 +109,7 @@ class CreateDemand extends PureComponent {
   // 暂存需求（自动保存）
   tempCreateDemand = values => {
     const { handleViewModal, handleQueryList, handleQueryBoard, demand: { formType } } = this.props
-    if(values.id) {
+    if (values.id) {
       this.editDemand(values)
       return true
     }
@@ -122,7 +132,7 @@ class CreateDemand extends PureComponent {
   };
 
   editDemand = params => {
-    const { handleViewModal, handleQueryList, handleQueryBoard, demand: {formType} } = this.props
+    const { handleViewModal, handleQueryList, handleQueryBoard, demand: { formType } } = this.props
     this.props.dispatch({
       type: 'demand/updateDemand',
       payload: {
@@ -142,7 +152,7 @@ class CreateDemand extends PureComponent {
   };
 
   handleSubmitForm = (saveType) => {
-    const { form, modalTitle, demand:{tempDemandId}, recordValue } = this.props
+    const { form, modalTitle, demand: { tempDemandId }, recordValue } = this.props
     const { description } = this.state
     form.validateFieldsAndScroll((err, values) => {
       if (saveType === 'clickBtn') {
@@ -189,8 +199,8 @@ class CreateDemand extends PureComponent {
   };
 
   renderForm = () => {
-    const { form, recordValue={}, demand: { groupList } } = this.props
-    const {description} = this.state
+    const { form, recordValue = {}, demand: { groupList } } = this.props
+    const { description } = this.state
     const {
       title,
       expectedCompletionDate,
@@ -200,6 +210,7 @@ class CreateDemand extends PureComponent {
       acceptTeam,
       receiver,
       communicate,
+      // id,
     } = recordValue;
     return (
       <Form>
@@ -356,19 +367,21 @@ class CreateDemand extends PureComponent {
             </FormItem>
           </Col>
           {/* <Col span={24}>
-              <FormItem
-                {...formLayoutItemAddEdit}
-                label='上传附件'
+            <FormItem
+              {...formLayoutItemAddEdit}
+              label='上传附件'
+            >
+              <UploadFile
+                uploadType='5'
+                urls={urls}
+                linkId={id}
+                handleSaveFileUrl={this.handleSaveFileUrl}
               >
-                <UploadFile
-                  uploadType='2'
-                  urls={urls}
-                  handleSaveFileUrl={handleSaveFileUrl}
-                >
-                  <Button>上传</Button>
-                </UploadFile>
-              </FormItem>
-            </Col> */}
+                <Button type='primary' ghost>上传</Button>
+                <span style={{marginLeft: '16px'}}>限制文件大小为20M以内</span>
+              </UploadFile>
+            </FormItem>
+          </Col> */}
         </Row>
       </Form>
     )

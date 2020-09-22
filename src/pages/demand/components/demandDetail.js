@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import _ from 'lodash';
 import moment from 'moment';
 import Editor from '@/components/TinyEditor';
+// import UploadFile from '@/components/FileUpload'
 import CustomBtn from '@/components/commonUseModule/customBtn';
 import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
 import ListOptBtn from '@/components/commonUseModule/listOptBtn';
@@ -35,6 +36,7 @@ import {
   Spin,
   message,
   Icon,
+  // Button
 } from 'antd';
 import {
   BOARD_TITLE,
@@ -74,6 +76,7 @@ class Detail extends Component {
       addStoryModalVisible: false,
       itAssessModalVisible: false,
       selectedStoryRows: [],
+      // urls: ''
     };
   }
 
@@ -90,6 +93,12 @@ class Detail extends Component {
       descriptionState: content,
     });
   };
+
+  // handleSaveFileUrl = (fileUrl) => {
+  //   this.setState({
+  //     urls: fileUrl
+  //   })
+  // }
 
   // 查日志
   handleQueryLogList = (obj = {}) => {
@@ -405,7 +414,7 @@ class Detail extends Component {
         dataIndex: 'description',
         type: 'p',
       },
-      { span: 3, required: false, name: '附件', value: '', type: 'p' },
+      // { span: 3, required: false, name: '附件', value: '', type: 'p' },
     ];
 
     const columns = [
@@ -645,7 +654,7 @@ class Detail extends Component {
                   <FormItem>
                     {form.getFieldDecorator('status', {
                       rules: [{ required: true, message: '请输入状态' }],
-                      initialValue: status,
+                      initialValue: String(status),
                     })(
                       <Select placeholder="请输入状态" style={{ width: w }}>
                         {BOARD_TITLE.map(d => (
@@ -659,12 +668,12 @@ class Detail extends Component {
                 </DescriptionItem>
                 <DescriptionItem
                   span={1}
-                  label={<>{<span style={{ color: 'red' }}>*</span>}预算编号</>}
+                  label={<>预算编号</>}
                 >
                   <FormItem>
                     {form.getFieldDecorator('budgetNumbers', {
-                      rules: [{ required: true, message: '请输入预算编号' }],
-                      initialValue: String(budgetNumbers),
+                      rules: [{ required: false, message: '请输入预算编号' }],
+                      initialValue: budgetNumbers ? String(budgetNumbers) : '',
                     })(
                       <Select
                         showSearch
@@ -709,11 +718,11 @@ class Detail extends Component {
                 </DescriptionItem>
                 <DescriptionItem
                   span={1}
-                  label={<>{<span style={{ color: 'red' }}>*</span>}优先级</>}
+                  label={<>优先级</>}
                 >
                   <FormItem>
                     {form.getFieldDecorator('priority', {
-                      rules: [{ required: true, message: '请输入优先级' }],
+                      rules: [{ required: false, message: '请输入优先级' }],
                       initialValue: priority,
                     })(
                       <Select allowClear style={{ width: w }} placeholder="请输入优先级">
@@ -728,18 +737,18 @@ class Detail extends Component {
                 </DescriptionItem>
                 <DescriptionItem
                   span={1}
-                  label={<>{<span style={{ color: 'red' }}>*</span>}提出人</>}
+                  label={<>提出人</>}
                 >
                   <FormItem>
                     {form.getFieldDecorator('introducer', {
                       rules: [{ required: true, message: '请输入提出人' }],
                       initialValue: introducer,
-                    })(<Input style={{ width: w }} />)}
+                    })(<Input disabled style={{ width: w }} />)}
                   </FormItem>
                 </DescriptionItem>
                 <DescriptionItem
                   span={1}
-                  label={<>{<span style={{ color: 'red' }}>*</span>}受理团队</>}
+                  label={<>受理团队</>}
                 >
                   <FormItem>
                     {form.getFieldDecorator('acceptTeam', {
@@ -771,7 +780,7 @@ class Detail extends Component {
                 </DescriptionItem>
                 <DescriptionItem
                   span={1}
-                  label={<>{<span style={{ color: 'red' }}>*</span>}受理人</>}
+                  label={<>受理人</>}
                 >
                   <FormItem>
                     {form.getFieldDecorator('receiver', {
@@ -827,11 +836,11 @@ class Detail extends Component {
                 </DescriptionItem>
                 <DescriptionItem
                   span={1}
-                  label={<>{<span style={{ color: 'red' }}>*</span>}计划上线日期</>}
+                  label={<>计划上线日期</>}
                 >
                   <FormItem>
                     {form.getFieldDecorator('plannedLaunchDate', {
-                      rules: [{ required: true, message: '请输入计划上线日期' }],
+                      rules: [{ required: false, message: '请输入计划上线日期' }],
                       initialValue: plannedLaunchDate ? moment(plannedLaunchDate) : null,
                     })(<DatePicker style={{ width: w }} placeholder="请输入计划上线日期" />)}
                   </FormItem>
@@ -848,7 +857,7 @@ class Detail extends Component {
                 </DescriptionItem>
                 <DescriptionItem
                   span={1}
-                  label={<>{<span style={{ color: 'red' }}>*</span>}项目编号</>}
+                  label={<>项目编号</>}
                 >
                   <FormItem>
                     {form.getFieldDecorator('projectNo', {
@@ -972,6 +981,19 @@ class Detail extends Component {
                     />
                   </FormItem>
                 </DescriptionItem>
+                {/* <DescriptionItem span={3} label={<>上传附件</>}>
+                  <FormItem>
+                    <UploadFile
+                      uploadType='5'
+                      urls={urls}
+                      linkId={demandNumber}
+                      handleSaveFileUrl={this.handleSaveFileUrl}
+                    >
+                      <Button type='primary' ghost>上传</Button>
+                      <span style={{ marginLeft: '16px' }}>限制文件大小为20M以内</span>
+                    </UploadFile>
+                  </FormItem>
+                </DescriptionItem> */}
               </Descriptions>
             ) : (
               <Descriptions column={3} bordered className={styles.formatDetailDesc}>
@@ -1085,7 +1107,7 @@ class Detail extends Component {
             )}
           </div>
         </GlobalSandBox>
-        <ChartCard handleModalVisible={this.handleModalVisible}/>
+        {title && <ChartCard handleModalVisible={this.handleModalVisible} title={title} />}
         <GlobalSandBox title="系统需求" img={sdIcon}></GlobalSandBox>
         <GlobalSandBox img={budgetLogIcon} title="操作日志">
           <StandardTable

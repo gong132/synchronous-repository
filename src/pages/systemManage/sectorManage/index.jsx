@@ -24,6 +24,8 @@ const FormItem = Form.Item;
   sectorList: sector.sectorList,
   deptList: sector.deptList,
   deptListMap: sector.deptListMap,
+  deptListAll: sector.deptListAll,
+  deptListMapAll: sector.deptListMapAll,
   allDept: sector.allDept,
 }))
 class SectorManage extends Component {
@@ -61,9 +63,12 @@ class SectorManage extends Component {
   };
 
   // 查询所有部门
-  handleQueryAllDept = () => {
+  handleQueryAllDept = (value) => {
     this.props.dispatch({
       type: 'sector/fetchAllDept',
+      payload: {
+        deptName: value
+      }
     });
   };
 
@@ -204,7 +209,7 @@ class SectorManage extends Component {
 
   renderSearchForm = () => {
     const { searchParams } = this.state;
-    const { allDept, loadingQueryData } = this.props;
+    const { deptListAll } = this.props;
     return (
       <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
         <Col span={8}>
@@ -222,16 +227,24 @@ class SectorManage extends Component {
             <Select
               allowClear
               value={searchParams.deptInfo}
+              showSearch
+              onSearch={_.debounce(this.handleQueryAllDept, 500)}
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                JSON.stringify(option.props.children)
+                  .toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0
+              }
               placeholder="请输入所属部门"
               onChange={val => this.saveParams(val, 'deptInfo')}
               style={{
                 width: '100%',
               }}
             >
-              {!_.isEmpty(allDept) &&
-                allDept.map(d => (
-                  <Option key={d.deptId} value={d.deptName}>
-                    {d.deptName}
+              {!_.isEmpty(deptListAll) &&
+                deptListAll.map(d => (
+                  <Option key={d.id} value={d.name}>
+                    {d.name}
                   </Option>
                 ))}
             </Select>
@@ -244,7 +257,7 @@ class SectorManage extends Component {
               style={{
                 display: 'inline-block',
               }}
-              loading={loadingQueryData}
+              // loading={loadingQueryData}
               type="reset"
             />
           </FormItem>

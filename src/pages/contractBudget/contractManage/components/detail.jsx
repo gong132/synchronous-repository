@@ -78,9 +78,19 @@ class Detail extends PureComponent {
   };
 
   // 查部门
-  handleQueryDept = () => {
+  handleQueryDept = (value) => {
     this.props.dispatch({
       type: 'contract/fetchNotBindDept',
+      payload: {
+        deptName: value
+      }
+    })
+  }
+
+  // 查项目
+  handleQueryProject = () => {
+    this.props.dispatch({
+      type: 'contract/fetchProject',
     });
   };
 
@@ -93,6 +103,26 @@ class Detail extends PureComponent {
       }
     })
   }
+
+  // 查询系统
+  handleQuerySystem = (val) => {
+    this.props.dispatch({
+      type: 'contract/fetchSystem',
+      payload: {
+        name: val,
+      }
+    });
+  };
+
+  // 查询供应商
+  handleQuerySupplier = (value) => {
+    this.props.dispatch({
+      type: 'contract/fetchSupplier',
+      payload: {
+        name: value
+      }
+    });
+  };
 
   // 查日志
   handleQueryLogList = (obj = {}) => {
@@ -460,8 +490,10 @@ class Detail extends PureComponent {
                       initialValue: budgetNumber,
                     })(
                       <Select
+                        allowClear
                         showSearch
                         onSearch={_.debounce(this.handleQueryBudget, 500)}
+                        onFocus={this.handleQueryBudget}
                         optionFilterProp="children"
                         filterOption={(input, option) =>
                           JSON.stringify(option.props.children)
@@ -520,11 +552,23 @@ class Detail extends PureComponent {
                       rules: [{ required: true, message: '请输入供应商' }],
                       initialValue: providerCompanyId,
                     })(
-                      <Select placeholder="请输入供应商" style={{ width: w }}>
+                      <Select
+                        showSearch
+                        onSearch={_.debounce(this.handleQuerySupplier, 500)}
+                        onFocus={this.handleQuerySupplier}
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                          JSON.stringify(option.props.children)
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
+                        placeholder="请输入供应商"
+                        style={{ width: w }}
+                      >
                         {!_.isEmpty(supplierList) &&
                           supplierList.map(d => (
-                            <Option key={d.supplierId} value={d.supplierId}>
-                              {d.supplierName}
+                            <Option key={d.id} value={d.id}>
+                              {d.name}
                             </Option>
                           ))}
                       </Select>,
@@ -542,6 +586,15 @@ class Detail extends PureComponent {
                     })(
                       <Select
                         allowClear
+                        showSearch
+                        onSearch={_.debounce(this.handleQueryDept, 500)}
+                        onFocus={this.handleQueryDept}
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                          JSON.stringify(option.props.children)
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
                         placeholder="请输入所属部门"
                         style={{
                           width: '100%',
@@ -765,14 +818,22 @@ class Detail extends PureComponent {
                     })(
                       <Select
                         allowClear
-                        // showSearch
+                        showSearch
+                        onSearch={_.debounce(this.handleQuerySystem, 500)}
+                        onFocus={this.handleQuerySystem}
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                          JSON.stringify(option.props.children)
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
                         placeholder="请输入所属系统"
                         style={{ width: '100%' }}
                       >
                         {!_.isEmpty(systemList) &&
                           systemList.map(d => (
-                            <Option key={d.systemId} value={d.systemId}>
-                              {d.systemName}
+                            <Option key={d.id} value={d.id}>
+                              {d.name}
                             </Option>
                           ))}
                       </Select>,

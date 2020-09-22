@@ -4,7 +4,7 @@ import {
   updateData,
   queryDept,
   querySectorInfo,
-  queryDeptTemp,
+  queryDeptAll,
 } from '@/services/systemManage/sectorManage';
 import { queryLogList } from '@/services/global';
 import { PagerHelper } from '@/utils/helper';
@@ -17,6 +17,8 @@ const Sector = {
     logList: PagerHelper.genListState(),
     deptList: [],
     deptListMap: {},
+    deptListAll: [],
+    deptListMapAll: {},
     sectorInfo: {},
     allDept: [],
   },
@@ -92,20 +94,27 @@ const Sector = {
       return true;
     },
 
-    // 临时查询所有项目接口
+    // 查询所有部门接口
     *fetchAllDept({ payload }, { call, put }) {
-      const { code, msg, data } = yield call(queryDeptTemp, payload);
+      const { code, msg, data } = yield call(queryDeptAll, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
       }
+      const obj = {}
+      data.map(v => {
+        v.id = String(v.id)
+        obj[v.id] = v.name
+        return true
+      })
       yield put({
         type: 'saveData',
         payload: {
-          allDept: data,
-        },
-      });
-      return true;
+          deptListAll: data,
+          deptListMapAll: obj
+        }
+      })
+      return true
     },
 
     // 查看集群详情

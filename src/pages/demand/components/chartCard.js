@@ -10,8 +10,10 @@ import msgIcon from '@/assets/icon/modular_xx.svg';
 import _ from 'lodash';
 import { getUserInfo, getParam } from '@/utils/utils';
 import { Row, Col, Mentions, message } from 'antd';
+import Config from '@/utils/config'
 import styles from './chartCard.less';
 
+const {envIP} = Config.config
 class ChartCard extends PureComponent {
   constructor(props) {
     super(props);
@@ -20,6 +22,7 @@ class ChartCard extends PureComponent {
       contextMenuVisible: false,
       textContent: '',
     };
+    this.handleOpen = this.handleOpen.bind(this)
   }
 
   componentDidMount() {
@@ -96,10 +99,39 @@ class ChartCard extends PureComponent {
     console.log('保存内容：', comLang); 
   };
 
+  // 建立连接
+  handleOpen = () => {
+    const {token} = getUserInfo()
+    const no = getParam('no')
+    const {title} = this.props
+    const sendMsg = {
+      linkId: no,
+      content: '',
+      title,
+      userToken: token,
+    }
+    const send = JSON.stringify(sendMsg);
+    this.refWebSocket.sendMessage(send);
+  }
+
   // 发消息
   handleSendMsg = () => {
     const { sendData } = this.state
+    const { title } = this.props
+    const no = getParam('no')
+    const {token} = getUserInfo()
+    const sendMsg = {
+      linkId: no,
+      content: sendData,
+      title,
+      userToken: token,
+    }
     console.log('sendData:', sendData)
+    const send = JSON.stringify(sendMsg);
+    this.refWebSocket.sendMessage(send);
+    this.setState({
+      sendData: ''
+    })
   }
 
   // 接消息
@@ -225,12 +257,13 @@ class ChartCard extends PureComponent {
           </Col>
         </Row>
         <Websocket
-          url={`ws://10.90.48.22:80/websocket/${userName}-${userId}&${id}`}
+          url={`ws://${envIP}:80/websocket/${userName}-${userId}&${id}`}
           onMessage={this.handleReceiveMessage}
-          // onOpen={this.handleOpen}
+          onOpen={this.handleOpen}
           // onClose={this.handleClose}
-          // reconnect
-          // debug
+          reconnect
+          debug
+          // protocol={token}
           ref={WebsocketRef => {
             this.refWebSocket = WebsocketRef;
           }}

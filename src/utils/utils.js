@@ -437,10 +437,8 @@ export function transformLink(strUrl) {
     if (v.match(picreg) !== null) {
       return v.replace(
         v.match(picreg)[0],
-        `<a href="${
-          v.match(picreg)[0]
-        }" style="display: block;width:15em;word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" target="_blank">${
-          v.match(picreg)[0]
+        `<a href="${v.match(picreg)[0]
+        }" style="display: block;width:15em;word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" target="_blank">${v.match(picreg)[0]
         }</a>`,
       );
     }
@@ -461,16 +459,16 @@ export const flatArrayByChildKey = (array, childKey) => {
     const rowOrder = currIndex + 1;
     const flagItems = currValue[childKey]
       ? currValue[childKey].map((child, childIndex) => {
-          const rowSpan = childIndex > 0 ? 0 : currValue[childKey].length;
-          return {
-            ...currValue,
-            flatItem: child,
-            rowSpan,
-            rowKey: `${currIndex}_${childIndex}`,
-            rowClassName,
-            rowOrder,
-          };
-        })
+        const rowSpan = childIndex > 0 ? 0 : currValue[childKey].length;
+        return {
+          ...currValue,
+          flatItem: child,
+          rowSpan,
+          rowKey: `${currIndex}_${childIndex}`,
+          rowClassName,
+          rowOrder,
+        };
+      })
       : [{ ...currValue, rowKey: `${currIndex}_0`, rowSpan: 1, rowClassName, rowOrder }];
     acc.push(...flagItems);
     return acc;

@@ -1,15 +1,15 @@
 /* eslint-disable no-undef */
-import { Tag, Icon, Badge, Breadcrumb } from 'antd';
+import { Icon, Badge, Breadcrumb } from 'antd';
 import React from 'react';
 import { connect } from 'dva';
 import Avatar from './AvatarDropdown';
 import styles from './index.less';
 
-const ENVTagColor = {
-  dev: 'orange',
-  test: 'green',
-  pre: '#87d068',
-};
+// const ENVTagColor = {
+//   dev: 'orange',
+//   test: 'green',
+//   pre: '#87d068',
+// };
 
 const GlobalHeaderRight = props => {
   const { theme, layout } = props;
@@ -21,19 +21,31 @@ const GlobalHeaderRight = props => {
   const createBreadcrumb = () => {
     const { location: { pathname }, breadcrumb } = props
     // console.log(pathname, breadcrumb)
-    let arr = pathname.split('/')
+    const arr = pathname.split('/')
     const breadPath = breadcrumb[pathname] || {}
     // console.log(breadcrumb, pathname, arr);
+    if (breadPath.path === '/projectDetail') {
+      return (
+        <Breadcrumb separator="|">
+          <Breadcrumb.Item
+            onClick={() => window.history.back('/projectManage')}
+          >项目管理
+          </Breadcrumb.Item>
+          <Breadcrumb.Item>详情</Breadcrumb.Item>
+        </Breadcrumb>
+      )
+    }
     if (arr.length === 4) {
       arr.pop()
-      let secPath = arr.join('/')
+      const secPath = arr.join('/')
       const fB = breadPath.parentKeys ? breadcrumb[breadPath.parentKeys[1]] : {}
       return (
         <Breadcrumb separator="|">
           <Breadcrumb.Item>{fB.name}</Breadcrumb.Item>
           <Breadcrumb.Item
             onClick={() => window.history.back(secPath)}
-          >{breadcrumb[secPath] && breadcrumb[secPath].name}</Breadcrumb.Item>
+          >{breadcrumb[secPath] && breadcrumb[secPath].name}
+          </Breadcrumb.Item>
           <Breadcrumb.Item>{breadPath.name}</Breadcrumb.Item>
         </Breadcrumb>
       )
@@ -67,7 +79,7 @@ const GlobalHeaderRight = props => {
         </Badge>
       </div>
       <Avatar />
-      {/*{REACT_APP_ENV && <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>}*/}
+      {/* {REACT_APP_ENV && <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>} */}
     </div>
   );
 };

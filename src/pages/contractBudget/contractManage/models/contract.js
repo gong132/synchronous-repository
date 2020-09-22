@@ -213,7 +213,7 @@ const Contract = {
       }
       const obj = {}
       data.map(v => {
-        obj[v.systemId] = v.systemName
+        obj[v.id] = v.name
         return true
       })
       yield put({
@@ -235,7 +235,7 @@ const Contract = {
       }
       const obj = {}
       data.map(v => {
-        obj[v.supplierId] = v.supplierName
+        obj[v.id] = v.name
         return true
       })
       yield put({

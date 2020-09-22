@@ -20,7 +20,7 @@ import {
   queryBudgetNumber,
   queryFlow,
 } from '@/services/demand/demand';
-import { queryLogList } from '@/services/global';
+import { queryLogList, queryFile } from '@/services/global';
 import { PagerHelper } from '@/utils/helper';
 import { message } from 'antd';
 
@@ -44,6 +44,15 @@ const Demand = {
     flowList: []
   },
   effects: {
+    *queryFile({ payload }, { call}) {
+      const { code, msg } = yield call(queryFile, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    },
+
     *fetchLogList({ payload }, { call, put }) {
       const { code, data, msg } = yield call(queryLogList, payload);
       if (code !== 200) {
@@ -79,12 +88,12 @@ const Demand = {
     },
 
     *addDemand({ payload }, { call }) {
-      const { code, msg } = yield call(addDemand, payload);
+      const { code, msg, data } = yield call(addDemand, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
       }
-      return true;
+      return data;
     },
 
     // 暂存需求
@@ -103,7 +112,7 @@ const Demand = {
           },
         });
       }
-      return true;
+      return data;
     },
 
     *updateDemand({ payload }, { call }) {
@@ -177,7 +186,7 @@ const Demand = {
     },
 
     // 查询流程进度
-    *queryFlow({payload}, { call, put }) {
+    *queryFlow({ payload }, { call, put }) {
       const { code, data, msg } = yield call(queryFlow, payload);
       if (code !== 200) {
         message.error(msg);
@@ -190,7 +199,7 @@ const Demand = {
         },
       });
       return data
-    },  
+    },
 
     *queryDemandProject({ payload }, { call, put }) {
       const res = yield call(queryDemand, payload);

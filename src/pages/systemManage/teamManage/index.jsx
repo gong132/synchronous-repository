@@ -131,7 +131,7 @@ class TeamManage extends Component {
   };
 
   renderSearchForm = () => {
-    const { form: { getFieldDecorator }, loadingQueryTeamData } = this.props;
+    const { form: { getFieldDecorator } } = this.props;
     return (
       <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
         {/* <Col span={6}>
@@ -173,7 +173,7 @@ class TeamManage extends Component {
           <FormItem>
             <CustomBtn
               onClick={() => this.handleResetSearch()}
-              loading={loadingQueryTeamData}
+              // loading={loadingQueryTeamData}
               // style={{
               //   display: 'inline-block',
               //   marginRight: '5rem'

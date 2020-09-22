@@ -2,7 +2,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { message } from 'antd';
-
 let lockReconnect = false
 let tt = null
 class Websocket extends React.Component {
@@ -64,6 +63,7 @@ class Websocket extends React.Component {
 
     this.shouldReconnect = this.props.reconnect;
     websocket.onclose = evt => {
+      console.log('关闭websocket')
       this.logging(
         `Websocket disconnected,the reason: ${evt.reason},the code: ${evt.code}`,
       );

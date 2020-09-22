@@ -70,6 +70,7 @@ export default {
   'menu.systemManage.detail': '集群或板块管理详情',
 
   'menu.projectManage': '项目管理',
+  'menu.projectDetail': '项目管理详情',
   'menu.menuConfig': '菜单管理',
 
   'menu.demand': '我的需求',

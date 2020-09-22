@@ -3,7 +3,7 @@ import {router} from "umi";
 import storage from "@/utils/storage";
 import {PagerHelper} from "@/utils/helper";
 import { isEmpty } from "@/utils/lang";
-import { queryLogList } from '@/services/global'
+import { queryLogList, saveFile } from '@/services/global'
 import { queryNotices, fetchMenuList, fetchCurrentUserInfo, fetchListByRoleId } from '@/services/user';
 
 const GlobalModel = {
@@ -91,6 +91,15 @@ const GlobalModel = {
           ...others
         },
       })
+    },
+
+    *saveFile({payload}, {call}) {
+      const { code, msg } = yield call(saveFile, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
     }
   },
   reducers: {

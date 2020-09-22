@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react'
-import { Empty, Dropdown, Icon, Menu, Spin } from 'antd'
+import { Empty, Dropdown, Icon, Menu, Spin, Modal } from 'antd'
 import { connect } from 'dva'
 import { router } from 'umi'
 import { BOARD_TITLE } from '../util/constant'
@@ -56,7 +56,7 @@ class DemandBoard extends Component {
   }
 
   handleViewDetail = (item) => {
-    const {id,demandNumber} = item
+    const { id, demandNumber } = item
     router.push({
       pathname: '/demand/myDemand/detail',
       query: {
@@ -89,7 +89,9 @@ class DemandBoard extends Component {
         {boardId === 2 && <Menu.Item key='appointAccept'>指派受理人</Menu.Item>}
         {(boardId === 1 || boardId === 3) && <Menu.Item key='edit'>编辑</Menu.Item>}
         {boardId === 3 && <Menu.Item key='accept'>受理</Menu.Item>}
-        {(boardId === 1 || boardId === 2) && <Menu.Item key='del'>删除</Menu.Item>}
+        {(boardId === 1 || boardId === 2)
+          && <Menu.Item key='del'>删除</Menu.Item>
+        }
         {
           collectId ?
             <Menu.Item key='cancelFocus'>取消关注</Menu.Item>
@@ -98,6 +100,23 @@ class DemandBoard extends Component {
       </Menu>
     )
   }
+
+  // 删除
+  deleteDemand = params => {
+    this.props
+      .dispatch({
+        type: 'demand/updateDemand',
+        payload: {
+          id: params.id,
+          isDelete: 1
+        },
+      })
+      .then(res => {
+        if (res) {
+          this.props.handleQueryBoard()
+        }
+      });
+  };
 
   quickResolveStory = async (item, key, keyPath, domEvent, editValue) => {
     if (domEvent.stopPropagation) {
@@ -116,7 +135,11 @@ class DemandBoard extends Component {
         this.handleViewModal(true, editValue)
         break;
       case 'del':
-        console.log('del')
+        Modal.confirm({
+          content: '确定删除当前需求？',
+          onOk: () => this.deleteDemand(editValue)
+        })
+        // this.deleteDemand(editValue)
         break;
       case 'appointFocus':
         console.log('appointFocus')
@@ -131,6 +154,8 @@ class DemandBoard extends Component {
         break;
     }
   }
+
+
 
 
   render() {
@@ -202,10 +227,12 @@ class DemandBoard extends Component {
                                   >
                                     <div
                                       className={styles.dragBoard}
-                                      onClick={() => this.handleViewDetail(item)}
                                     >
                                       <div className={styles.dragBoard_firstLine}>
-                                        <div className={styles.dragBoard_firstLine_no}>
+                                        <div
+                                          onClick={() => this.handleViewDetail(item)}
+                                          className={styles.dragBoard_firstLine_no}
+                                        >
                                           {item.demandNumber}
                                         </div>
                                         <div className={styles.dragBoard_firstLine_menu}>

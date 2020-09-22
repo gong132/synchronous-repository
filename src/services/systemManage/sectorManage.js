@@ -40,9 +40,9 @@ export async function querySectorInfo(params) {
   });
 }
 
-// 查询所有部门临时接口
-export async function queryDeptTemp(params) {
-  return request('/temp/dept', {
+// 查询所有部门
+export async function queryDeptAll(params) {
+  return request('/dept/search', {
     method: 'get',
     params,
   });

@@ -23,3 +23,20 @@ export async function queryComp(params) {
     params,
   });
 }
+
+// 查询附件
+export async function queryFile(params) {
+  return request('/attachment/query', {
+    method: 'get',
+    params,
+  });
+}
+
+// 保存附件
+export async function saveFile(params) {
+  return request('/attachment/bind', {
+    method: 'get',
+    params,
+  });
+}
+

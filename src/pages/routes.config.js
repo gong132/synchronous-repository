@@ -140,6 +140,13 @@ module.exports = {
           component: './projectManage',
         },
         {
+          path: '/projectDetail',
+          name: 'projectDetail',
+          hideInMenu: true,
+          component: './projectManage/components/detail',
+          // buttons: [{ name: '编辑', key: 'edit' }],
+        },
+        {
           path: '/systemManage',
           name: 'systemManage',
           icon: 'setting',

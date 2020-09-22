@@ -58,16 +58,16 @@ export async function queryProject(params) {
 
 // 查询所有系统
 export async function querySystem(params) {
-  return request('/temp/system', {
-    method: 'get',
+  return request('/system/list', {
+    method: 'post',
     params,
   });
 }
 
 // 查询所有供应商
 export async function querySupplier(params) {
-  return request('/temp/supplier', {
-    method: 'get',
+  return request('/supplier/list', {
+    method: 'post',
     params,
   });
 }

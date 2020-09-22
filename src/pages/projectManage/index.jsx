@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'dva'
+import { router } from 'umi'
 import moment from 'moment'
 import StandardTable from "@/components/StandardTable";
 import { TableColumnHelper } from "@/utils/helper";
@@ -77,7 +78,33 @@ class ProjectManage extends Component {
 
   }
 
-  handleViewDetail = () => {}
+  handleViewDetail = () => { 
+    router.push({
+      pathname: '/projectDetail'
+    })
+  }
+
+  // 分页操作
+  handleStandardTableChange = (pagination, filters, sorter) => {
+    console.log(pagination, filters, sorter)
+    const formValues = this.props.form.getFieldsValue();
+    if (formValues.signTime && !_.isEmpty(formValues.signTime)) {
+      formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYY-MM-DD');
+      formValues.signingEndTime = moment(formValues.signTime[1]).format('YYYY-MM-DD');
+    }
+    const params = {
+      currentPage: pagination.current,
+      pageSize: pagination.pageSize,
+      ...formValues, // 添加已查询条件去获取分页
+    };
+
+    const sortParams = {
+      sortBy: sorter.columnKey,
+      orderFlag: sorter.order === 'ascend' ? 1 : -1,
+    };
+
+    this.handleQueryData({ ...params, ...sortParams });
+  };
 
   renderSearchForm = () => {
     const { searchMore } = this.state
@@ -90,6 +117,25 @@ class ProjectManage extends Component {
     const content = (
       <div className={styles.moreSearch}>
         <Row>
+          <Col span={24}>
+            <FormItem colon={false} label="商务状态">
+              {getFieldDecorator(
+                'providerCompanyName',
+                {},
+              )(
+                <Select
+                  allowClear
+                  // showSearch
+                  style={{
+                    width: '100%',
+                  }}
+                  placeholder="请输入商务状态"
+                >
+                  <Option key='p' value='p'>未定义</Option>
+                </Select>,
+              )}
+            </FormItem>
+          </Col>
           <Col span={24}>
             <FormItem colon={false} label="所属需求编号">
               {getFieldDecorator('budgetNumber', {
@@ -350,13 +396,13 @@ class ProjectManage extends Component {
         }
       },
       TableColumnHelper.genPlanColumn('deptName', '项目名称'),
-      TableColumnHelper.genLangColumn('systemName', '项目状态'),
-      TableColumnHelper.genPlanColumn('userName', '项目进度'),
-      TableColumnHelper.genPlanColumn('userName', '项目优先级'),
-      TableColumnHelper.genPlanColumn('userName', '立项金额'),
-      TableColumnHelper.genPlanColumn('userName', '业务集群/板块'),
-      TableColumnHelper.genPlanColumn('userName', '商务状态'),
-      TableColumnHelper.genPlanColumn('userName', '立项申请团队'),
+      TableColumnHelper.genLangColumn('systemName', '项目状态', { sorter: true }),
+      TableColumnHelper.genPlanColumn('userName', '项目进度', { sorter: true }),
+      TableColumnHelper.genPlanColumn('userName', '项目优先级', { sorter: true }),
+      TableColumnHelper.genPlanColumn('userName', '立项金额', { sorter: true }),
+      TableColumnHelper.genPlanColumn('userName', '业务集群/板块', { sorter: true }),
+      TableColumnHelper.genPlanColumn('userName', '商务状态', { sorter: true }),
+      TableColumnHelper.genPlanColumn('userName', '立项申请团队', { sorter: true }),
       {
         title: '操作',
         align: 'left',
@@ -388,7 +434,7 @@ class ProjectManage extends Component {
               {
                 <ListOptBtn
                   title='里程碑计划'
-                    onClick={() => this.handlePlan()}
+                  onClick={() => this.handlePlan()}
                   style={{
                     fontSize: '20px',
                     position: 'relative',
@@ -419,7 +465,7 @@ class ProjectManage extends Component {
             { number: 'gong2', systemName: 'gg' },
             { number: 'gong3', systemName: 'gg' }
           ]}
-        // onChange={this.handleStandardTableChange}
+          onChange={this.handleStandardTableChange}
         // scroll={{ x: 1800 }}
         />
       </Card>
