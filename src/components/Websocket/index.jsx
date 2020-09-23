@@ -51,7 +51,7 @@ class Websocket extends React.Component {
       const {heartCheck} = receiveData
       console.log('heartCheck:', heartCheck)
       if (heartCheck === '0') {
-        this.heartCheckReset()
+        // this.heartCheckReset()
         this.props.onMessage(JSON.stringify(receiveData));
         return true;
       }

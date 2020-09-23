@@ -186,7 +186,7 @@ const Index = memo(
               style={{ marginLeft: '16px' }}
             /> */}
             <CustomBtn
-              onClick={() => handleViewModal(true, '创建')}
+              // onClick={() => handleViewModal(true, '创建')}
               type="others"
               // icon='gzIcon'
               title="我的关注"

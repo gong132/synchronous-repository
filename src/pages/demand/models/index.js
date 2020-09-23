@@ -21,7 +21,15 @@ import {
   // queryProjectDemandBoard,
   queryBudgetNumber,
   queryFlow,
+  focusDemand,
 } from '@/services/demand/demand';
+import {
+  addMilePlan,
+  updateMilePlan,
+  removeMilePlan,
+  queryMilePlan,
+  // queryMilePlanInfo,
+} from '@/services/milestonePlan/mileStonePlan'
 import { queryLogList, queryFile } from '@/services/global';
 import { PagerHelper } from '@/utils/helper';
 import { message } from 'antd';
@@ -31,6 +39,7 @@ const Demand = {
   state: {
     formType: 'list',
     demandList: PagerHelper.genListState(),
+    milePlanList: PagerHelper.genListState(),
     logList: PagerHelper.genListState(),
     storyList: PagerHelper.genListState(),
     assessStoryList: PagerHelper.genListState(),
@@ -71,6 +80,16 @@ const Demand = {
           ...others,
         },
       });
+    },
+
+    // 关注需求
+    *focusDemand({payload}, {call}) {
+      const { code, msg } = yield call(focusDemand, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
     },
 
     *queryStoryList({ payload }, { call, put }) {
@@ -362,6 +381,56 @@ const Demand = {
       }
       return true;
     },
+
+    // 新增里程碑计划
+    *addMilePlan({ payload }, { call }) {
+      const { code, msg } = yield call(addMilePlan, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    },
+
+    // 编辑里程碑计划
+    *updateMilePlan({ payload }, { call }) {
+      const { code, msg } = yield call(updateMilePlan, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    },
+
+    // 删除里程碑计划
+    *deleteMilePlan({ payload }, { call }) {
+      const { code, msg } = yield call(removeMilePlan, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    },
+
+    // 查询里程碑计划
+    *queryMilePlan({ payload }, { call, put }) {
+      const res = yield call(queryMilePlan, payload);
+      if (!res.code || res.code !== 200) {
+        message.error(res.msg);
+        return;
+      }
+      const { data, ...others } = res.data;
+      yield put({
+        type: 'saveData',
+        payload: {
+          assessStoryList: PagerHelper.resolveListState({
+            filter: payload,
+            data,
+            ...others,
+          })
+        },
+      });
+    },
   },
   reducers: {
     saveData(state, { payload }) {
@@ -380,6 +449,12 @@ const Demand = {
       return {
         ...state,
         demandList: PagerHelper.resolveListState(action.payload),
+      };
+    },
+    setMilePlanData(state, action) {
+      return {
+        ...state,
+        milePlanList: PagerHelper.resolveListState(action.payload),
       };
     },
     setLogData(state, action) {

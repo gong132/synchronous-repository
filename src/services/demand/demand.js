@@ -170,3 +170,12 @@ export async function syncStory(params) {
     params,
   });
 }
+
+// 关注需求
+// attention/add
+export async function focusDemand(params) {
+  return request('/attention/add', {
+    method: 'post',
+    params,
+  });
+}

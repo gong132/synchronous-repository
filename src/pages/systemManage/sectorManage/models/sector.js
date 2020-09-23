@@ -81,7 +81,8 @@ const Sector = {
       }
       const obj = {};
       data.map(v => {
-        obj[v.deptId] = v.deptName;
+        v.id=String(v.id)
+        obj[v.id] = v.name;
         return true;
       });
       yield put({

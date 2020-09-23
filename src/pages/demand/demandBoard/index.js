@@ -11,6 +11,7 @@ import {
 } from "react-beautiful-dnd";
 import _ from 'lodash';
 import EditModal from '../components/createModal'
+import AppointModal from '../components/appointModal'
 // import moment from 'moment';
 import styles from '../index.less'
 
@@ -40,7 +41,9 @@ class DemandBoard extends Component {
       iHeight: 0, // 看板整体高度
       ciHeight: 0, // 每列下的高度
       showEditModal: false,
-      propValue: {}
+      propValue: {},
+      showAppointModal: false,
+      demandId:''
     }
   }
 
@@ -81,6 +84,13 @@ class DemandBoard extends Component {
     })
   }
 
+  handleViewAppointModal = (bool, recordValue) => {
+    this.setState({
+      showAppointModal: bool,
+      demandId: recordValue.id
+    })
+  }
+
   renderBoardMenu = (record, boardId) => {
     const { collectId } = record
     return (
@@ -118,6 +128,21 @@ class DemandBoard extends Component {
       });
   };
 
+  // 关注
+  handleFocusDemand = (id) => {
+    this.props.dispatch({
+      type: 'demand/focusDemand',
+      payload: {
+        type: 0,
+        demandId: Number(id)
+      }
+    }).then(res => {
+      if (res) {
+        this.props.handleQueryBoard()
+      }
+    });
+  }
+
   quickResolveStory = async (item, key, keyPath, domEvent, editValue) => {
     if (domEvent.stopPropagation) {
       domEvent.stopPropagation()
@@ -126,7 +151,7 @@ class DemandBoard extends Component {
     }
     switch (key) {
       case 'focus':
-        console.log('focus');
+        this.handleFocusDemand(editValue.id)
         break;
       case 'cancelFocus':
         console.log('cancelFocus');
@@ -142,7 +167,7 @@ class DemandBoard extends Component {
         // this.deleteDemand(editValue)
         break;
       case 'appointFocus':
-        console.log('appointFocus')
+        this.handleViewAppointModal(true, editValue)
         break;
       case 'appointAccept':
         console.log('appointAccept')
@@ -158,8 +183,10 @@ class DemandBoard extends Component {
 
 
 
+
+
   render() {
-    const { iHeight, ciHeight, showEditModal, propValue } = this.state
+    const { iHeight, ciHeight, showEditModal, propValue, showAppointModal, demandId } = this.state
     const { demandBoard, handleQueryBoard, loadingQueryBoard } = this.props
     const editModalProps = {
       visibleModal: showEditModal,
@@ -167,6 +194,13 @@ class DemandBoard extends Component {
       handleViewModal: this.handleViewModal,
       handleQueryBoard,
       recordValue: propValue,
+    }
+
+    const appointModalProps = {
+      handleViewModal: this.handleViewAppointModal,
+      handleQueryBoard,
+      visible: showAppointModal,
+      demandId,
     }
     const arr = _.isEmpty(demandBoard) ? BOARD_TITLE : demandBoard
     return (
@@ -178,6 +212,7 @@ class DemandBoard extends Component {
         id='dragContext'
       >
         {showEditModal && <EditModal {...editModalProps} />}
+        {showAppointModal && <AppointModal {...appointModalProps} />}
         <DragDropContext>
           {!_.isEmpty(arr) && arr.map((droppableItem) => (
             <div

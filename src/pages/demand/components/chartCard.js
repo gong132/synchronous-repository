@@ -21,8 +21,8 @@ class ChartCard extends PureComponent {
       sendData: '',
       contextMenuVisible: false,
       textContent: '',
+      receiveMsg: []
     };
-    this.handleOpen = this.handleOpen.bind(this)
   }
 
   componentDidMount() {
@@ -94,25 +94,10 @@ class ChartCard extends PureComponent {
   handleAddtoComLang = comLang => {
     if (!comLang) {
       message.error('您未选中任何文字');
-      return;
+      return true;
     }
-    console.log('保存内容：', comLang); 
   };
 
-  // 建立连接
-  handleOpen = () => {
-    const {token} = getUserInfo()
-    const no = getParam('no')
-    const {title} = this.props
-    const sendMsg = {
-      linkId: no,
-      content: '',
-      title,
-      userToken: token,
-    }
-    const send = JSON.stringify(sendMsg);
-    this.refWebSocket.sendMessage(send);
-  }
 
   // 发消息
   handleSendMsg = () => {
@@ -126,7 +111,6 @@ class ChartCard extends PureComponent {
       title,
       userToken: token,
     }
-    console.log('sendData:', sendData)
     const send = JSON.stringify(sendMsg);
     this.refWebSocket.sendMessage(send);
     this.setState({
@@ -136,27 +120,22 @@ class ChartCard extends PureComponent {
 
   // 接消息
   handleReceiveMessage = (msg) => {
-    console.log('msg:', msg)
+    const copyMsg = JSON.parse(msg)
+    this.setState({
+      receiveMsg: copyMsg.message
+    })
   }
 
   render() {
-    const { sendData, contextMenuVisible, textContent } = this.state;
+    const { sendData, contextMenuVisible, textContent, receiveMsg } = this.state;
     const { handleModalVisible } = this.props;
     const styleObj = {
       backgroundColor: 'white',
       borderColor: '#2E5BFF',
       color: '#2E5BFF',
     };
-    const msgData = [
-      {
-        userName: '测试443264',
-        msg:
-          '@测试222194-014785有一条需求需要运营团队受理，需求名称:关联关联提给总部需求编号: R2005140097@测试504517-000531有一条需求需要运营团队受理，需求名称:关联关联提給部求编号: R2005140097',
-        time: '2020-05-24   00：32：43',
-      },
-    ];
     const { userInfo: { userId, userName } } = getUserInfo();
-    const id = getParam('id')
+    const no = getParam('no')
     return (
       <GlobalSandBox title="评论" img={msgIcon}>
         <div className={styles.msgContext} id="messageArea">
@@ -177,15 +156,15 @@ class ChartCard extends PureComponent {
               </div>
             </div>
           ) : null}
-          {!_.isEmpty(msgData) &&
-            msgData.map(m => {
+          {!_.isEmpty(receiveMsg) &&
+            receiveMsg.map(m => {
               return (
                 <div className={styles.msgContent}>
                   <div className={styles.msgContent_head}>
                     <div className={styles.msgContent_head_name}>{m.userName}</div>
-                    <div className={styles.msgContent_head_time}>{m.time}</div>
+                    <div className={styles.msgContent_head_time}>{m.createTime}</div>
                   </div>
-                  <div className={styles.msgContent_body}>{m.msg}</div>
+                  <div className={styles.msgContent_body}>{m.content}</div>
                 </div>
               );
             })}
@@ -257,9 +236,9 @@ class ChartCard extends PureComponent {
           </Col>
         </Row>
         <Websocket
-          url={`ws://${envIP}:80/websocket/${userName}-${userId}&${id}`}
+          url={`ws://${envIP}:80/websocket/${userName}-${userId}&${no}`}
           onMessage={this.handleReceiveMessage}
-          onOpen={this.handleOpen}
+          // onOpen={this.handleOpen}
           // onClose={this.handleClose}
           reconnect
           debug

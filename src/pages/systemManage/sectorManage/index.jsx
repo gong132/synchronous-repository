@@ -2,9 +2,10 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'dva';
 import { router } from 'umi';
 import StandardTable from '@/components/StandardTable';
-import { DefaultPage, TableColumnHelper } from '@/utils/helper';
+import { DefaultPage } from '@/utils/helper';
 import CustomBtn from '@/components/commonUseModule/customBtn';
 import ListOptBtn from '@/components/commonUseModule/listOptBtn'
+import Ellipse from '@/components/commonUseModule/ellipse'
 import editIcon from '@/assets/icon/cz_bj.svg';
 import eyeIcon from '@/assets/icon/cz_ck.svg'
 import { formLayoutItem, MENU_ACTIONS } from '@/utils/constant'
@@ -270,19 +271,22 @@ class SectorManage extends Component {
     const { global: { authActions } } = this.props
     const columns = [
       {
-        title: '集群/模块名称',
+        title: <Ellipse text='集群/模块名称' style={{width: '10vw'}} />,
         dataIndex: 'name',
         key: 'name',
         render: (text, record) => {
           return (
-            <span onClick={() => this.handleViewDetail(record)} className="globalStyle">
-              {text}
-            </span>
+            <Ellipse
+              text={text}
+              onClick={() => this.handleViewDetail(record)}
+              className="globalStyle"
+              style={{width: '10vw'}}
+            />
           );
         },
       },
       {
-        title: '所属部门',
+        title: <Ellipse text='所属部门' style={{width: '10vw'}} />,
         dataIndex: 'deptName',
         key: 'deptName',
         render: (text, record) => {
@@ -290,26 +294,72 @@ class SectorManage extends Component {
           let str = '';
           record.clusterLinkDepts.map((d, index) => {
             if (record.clusterLinkDepts.length > index + 1) {
-              str += `${d.deptName}, `;
+              str += `${d.deptName} `;
               return '';
             }
             str += d.deptName;
             return '';
           });
-          return str;
+          return <Ellipse
+            text={str}
+            style={{width: '10vw'}}
+          />;
         },
       },
-      TableColumnHelper.genPlanColumn('createUserName', '创建人'),
-      TableColumnHelper.genPlanColumn('createTime', '创建时间'),
-      TableColumnHelper.genPlanColumn('updateTime', '修改时间'),
-      TableColumnHelper.genPlanColumn('updateUserName', '修改人'),
+      {
+        title: <Ellipse text='创建人' style={{width: '10vw'}} />,
+        dataIndex: 'createUserName',
+        key: 'createUserName',
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+            />
+          );
+        },
+      },
+      {
+        title: <Ellipse text='创建时间' style={{width: '10vw'}} />,
+        dataIndex: 'createTime',
+        key: 'createTime',
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+            />
+          );
+        },
+      },
+      {
+        title: <Ellipse text='修改时间' style={{width: '10vw'}} />,
+        dataIndex: 'updateTime',
+        key: 'updateTime',
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+            />
+          );
+        },
+      },
+      {
+        title: <Ellipse text='修改人' style={{width: '10vw'}} />,
+        dataIndex: 'updateUserName',
+        key: 'updateUserName',
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+            />
+          );
+        },
+      },
       {
         title: '操作',
         align: 'left',
-        width: 190,
         render: (text, record) => {
           return (
-            <div>
+            <div style={{whiteSpace: 'nowrap'}}>
               {authActions.includes(MENU_ACTIONS.EDIT) && <ListOptBtn
                 title="编辑"
                 onClick={() => this.handleViewModal(true, '编辑', record)}
@@ -341,7 +391,7 @@ class SectorManage extends Component {
 
   render() {
     const { modalVisible, modalTitle, record } = this.state;
-    const { sectorList, form, loadingQueryData, deptList, loadingCreateData, global: {authActions} } = this.props;
+    const { sectorList, form, loadingQueryData, deptList, loadingCreateData, global: { authActions } } = this.props;
     const { name, clusterLinkDepts } = record;
     const arr = [];
     if (clusterLinkDepts) {
@@ -354,13 +404,17 @@ class SectorManage extends Component {
     return (
       <Fragment>
         <div style={{ display: 'flex' }}>
-          {authActions.includes(MENU_ACTIONS.ADD) &&  <CustomBtn
+          {authActions.includes(MENU_ACTIONS.ADD) && <CustomBtn
             onClick={() => this.handleViewModal(true, '新建')}
             type="create"
             icon='plus'
           />}
         </div>
-        <Card>
+        <Card 
+          bodyStyle={{
+            overflow: 'auto'
+          }}
+        >
           <Modal
             title={modalTitle}
             visible={modalVisible}
@@ -408,9 +462,9 @@ class SectorManage extends Component {
                         <Row>
                           {!_.isEmpty(deptList) &&
                             deptList.map(v => (
-                              <Col key={v.deptId} span={4}>
-                                <Checkbox key={v.deptId} value={v.deptId}>
-                                  {v.deptName}
+                              <Col key={v.id} span={6}>
+                                <Checkbox key={v.id} value={v.id}>
+                                  {v.name}
                                 </Checkbox>
                               </Col>
                             ))}

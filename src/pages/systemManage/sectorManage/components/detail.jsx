@@ -271,9 +271,9 @@ class SectorDetail extends PureComponent {
                           <Row>
                             {!_.isEmpty(deptList) &&
                               deptList.map(v => (
-                                <Col key={v.deptId} span={4}>
-                                  <Checkbox key={v.deptId} value={v.deptId}>
-                                    {v.deptName}
+                                <Col key={v.id} span={4}>
+                                  <Checkbox key={v.id} value={v.id}>
+                                    {v.name}
                                   </Checkbox>
                                 </Col>
                               ))}

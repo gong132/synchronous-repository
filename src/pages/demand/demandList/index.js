@@ -130,6 +130,7 @@ const Index = memo(
                     pathname: `${pathname}/detail`,
                     query: {
                       id: rows.id,
+                      no: rows.demandNumber
                     },
                   });
                 }}
@@ -165,6 +166,7 @@ const Index = memo(
                   pathname: `${props.location.pathname}/detail`,
                   query: {
                     id: rows.id,
+                    no: rows.demandNumber
                   },
                 });
               }}
