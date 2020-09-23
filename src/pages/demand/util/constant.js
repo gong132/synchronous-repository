@@ -140,3 +140,15 @@ export const DEMAND_STATUS = [
   { key: "8", value: "测试中" },
   { key: "9", value: "上线" },
 ]
+export const STORY_STATUS = [
+  { key: "1", value: "需求分析中" },
+  { key: "2", value: "需求已确定" },
+  { key: "3", value: "开发中" },
+  { key: "4", value: "测试提测" },
+  { key: "5", value: "测试中" },
+  { key: "6", value: "测试完成" },
+  { key: "7", value: "已上线" },
+  { key: "8", value: "暂停" },
+  { key: "9", value: "取消" },
+  { key: "10", value: "关闭" },
+]

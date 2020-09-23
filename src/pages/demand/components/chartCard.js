@@ -96,7 +96,7 @@ class ChartCard extends PureComponent {
       message.error('您未选中任何文字');
       return;
     }
-    console.log('保存内容：', comLang); 
+    console.log('保存内容：', comLang);
   };
 
   // 建立连接
@@ -157,6 +157,7 @@ class ChartCard extends PureComponent {
     ];
     const { userInfo: { userId, userName } } = getUserInfo();
     const id = getParam('id')
+
     return (
       <GlobalSandBox title="评论" img={msgIcon}>
         <div className={styles.msgContext} id="messageArea">
@@ -240,6 +241,7 @@ class ChartCard extends PureComponent {
                   ...styleObj,
                   marginTop: '12px',
                 }}
+                onClick={() => handleModalVisible(true, "turnAssessModalVisible")}
                 img={turnIcon}
                 text="转评估人"
               />

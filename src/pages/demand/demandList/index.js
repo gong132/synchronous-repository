@@ -139,7 +139,7 @@ const Index = memo(
           return (
             <Tooltip placement="top" title={rows.demandNumber}>
               <span
-                style={{ color: '#2E5BFF' }}
+                style={{ color: '#2E5BFF', cursor: "pointer" }}
                 onClick={() => {
                   const pathname = props?.location?.pathname;
                   if (!pathname) return
@@ -169,7 +169,7 @@ const Index = memo(
       TableColumnHelper.genPlanColumn('plannedLaunchDate', '计划上线日期'),
       {
         title: '操作',
-        width: 200,
+        width: 120,
         align: 'center',
         render: rows => (
           <Fragment>
@@ -226,7 +226,7 @@ const Index = memo(
             return (
               <Tooltip placement="top" title={rows.number}>
                 <span
-                  style={{ color: '#2E5BFF' }}
+                  style={{ color: '#2E5BFF', cursor: "pointer" }}
                   onClick={() => {
                     props.history.push({
                       pathname: '/demand/storyDetail',
@@ -318,7 +318,7 @@ const Index = memo(
           columns={subColumns}
           data={{ list: row.storyList }}
           pagination={false}
-          scroll={{ x: 1550, y: 550 }}
+          scroll={{ x: 2550, y: 550 }}
         />
       );
     };
@@ -601,6 +601,8 @@ const Index = memo(
         </Form>
       );
     };
+
+    const contentWidth = document.body.clientWidth - 188 - 32 - 32 + 1
     return (
       <div className={styles.childrenTable}>
         <div className={styles.tableList}>
@@ -612,11 +614,11 @@ const Index = memo(
             data={demandList}
             expandIcon={prop => {
               if (prop?.record?.storyList?.length < 1) return ""
-              return !prop?.expanded ? ">" : "v"
+              return !prop?.expanded ? <span style={{cursor: "pointer"}}>&gt;</span> : <span style={{cursor: "pointer"}}>v</span>
             }}
             onChange={handleDemandTableChange}
             expandRowByClick
-            scroll={{ x: 1350 }}
+            scroll={{ x: contentWidth }}
           />
         </div>
         {addModalVisible && (

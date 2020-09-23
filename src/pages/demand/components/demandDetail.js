@@ -51,8 +51,7 @@ import {
 import { getParam } from '@/utils/utils';
 import styles from '../index.less';
 
-import AddStory from '@/pages/demand/components/story/addStory';
-import ITAssess from '@/pages/demand/components/story/ITAssess';
+import StoryList from "./story/storyList"
 
 const { Step } = Steps;
 const RadioGroup = Radio.Group;
@@ -75,6 +74,7 @@ class Detail extends Component {
       descriptionState: '',
       addStoryModalVisible: false,
       itAssessModalVisible: false,
+      turnAssessModalVisible: false,
       selectedStoryRows: [],
       // urls: ''
     };
@@ -269,12 +269,6 @@ class Detail extends Component {
     });
   };
 
-  handleSelectedStoryRows = rows => {
-    this.setState({
-      selectedStoryRows: rows,
-    });
-  };
-
   handleCopyStory = () => {
     const { dispatch } = this.props;
     const { selectedStoryRows } = this.state;
@@ -294,16 +288,6 @@ class Detail extends Component {
     });
   };
 
-  handleStoryTableChange = pagination => {
-    // const formValues = form.getFieldsValue();
-    const params = {
-      currentPage: pagination.current,
-      pageSize: pagination.pageSize,
-      // ...formValues, // 添加已查询条件去获取分页
-    };
-    this.handleQueryStoryList(params);
-  };
-
   handleModalVisible = (flag, tag) => {
     this.setState({
       [tag]: !!flag
@@ -311,13 +295,12 @@ class Detail extends Component {
   }
 
   render() {
-    const { editBool, descriptionState, addStoryModalVisible, selectedStoryRows, itAssessModalVisible } = this.state;
+    const { editBool, descriptionState } = this.state;
     const {
       form,
       loadingQueryInfo,
       loadingQueryLogData,
-      loadingQueryStoryData,
-      demand: { budgetList, demandInfo, groupList, logList, storyList, flowList },
+      demand: { budgetList, demandInfo, groupList, logList, flowList },
     } = this.props;
     const w = '100%';
     const {
@@ -486,20 +469,6 @@ class Detail extends Component {
 
       return str
     }
-    const storyColumns = [
-      TableColumnHelper.genPlanColumn('number', 'story编号'),
-      TableColumnHelper.genPlanColumn('title', '标题'),
-      TableColumnHelper.genPlanColumn('status', '状态'),
-      TableColumnHelper.genPlanColumn('priority', '优先级'),
-      TableColumnHelper.genPlanColumn('type', 'story类型'),
-      TableColumnHelper.genPlanColumn('systemName', '所属系统'),
-      TableColumnHelper.genDateTimeColumn('evaluateTime', 'IT预计上线时间', "YYYY-MM-DD"),
-      TableColumnHelper.genPlanColumn('developWorkload', '开发预计测试工作量'),
-      TableColumnHelper.genPlanColumn('testWorkload', '测试预计测试工作量'),
-      TableColumnHelper.genPlanColumn('assessor', '评估人'),
-      TableColumnHelper.genPlanColumn('userName', '创建人'),
-      TableColumnHelper.genDateTimeColumn('createTime', '创建时间'),
-    ];
 
     return (
       <Fragment>
@@ -1029,29 +998,31 @@ class Detail extends Component {
           </GlobalSandBox>
         </Spin>
         {
-          type === 'p' && <GlobalSandBox
-            title="项目里程碑"
-            img={sdIcon}
-            optNode={
-              <OptButton
-                style={{
-                  backgroundColor: 'white',
-                  color: '#B0BAC9',
-                  borderColor: '#B0BAC9',
-                }}
-                icon="plus"
-                text="新建"
+          type === 'p' && (
+            <GlobalSandBox
+              title="项目里程碑"
+              img={sdIcon}
+              optNode={
+                <OptButton
+                  style={{
+                    backgroundColor: 'white',
+                    color: '#B0BAC9',
+                    borderColor: '#B0BAC9',
+                  }}
+                  icon="plus"
+                  text="新建"
+                />
+              }
+            >
+              <StandardTable
+                rowKey={(record, index) => index}
+                columns={proColumns}
+                // data={logList}
+                // loading={loadingQueryLogData}
+                onChange={this.handleStandardTableChangePro}
               />
-            }
-          >
-            <StandardTable
-              rowKey={(record, index) => index}
-              columns={proColumns}
-              // data={logList}
-              // loading={loadingQueryLogData}
-              onChange={this.handleStandardTableChangePro}
-            />
-          </GlobalSandBox>
+            </GlobalSandBox>
+          )
         }
         <GlobalSandBox
           title="新建story"
@@ -1077,35 +1048,18 @@ class Detail extends Component {
             </div>
           }
         >
-          <div className={styles.tableList}>
-            {/*<div className={styles.tableListForm}>{renderForm()}</div>*/}
-            <StandardTable
-              rowKey="id"
-              selectedRows={selectedStoryRows}
-              onSelectRow={this.handleSelectedStoryRows}
-              columns={storyColumns}
-              data={storyList}
-              loading={loadingQueryStoryData}
-              onChange={this.handleStoryTableChange}
-            />
-
-            {addStoryModalVisible && (
-              <AddStory
-                type="add"
-                modalVisible={addStoryModalVisible}
-                handleModalVisible={() => this.handleModalVisible(false, "addStoryModalVisible")}
-                values={demandInfo}
-                handleQueryStoryList={this.handleQueryStoryList}
-              />
-            )}
-            {itAssessModalVisible && (
-              <ITAssess
-                modalVisible={itAssessModalVisible}
-                handleModalVisible={() => this.handleModalVisible(false, "itAssessModalVisible")}
-                values={demandInfo}
-              />
-            )}
-          </div>
+          <StoryList
+            handleQueryStoryList={this.handleQueryStoryList}
+            demandInfo={demandInfo}
+            selectedStoryRows={this.state.selectedStoryRows}
+            setSelectedStoryRows={rows => this.setState({
+              selectedStoryRows: rows
+            })}
+            handleModalVisible={this.handleModalVisible}
+            itAssessModalVisible={this.state.itAssessModalVisible}
+            addStoryModalVisible={this.state.addStoryModalVisible}
+            turnAssessModalVisible={this.state.turnAssessModalVisible}
+          />
         </GlobalSandBox>
         {title && <ChartCard handleModalVisible={this.handleModalVisible} title={title} />}
         <GlobalSandBox title="系统需求" img={sdIcon}></GlobalSandBox>
