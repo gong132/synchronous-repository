@@ -56,10 +56,15 @@ const GlobalModel = {
         message.error(msg);
         return false
       }
-      storage.add('gd-user', { currentUserMenuList: data });
+      const newData =  data.flat(1).reduce((cur, next, i) =>{
+        const findCurIndex = cur.find(v => v?.id === next?.id)
+        if (isEmpty(findCurIndex)) cur.push(next)
+        return cur
+      }, [])
+      storage.add('gd-user', { currentUserMenuList: newData });
       yield put({
         type: 'saveData',
-        payload: { currentUserMenuList: data },
+        payload: { currentUserMenuList: newData },
       });
 
       yield put({
@@ -69,8 +74,8 @@ const GlobalModel = {
         },
       });
 
-      callback && callback(data);
-      return data
+      callback && callback(newData);
+      return newData
     },
 
     *fetchLogList({payload}, {call, put}) {

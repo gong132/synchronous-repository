@@ -1,5 +1,4 @@
 import { Button, Result } from 'antd';
-import React from 'react';
 import { router } from 'umi';
 
 const NoMatchPage = () => (
@@ -14,5 +13,6 @@ const NoMatchPage = () => (
     }
   />
 );
+
 
 export default NoMatchPage;
