@@ -213,6 +213,12 @@ ol {
 .lFlex {
   display: flex;
 }
+// flex布局, 右对齐
+.rFlex {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
 
 // 全局基础样式
 .globalStyle {
@@ -225,6 +231,26 @@ ol {
 
 // 修改侧边栏样式
 :global {
+
+  .ant-table-body::-webkit-scrollbar{
+    width:14px;
+    height:14px;
+  }
+  .ant-table-body::-webkit-scrollbar-track{
+    background: #F4F6FC;
+    border-radius:2px;
+  }
+  .ant-table-body::-webkit-scrollbar-thumb{
+    background: #bfbfbf;
+    border-radius:10px;
+  }
+  .ant-table-body::-webkit-scrollbar-thumb:hover{
+    background: rgba(0,0,0,0.35);
+  }
+  .ant-table-body::-webkit-scrollbar-corner{
+    background: #179a16;
+  }
+
 
   .ant-menu-item-selected>a,
   .ant-menu-submenu-selected,

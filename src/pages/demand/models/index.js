@@ -12,6 +12,7 @@ import {
   batchAssessStory,
   fetchStoryDetails,
   syncStory,
+  assignUser,
   // updateDemand,
   queryDemand,
   queryGroup,
@@ -385,6 +386,15 @@ const Demand = {
     // 新增里程碑计划
     *addMilePlan({ payload }, { call }) {
       const { code, msg } = yield call(addMilePlan, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    // 指派关注人
+    },
+    *assignUser({ payload }, { call }) {
+      const { code, msg } = yield call(assignUser, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;

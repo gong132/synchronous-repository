@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'dva';
+import moment from "moment";
 import classNames from 'classnames';
 import { DefaultPage, TableColumnHelper } from '@/utils/helper';
 import StandardTable from '@/components/StandardTable';
@@ -14,12 +15,13 @@ import {
   Tooltip,
   DatePicker,
   Icon,
-  Card,
+  Card, Divider,
 } from 'antd';
 import { isEmpty } from '@/utils/lang';
 import { formLayoutItem, formLayoutItem2, MENU_ACTIONS } from '@/utils/constant';
 import { BUDGET_TYPE, PROJECT_TYPE } from '@/pages/contractBudget/util/constant';
 import OptButton from '@/components/commonUseModule/optButton';
+import YearPicker from '@/components/YearPicker';
 import edit from '@/assets/icon/Button_bj.svg';
 import upIcon from '@/assets/icon/Pull_up.svg';
 import bottomIcon from '@/assets/icon/drop_down.svg';
@@ -49,6 +51,8 @@ const Index = props => {
   const [selectedRows, setSelectedRows] = useState({});
   const [teamList, setTeamList] = useState([]);
   const [allDeptList, setAllDeptList] = useState([]);
+
+  const [yearTime, setYearTime] = useState(null);
 
   const handleQueryBudgetData = params => {
     dispatch({
@@ -93,21 +97,23 @@ const Index = props => {
     TableColumnHelper.genPlanColumn('userName', '录入人', { sorter: true }),
     TableColumnHelper.genDateTimeColumn('createTime', '录入时间', 'YYYY-MM-DD', { sorter: true }),
     TableColumnHelper.genPlanColumn('deptName', '需求部门', { sorter: true }),
-    TableColumnHelper.genLangColumn('clusterName', '集群或板块', { sorter: true }, 4),
+    TableColumnHelper.genLangColumn('clusterName', '集群或板块', { sorter: true, width: 150 }, 4),
     TableColumnHelper.genDateTimeColumn('expectSetTime', '预计立项时间', 'YYYY-MM-DD', {
       sorter: true,
+      width: 170,
     }),
-    TableColumnHelper.genMoneyColumn('expectTotalAmount', '预算总金额', { sorter: true }),
-    TableColumnHelper.genMoneyColumn('hardwareExpectAmount', '硬件预算金额', { sorter: true }),
+    TableColumnHelper.genMoneyColumn('expectTotalAmount', '预算总金额', { sorter: true, width: 150 }),
+    TableColumnHelper.genMoneyColumn('hardwareExpectAmount', '硬件预算金额', { sorter: true, width: 170 }),
     {
       title: '操作',
-      width: 200,
+      width: 100,
       align: 'center',
       render: rows => (
         <Fragment>
           {authActions.includes(MENU_ACTIONS.EDIT) && (
             <OptButton
               img={edit}
+              showText={false}
               text="编辑"
               onClick={() => {
                 setAddModalVisible(true);
@@ -115,10 +121,12 @@ const Index = props => {
               }}
             />
           )}
+          <Divider type="vertical" />
           {authActions.includes(MENU_ACTIONS.CHECK) && (
             <OptButton
               icon="eye"
               text="查看"
+              showText={false}
               onClick={() => {
                 props.history.push({
                   pathname: '/contract-budget/budget/detail',
@@ -153,13 +161,14 @@ const Index = props => {
   const handleResetForm = () => {
     setSearchMore(true);
     form.resetFields();
+    setYearTime(null)
     setSearchMore(false);
     handleQueryBudgetData();
   };
 
-  const handleSearchForm = () => {
+  const handleSearchForm = params=> {
     const formValues = form.getFieldsValue();
-    handleQueryBudgetData(formValues);
+    handleQueryBudgetData({ ...formValues, ...params });
   };
 
   const handleDownLoad = () => {
@@ -367,24 +376,24 @@ const Index = props => {
     return (
       <Form layout="inline">
         <Row>
-          <Col span={6}>
-            <FormItem {...formLayoutItem} label="预算编号">
+          <Col span={5}>
+            <FormItem {...formLayoutItem} label="预算编号" colon={false}>
               {getFieldDecorator(
                 'number',
                 {},
               )(<Input allowClear onBlur={handleSearchForm} placeholder="请输入预算编号" />)}
             </FormItem>
           </Col>
-          <Col span={6}>
-            <FormItem {...formLayoutItem} label="项目名称">
+          <Col span={5}>
+            <FormItem {...formLayoutItem} label="项目名称" colon={false}>
               {getFieldDecorator(
                 'name',
                 {},
               )(<Input allowClear onBlur={handleSearchForm} placeholder="请输入项目名称" />)}
             </FormItem>
           </Col>
-          <Col span={6}>
-            <FormItem {...formLayoutItem} label="需求部门">
+          <Col span={5}>
+            <FormItem {...formLayoutItem} label="需求部门" colon={false}>
               {getFieldDecorator(
                 'deptId',
                 {},
@@ -406,7 +415,18 @@ const Index = props => {
               )}
             </FormItem>
           </Col>
-          <Col span={6}>
+          <Col span={5}>
+            <FormItem {...formLayoutItem} label="预算年度" colon={false}>
+              <YearPicker
+                value={yearTime}
+                onChange={val => {
+                  setYearTime(val)
+                  handleSearchForm({year: moment.isMoment(val) && val.format("YYYY") || null})
+                }}
+              />
+            </FormItem>
+          </Col>
+          <Col span={4}>
             <div
               style={{
                 width: '100%',
@@ -471,7 +491,7 @@ const Index = props => {
             data={budgetList}
             columns={columns}
             onChange={handleStandardTableChange}
-            scroll={{ x: 1450 }}
+            scroll={{ x: 1500 }}
           />
         </Card>
         {addModalVisible && (

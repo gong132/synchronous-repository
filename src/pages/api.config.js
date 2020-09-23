@@ -1,4 +1,4 @@
 // 设置环境
-const buildEnv = REACT_APP_ENV || 'dev';
+const buildEnv = BUILD_ENV || 'dev';
 
 export default { buildEnv }

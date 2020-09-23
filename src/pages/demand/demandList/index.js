@@ -35,6 +35,8 @@ import bottomIcon from "@/assets/icon/drop_down.svg";
 import upIcon from "@/assets/icon/Pull_up.svg";
 import {DEMAND_PRIORITY_ARR, DEMAND_STATUS} from "@/pages/demand/util/constant";
 
+import AssignUser from "../components/story/assignUser"
+
 const demandRoutes = {
   '/demand/myDemand': '我的需求',
   '/demand/generalDemand': '一般需求',
@@ -55,6 +57,7 @@ const Index = memo(
     const [selectedRows, setSelectedRows] = useState({});
     const [searchMore, setSearchMore] = useState(false);
 
+    const [assignVisible, setAssignVisible] = useState(false)
     const handleQueryMyDemand = params => {
       dispatch({
         type: 'demand/queryDemand',
@@ -90,6 +93,20 @@ const Index = memo(
         payload: {
           ...PagerHelper.MaxPage,
         },
+      })
+    }
+    const handleAssign = (params, rows, callback) => {
+      dispatch({
+        type: "demand/assignUser",
+        payload: {
+          ...params,
+          type: 1,
+        },
+      }).then(result => {
+        if (!result) return;
+        message.success("指派成功")
+        callback && callback()
+        handleQueryUserList()
       })
     }
 
@@ -173,7 +190,26 @@ const Index = memo(
 
             />
             <Divider type="vertical" />
-            <OptButton img={assignIcon} showText={false} text="指派" onClick={() => {}} />
+            <Popover
+              content={(
+                <AssignUser
+                  userList={userList}
+                  rows={rows}
+                  onOk={handleAssign}
+                  handleVisible={setAssignVisible}
+                />
+              )}
+              title="指派关注人"
+              trigger="click"
+              placement="left"
+              visible={rows.id === assignVisible}
+              onClick={e => e.stopPropagation()}
+              onVisibleChange={visible =>{
+                setAssignVisible( visible && rows.id)
+              }}
+            >
+              <OptButton onClick={e => e.stopPropagation()} img={assignIcon} showText={false} text="指派" />
+            </Popover>
           </Fragment>
         ),
       },
@@ -576,7 +612,12 @@ const Index = memo(
             expandedRowRender={expandedRowRender}
             columns={columns}
             data={demandList}
+            expandIcon={prop => {
+              if (prop?.record?.storyList?.length < 1) return ""
+              return !prop?.expanded ? ">" : "v"
+            }}
             onChange={handleDemandTableChange}
+            expandRowByClick
             scroll={{ x: 1350 }}
           />
         </div>

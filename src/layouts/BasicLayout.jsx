@@ -46,7 +46,7 @@ const BasicLayout = props => {
 
   const  getAllMenu = () => {
     dispatch({
-      type: 'global/queryAllMenuList',
+      type: 'global/queryCurrentUserMenuList',
       payload: {},
     }).then(data => {
       if (!data) return;
