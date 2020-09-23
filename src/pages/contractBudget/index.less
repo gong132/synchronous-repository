@@ -65,11 +65,10 @@
   transition: all 0.3s;
 }
 .addForm, .addForm:hover, .addForm:active, .addForm:focus, .addForm:visited {
-  background: #fff;
+  background: linear-gradient(135deg, #2E5BFF 0%, #2496EE 100%);
   opacity:1;
   border-radius:2px;
-  color: #2E5BFF;
-  border: 1px solid #2E5BFF;
+  color: #fff;
 }
 .orangeForm, .orangeForm:hover, .orangeForm:active, .orangeForm:focus, .orangeForm:visited {
   width: 80px;
@@ -81,7 +80,9 @@
 }
 
 .moreSearch {
-  width: 270px;
+  width: 240px;
+  height: 400px;
+  overflow-y: auto;
   margin-top: 12px;
   :global {
     .ant-form-item {
@@ -90,7 +91,29 @@
     .ant-select {
       width: 100%;
     }
+    .ant-form-item {
+      width: 240px;
+    }
   }
+}
+/*修改滚动条样式*/
+.moreSearch::-webkit-scrollbar{
+  width:10px;
+  height:10px;
+}
+.moreSearch::-webkit-scrollbar-track{
+  background: rgb(239, 239, 239);
+  border-radius:2px;
+}
+.moreSearch::-webkit-scrollbar-thumb{
+  background: #bfbfbf;
+  border-radius:10px;
+}
+.moreSearch::-webkit-scrollbar-thumb:hover{
+  background: #333;
+}
+.moreSearch::-webkit-scrollbar-corner{
+  background: #179a16;
 }
 .moreSearchButton {
   width: 200px;

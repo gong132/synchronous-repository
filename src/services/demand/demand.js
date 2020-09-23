@@ -170,3 +170,11 @@ export async function syncStory(params) {
     params,
   });
 }
+
+// 指派关注人
+export async function assignUser(params) {
+  return request('/attention/add', {
+    method: 'post',
+    params,
+  });
+}
