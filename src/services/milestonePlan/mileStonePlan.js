@@ -39,3 +39,11 @@ export async function queryMilePlanInfo(params) {
     params,
   });
 }
+
+// 获取里程碑所有阶段
+export async function queryMilePlanStage(params) {
+  return request('/milestone/stage', {
+    method: 'get',
+    params,
+  });
+}

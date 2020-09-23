@@ -29,6 +29,7 @@ import {
   updateMilePlan,
   removeMilePlan,
   queryMilePlan,
+  queryMilePlanStage,
   // queryMilePlanInfo,
 } from '@/services/milestonePlan/mileStonePlan'
 import { queryLogList, queryFile } from '@/services/global';
@@ -44,6 +45,7 @@ const Demand = {
     logList: PagerHelper.genListState(),
     storyList: PagerHelper.genListState(),
     assessStoryList: PagerHelper.genListState(),
+    planStageList: [],
     demandBoard: [],
     demandInfo: {},
     groupList: [],
@@ -441,6 +443,28 @@ const Demand = {
         },
       });
     },
+
+    // 获取里程碑所有阶段
+    *queryMilePlanStage({payload}, {call, put}) {
+      const {data, msg, code} = yield call(queryMilePlanStage, payload)
+      if(code !== 200) {
+        message.error(msg)
+        return false
+      }
+      const obj = {}
+      data.map(v => {
+        obj[v.id] = v.stageName
+        return true
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          planStageList: data,
+          planStageListMap: obj
+        }
+      })
+      return true
+    }
   },
   reducers: {
     saveData(state, { payload }) {

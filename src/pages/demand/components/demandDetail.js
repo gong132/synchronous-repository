@@ -79,6 +79,7 @@ class Detail extends Component {
   }
 
   componentDidMount() {
+    this.handlePlanStage()
     this.handleQueryBudget();
     this.handleQueryDetail();
     this.handleQueryLogList();
@@ -97,6 +98,13 @@ class Detail extends Component {
   //     urls: fileUrl
   //   })
   // }
+
+  // 查询里程碑计划所有阶段
+  handlePlanStage = () => {
+    this.props.dispatch({
+      type: 'demand/queryMilePlanStage',
+    });
+  }
 
   // 查日志
   handleQueryLogList = (obj = {}) => {
@@ -412,8 +420,6 @@ class Detail extends Component {
       TableColumnHelper.genPlanColumn('updateTime', '操作时间', { width: '100px' }),
     ];
 
-    
-
     const resolveFlowData = (arr, index, typeFlow) => {
       let str = ''
       if (arr[index] && typeFlow === 'name') {
@@ -513,25 +519,25 @@ class Detail extends Component {
                     />
                   </Fragment>
                 ) : (
-                  <Fragment>
-                    <OptButton
-                      style={{
+                    <Fragment>
+                      <OptButton
+                        style={{
                           backgroundColor: 'white',
                           color: '#B0BAC9',
                           borderColor: '#B0BAC9',
                         }}
-                      disabled
-                      img={psIcon}
-                      text="已提交OA审批"
-                    />
-                    <OptButton
-                      style={{
+                        disabled
+                        img={psIcon}
+                        text="已提交OA审批"
+                      />
+                      <OptButton
+                        style={{
                           backgroundColor: 'white',
                         }}
-                      img={apsIcon}
-                      text="提交OA审批"
-                    />
-                  </Fragment>
+                        img={apsIcon}
+                        text="提交OA审批"
+                      />
+                    </Fragment>
                   )}
                 {editBool ? (
                   <Fragment>
@@ -557,18 +563,18 @@ class Detail extends Component {
                     />
                   </Fragment>
                 ) : (
-                  <OptButton
-                    onClick={() =>
+                    <OptButton
+                      onClick={() =>
                         this.setState({
                           editBool: true,
                         })
                       }
-                    style={{
+                      style={{
                         backgroundColor: 'white',
                       }}
-                    img={editIcon}
-                    text="编辑"
-                  />
+                      img={editIcon}
+                      text="编辑"
+                    />
                   )}
               </Fragment>
             }
@@ -943,8 +949,8 @@ class Detail extends Component {
                 </DescriptionItem> */}
               </Descriptions>
             ) : (
-              <Descriptions column={3} bordered className={styles.formatDetailDesc}>
-                {detailList.map(
+                <Descriptions column={3} bordered className={styles.formatDetailDesc}>
+                  {detailList.map(
                     (v, i) =>
                       (v.type === type || v.type === 'p') && (
                         <DescriptionItem
@@ -976,7 +982,7 @@ class Detail extends Component {
           </GlobalSandBox>
         </Spin>
         {
-          type === 'p' && <MilePlan />
+          type === 'p' && <MilePlan handleQueryLogList={this.handleQueryLogList} demandNumber={demandNumber} />
         }
         <GlobalSandBox
           title="新建story"
@@ -1040,7 +1046,7 @@ class Detail extends Component {
             columns={columns}
             data={logList}
             loading={loadingQueryLogData}
-          // onChange={this.handleStandardTableChange}
+            onChange={this.handleStandardTableChange}
           />
         </GlobalSandBox>
       </Fragment >

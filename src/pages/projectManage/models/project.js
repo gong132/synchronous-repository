@@ -3,12 +3,14 @@ import { PagerHelper } from '@/utils/helper';
 import {
   queryAllCluster
 } from '@/services/project/project'
+import { queryLogList } from '@/services/global';
 import { message } from 'antd'
 
 const Project = {
   namespace: 'project',
   state: {
     projectList: PagerHelper.genListState(),
+    logList: PagerHelper.genListState(),
     clusterList: []
   },
   effects: {
@@ -25,6 +27,23 @@ const Project = {
           clusterList: data
         },
       })
+    },
+
+    *fetchLogList({ payload }, { call, put }) {
+      const { code, data, msg } = yield call(queryLogList, payload);
+      if (code !== 200) {
+        message.error(msg);
+        return;
+      }
+      const { records, ...others } = data;
+      yield put({
+        type: 'setLogData',
+        payload: {
+          filter: payload,
+          data: records,
+          ...others,
+        },
+      });
     },
   },
   reducers: {
