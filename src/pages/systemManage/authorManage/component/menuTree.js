@@ -1,4 +1,4 @@
-import React, {memo, useEffect} from "react";
+import React, {memo} from "react";
 import { Checkbox } from "antd";
 import _filter from 'lodash/filter';
 import _sortBy from 'lodash/sortBy';
@@ -18,6 +18,7 @@ const Index = memo(props => {
     _sortBy(menuJson, 'id').map(v => {
       newArr.push(v);
       findParentMenu(menuArray, v.pid, newArr);
+      return v
     })
   };
   // 递归找到当前节点的所有子节点(不包括当前节点)
@@ -29,6 +30,7 @@ const Index = memo(props => {
     _sortBy(menuJson, 'id').map(v => {
       newArr.push(v);
       findChildMenu(menuArray, v.id, newArr);
+      return v
     })
   };
 
@@ -39,7 +41,7 @@ const Index = memo(props => {
       findParentMenu(allMenuList, rows.pid, parentArr);
 
       setSelectedRows(arr => {
-        let hash = {};
+        const hash = {};
         // 取原始数据与新选择的数的并集,并对数组去重
         const newArr = parentArr.concat(arr.filter(v=>!parentArr.includes(v.id))).reduceRight((item, next) => {
           if (!hash[next.id]) {
@@ -70,7 +72,7 @@ const Index = memo(props => {
       align: 'center',
       render: rows => {
         const isChecked = !isEmpty(selectedRows.find(v => v.id === rows.id));
-        return <Checkbox checked={isChecked} onClick={e => handleChangeCheck(e.target.checked, rows)}/>
+        return <Checkbox checked={isChecked} onClick={e => handleChangeCheck(e.target.checked, rows)} />
       }
     }
   ];

@@ -4,7 +4,7 @@ import storage from "@/utils/storage";
 import {PagerHelper} from "@/utils/helper";
 import { isEmpty } from "@/utils/lang";
 import { queryLogList, fetchUserList, saveFile } from '@/services/global'
-import { queryNotices, fetchMenuList, fetchCurrentUserInfo, fetchListByRoleId } from '@/services/user';
+import { queryNotices, fetchMenuList, fetchCurrentUserInfo, fetchListByRoleId, queryCurrentUserMenuList } from '@/services/user';
 
 const GlobalModel = {
   namespace: 'global',
@@ -46,16 +46,12 @@ const GlobalModel = {
         type: 'saveData',
         payload: { currentUser: data },
       });
-      yield put({
-        type: 'queryListByRoleId',
-        payload: { id: data.roleId }
-      })
 
       callback && callback(data);
       return data
     },
-    *queryListByRoleId({ payload, callback }, { call, put }) {
-      const { code, data, msg } = yield call(fetchListByRoleId, payload);
+    *queryCurrentUserMenuList({ payload, callback }, { call, put }) {
+      const { code, data, msg } = yield call(queryCurrentUserMenuList, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false

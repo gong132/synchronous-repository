@@ -25,3 +25,9 @@ export async function fetchListByRoleId(params) {
     params,
   });
 }
+export async function queryCurrentUserMenuList(params) {
+  return request('/user/queryResource', {
+    method: 'get',
+    params,
+  });
+}
