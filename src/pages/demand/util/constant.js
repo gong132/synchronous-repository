@@ -1,57 +1,58 @@
 // 需求描述默认模板
-const DEFAULT_DESC = '<h4>功能描述：</h4><span>简要描述要实现的功能</span><h4>范围和用户：</h4><span>明确的应用范围和目标用户使得团队有的放矢。</span><h4>预期效益：</h4><span> 价值和可量化ROI或提升数字，需要明确的统计公式，如无法统计，则需要提数据埋点需求，通过数据量化收益。</span> '
+const DEFAULT_DESC =
+  '<h4>功能描述：</h4><span>简要描述要实现的功能</span><h4>范围和用户：</h4><span>明确的应用范围和目标用户使得团队有的放矢。</span><h4>预期效益：</h4><span> 价值和可量化ROI或提升数字，需要明确的统计公式，如无法统计，则需要提数据埋点需求，通过数据量化收益。</span> ';
 
 // 看板状态：暂存中，待指派、待受理、讨论中，待拆分，story技术评估，开发中，测试中，上线
 const BOARD_TITLE = [
   {
     name: '暂存中',
     boardId: 1,
-    demandList:[]
+    demandList: [],
   },
   {
     name: '待指派',
     boardId: 2,
-    demandList:[]
+    demandList: [],
   },
   {
     name: '待受理',
     boardId: 3,
-    demandList:[]
+    demandList: [],
   },
   {
     name: '讨论中',
     boardId: 4,
-    demandList:[]
+    demandList: [],
   },
   {
     name: '待拆分',
     boardId: 5,
-    demandList:[]
+    demandList: [],
   },
   {
     name: 'story技术评估',
     boardId: 6,
-    demandList:[]
+    demandList: [],
   },
   {
     name: '开发中',
     boardId: 7,
-    demandList:[]
+    demandList: [],
   },
   {
     name: '测试中',
     boardId: 8,
-    demandList:[]
+    demandList: [],
   },
   {
     name: '上线',
     boardId: 9,
-    demandList:[]
+    demandList: [],
   },
   {
     name: '取消',
     boardId: 10,
-    demandList:[]
+    demandList: [],
   },
 ];
 
@@ -65,12 +66,12 @@ const BOARD_TITLE_OBJ = {
   '7': '开发中',
   '8': '测试中',
   '9': '上线',
-  '10': '取消'
-}
+  '10': '取消',
+};
 
 // 详情页流程
 const FLOW_STATUS = [
-  { label: '暂存中', value: '0', userName: '胖胖hhhhhhhhhh', time:'2020-09-17' },
+  { label: '暂存中', value: '0', userName: '胖胖hhhhhhhhhh', time: '2020-09-17' },
   { label: '待指派', value: '1' },
   { label: '待受理', value: '2' },
   { label: '讨论中', value: '3' },
@@ -78,7 +79,7 @@ const FLOW_STATUS = [
   { label: 'Story技术评估', value: '5' },
   { label: '开发中', value: '6' },
   { label: '上线', value: '7' },
-]
+];
 
 // 需求类型
 const DEMAND_TYPE_ARR = [
@@ -105,8 +106,8 @@ const DEMAND_PRIORITY_OBJ = {
 };
 
 const IS_OR_NOT = {
-  'n': '否',
-  'y': '是',
+  n: '否',
+  y: '是',
 };
 
 export {
@@ -122,46 +123,46 @@ export {
 };
 
 export const STORY_TYPE = [
-  { key: 1, value: "新增" },
-  { key: 2, value: "优化" },
-  { key: 3, value: "变更" },
-]
+  { key: 1, value: '新增' },
+  { key: 2, value: '优化' },
+  { key: 3, value: '变更' },
+];
 
 export const STORY_PRIORITY = [
-  { key: "最高", value: "最高" },
-  { key: "高", value: "高" },
-  { key: "中", value: "中" },
-  { key: "低", value: "低" },
-  { key: "最低", value: "最低" },
-]
+  { key: '最高', value: '最高' },
+  { key: '高', value: '高' },
+  { key: '中', value: '中' },
+  { key: '低', value: '低' },
+  { key: '最低', value: '最低' },
+];
 
 export const DEMAND_STATUS = [
-  { key: "1", value: "暂存中" },
-  { key: "2", value: "待指派" },
-  { key: "3", value: "待受理" },
-  { key: "4", value: "讨论中" },
-  { key: "5", value: "待拆分" },
-  { key: "6", value: "story技术评估" },
-  { key: "7", value: "开发中" },
-  { key: "8", value: "测试中" },
-  { key: "9", value: "上线" },
-]
+  { key: '1', value: '暂存中' },
+  { key: '2', value: '待指派' },
+  { key: '3', value: '待受理' },
+  { key: '4', value: '讨论中' },
+  { key: '5', value: '待拆分' },
+  { key: '6', value: 'story技术评估' },
+  { key: '7', value: '开发中' },
+  { key: '8', value: '测试中' },
+  { key: '9', value: '上线' },
+];
 export const STORY_STATUS = [
-  { key: "1", value: "需求分析中" },
-  { key: "2", value: "需求已确定" },
-  { key: "3", value: "开发中" },
-  { key: "4", value: "测试提测" },
-  { key: "5", value: "测试中" },
-  { key: "6", value: "测试完成" },
-  { key: "7", value: "已上线" },
-  { key: "8", value: "暂停" },
-  { key: "9", value: "取消" },
-  { key: "10", value: "关闭" },
-]
+  { key: '1', value: '需求分析中' },
+  { key: '2', value: '需求已确定' },
+  { key: '3', value: '开发中' },
+  { key: '4', value: '测试提测' },
+  { key: '5', value: '测试中' },
+  { key: '6', value: '测试完成' },
+  { key: '7', value: '已上线' },
+  { key: '8', value: '暂停' },
+  { key: '9', value: '取消' },
+  { key: '10', value: '关闭' },
+];
 export const DEMAND_LEVEL = [
-  { key: "1", value: "一般" },
-  { key: "2", value: "紧急重要" },
-]
+  { key: '1', value: '一般' },
+  { key: '2', value: '紧急重要' },
+];
 // 需求类型
 export const DEMAND_TYPE = [
   { key: 'p', value: '项目需求' },
@@ -170,10 +171,16 @@ export const DEMAND_TYPE = [
 
 // 下拉
 export const DEMAND_GROUP = [
-  { key: "1", value: "我的需求" },
-  { key: "2", value: "我创建的" },
-  { key: "3", value: "我受理的" },
-  { key: "4", value: "我关注的" },
-  { key: "5", value: "我团队的" },
-  { key: "6", value: "我部门的" },
-]
+  { key: '1', value: '我的需求' },
+  { key: '2', value: '我创建的' },
+  { key: '3', value: '我受理的' },
+  { key: '4', value: '我关注的' },
+  { key: '5', value: '我团队的' },
+  { key: '6', value: '我部门的' },
+];
+
+//
+export const RISK_CONTROL = [
+  { key: 'y', value: '是' },
+  { key: 'n', value: '否' },
+];

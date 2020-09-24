@@ -41,6 +41,7 @@ import {
   DEMAND_STATUS,
   DEMAND_TYPE,
   DEMAND_TYPE_ARR,
+  RISK_CONTROL,
 } from '@/pages/demand/util/constant';
 
 import AssignUser from '../components/story/assignUser';
@@ -49,7 +50,7 @@ import storage from '@/utils/storage';
 const demandRoutes = {
   '/demand/myDemand': '我的需求',
   '/demand/generalDemand': '一般需求',
-  '/demand/projectDemand': '项目',
+  '/demand/projectDemand': '项目需求',
 };
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -62,6 +63,7 @@ const Index = memo(
       setSearchForm,
       demand: { demandList, allBudgetList, groupList },
       global: { userList },
+      location: { pathname },
     } = props;
 
     const [addModalVisible, setAddModalVisible] = useState(false);
@@ -165,13 +167,6 @@ const Index = memo(
       });
     };
 
-    useEffect(() => {
-      handleQueryDemandList();
-      handleQueryUserList();
-      handleQueryBudgetList();
-      handleQueryHeaderGroupList();
-    }, []);
-
     const columns = [
       {
         title: '需求编号',
@@ -184,7 +179,6 @@ const Index = memo(
               <span
                 style={{ color: '#2E5BFF', cursor: 'pointer' }}
                 onClick={() => {
-                  const pathname = props?.location?.pathname;
                   if (!pathname) return;
                   props.history.push({
                     pathname: `${pathname}/detail`,
@@ -204,17 +198,24 @@ const Index = memo(
         },
       },
       TableColumnHelper.genPlanColumn('title', '标题'),
-      TableColumnHelper.genSelectColumn('type', '需求类型', DEMAND_TYPE),
-      TableColumnHelper.genSelectColumn('status', '状态', DEMAND_STATUS),
+      TableColumnHelper.genSelectColumn('type', '需求类型', DEMAND_TYPE, { sorter: true }),
+      TableColumnHelper.genSelectColumn('status', '状态', DEMAND_STATUS, { sorter: true }),
       TableColumnHelper.genSelectColumn(
         'priority',
         '优先级',
         DEMAND_PRIORITY_ARR.map(v => ({ ...v, value: v.val })),
+        { sorter: true },
       ),
-      TableColumnHelper.genPlanColumn('acceptTeam', '受理团队'),
-      TableColumnHelper.genPlanColumn('receiverId', '受理人'),
-      TableColumnHelper.genPlanColumn('expectedCompletionDate', '期望完成日期'),
-      TableColumnHelper.genPlanColumn('plannedLaunchDate', '计划上线日期'),
+      TableColumnHelper.genPlanColumn('acceptTeam', '受理团队', { sorter: true }),
+      TableColumnHelper.genPlanColumn('receiverId', '受理人', { sorter: true }),
+      TableColumnHelper.genPlanColumn('expectedCompletionDate', '期望完成日期', { sorter: true }),
+      TableColumnHelper.genPlanColumn('plannedLaunchDate', '计划上线日期', { sorter: true }),
+      TableColumnHelper.genPlanColumn('actualLineDate', '实际上线日期'),
+      TableColumnHelper.genPlanColumn('estimatedDevelopmentEffort', '开发预计工作量'),
+      TableColumnHelper.genPlanColumn('estimatedTestWorkload', '测试预计工作量'),
+      TableColumnHelper.genPlanColumn('introducer', '需求提出人', { sorter: true }),
+      TableColumnHelper.genPlanColumn('creator', '创建人', { sorter: true }),
+      TableColumnHelper.genPlanColumn('createTime', '创建时间', { sorter: true }),
       {
         title: '操作',
         width: 120,
@@ -266,6 +267,28 @@ const Index = memo(
       },
     ];
 
+    const myDemandColumns = [
+      TableColumnHelper.genSelectColumn('demandUrgency', '需求紧迫性', DEMAND_LEVEL, {
+        sorter: true,
+      }),
+      TableColumnHelper.genSelectColumn(
+        'riskControlFunction',
+        '是否涉及业务风控功能',
+        RISK_CONTROL,
+        { sorter: true },
+      ),
+      TableColumnHelper.genSelectColumn('businessCompliance', '是否涉及业务合规性', RISK_CONTROL, {
+        sorter: true,
+      }),
+      TableColumnHelper.genPlanColumn('projectName', '所属项目', { sorter: true }),
+    ];
+    // 针对不是项目需求的, 放入其他几个字段
+    if (demandRoutes[pathname] !== '项目需求') {
+      myDemandColumns.forEach((v, i) => {
+        columns.splice(12 + i, 0, v);
+      });
+    }
+
     const expandedRowRender = row => {
       if (isEmpty(row.storyList)) return null;
       const subColumns = [
@@ -311,7 +334,6 @@ const Index = memo(
           title: '操作',
           width: 170,
           align: 'center',
-          fixed: 'right',
           render: rows => {
             const { userInfo } = storage.get('gd-user', {});
             const isDelete = userInfo?.userId === rows?.userId && !rows?.issueId;
@@ -389,14 +411,18 @@ const Index = memo(
       );
     };
 
-    const handleDemandTableChange = pagination => {
+    const handleDemandTableChange = (pagination, filters, sorter) => {
       // const formValues = form.getFieldsValue();
       const params = {
         currentPage: pagination.current,
         pageSize: pagination.pageSize,
         // ...formValues, // 添加已查询条件去获取分页
       };
-      handleQueryDemandList(params);
+      const sortParams = {
+        sortBy: sorter.columnKey,
+        orderFlag: sorter.order === 'ascend' ? 1 : -1,
+      };
+      handleQueryDemandList({ ...params, ...sortParams });
     };
 
     const handleSearchForm = () => {
@@ -419,8 +445,6 @@ const Index = memo(
       };
       setSearchForm(obj => ({ ...obj, ...params }));
     };
-
-    const handleResetForm = () => {};
 
     const renderForm = () => {
       const { getFieldDecorator } = form;
@@ -670,7 +694,7 @@ const Index = memo(
                 <Button
                   ghost
                   className={classNames('margin-right-6', styles.orangeForm)}
-                  onClick={handleResetForm}
+                  onClick={() => setSearchForm({ active: '0', myGroup: '1' })}
                 >
                   重置
                 </Button>
@@ -701,7 +725,13 @@ const Index = memo(
       );
     };
 
-    const contentWidth = document.body.clientWidth - 188 - 32 - 32 + 1;
+    useEffect(() => {
+      handleQueryDemandList();
+      handleQueryUserList();
+      handleQueryBudgetList();
+      handleQueryHeaderGroupList();
+    }, []);
+
     return (
       <div className={styles.childrenTable}>
         <div className={styles.tableList}>
@@ -726,7 +756,7 @@ const Index = memo(
             }}
             onChange={handleDemandTableChange}
             expandRowByClick
-            scroll={{ x: contentWidth }}
+            scroll={{ x: 2750 }}
           />
         </div>
         {addModalVisible && (
