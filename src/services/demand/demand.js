@@ -170,6 +170,13 @@ export async function syncStory(params) {
     params,
   });
 }
+// 查询 评估权限
+export async function estimate(params) {
+  return request('/story/estimate', {
+    method: 'get',
+    params,
+  });
+}
 
 // 关注需求
 // attention/add

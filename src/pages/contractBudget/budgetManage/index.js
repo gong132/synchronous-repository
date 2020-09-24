@@ -52,7 +52,7 @@ const Index = props => {
   const [teamList, setTeamList] = useState([]);
   const [allDeptList, setAllDeptList] = useState([]);
 
-  const [yearTime, setYearTime] = useState([]);
+  const [yearTime, setYearTime] = useState(null);
 
   const handleQueryBudgetData = params => {
     dispatch({

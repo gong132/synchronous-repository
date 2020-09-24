@@ -68,6 +68,7 @@ const Index = memo(props => {
     {
       title: "转评估人",
       align: "center",
+      key: "assessor",
       width: 180,
       render: rows => (
         <Select
@@ -95,13 +96,17 @@ const Index = memo(props => {
   };
 
   const handleOk = () => {
+    if (changeRows.length === 0) {
+      message.warning("当前数据未修改, 请修改后提交.")
+      return
+    }
     const monitorErr = changeRows.map(v => {
-      if (!v.evaluateTime || !v.developWorkload || !v.testWorkload) return false
+      if (!v.assessor) return false
       return true
     }).filter(v => !v).length > 0
 
     if (monitorErr) {
-      message.error("请输入完整内容")
+      message.error("转评估人不能为空")
       return
     }
 

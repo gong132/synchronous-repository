@@ -2,6 +2,7 @@ import * as React from 'react';
 
 export interface IGOptButtonProps {
   style?: React.CSSProperties;
+  iconStyle?: React.CSSProperties;
   text: React.ReactNode;
   icon?: string;
   img?: string;

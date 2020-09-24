@@ -9,6 +9,7 @@ import {
   tempAddDemand,
   copyStory,
   searchStory,
+  estimate,
   batchAssessStory,
   fetchStoryDetails,
   syncStory,
@@ -58,6 +59,8 @@ const Demand = {
     tempDemandId: '',
     flowList: [],
     storyDetails: {},
+    ITAssignVisible: false,
+    assignorVisible: false,
   },
   effects: {
     *queryFile({ payload }, { call}) {
@@ -463,7 +466,37 @@ const Demand = {
         }
       })
       return true
-    }
+    },
+    // 查询 评估权限
+    *ITAssignAuth({payload}, {call, put}) {
+      const {data, msg, code} = yield call(estimate, payload)
+      if(code !== 200) {
+        message.error(msg)
+        return false
+      }
+      yield put({
+        type: 'saveData',
+        payload: {
+          ITAssignVisible: data,
+        }
+      })
+      return data
+    },
+    // 查询 评估权限
+    *assignorAuth({payload}, {call, put}) {
+      const {data, msg, code} = yield call(estimate, payload)
+      if(code !== 200) {
+        message.error(msg)
+        return false
+      }
+      yield put({
+        type: 'saveData',
+        payload: {
+          assignorVisible: data,
+        }
+      })
+      return data
+    },
   },
   reducers: {
     saveData(state, { payload }) {

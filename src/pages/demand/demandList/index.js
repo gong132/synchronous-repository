@@ -36,6 +36,7 @@ import upIcon from "@/assets/icon/Pull_up.svg";
 import {DEMAND_PRIORITY_ARR, DEMAND_STATUS} from "@/pages/demand/util/constant";
 
 import AssignUser from "../components/story/assignUser"
+import storage from "@/utils/storage";
 
 const demandRoutes = {
   '/demand/myDemand': '我的需求',
@@ -123,6 +124,21 @@ const Index = memo(
         handleQueryDemandList();
       });
     };
+
+
+    // 同步JIRA
+    const handleSyncStory = () => {
+      dispatch({
+        type: "demand/syncStory",
+        payload: {
+          storyId: props?.location?.query?.id,
+        },
+      }).then(res => {
+        if (!res) return;
+        message.success("同步成功")
+        handleQueryDemandList();
+      })
+    }
 
     useEffect(() => {
       handleQueryDemandList();
@@ -261,57 +277,68 @@ const Index = memo(
           width: 170,
           align: 'center',
           fixed: "right",
-          render: rows => (
-            <Fragment>
-              <OptButton
-                img={edit}
-                showText={false}
-                text="编辑"
-                onClick={() => {
-                  setAddModalVisible(true);
-                  setSelectedRows(rows);
-                }}
-              />
-              <Divider type="vertical" />
-              <OptButton
-                icon="eye"
-                text="查看"
-                showText={false}
-                onClick={() => {
-                  router.push({
-                    pathname: "/demand/storyDetail",
-                    query: {
-                      id: rows.id,
-                    },
-                  });
-                }}
-              />
-              <Divider type="vertical" />
-              <OptButton
-                icon="sync"
-                text="同步"
-                showText={false}
-                onClick={() => {
-                  // setAddModalVisible(true);
-                  // setSelectedRows(rows)
-                }}
-              />
-              <Divider type="vertical" />
-
-              <Popconfirm
-                title={`确定要删除${row.title}吗?`}
-                onConfirm={() => handleUpdateStory(rows.id)}
-                okText="确定"
-                cancelText="取消"
-              >
+          render: rows => {
+            const { userInfo } = storage.get("gd-user", {})
+            const isDelete = userInfo?.userId === rows?.userId && !rows?.issueId
+            return (
+              <Fragment>
                 <OptButton
-                  img={deleteIcon}
+                  img={edit}
                   showText={false}
-                  text="删除"
+                  text="编辑"
+                  onClick={() => {
+                    setAddModalVisible(true);
+                    setSelectedRows(rows);
+                  }}
                 />
-              </Popconfirm>
-            </Fragment>
-          ),
+                <Divider type="vertical" />
+                <OptButton
+                  icon="eye"
+                  text="查看"
+                  showText={false}
+                  onClick={() => {
+                    router.push({
+                      pathname: "/demand/storyDetail",
+                      query: {
+                        id: rows.id,
+                      },
+                    });
+                  }}
+                />
+                <Divider type="vertical" />
+
+                <Popconfirm
+                  title="确定要同步JIRA吗?"
+                  onConfirm={(userInfo.userId !== rows.assessor || rows?.issueId) && handleSyncStory}
+                  okText="确定"
+                  cancelText="取消"
+                >
+                  <OptButton
+                    icon="sync"
+                    text="同步"
+                    disabled={userInfo.userId !== rows.assessor || rows?.issueId}
+                    showText={false}
+                  />
+                </Popconfirm>
+                <Divider type="vertical" />
+
+                <Popconfirm
+                  title={`确定要删除${row.title}吗?`}
+                  onConfirm={() => isDelete && handleUpdateStory(rows.id)}
+                  okText="确定"
+                  cancelText="取消"
+                >
+                  <OptButton
+                    img={deleteIcon}
+                    showText={false}
+                    style={isDelete ? {color: "#d63649"} : {color: "#b0bac9"}}
+                    text="删除"
+                    disabled={!isDelete}
+                  />
+                </Popconfirm>
+              </Fragment>
+            )
+          }
         },
       ];
       return (

@@ -130,7 +130,7 @@ const AuthorManage = props => {
             okText="确定"
             cancelText="取消"
           >
-            <OptButton img={deleteIcon} text="删除" />
+            <OptButton img={deleteIcon} text="删除" iconStyle={{color: "#d63649"}} style={{color: "#d63649"}} />
           </Popconfirm>
         </>
       )
