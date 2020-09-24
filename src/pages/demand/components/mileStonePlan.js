@@ -21,6 +21,7 @@ import {
   DatePicker,
   Popconfirm
 } from 'antd'
+import { getParam } from '@/utils/utils';
 
 const FormItem = Form.Item
 const { Option } = Select
@@ -46,9 +47,11 @@ class MilePlan extends PureComponent {
 
   // 查询
   handleQueryList = (params) => {
+    const no = getParam('no')
     this.props.dispatch({
       type: 'demand/queryMilePlan',
       payload: {
+        demandNo: no,
         ...DefaultPage,
         ...params
       },
@@ -64,6 +67,7 @@ class MilePlan extends PureComponent {
       },
     }).then(res => {
       if (res) {
+        this.handleVisibleModal(false)
         this.handleQueryList()
         this.props.handleQueryLogList()
       }
@@ -79,6 +83,7 @@ class MilePlan extends PureComponent {
       },
     }).then(res => {
       if (res) {
+        this.handleVisibleModal(false)
         this.handleQueryList()
         this.props.handleQueryLogList()
       }
@@ -102,13 +107,15 @@ class MilePlan extends PureComponent {
 
   handleSubmit = () => {
     const { modalTitle, recordValue } = this.state
-    const { demandNumber } = this.props
+    const { demandNumber, demand } = this.props
+    const { planStageListMap } = demand
     this.props.form.validateFields((err, values) => {
       if (err) return true;
       if (values.planTime && !_.isEmpty(values.planTime)) {
         values.stageStart = moment(values.planTime[0]).format('YYYY-MM-DD')
         values.stageEnd = moment(values.planTime[1]).format('YYYY-MM-DD')
       }
+      values.headName = planStageListMap[values.headId]
       values.demandNo = demandNumber
       if (modalTitle === '编辑') {
         values.id = recordValue.id
@@ -145,13 +152,13 @@ class MilePlan extends PureComponent {
       stageStart,
       stageEnd,
       stage,
-      headName,
       headId,
     } = recordValue
     return (
       <Modal
         visible={visibleModal}
         title={modalTitle}
+        width='794px'
         onCancel={() => this.handleVisibleModal(false)}
         footer={
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -169,7 +176,7 @@ class MilePlan extends PureComponent {
       >
         <Row>
           <Col span={24}>
-            <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 12 }} label="里程碑计划">
+            <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 8 }} label="里程碑计划">
               {form.getFieldDecorator('stage', {
                 rules: [{ required: true, message: '请输入里程碑计划' }],
                 initialValue: stage,
@@ -183,6 +190,9 @@ class MilePlan extends PureComponent {
                       .indexOf(input.toLowerCase()) >= 0
                   }
                   placeholder="请输入里程碑计划"
+                  style={{
+                    width: '100%'
+                  }}
                 >
                   {!_.isEmpty(planStageList) &&
                     planStageList.map(d => (
@@ -195,7 +205,7 @@ class MilePlan extends PureComponent {
             </FormItem>
           </Col>
           <Col span={24}>
-            <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 12 }} label="里程碑时间段">
+            <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 8 }} label="里程碑时间段">
               {form.getFieldDecorator('planTime', {
                 rules: [{ required: true, message: '请输入里程碑时间段' }],
                 initialValue: stageStart ? [moment(stageStart), moment(stageEnd)] : [],
@@ -205,10 +215,10 @@ class MilePlan extends PureComponent {
             </FormItem>
           </Col>
           <Col span={24}>
-            <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 12 }} label="负责人">
+            <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 8 }} label="负责人">
               {form.getFieldDecorator('headId', {
-                rules: [{ required: true, message: '请输入负责人' }],
-                initialValue: headId,
+                rules: [{ required: false, message: '请输入负责人' }],
+                initialValue: headId ? Number(headId) : '',
               })(
                 <Select
                   allowClear
@@ -219,6 +229,9 @@ class MilePlan extends PureComponent {
                       .indexOf(input.toLowerCase()) >= 0
                   }
                   placeholder="请输入负责人"
+                  style={{
+                    width: '100%'
+                  }}
                 >
                   {!_.isEmpty(planStageList) &&
                     planStageList.map(d => (
@@ -231,9 +244,9 @@ class MilePlan extends PureComponent {
             </FormItem>
           </Col>
           <Col span={24}>
-            <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 12 }} label="目标">
+            <FormItem labelCol={{ span: 4 }} wrapperCol={{ span: 20 }} label="目标">
               {form.getFieldDecorator('target', {
-                rules: [{ required: true, message: '请输入目标' }],
+                rules: [{ required: false, message: '请输入目标' }],
                 initialValue: target,
               })(
                 <Input.TextArea placeholder='请输入目标' />,
@@ -247,16 +260,31 @@ class MilePlan extends PureComponent {
 
   render() {
     const { demand } = this.props
-    const { milePlanList } = demand
+    const { milePlanList, planStageListMap } = demand
     const { visibleModal } = this.state
     const proColumns = [
-      TableColumnHelper.genPlanColumn('operateUserName', '里程碑阶段'),
-      TableColumnHelper.genPlanColumn('content1', '负责人'),
-      TableColumnHelper.genPlanColumn('updateTime', '计划完成日期'),
-      TableColumnHelper.genPlanColumn('content2', '创建人'),
-      TableColumnHelper.genPlanColumn('content3', '创建时间'),
-      TableColumnHelper.genPlanColumn('content4', '修改人'),
-      TableColumnHelper.genPlanColumn('content5', '修改时间'),
+      {
+        title: '里程碑阶段',
+        dataIndex: 'stage',
+        key: 'stage',
+        render: (text, record) => {
+          return planStageListMap[record.stage]
+        }
+      },
+      {
+        title: '里程碑时间段',
+        dataIndex: 'planTime',
+        key: 'planTime',
+        render: (text, record) => {
+          return (
+            <span>{record.stageStart} — {record.stageEnd}</span>
+          )
+        }
+      },
+      TableColumnHelper.genPlanColumn('target', '目标'),
+      TableColumnHelper.genPlanColumn('headName', '负责人'),
+      TableColumnHelper.genPlanColumn('createUserName', '创建人'),
+      TableColumnHelper.genPlanColumn('createTime', '创建时间'),
       {
         title: '操作',
         align: 'left',

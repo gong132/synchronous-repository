@@ -217,29 +217,30 @@ class SectorDetail extends PureComponent {
                 text="编辑"
               />
             ) : (
-              <div>
-                <OptButton
-                  style={{
-                    ...btnStyle,
-                    backgroundColor: 'white',
-                  }}
-                  icon="close"
-                  onClick={() =>
-                    this.setState({
-                      editBool: false,
-                    })
-                  }
-                  text="取消"
-                />
-                <OptButton
-                  style={{
-                    marginLeft: '16px',
-                  }}
-                  onClick={() => this.handleSubmit()}
-                  loading={loadingUpdate}
-                  text="保存"
-                />
-              </div>
+                <div>
+                  <OptButton
+                    style={{
+                      ...btnStyle,
+                      backgroundColor: 'white',
+                    }}
+                    icon="close"
+                    onClick={() =>
+                      this.setState({
+                        editBool: false,
+                      })
+                    }
+                    text="取消"
+                  />
+                  <OptButton
+                    style={{
+                      backgroundColor: 'white',
+                      marginLeft: '16px',
+                    }}
+                    onClick={() => this.handleSubmit()}
+                    loading={loadingUpdate}
+                    text="保存"
+                  />
+                </div>
               )
           }
         >

@@ -34,6 +34,7 @@ import {
   Spin,
   message,
   Icon,
+  Modal
   // Button
 } from 'antd';
 import {
@@ -64,6 +65,7 @@ const { Option } = Select;
   loadingQueryInfo: loading.effects['demand/queryDemandInfo'],
   loadingQueryLogData: loading.effects['demand/fetchLogList'],
   loadingQueryStoryData: loading.effects['demand/queryStoryList'],
+  loadingEditDemand: loading.effects['demand/updateDemand']
 }))
 class Detail extends Component {
   constructor(props) {
@@ -80,6 +82,7 @@ class Detail extends Component {
 
   componentDidMount() {
     this.handlePlanStage()
+    this.handleQueryPlanList()
     this.handleQueryBudget();
     this.handleQueryDetail();
     this.handleQueryLogList();
@@ -98,6 +101,19 @@ class Detail extends Component {
   //     urls: fileUrl
   //   })
   // }
+
+  // 查询
+  handleQueryPlanList = (params) => {
+    const no = getParam('no')
+    this.props.dispatch({
+      type: 'demand/queryMilePlan',
+      payload: {
+        demandNo: no,
+        ...DefaultPage,
+        ...params
+      },
+    });
+  }
 
   // 查询里程碑计划所有阶段
   handlePlanStage = () => {
@@ -307,6 +323,29 @@ class Detail extends Component {
     })
   }
 
+  handleResolveCancelOrBack = (type) => {
+    const id = getParam('id')
+    const params = {
+      id,
+    }
+    if (type === 'cancel') {
+      params.status = 10
+    } else if (type === 'back') {
+      params.status = 1
+    }
+    this.props
+      .dispatch({
+        type: 'demand/updateDemand',
+        payload: {
+          ...params,
+        },
+      }).then(res => {
+        if (res) {
+          window.history.back()
+        }
+      })
+  }
+
   render() {
     const { editBool, descriptionState, addStoryModalVisible, selectedStoryRows, itAssessModalVisible } = this.state;
     const {
@@ -314,6 +353,7 @@ class Detail extends Component {
       loadingQueryInfo,
       loadingQueryLogData,
       loadingQueryStoryData,
+      loadingEditDemand,
       demand: { budgetList, demandInfo, groupList, logList, storyList, flowList },
     } = this.props;
     const w = '100%';
@@ -459,8 +499,29 @@ class Detail extends Component {
         <div className="yCenter-between">
           <CustomBtn type="create" title="下一节点" />
           <div className="yCenter">
-            <CustomBtn type="others" title="取消" style={{ ...btnStyle, marginRight: '16px' }} />
-            <CustomBtn type="others" title="打回" style={btnStyle} />
+
+            <CustomBtn
+              onClick={() => {
+                Modal.confirm({
+                  content: '需求被取消后可到取消看板查看, 是否确定取消？',
+                  onOk: () => this.handleResolveCancelOrBack('cancel')
+                })
+              }}
+              type="others"
+              title="取消"
+              style={{ ...btnStyle, marginRight: '16px' }}
+            />
+            <CustomBtn
+              onClick={() => {
+                Modal.confirm({
+                  content: '需求被打回后可到暂存看板中查看，是否确定打回？',
+                  onOk: () => this.handleResolveCancelOrBack('back')
+                })
+              }}
+              type="others"
+              title="打回"
+              style={btnStyle}
+            />
           </div>
         </div>
         <GlobalSandBox title="流程进度" img={flowIcon}>
@@ -558,6 +619,7 @@ class Detail extends Component {
                       style={{
                         backgroundColor: 'white',
                       }}
+                      loading={loadingEditDemand}
                       onClick={this.handleSubmit}
                       text="保存"
                     />

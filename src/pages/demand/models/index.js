@@ -46,6 +46,7 @@ const Demand = {
     storyList: PagerHelper.genListState(),
     assessStoryList: PagerHelper.genListState(),
     planStageList: [],
+    planStageListMap: {},
     demandBoard: [],
     demandInfo: {},
     groupList: [],
@@ -433,13 +434,11 @@ const Demand = {
       }
       const { data, ...others } = res.data;
       yield put({
-        type: 'saveData',
+        type: 'setMilePlanData',
         payload: {
-          assessStoryList: PagerHelper.resolveListState({
-            filter: payload,
-            data,
-            ...others,
-          })
+          filter: payload,
+          data,
+          ...others,
         },
       });
     },

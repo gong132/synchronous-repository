@@ -48,6 +48,11 @@ const BOARD_TITLE = [
     boardId: 9,
     demandList:[]
   },
+  {
+    name: '取消',
+    boardId: 10,
+    demandList:[]
+  },
 ];
 
 const BOARD_TITLE_OBJ = {
@@ -60,6 +65,7 @@ const BOARD_TITLE_OBJ = {
   '7': '开发中',
   '8': '测试中',
   '9': '上线',
+  '10': '取消'
 }
 
 // 详情页流程

@@ -12,6 +12,8 @@ import {
 import _ from 'lodash';
 import EditModal from '../components/createModal'
 import AppointModal from '../components/appointModal'
+import focusIcon from '@/assets/icon/sc.svg'
+import { getUserInfo } from '@/utils/utils'
 // import moment from 'moment';
 import styles from '../index.less'
 
@@ -43,7 +45,7 @@ class DemandBoard extends Component {
       showEditModal: false,
       propValue: {},
       showAppointModal: false,
-      demandId:''
+      demandId: ''
     }
   }
 
@@ -84,7 +86,7 @@ class DemandBoard extends Component {
     })
   }
 
-  handleViewAppointModal = (bool, recordValue) => {
+  handleViewAppointModal = (bool, recordValue = {}) => {
     this.setState({
       showAppointModal: bool,
       demandId: recordValue.id
@@ -92,18 +94,20 @@ class DemandBoard extends Component {
   }
 
   renderBoardMenu = (record, boardId) => {
-    const { collectId } = record
+    const { attention, creator } = record
+    const { userInfo } = getUserInfo()
+    const { userName } = userInfo
     return (
       <Menu onClick={({ item, key, keyPath, domEvent }) => this.quickResolveStory(item, key, keyPath, domEvent, record)}>
         {boardId !== 1 && <Menu.Item key='appointFocus'>指派关注人</Menu.Item>}
         {boardId === 2 && <Menu.Item key='appointAccept'>指派受理人</Menu.Item>}
-        {(boardId === 1 || boardId === 3) && <Menu.Item key='edit'>编辑</Menu.Item>}
+        {(boardId === 1 || boardId === 3) && creator === userName && <Menu.Item key='edit'>编辑</Menu.Item>}
         {boardId === 3 && <Menu.Item key='accept'>受理</Menu.Item>}
         {(boardId === 1 || boardId === 2)
-          && <Menu.Item key='del'>删除</Menu.Item>
+          && creator === userName && <Menu.Item key='del'>删除</Menu.Item>
         }
         {
-          collectId ?
+          attention === 1 ?
             <Menu.Item key='cancelFocus'>取消关注</Menu.Item>
             : <Menu.Item key='focus'>关注</Menu.Item>
         }
@@ -143,6 +147,8 @@ class DemandBoard extends Component {
     });
   }
 
+  // 取消关注
+
   quickResolveStory = async (item, key, keyPath, domEvent, editValue) => {
     if (domEvent.stopPropagation) {
       domEvent.stopPropagation()
@@ -180,10 +186,11 @@ class DemandBoard extends Component {
     }
   }
 
-
-
-
-
+  // 拖拽处理
+  onDragEnd = result => {
+    console.log(result)
+    const {source, destination} = result
+  }
 
   render() {
     const { iHeight, ciHeight, showEditModal, propValue, showAppointModal, demandId } = this.state
@@ -213,7 +220,7 @@ class DemandBoard extends Component {
       >
         {showEditModal && <EditModal {...editModalProps} />}
         {showAppointModal && <AppointModal {...appointModalProps} />}
-        <DragDropContext>
+        <DragDropContext onDragEnd={this.onDragEnd}>
           {!_.isEmpty(arr) && arr.map((droppableItem) => (
             <div
               key={droppableItem.boardId}
@@ -288,7 +295,8 @@ class DemandBoard extends Component {
                                         </div>
                                       </div>
                                       <div className={styles.dragBoard_secondLine}>
-                                        {item.title}
+                                        {item.attention === 1 && <Icon component={focusIcon} />}
+                                        <span>{item.title}</span>
                                       </div>
                                       <div className={styles.dragBoard_thirdLine}>
                                         <div className={styles.dragBoard_thirdLine_time}>

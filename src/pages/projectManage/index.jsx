@@ -5,6 +5,7 @@ import moment from 'moment'
 import StandardTable from "@/components/StandardTable";
 import { TableColumnHelper } from "@/utils/helper";
 import ListOptBtn from '@/components/commonUseModule/listOptBtn'
+import Ellipse from '@/components/commonUseModule/ellipse'
 import editIcon from '@/assets/icon/cz_bj.svg';
 import eyeIcon from '@/assets/icon/cz_ck.svg'
 import lcbIcon from '@/assets/icon/cz_lcbjh.svg'
@@ -78,7 +79,7 @@ class ProjectManage extends Component {
 
   }
 
-  handleViewDetail = () => { 
+  handleViewDetail = () => {
     router.push({
       pathname: '/projectDetail'
     })
@@ -103,7 +104,7 @@ class ProjectManage extends Component {
       orderFlag: sorter.order === 'ascend' ? 1 : -1,
     };
 
-    this.handleQueryData({ ...params, ...sortParams });
+    // this.handleQueryData({ ...params, ...sortParams });
   };
 
   renderSearchForm = () => {
@@ -378,43 +379,170 @@ class ProjectManage extends Component {
   genColumns = () => {
     const columns = [
       {
-        title: '项目编号',
+        title: <Ellipse text='项目编号' style={{ width: 57 }} />,
         dataIndex: 'number',
         key: 'number',
         sorter: true,
+        align: 'center',
         render: (text, record) => {
           return (
-            <span
-              onClick={
-                () => this.handleViewDetail(record)
-              }
-              className='globalStyle'
-            >
-              {text}
-            </span>
-          )
-        }
+            <Ellipse
+              text={text}
+              onClick={() => this.handleViewDetail(record)}
+              className="globalStyle"
+              style={{
+                width: '6vw'
+              }}
+            />
+          );
+        },
       },
-      TableColumnHelper.genPlanColumn('deptName', '项目名称'),
-      TableColumnHelper.genLangColumn('systemName', '项目状态', { sorter: true }),
-      TableColumnHelper.genPlanColumn('userName', '项目进度', { sorter: true }),
-      TableColumnHelper.genPlanColumn('userName', '项目优先级', { sorter: true }),
-      TableColumnHelper.genPlanColumn('userName', '立项金额', { sorter: true }),
-      TableColumnHelper.genPlanColumn('userName', '业务集群/板块', { sorter: true }),
-      TableColumnHelper.genPlanColumn('userName', '商务状态', { sorter: true }),
-      TableColumnHelper.genPlanColumn('userName', '立项申请团队', { sorter: true }),
+      {
+        title: <Ellipse text='项目名称' style={{ width: 57 }} />,
+        dataIndex: 'name',
+        key: 'name',
+        align: 'center',
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '8vw'
+              }}
+            />
+          );
+        },
+      },
+      {
+        title: <Ellipse text='项目状态' style={{ width: 57 }} />,
+        dataIndex: 'number',
+        key: 'number',
+        sorter: true,
+        align: 'center',
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '6vw'
+              }}
+            />
+          );
+        },
+      },
+      {
+        title: <Ellipse text='项目进度' style={{ width: 57 }} />,
+        dataIndex: 'number',
+        key: 'number',
+        sorter: true,
+        align: 'center',
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '6vw'
+              }}
+            />
+          );
+        },
+      },
+      {
+        title: <Ellipse text='项目优先级' style={{ width: '3vw' }} />,
+        dataIndex: 'name',
+        key: 'name',
+        align: 'center',
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '3vw'
+              }}
+            />
+          );
+        },
+      },
+      {
+        title: <Ellipse text='立项金额' style={{ width: 57 }} />,
+        dataIndex: 'number',
+        key: 'number',
+        sorter: true,
+        align: 'center',
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '6vw'
+              }}
+            />
+          );
+        },
+      },
+      {
+        title: <Ellipse text='业务集群/板块' style={{ width: 57 }} />,
+        dataIndex: 'number',
+        key: 'number',
+        sorter: true,
+        align: 'center',
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '6vw'
+              }}
+            />
+          );
+        },
+      },
+      {
+        title: <Ellipse text='商务状态' style={{ width: 57 }} />,
+        dataIndex: 'number',
+        key: 'number',
+        sorter: true,
+        align: 'center',
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '6vw'
+              }}
+            />
+          );
+        },
+      },
+      {
+        title: <Ellipse text='立项申请团队' style={{ width: 57 }} />,
+        dataIndex: 'number',
+        key: 'number',
+        sorter: true,
+        align: 'center',
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '6vw'
+              }}
+            />
+          );
+        },
+      },
       {
         title: '操作',
         align: 'left',
         render: (text, record) => {
           return (
-            <div>
+            <div style={{whiteSpace: 'nowrap'}}>
               {<ListOptBtn
                 title="编辑"
                 onClick={() => this.handleViewModal(true, '编辑', record)}
                 style={{
                   fontSize: '20px',
-                  marginRight: '16px',
+                  marginRight: '12px',
                   position: 'relative',
                   top: '1px'
                 }}
@@ -426,7 +554,7 @@ class ProjectManage extends Component {
                 style={{
                   fontSize: '24px',
                   position: 'relative',
-                  marginRight: '16px',
+                  marginRight: '12px',
                   top: '5px'
                 }}
                 icon={eyeIcon}
@@ -461,7 +589,7 @@ class ProjectManage extends Component {
           // data={constractList}
           // loading={loadingQueryData}
           dataSource={[
-            { number: 'gong', systemName: 'gg' },
+            { number: 'gong', systemName: 'gg', name: '国庆放假不调休，哈哈哈' },
             { number: 'gong2', systemName: 'gg' },
             { number: 'gong3', systemName: 'gg' }
           ]}
