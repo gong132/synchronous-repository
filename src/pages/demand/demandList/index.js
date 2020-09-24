@@ -29,11 +29,19 @@ import styles from '../index.less';
 
 import deleteIcon from '@/assets/icon/Button_del.svg';
 import assignIcon from '@/assets/icon/cz_zp.svg';
+import arrowRight from '@/assets/icon/arrowRight.svg';
+import arrowBottom from '@/assets/icon/arrowbottom.svg';
 import {formLayoutItem, formLayoutItem2} from "@/utils/constant";
 import classNames from "classnames";
 import bottomIcon from "@/assets/icon/drop_down.svg";
 import upIcon from "@/assets/icon/Pull_up.svg";
-import {DEMAND_PRIORITY_ARR, DEMAND_STATUS} from "@/pages/demand/util/constant";
+import {
+  DEMAND_LEVEL,
+  DEMAND_PRIORITY_ARR,
+  DEMAND_STATUS,
+  DEMAND_TYPE,
+  DEMAND_TYPE_ARR
+} from "@/pages/demand/util/constant";
 
 import AssignUser from "../components/story/assignUser"
 import storage from "@/utils/storage";
@@ -45,12 +53,14 @@ const demandRoutes = {
 };
 const FormItem = Form.Item;
 const { Option } = Select;
+const { RangePicker } = DatePicker;
 const Index = memo(
   withRouter(props => {
     const {
       dispatch,
       form,
-      demand: { demandList },
+      setSearchForm,
+      demand: { demandList, allBudgetList, groupList },
       global: { userList }
     } = props;
 
@@ -87,10 +97,26 @@ const Index = memo(
       handleQueryDemandProject(params);
     };
 
-
     const handleQueryUserList = () => {
       dispatch({
         type: "global/queryUserList",
+        payload: {
+          ...PagerHelper.MaxPage,
+        },
+      })
+    }
+
+    const handleQueryBudgetList = () => {
+      dispatch({
+        type: "demand/queryBudgetList",
+        payload: {
+          ...PagerHelper.MaxPage,
+        },
+      })
+    }
+    const handleQueryHeaderGroupList = () => {
+      dispatch({
+        type: "demand/fetchHeaderGroup",
         payload: {
           ...PagerHelper.MaxPage,
         },
@@ -143,6 +169,8 @@ const Index = memo(
     useEffect(() => {
       handleQueryDemandList();
       handleQueryUserList()
+      handleQueryBudgetList()
+      handleQueryHeaderGroupList()
     }, []);
 
     const columns = [
@@ -177,9 +205,9 @@ const Index = memo(
         },
       },
       TableColumnHelper.genPlanColumn('title', '标题'),
-      TableColumnHelper.genSelectColumn('type', '需求类型', DEMAND_PRIORITY_ARR),
+      TableColumnHelper.genSelectColumn('type', '需求类型', DEMAND_TYPE),
       TableColumnHelper.genSelectColumn('status', '状态', DEMAND_STATUS),
-      TableColumnHelper.genSelectColumn('priority', '优先级',DEMAND_PRIORITY_ARR),
+      TableColumnHelper.genSelectColumn('priority', '优先级',DEMAND_PRIORITY_ARR.map(v => ({...v, value: v.val}))),
       TableColumnHelper.genPlanColumn('acceptTeam', '受理团队'),
       TableColumnHelper.genPlanColumn('receiverId', '受理人'),
       TableColumnHelper.genPlanColumn('expectedCompletionDate', '期望完成日期'),
@@ -363,7 +391,20 @@ const Index = memo(
     };
 
     const handleSearchForm = () => {
-
+      const formValues = form.getFieldsValue()
+      const { requirementDescription, plannedLaunchDate, actualLineDate, createTime } = formValues;
+      const params = {
+        ...formValues,
+        minExpectedCompletionDate: requirementDescription ? requirementDescription[0].format("YYYY-MM-DD") : null,
+        maxExpectedCompletionDate: requirementDescription ? requirementDescription[1].format("YYYY-MM-DD") : null,
+        minPlannedLaunchDate: plannedLaunchDate ? plannedLaunchDate[0].format("YYYY-MM-DD") : null,
+        maxPlannedLaunchDate: plannedLaunchDate ? plannedLaunchDate[1].format("YYYY-MM-DD") : null,
+        minActualLineDate: actualLineDate ? actualLineDate[1].format("YYYY-MM-DD") : null,
+        maxActualLineDate: actualLineDate ? actualLineDate[1].format("YYYY-MM-DD") : null,
+        minCreateDate: createTime ? createTime[1].format("YYYY-MM-DD") : null,
+        maxCreateDate: createTime ? createTime[1].format("YYYY-MM-DD") : null,
+      }
+      setSearchForm(obj => ({ ...obj, ...params}))
     }
 
     const handleResetForm = () => {
@@ -377,11 +418,11 @@ const Index = memo(
           <Row>
             <Col span={24}>
               <FormItem {...formLayoutItem2} label="所属预算">
-                {getFieldDecorator('type')(
+                {getFieldDecorator('budgetNumbers')(
                   <Select placeholder="请选择项目类型" allowClear>
-                    {[].map(v => (
-                      <Option value={v.key} key={v.key.toString()}>
-                        {v.value}
+                    {allBudgetList && allBudgetList.map(v => (
+                      <Option value={v.id} key={v.id}>
+                        {v.name}
                       </Option>
                     ))}
                   </Select>
@@ -391,6 +432,32 @@ const Index = memo(
             <Col span={24}>
               <FormItem {...formLayoutItem2} label="需求类型">
                 {getFieldDecorator('type')(
+                  <Select placeholder="请选择项目类型" allowClear>
+                    {DEMAND_TYPE_ARR.map(v => (
+                      <Option value={v.key} key={v.key.toString()}>
+                        {v.val}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+            <Col span={24}>
+              <FormItem {...formLayoutItem2} label="状态">
+                {getFieldDecorator('status')(
+                  <Select placeholder="请选择状态" allowClear>
+                    {DEMAND_STATUS.map(v => (
+                      <Option value={v.key} key={v.key.toString()}>
+                        {v.value}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+              </FormItem>
+            </Col>
+            <Col span={24}>
+              <FormItem {...formLayoutItem2} label="优先级">
+                {getFieldDecorator('priority')(
                   <Select placeholder="请选择项目类型" allowClear>
                     {DEMAND_PRIORITY_ARR.map(v => (
                       <Option value={v.key} key={v.key.toString()}>
@@ -402,21 +469,8 @@ const Index = memo(
               </FormItem>
             </Col>
             <Col span={24}>
-              <FormItem {...formLayoutItem2} label="优先级">
-                {getFieldDecorator('type')(
-                  <Select placeholder="请选择项目类型" allowClear>
-                    {DEMAND_PRIORITY_ARR.map(v => (
-                      <Option value={v.key} key={v.key.toString()}>
-                        {v.value}
-                      </Option>
-                    ))}
-                  </Select>
-                )}
-              </FormItem>
-            </Col>
-            <Col span={24}>
               <FormItem {...formLayoutItem2} label="需求提出人">
-                {getFieldDecorator('type')(
+                {getFieldDecorator('introducer')(
                   <Select placeholder="请选择需求提出人" allowClear>
                     {userList?.list && userList?.list.map(v => (
                       <Option value={v.loginid} key={v.loginid.toString()}>
@@ -429,11 +483,11 @@ const Index = memo(
             </Col>
             <Col span={24}>
               <FormItem {...formLayoutItem2} label="受理团队">
-                {getFieldDecorator('type')(
+                {getFieldDecorator('acceptTeam')(
                   <Select placeholder="请选择项目类型" allowClear>
-                    {[].map(v => (
-                      <Option value={v.key} key={v.key.toString()}>
-                        {v.value}
+                    {groupList && groupList.map(v => (
+                      <Option value={v.id} key={v.id}>
+                        {v.name}
                       </Option>
                     ))}
                   </Select>
@@ -442,7 +496,7 @@ const Index = memo(
             </Col>
             <Col span={24}>
               <FormItem {...formLayoutItem2} label="受理人">
-                {getFieldDecorator('type')(
+                {getFieldDecorator('receiver')(
                   <Select placeholder="请选择受理人" allowClear>
                     {userList?.list && userList?.list.map(v => (
                       <Option value={v.loginid} key={v.loginid.toString()}>
@@ -455,35 +509,35 @@ const Index = memo(
             </Col>
             <Col span={24}>
               <FormItem {...formLayoutItem2} label="需求描述">
-                {getFieldDecorator('type')(<Input />)}
+                {getFieldDecorator('requirementDescription')(<Input />)}
               </FormItem>
             </Col>
             <Col span={24}>
               <FormItem {...formLayoutItem2} label="期望完成日期">
-                {getFieldDecorator('type')(
-                  <DatePicker format="YYYY-MM-DD" />
+                {getFieldDecorator('requirementDescription')(
+                  <RangePicker format="YYYY-MM-DD" />
                 )}
               </FormItem>
             </Col>
             <Col span={24}>
               <FormItem {...formLayoutItem2} label="计划上线日期">
-                {getFieldDecorator('type')(
-                  <DatePicker format="YYYY-MM-DD" />
+                {getFieldDecorator('plannedLaunchDate')(
+                  <RangePicker format="YYYY-MM-DD" />
                 )}
               </FormItem>
             </Col>
             <Col span={24}>
               <FormItem {...formLayoutItem2} label="实际上线日期">
-                {getFieldDecorator('type')(
-                  <DatePicker format="YYYY-MM-DD" />
+                {getFieldDecorator('actualLineDate')(
+                  <RangePicker format="YYYY-MM-DD" />
                 )}
               </FormItem>
             </Col>
             <Col span={24}>
               <FormItem {...formLayoutItem2} label="需求紧迫性">
-                {getFieldDecorator('type')(
+                {getFieldDecorator('demandUrgency')(
                   <Select placeholder="请选择项目类型" allowClear>
-                    {[].map(v => (
+                    {DEMAND_LEVEL.map(v => (
                       <Option value={v.key} key={v.key.toString()}>
                         {v.value}
                       </Option>
@@ -494,9 +548,9 @@ const Index = memo(
             </Col>
             <Col span={24}>
               <FormItem {...formLayoutItem2} label="是否涉及业务风控功能">
-                {getFieldDecorator('type')(
+                {getFieldDecorator('riskControlFunction')(
                   <Select placeholder="请选择项目类型" allowClear>
-                    {[].map(v => (
+                    {[{ key: "y", value: "是"},{ key: "n", value: "否"}].map(v => (
                       <Option value={v.key} key={v.key.toString()}>
                         {v.value}
                       </Option>
@@ -507,9 +561,9 @@ const Index = memo(
             </Col>
             <Col span={24}>
               <FormItem {...formLayoutItem2} label="是否涉及业务合规性">
-                {getFieldDecorator('type')(
+                {getFieldDecorator('businessCompliance')(
                   <Select placeholder="请选择项目类型" allowClear>
-                    {[].map(v => (
+                    {[{ key: "y", value: "是"},{ key: "n", value: "否"}].map(v => (
                       <Option value={v.key} key={v.key.toString()}>
                         {v.value}
                       </Option>
@@ -534,13 +588,13 @@ const Index = memo(
                   <Input
                     allowClear
                     onBlur={handleSearchForm}
-                    placeholder="请输入需求标题和描述"
+                    placeholder="请输入需求标题或描述关键字"
                   />)}
               </FormItem>
             </Col>
             <Col span={4}>
               <FormItem {...formLayoutItem} label="创建人">
-                {getFieldDecorator('deptId',{
+                {getFieldDecorator('creatorId',{
                 })(
                   <Select
                     allowClear
@@ -560,7 +614,7 @@ const Index = memo(
             </Col>
             <Col span={4}>
               <FormItem {...formLayoutItem} label="状态">
-                {getFieldDecorator('deptId',{
+                {getFieldDecorator('status',{
                 })(
                   <Select
                     allowClear
@@ -578,17 +632,17 @@ const Index = memo(
                 )}
               </FormItem>
             </Col>
-            <Col span={4}>
+            <Col span={5}>
               <FormItem {...formLayoutItem} label="创建日期">
-                {getFieldDecorator('deptId',{
+                {getFieldDecorator('createTime',{
                 })(
-                  <DatePicker
+                  <RangePicker
                     format="YYYY-MM-DD"
                   />
                 )}
               </FormItem>
             </Col>
-            <Col span={6}>
+            <Col span={5}>
               <div
                 style={{
                   width: '100%',
@@ -643,7 +697,15 @@ const Index = memo(
             data={demandList}
             expandIcon={prop => {
               if (prop?.record?.storyList?.length < 1) return ""
-              return !prop?.expanded ? <span style={{cursor: "pointer"}}>&gt;</span> : <span style={{cursor: "pointer"}}>v</span>
+              return !prop?.expanded ? (
+                <span style={{cursor: "pointer"}}>
+                  <Icon component={arrowRight} />
+                </span>
+              ) : (
+                <span style={{cursor: "pointer"}}>
+                  <Icon component={arrowBottom} />
+                </span>
+              )
             }}
             onChange={handleDemandTableChange}
             expandRowByClick

@@ -9,6 +9,7 @@ import {
   tempAddDemand,
   copyStory,
   searchStory,
+  queryBudgetList,
   estimate,
   batchAssessStory,
   fetchStoryDetails,
@@ -53,6 +54,7 @@ const Demand = {
     groupList: [],
     groupMap: {},
     budgetList: [],
+    allBudgetList: [],
     budgetMap: {},
     systemList: [],
     userList: [],
@@ -493,6 +495,21 @@ const Demand = {
         type: 'saveData',
         payload: {
           assignorVisible: data,
+        }
+      })
+      return data
+    },
+    // 查询所有预算列表
+    *queryBudgetList({payload}, {call, put}) {
+      const {data, msg, code} = yield call(queryBudgetList, payload)
+      if(code !== 200) {
+        message.error(msg)
+        return false
+      }
+      yield put({
+        type: 'saveData',
+        payload: {
+          allBudgetList: data?.data,
         }
       })
       return data

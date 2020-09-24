@@ -158,3 +158,22 @@ export const STORY_STATUS = [
   { key: "9", value: "取消" },
   { key: "10", value: "关闭" },
 ]
+export const DEMAND_LEVEL = [
+  { key: "1", value: "一般" },
+  { key: "2", value: "紧急重要" },
+]
+// 需求类型
+export const DEMAND_TYPE = [
+  { key: 'p', value: '项目需求' },
+  { key: 'u', value: '一般需求' },
+];
+
+// 下拉
+export const DEMAND_GROUP = [
+  { key: "1", value: "我的需求" },
+  { key: "2", value: "我创建的" },
+  { key: "3", value: "我受理的" },
+  { key: "4", value: "我关注的" },
+  { key: "5", value: "我团队的" },
+  { key: "6", value: "我部门的" },
+]

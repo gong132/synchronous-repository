@@ -1,4 +1,4 @@
-import React, { Fragment, memo, useEffect, useState } from 'react';
+import React, {Fragment, memo, useEffect, useState} from 'react';
 import { connect } from 'dva';
 import { withRouter } from 'umi'
 import { DefaultPage } from '@/utils/helper';
@@ -14,8 +14,11 @@ import CreateDemand from './components/createModal';
 import DemandBoard from './demandBoard';
 import DemandList from './demandList/index';
 import styles from './index.less';
+import {Select} from "antd";
+import {DEMAND_GROUP} from "@/pages/demand/util/constant";
 // import spIcon from '@/assets/icon/Button_oajssp.svg'
-// import gzIcon from '@/assets/icon/Button_gz.svg'
+import unGzIcon from '@/assets/icon/Button_gz.svg'
+import gzIcon from "@/assets/icon/sc.svg"
 
 const demandRoutes = {
   '/demand/myDemand': '我的需求',
@@ -31,7 +34,7 @@ const Index = memo(
     const [visibleModal, setVisibleModal] = useState(false);
     const [modalTitle, setModalTitle] = useState('创建需求');
 
-    // const [searchMore, setSearchMore] = useState(false)
+    const [searchForm, setSearchForm] = useState({ active: "0", myGroup: "1" })
 
     const handleViewModal = (bool, title) => {
       setVisibleModal(bool);
@@ -96,10 +99,10 @@ const Index = memo(
     // 根据路由查询不同接口
     const handleQueryDemandList = params => {
       if (demandRoutes[props.location.pathname] === '我的需求') {
-        handleQueryList(params);
+        handleQueryList({...searchForm, ...params});
         return;
       }
-      handleQueryDemandProject(params);
+      handleQueryDemandProject({...searchForm, ...params});
     };
 
     // 查询看板
@@ -127,12 +130,13 @@ const Index = memo(
     };
 
     useEffect(() => {
+      console.log("refresh")
       if (formType === 'list') {
         handleQueryDemandList();
       } else if (formType === 'board') {
         handleQueryBoard();
       }
-    }, []);
+    }, [searchForm, formType]);
 
     useEffect(() => {
       handleQueryGroup()
@@ -185,16 +189,31 @@ const Index = memo(
               icon={spIcon}
               style={{ marginLeft: '16px' }}
             /> */}
+
             <CustomBtn
-              // onClick={() => handleViewModal(true, '创建')}
+              onClick={() => {
+                setSearchForm(obj => ({...obj, active: obj.active === "1" ? "0" : "1"}))
+              }}
               type="others"
-              // icon='gzIcon'
+              icon={searchForm?.active === "1" ? gzIcon : unGzIcon}
               title="我的关注"
               style={{ marginLeft: '16px' }}
             />
+            <div className={styles.dropStyle}>
+              <Select
+                value={searchForm.myGroup}
+                onChange={val => setSearchForm(obj => ({...obj, myGroup: val}))}
+              >
+                {
+                  DEMAND_GROUP.map(v => (
+                    <Select.Option value={v.key} key={v.key}>{v.value}</Select.Option>
+                  ))
+                }
+              </Select>
+            </div>
           </div>
         </div>
-        {formType === 'list' && <DemandList />}
+        {formType === 'list' && <DemandList setSearchForm={setSearchForm} />}
         {formType === 'board' && <DemandBoard handleQueryBoard={handleQueryBoard} />}
       </Fragment>
     );

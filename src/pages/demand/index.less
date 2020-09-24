@@ -1,3 +1,4 @@
+/* eslint-disable */
 .moreBtn {
   background: #fff;
   opacity: 1;
@@ -352,4 +353,17 @@
   border-radius:2px;
   border: 1px solid #2E5BFF;
   color: #2E5BFF;
+}
+.dropStyle {
+  width: 220px;
+  margin-left: 16px;
+  :global {
+    .ant-select {
+      width: 100%;
+      .ant-select-selection--single {
+        height: 34px;
+        border: 1px solid #2E5BFF;
+      }
+    }
+  }
 }
