@@ -1,15 +1,14 @@
 import React, {memo, useEffect, useState} from "react";
 import { connect } from "dva"
-import moment from "moment";
-import {Modal, DatePicker, Input, message,} from "antd";
+import {Modal, message, Select,} from "antd";
 import StandardTable from "@/components/StandardTable";
 import {PagerHelper, TableColumnHelper} from "@/utils/helper";
 import {isEmpty} from "@/utils/lang";
 
 
 const Index = memo(props => {
-  const { dispatch, values, modalVisible, handleModalVisible,
-    demand: { storyList }, loading } = props;
+  const { dispatch, values, modalVisible, handleModalVisible, loading,
+    demand: { storyList }, global: { userList }  } = props;
 
   const [changeRows, setChangeRows] = useState([])
   const handleQueryStoryList = params => {
@@ -23,14 +22,21 @@ const Index = memo(props => {
       }
     })
   }
+  const handleQueryUserList = () => {
+    dispatch({
+      type: "global/queryUserList",
+      payload: {
+        ...PagerHelper.MaxPage,
+      }
+    })
+  }
 
   useEffect(() => {
     handleQueryStoryList()
+    handleQueryUserList()
   }, []);
 
   const handleChangeRows = (tag, val, rows) => {
-    console.log(tag, val, rows, '11111111')
-
     // 如果不存在, 新增
     if (isEmpty(changeRows.find(v => v.id === rows.id))) {
       const newRows = {
@@ -56,39 +62,25 @@ const Index = memo(props => {
     TableColumnHelper.genPopoverColumn("number", "story编号", 8),
     TableColumnHelper.genPopoverColumn("title", "story名称", 6),
     TableColumnHelper.genPlanColumn("systemName", "所属系统"),
-    TableColumnHelper.genDateTimeColumn("expectedCompletionDate", "需求期望上线日期", "YYYY-MM-DD"),
+    TableColumnHelper.genDateTimeColumn("evaluateTime", "IT预计上线日期", "YYYY-MM-DD"),
+    TableColumnHelper.genPlanColumn("developWorkload", "开发预计工作量"),
+    TableColumnHelper.genPlanColumn("testWorkload", "测试预计工作量"),
     {
-      title: "IT预计上线日期",
+      title: "转评估人",
       align: "center",
       width: 180,
       render: rows => (
-        <DatePicker
-          defaultValue={rows?.evaluateTime && moment(rows.evaluateTime)}
-          onChange={val => handleChangeRows("evaluateTime", val?.format("YYYY-MM-DD"), rows)}
-          format="YYYY-MM-DD"
-        />
-      )
-    },
-    {
-      title: "开发预计工作量",
-      align: "center",
-      width: 150,
-      render: rows => (
-        <Input
-          onChange={val => handleChangeRows("developWorkload", val.target.value, rows)}
-          defaultValue={rows?.developWorkload}
-        />
-      )
-    },
-    {
-      title: "测试预计工作量",
-      align: "center",
-      width: 150,
-      render: rows => (
-        <Input
-          defaultValue={rows?.testWorkload}
-          onChange={val => handleChangeRows("testWorkload", val.target.value, rows)}
-        />
+        <Select
+          style={{ width: 170 }}
+          onChange={val => handleChangeRows("assessor", val, rows)}
+          defaultValue={rows?.assessor}
+        >
+          {
+            userList?.list && userList.list.map(v => (
+              <Select.Option value={v.loginid} key={v.loginid}>{v.lastname}</Select.Option>
+            ))
+          }
+        </Select>
       )
     },
   ]
@@ -117,11 +109,11 @@ const Index = memo(props => {
       type: "demand/batchAssessStory",
       payload: {
         stories: changeRows,
-        operateType: 2,
+        operateType: 1,
       }
     }).then(res => {
       if (!res) return;
-      message.success("转评估人成功")
+      message.success("转评估成功")
     })
   }
 
@@ -149,9 +141,11 @@ const Index = memo(props => {
 })
 
 export default connect(({
-    demand,
-    loading,
-  }) => ({
-    demand,
-    loading: loading.models.demand,
-  }))(Index)
+                          global,
+                          demand,
+                          loading,
+                        }) => ({
+  global,
+  demand,
+  loading: loading.models.demand,
+}))(Index)

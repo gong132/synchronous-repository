@@ -2,8 +2,8 @@ import {message} from "antd";
 import {router} from "umi";
 import storage from "@/utils/storage";
 import {PagerHelper} from "@/utils/helper";
-import { isEmpty } from "@/utils/lang";
-import { queryLogList, fetchUserList, saveFile } from '@/services/global'
+import {isArray, isEmpty} from "@/utils/lang";
+import { queryLogList, fetchUserList, saveFile, fetchSystemList } from '@/services/global'
 import { queryNotices, fetchMenuList, fetchCurrentUserInfo, fetchListByRoleId, queryCurrentUserMenuList } from '@/services/user';
 
 const GlobalModel = {
@@ -13,6 +13,7 @@ const GlobalModel = {
     notices: [],
     logList: PagerHelper.genListState(),
     userList: PagerHelper.genListState(),
+    systemList: PagerHelper.genListState(),
     allMenuList: [],
     currentUserMenuList: [],
     authActions: [],
@@ -56,11 +57,11 @@ const GlobalModel = {
         message.error(msg);
         return false
       }
-      const newData =  data.flat(1).reduce((cur, next, i) =>{
+      const newData = isArray(data) ? data.flat(1).reduce((cur, next, i) =>{
         const findCurIndex = cur.find(v => v?.id === next?.id)
         if (isEmpty(findCurIndex)) cur.push(next)
         return cur
-      }, [])
+      }, []) : []
       storage.add('gd-user', { currentUserMenuList: newData });
       yield put({
         type: 'saveData',
@@ -119,6 +120,20 @@ const GlobalModel = {
         },
       })
     },
+    *querySystemList({payload}, {call, put}) {
+      const res = yield call(fetchSystemList, payload);
+      if (!res || res.code !== 200) {
+        message.error(msg);
+        return
+      }
+      yield put({
+        type: 'setSystemData',
+        payload: {
+          filter: payload,
+          data: res.data,
+        },
+      })
+    },
   },
   reducers: {
     saveData(state, { payload }) {
@@ -157,6 +172,12 @@ const GlobalModel = {
       return {
         ...state,
         userList: PagerHelper.resolveListState(action.payload),
+      };
+    },
+    setSystemData(state, action) {
+      return {
+        ...state,
+        systemList: PagerHelper.resolveListState(action.payload),
       };
     },
 

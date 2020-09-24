@@ -47,3 +47,10 @@ export async function fetchUserList(params) {
     params,
   });
 }
+// 查询系统
+export async function fetchSystemList(params) {
+  return request('/system/list', {
+    method: 'post',
+    params,
+  });
+}

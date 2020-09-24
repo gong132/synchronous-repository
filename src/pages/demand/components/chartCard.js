@@ -219,6 +219,7 @@ class ChartCard extends PureComponent {
                   ...styleObj,
                   marginTop: '12px',
                 }}
+                onClick={() => handleModalVisible(true, "turnAssessModalVisible")}
                 img={turnIcon}
                 text="转评估人"
               />

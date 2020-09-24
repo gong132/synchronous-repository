@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'dva';
-import moment from "moment";
 import classNames from 'classnames';
 import { DefaultPage, TableColumnHelper } from '@/utils/helper';
 import StandardTable from '@/components/StandardTable';
@@ -29,6 +28,7 @@ import bottomIcon from '@/assets/icon/drop_down.svg';
 import AddForm from './addForm';
 import styles from '../index.less';
 import { exportExcel } from '@/utils/utils';
+import moment from "moment";
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -52,7 +52,7 @@ const Index = props => {
   const [teamList, setTeamList] = useState([]);
   const [allDeptList, setAllDeptList] = useState([]);
 
-  const [yearTime, setYearTime] = useState(null);
+  const [yearTime, setYearTime] = useState([]);
 
   const handleQueryBudgetData = params => {
     dispatch({
@@ -161,7 +161,6 @@ const Index = props => {
   const handleResetForm = () => {
     setSearchMore(true);
     form.resetFields();
-    setYearTime(null)
     setSearchMore(false);
     handleQueryBudgetData();
   };
@@ -357,11 +356,11 @@ const Index = props => {
                   onSearch={val => handleSearch(handleQueryAllTeam({ deptName: val }))}
                 >
                   {teamList &&
-                    teamList.map(v => (
-                      <Option value={v.id} key={v.id.toString()}>
-                        {v.name}
-                      </Option>
-                    ))}
+                  teamList.map(v => (
+                    <Option value={v.id} key={v.id.toString()}>
+                      {v.name}
+                    </Option>
+                  ))}
                 </Select>,
               )}
             </FormItem>
@@ -406,11 +405,11 @@ const Index = props => {
                   placeholder="请输入需求部门"
                 >
                   {allDeptList &&
-                    allDeptList.map(v => (
-                      <Option value={v.id} key={v.id.toString()}>
-                        {v.name}
-                      </Option>
-                    ))}
+                  allDeptList.map(v => (
+                    <Option value={v.id} key={v.id.toString()}>
+                      {v.name}
+                    </Option>
+                  ))}
                 </Select>,
               )}
             </FormItem>
