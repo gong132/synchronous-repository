@@ -1,6 +1,6 @@
-import React, {Fragment, memo, useEffect, useState} from 'react';
+import React, { Fragment, memo, useEffect, useState } from 'react';
 import { connect } from 'dva';
-import { withRouter } from 'umi'
+import { withRouter } from 'umi';
 import { DefaultPage } from '@/utils/helper';
 // import _ from 'lodash'
 import CustomBtn from '@/components/commonUseModule/customBtn';
@@ -14,11 +14,11 @@ import CreateDemand from './components/createModal';
 import DemandBoard from './demandBoard';
 import DemandList from './demandList/index';
 import styles from './index.less';
-import {Select} from "antd";
-import {DEMAND_GROUP} from "@/pages/demand/util/constant";
+import { Select } from 'antd';
+import { DEMAND_GROUP } from '@/pages/demand/util/constant';
 // import spIcon from '@/assets/icon/Button_oajssp.svg'
-import unGzIcon from '@/assets/icon/Button_gz.svg'
-import gzIcon from "@/assets/icon/sc.svg"
+import unGzIcon from '@/assets/icon/Button_gz.svg';
+import gzIcon from '@/assets/icon/sc.svg';
 
 const demandRoutes = {
   '/demand/myDemand': '我的需求',
@@ -34,7 +34,7 @@ const Index = memo(
     const [visibleModal, setVisibleModal] = useState(false);
     const [modalTitle, setModalTitle] = useState('创建需求');
 
-    const [searchForm, setSearchForm] = useState({ active: "0", myGroup: "1" })
+    const [searchForm, setSearchForm] = useState({ active: '0', myGroup: '1' });
 
     const handleViewModal = (bool, title) => {
       setVisibleModal(bool);
@@ -77,32 +77,32 @@ const Index = memo(
     };
 
     // 查询团队
-    const handleQueryGroup = (params) => {
+    const handleQueryGroup = params => {
       dispatch({
         type: 'demand/fetchHeaderGroup',
         payload: {
-          ...params
-        }
+          ...params,
+        },
       });
     };
 
     // 查预算编号
-    const handleQueryBudget = (number) => {
+    const handleQueryBudget = number => {
       dispatch({
         type: 'demand/fetchBudgetNumber',
         payload: {
-          number
-        }
-      })
-    }
+          number,
+        },
+      });
+    };
 
     // 根据路由查询不同接口
     const handleQueryDemandList = params => {
       if (demandRoutes[props.location.pathname] === '我的需求') {
-        handleQueryList({...searchForm, ...params});
+        handleQueryList({ ...searchForm, ...params });
         return;
       }
-      handleQueryDemandProject({...searchForm, ...params});
+      handleQueryDemandProject({ ...searchForm, ...params });
     };
 
     // 查询看板
@@ -130,7 +130,6 @@ const Index = memo(
     };
 
     useEffect(() => {
-      console.log("refresh")
       if (formType === 'list') {
         handleQueryDemandList();
       } else if (formType === 'board') {
@@ -139,9 +138,9 @@ const Index = memo(
     }, [searchForm, formType]);
 
     useEffect(() => {
-      handleQueryGroup()
-      handleQueryBudget()
-    }, [])
+      handleQueryGroup();
+      handleQueryBudget();
+    }, []);
 
     // 查看详情
     // const handleViewDetail = () => {
@@ -164,7 +163,12 @@ const Index = memo(
       <Fragment>
         {visibleModal && <CreateDemand {...createModalProps} />}
         <div className="yCenter-between">
-          <CustomBtn onClick={() => handleViewModal(true, '创建')} icon='plus' type="create" title="创建需求" />
+          <CustomBtn
+            onClick={() => handleViewModal(true, '创建')}
+            icon="plus"
+            type="create"
+            title="创建需求"
+          />
           {/* <CustomBtn onClick={handleViewDetail} type='create' title='详情' /> */}
 
           <div className="xCenter">
@@ -192,23 +196,23 @@ const Index = memo(
 
             <CustomBtn
               onClick={() => {
-                setSearchForm(obj => ({...obj, active: obj.active === "1" ? "0" : "1"}))
+                setSearchForm(obj => ({ ...obj, active: obj.active === '1' ? '0' : '1' }));
               }}
               type="others"
-              icon={searchForm?.active === "1" ? gzIcon : unGzIcon}
+              icon={searchForm?.active === '1' ? gzIcon : unGzIcon}
               title="我的关注"
               style={{ marginLeft: '16px' }}
             />
             <div className={styles.dropStyle}>
               <Select
                 value={searchForm.myGroup}
-                onChange={val => setSearchForm(obj => ({...obj, myGroup: val}))}
+                onChange={val => setSearchForm(obj => ({ ...obj, myGroup: val }))}
               >
-                {
-                  DEMAND_GROUP.map(v => (
-                    <Select.Option value={v.key} key={v.key}>{v.value}</Select.Option>
-                  ))
-                }
+                {DEMAND_GROUP.map(v => (
+                  <Select.Option value={v.key} key={v.key}>
+                    {v.value}
+                  </Select.Option>
+                ))}
               </Select>
             </div>
           </div>

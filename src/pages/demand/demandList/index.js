@@ -15,9 +15,9 @@ import {
   Popover,
   Row,
   Select,
-  Tooltip
+  Tooltip,
 } from 'antd';
-import {DefaultPage, PagerHelper, TableColumnHelper} from '@/utils/helper';
+import { DefaultPage, PagerHelper, TableColumnHelper } from '@/utils/helper';
 // import {MENU_ACTIONS} from "@/utils/constant";
 import OptButton from '@/components/commonUseModule/optButton';
 import edit from '@/assets/icon/Button_bj.svg';
@@ -31,20 +31,20 @@ import deleteIcon from '@/assets/icon/Button_del.svg';
 import assignIcon from '@/assets/icon/cz_zp.svg';
 import arrowRight from '@/assets/icon/arrowRight.svg';
 import arrowBottom from '@/assets/icon/arrowbottom.svg';
-import {formLayoutItem, formLayoutItem2} from "@/utils/constant";
-import classNames from "classnames";
-import bottomIcon from "@/assets/icon/drop_down.svg";
-import upIcon from "@/assets/icon/Pull_up.svg";
+import { formLayoutItem, formLayoutItem2 } from '@/utils/constant';
+import classNames from 'classnames';
+import bottomIcon from '@/assets/icon/drop_down.svg';
+import upIcon from '@/assets/icon/Pull_up.svg';
 import {
   DEMAND_LEVEL,
   DEMAND_PRIORITY_ARR,
   DEMAND_STATUS,
   DEMAND_TYPE,
-  DEMAND_TYPE_ARR
-} from "@/pages/demand/util/constant";
+  DEMAND_TYPE_ARR,
+} from '@/pages/demand/util/constant';
 
-import AssignUser from "../components/story/assignUser"
-import storage from "@/utils/storage";
+import AssignUser from '../components/story/assignUser';
+import storage from '@/utils/storage';
 
 const demandRoutes = {
   '/demand/myDemand': '我的需求',
@@ -61,14 +61,14 @@ const Index = memo(
       form,
       setSearchForm,
       demand: { demandList, allBudgetList, groupList },
-      global: { userList }
+      global: { userList },
     } = props;
 
     const [addModalVisible, setAddModalVisible] = useState(false);
     const [selectedRows, setSelectedRows] = useState({});
     const [searchMore, setSearchMore] = useState(false);
 
-    const [assignVisible, setAssignVisible] = useState(false)
+    const [assignVisible, setAssignVisible] = useState(false);
     const handleQueryMyDemand = params => {
       dispatch({
         type: 'demand/queryDemand',
@@ -99,43 +99,43 @@ const Index = memo(
 
     const handleQueryUserList = () => {
       dispatch({
-        type: "global/queryUserList",
+        type: 'global/queryUserList',
         payload: {
           ...PagerHelper.MaxPage,
         },
-      })
-    }
+      });
+    };
 
     const handleQueryBudgetList = () => {
       dispatch({
-        type: "demand/queryBudgetList",
+        type: 'demand/queryBudgetList',
         payload: {
           ...PagerHelper.MaxPage,
         },
-      })
-    }
+      });
+    };
     const handleQueryHeaderGroupList = () => {
       dispatch({
-        type: "demand/fetchHeaderGroup",
+        type: 'demand/fetchHeaderGroup',
         payload: {
           ...PagerHelper.MaxPage,
         },
-      })
-    }
+      });
+    };
     const handleAssign = (params, rows, callback) => {
       dispatch({
-        type: "demand/assignUser",
+        type: 'demand/assignUser',
         payload: {
           ...params,
           type: 1,
         },
       }).then(result => {
         if (!result) return;
-        message.success("指派成功")
-        callback && callback()
-        handleQueryUserList()
-      })
-    }
+        message.success('指派成功');
+        callback && callback();
+        handleQueryUserList();
+      });
+    };
 
     const handleUpdateStory = ids => {
       dispatch({
@@ -151,26 +151,25 @@ const Index = memo(
       });
     };
 
-
     // 同步JIRA
     const handleSyncStory = () => {
       dispatch({
-        type: "demand/syncStory",
+        type: 'demand/syncStory',
         payload: {
           storyId: props?.location?.query?.id,
         },
       }).then(res => {
         if (!res) return;
-        message.success("同步成功")
+        message.success('同步成功');
         handleQueryDemandList();
-      })
-    }
+      });
+    };
 
     useEffect(() => {
       handleQueryDemandList();
-      handleQueryUserList()
-      handleQueryBudgetList()
-      handleQueryHeaderGroupList()
+      handleQueryUserList();
+      handleQueryBudgetList();
+      handleQueryHeaderGroupList();
     }, []);
 
     const columns = [
@@ -183,15 +182,15 @@ const Index = memo(
           return (
             <Tooltip placement="top" title={rows.demandNumber}>
               <span
-                style={{ color: '#2E5BFF', cursor: "pointer" }}
+                style={{ color: '#2E5BFF', cursor: 'pointer' }}
                 onClick={() => {
                   const pathname = props?.location?.pathname;
-                  if (!pathname) return
+                  if (!pathname) return;
                   props.history.push({
                     pathname: `${pathname}/detail`,
                     query: {
                       id: rows.id,
-                      no: rows.demandNumber
+                      no: rows.demandNumber,
                     },
                   });
                 }}
@@ -207,7 +206,11 @@ const Index = memo(
       TableColumnHelper.genPlanColumn('title', '标题'),
       TableColumnHelper.genSelectColumn('type', '需求类型', DEMAND_TYPE),
       TableColumnHelper.genSelectColumn('status', '状态', DEMAND_STATUS),
-      TableColumnHelper.genSelectColumn('priority', '优先级',DEMAND_PRIORITY_ARR.map(v => ({...v, value: v.val}))),
+      TableColumnHelper.genSelectColumn(
+        'priority',
+        '优先级',
+        DEMAND_PRIORITY_ARR.map(v => ({ ...v, value: v.val })),
+      ),
       TableColumnHelper.genPlanColumn('acceptTeam', '受理团队'),
       TableColumnHelper.genPlanColumn('receiverId', '受理人'),
       TableColumnHelper.genPlanColumn('expectedCompletionDate', '期望完成日期'),
@@ -227,32 +230,36 @@ const Index = memo(
                   pathname: `${props.location.pathname}/detail`,
                   query: {
                     id: rows.id,
-                    no: rows.demandNumber
+                    no: rows.demandNumber,
                   },
                 });
               }}
-
             />
             <Divider type="vertical" />
             <Popover
-              content={(
+              content={
                 <AssignUser
                   userList={userList}
                   rows={rows}
                   onOk={handleAssign}
                   handleVisible={setAssignVisible}
                 />
-              )}
+              }
               title="指派关注人"
               trigger="click"
               placement="left"
               visible={rows.id === assignVisible}
               onClick={e => e.stopPropagation()}
-              onVisibleChange={visible =>{
-                setAssignVisible( visible && rows.id)
+              onVisibleChange={visible => {
+                setAssignVisible(visible && rows.id);
               }}
             >
-              <OptButton onClick={e => e.stopPropagation()} img={assignIcon} showText={false} text="指派" />
+              <OptButton
+                onClick={e => e.stopPropagation()}
+                img={assignIcon}
+                showText={false}
+                text="指派"
+              />
             </Popover>
           </Fragment>
         ),
@@ -272,7 +279,7 @@ const Index = memo(
             return (
               <Tooltip placement="top" title={rows.number}>
                 <span
-                  style={{ color: '#2E5BFF', cursor: "pointer" }}
+                  style={{ color: '#2E5BFF', cursor: 'pointer' }}
                   onClick={() => {
                     props.history.push({
                       pathname: '/demand/storyDetail',
@@ -304,10 +311,10 @@ const Index = memo(
           title: '操作',
           width: 170,
           align: 'center',
-          fixed: "right",
+          fixed: 'right',
           render: rows => {
-            const { userInfo } = storage.get("gd-user", {})
-            const isDelete = userInfo?.userId === rows?.userId && !rows?.issueId
+            const { userInfo } = storage.get('gd-user', {});
+            const isDelete = userInfo?.userId === rows?.userId && !rows?.issueId;
             return (
               <Fragment>
                 <OptButton
@@ -326,7 +333,7 @@ const Index = memo(
                   showText={false}
                   onClick={() => {
                     router.push({
-                      pathname: "/demand/storyDetail",
+                      pathname: '/demand/storyDetail',
                       query: {
                         id: rows.id,
                       },
@@ -337,7 +344,9 @@ const Index = memo(
 
                 <Popconfirm
                   title="确定要同步JIRA吗?"
-                  onConfirm={(userInfo.userId !== rows.assessor || rows?.issueId) && handleSyncStory}
+                  onConfirm={
+                    (userInfo.userId !== rows.assessor || rows?.issueId) && handleSyncStory
+                  }
                   okText="确定"
                   cancelText="取消"
                 >
@@ -359,14 +368,14 @@ const Index = memo(
                   <OptButton
                     img={deleteIcon}
                     showText={false}
-                    style={isDelete ? {color: "#d63649"} : {color: "#b0bac9"}}
+                    style={isDelete ? { color: '#d63649' } : { color: '#b0bac9' }}
                     text="删除"
                     disabled={!isDelete}
                   />
                 </Popconfirm>
               </Fragment>
-            )
-          }
+            );
+          },
         },
       ];
       return (
@@ -391,25 +400,27 @@ const Index = memo(
     };
 
     const handleSearchForm = () => {
-      const formValues = form.getFieldsValue()
+      const formValues = form.getFieldsValue();
       const { requirementDescription, plannedLaunchDate, actualLineDate, createTime } = formValues;
       const params = {
         ...formValues,
-        minExpectedCompletionDate: requirementDescription ? requirementDescription[0].format("YYYY-MM-DD") : null,
-        maxExpectedCompletionDate: requirementDescription ? requirementDescription[1].format("YYYY-MM-DD") : null,
-        minPlannedLaunchDate: plannedLaunchDate ? plannedLaunchDate[0].format("YYYY-MM-DD") : null,
-        maxPlannedLaunchDate: plannedLaunchDate ? plannedLaunchDate[1].format("YYYY-MM-DD") : null,
-        minActualLineDate: actualLineDate ? actualLineDate[1].format("YYYY-MM-DD") : null,
-        maxActualLineDate: actualLineDate ? actualLineDate[1].format("YYYY-MM-DD") : null,
-        minCreateDate: createTime ? createTime[1].format("YYYY-MM-DD") : null,
-        maxCreateDate: createTime ? createTime[1].format("YYYY-MM-DD") : null,
-      }
-      setSearchForm(obj => ({ ...obj, ...params}))
-    }
+        minExpectedCompletionDate: requirementDescription
+          ? requirementDescription[0].format('YYYY-MM-DD')
+          : null,
+        maxExpectedCompletionDate: requirementDescription
+          ? requirementDescription[1].format('YYYY-MM-DD')
+          : null,
+        minPlannedLaunchDate: plannedLaunchDate ? plannedLaunchDate[0].format('YYYY-MM-DD') : null,
+        maxPlannedLaunchDate: plannedLaunchDate ? plannedLaunchDate[1].format('YYYY-MM-DD') : null,
+        minActualLineDate: actualLineDate ? actualLineDate[1].format('YYYY-MM-DD') : null,
+        maxActualLineDate: actualLineDate ? actualLineDate[1].format('YYYY-MM-DD') : null,
+        minCreateDate: createTime ? createTime[1].format('YYYY-MM-DD') : null,
+        maxCreateDate: createTime ? createTime[1].format('YYYY-MM-DD') : null,
+      };
+      setSearchForm(obj => ({ ...obj, ...params }));
+    };
 
-    const handleResetForm = () => {
-
-    }
+    const handleResetForm = () => {};
 
     const renderForm = () => {
       const { getFieldDecorator } = form;
@@ -420,12 +431,13 @@ const Index = memo(
               <FormItem {...formLayoutItem2} label="所属预算">
                 {getFieldDecorator('budgetNumbers')(
                   <Select placeholder="请选择项目类型" allowClear>
-                    {allBudgetList && allBudgetList.map(v => (
-                      <Option value={v.id} key={v.id}>
-                        {v.name}
-                      </Option>
-                    ))}
-                  </Select>
+                    {allBudgetList &&
+                      allBudgetList.map(v => (
+                        <Option value={v.id} key={v.id}>
+                          {v.name}
+                        </Option>
+                      ))}
+                  </Select>,
                 )}
               </FormItem>
             </Col>
@@ -438,7 +450,7 @@ const Index = memo(
                         {v.val}
                       </Option>
                     ))}
-                  </Select>
+                  </Select>,
                 )}
               </FormItem>
             </Col>
@@ -451,7 +463,7 @@ const Index = memo(
                         {v.value}
                       </Option>
                     ))}
-                  </Select>
+                  </Select>,
                 )}
               </FormItem>
             </Col>
@@ -464,7 +476,7 @@ const Index = memo(
                         {v.val}
                       </Option>
                     ))}
-                  </Select>
+                  </Select>,
                 )}
               </FormItem>
             </Col>
@@ -472,12 +484,13 @@ const Index = memo(
               <FormItem {...formLayoutItem2} label="需求提出人">
                 {getFieldDecorator('introducer')(
                   <Select placeholder="请选择需求提出人" allowClear>
-                    {userList?.list && userList?.list.map(v => (
-                      <Option value={v.loginid} key={v.loginid.toString()}>
-                        {v.lastname}
-                      </Option>
-                    ))}
-                  </Select>
+                    {userList?.list &&
+                      userList?.list.map(v => (
+                        <Option value={v.loginid} key={v.loginid.toString()}>
+                          {v.lastname}
+                        </Option>
+                      ))}
+                  </Select>,
                 )}
               </FormItem>
             </Col>
@@ -485,12 +498,13 @@ const Index = memo(
               <FormItem {...formLayoutItem2} label="受理团队">
                 {getFieldDecorator('acceptTeam')(
                   <Select placeholder="请选择项目类型" allowClear>
-                    {groupList && groupList.map(v => (
-                      <Option value={v.id} key={v.id}>
-                        {v.name}
-                      </Option>
-                    ))}
-                  </Select>
+                    {groupList &&
+                      groupList.map(v => (
+                        <Option value={v.id} key={v.id}>
+                          {v.name}
+                        </Option>
+                      ))}
+                  </Select>,
                 )}
               </FormItem>
             </Col>
@@ -498,12 +512,13 @@ const Index = memo(
               <FormItem {...formLayoutItem2} label="受理人">
                 {getFieldDecorator('receiver')(
                   <Select placeholder="请选择受理人" allowClear>
-                    {userList?.list && userList?.list.map(v => (
-                      <Option value={v.loginid} key={v.loginid.toString()}>
-                        {v.lastname}
-                      </Option>
-                    ))}
-                  </Select>
+                    {userList?.list &&
+                      userList?.list.map(v => (
+                        <Option value={v.loginid} key={v.loginid.toString()}>
+                          {v.lastname}
+                        </Option>
+                      ))}
+                  </Select>,
                 )}
               </FormItem>
             </Col>
@@ -514,23 +529,17 @@ const Index = memo(
             </Col>
             <Col span={24}>
               <FormItem {...formLayoutItem2} label="期望完成日期">
-                {getFieldDecorator('requirementDescription')(
-                  <RangePicker format="YYYY-MM-DD" />
-                )}
+                {getFieldDecorator('requirementDescription')(<RangePicker format="YYYY-MM-DD" />)}
               </FormItem>
             </Col>
             <Col span={24}>
               <FormItem {...formLayoutItem2} label="计划上线日期">
-                {getFieldDecorator('plannedLaunchDate')(
-                  <RangePicker format="YYYY-MM-DD" />
-                )}
+                {getFieldDecorator('plannedLaunchDate')(<RangePicker format="YYYY-MM-DD" />)}
               </FormItem>
             </Col>
             <Col span={24}>
               <FormItem {...formLayoutItem2} label="实际上线日期">
-                {getFieldDecorator('actualLineDate')(
-                  <RangePicker format="YYYY-MM-DD" />
-                )}
+                {getFieldDecorator('actualLineDate')(<RangePicker format="YYYY-MM-DD" />)}
               </FormItem>
             </Col>
             <Col span={24}>
@@ -542,7 +551,7 @@ const Index = memo(
                         {v.value}
                       </Option>
                     ))}
-                  </Select>
+                  </Select>,
                 )}
               </FormItem>
             </Col>
@@ -550,12 +559,15 @@ const Index = memo(
               <FormItem {...formLayoutItem2} label="是否涉及业务风控功能">
                 {getFieldDecorator('riskControlFunction')(
                   <Select placeholder="请选择项目类型" allowClear>
-                    {[{ key: "y", value: "是"},{ key: "n", value: "否"}].map(v => (
+                    {[
+                      { key: 'y', value: '是' },
+                      { key: 'n', value: '否' },
+                    ].map(v => (
                       <Option value={v.key} key={v.key.toString()}>
                         {v.value}
                       </Option>
                     ))}
-                  </Select>
+                  </Select>,
                 )}
               </FormItem>
             </Col>
@@ -563,12 +575,15 @@ const Index = memo(
               <FormItem {...formLayoutItem2} label="是否涉及业务合规性">
                 {getFieldDecorator('businessCompliance')(
                   <Select placeholder="请选择项目类型" allowClear>
-                    {[{ key: "y", value: "是"},{ key: "n", value: "否"}].map(v => (
+                    {[
+                      { key: 'y', value: '是' },
+                      { key: 'n', value: '否' },
+                    ].map(v => (
                       <Option value={v.key} key={v.key.toString()}>
                         {v.value}
                       </Option>
                     ))}
-                  </Select>
+                  </Select>,
                 )}
               </FormItem>
             </Col>
@@ -589,13 +604,16 @@ const Index = memo(
                     allowClear
                     onBlur={handleSearchForm}
                     placeholder="请输入需求标题或描述关键字"
-                  />)}
+                  />,
+                )}
               </FormItem>
             </Col>
             <Col span={4}>
               <FormItem {...formLayoutItem} label="创建人">
-                {getFieldDecorator('creatorId',{
-                })(
+                {getFieldDecorator(
+                  'creatorId',
+                  {},
+                )(
                   <Select
                     allowClear
                     showSearch
@@ -603,19 +621,22 @@ const Index = memo(
                     // onSearch={val => handleSearch(handleQueryAllTeam({ groupName: val }))}
                     placeholder="请输入创建人"
                   >
-                    {userList?.list && userList?.list.map(v => (
-                      <Option value={v.loginid} key={v.loginid.toString()}>
-                        {v.lastname}
-                      </Option>
-                    ))}
+                    {userList?.list &&
+                      userList?.list.map(v => (
+                        <Option value={v.loginid} key={v.loginid.toString()}>
+                          {v.lastname}
+                        </Option>
+                      ))}
                   </Select>,
                 )}
               </FormItem>
             </Col>
             <Col span={4}>
               <FormItem {...formLayoutItem} label="状态">
-                {getFieldDecorator('status',{
-                })(
+                {getFieldDecorator(
+                  'status',
+                  {},
+                )(
                   <Select
                     allowClear
                     showSearch
@@ -634,12 +655,7 @@ const Index = memo(
             </Col>
             <Col span={5}>
               <FormItem {...formLayoutItem} label="创建日期">
-                {getFieldDecorator('createTime',{
-                })(
-                  <RangePicker
-                    format="YYYY-MM-DD"
-                  />
-                )}
+                {getFieldDecorator('createTime', {})(<RangePicker format="YYYY-MM-DD" />)}
               </FormItem>
             </Col>
             <Col span={5}>
@@ -685,7 +701,7 @@ const Index = memo(
       );
     };
 
-    const contentWidth = document.body.clientWidth - 188 - 32 - 32 + 1
+    const contentWidth = document.body.clientWidth - 188 - 32 - 32 + 1;
     return (
       <div className={styles.childrenTable}>
         <div className={styles.tableList}>
@@ -695,17 +711,18 @@ const Index = memo(
             expandedRowRender={expandedRowRender}
             columns={columns}
             data={demandList}
+            loading={props.loading}
             expandIcon={prop => {
-              if (prop?.record?.storyList?.length < 1) return ""
+              if (prop?.record?.storyList?.length < 1) return '';
               return !prop?.expanded ? (
-                <span style={{cursor: "pointer"}}>
+                <span style={{ cursor: 'pointer' }}>
                   <Icon component={arrowRight} />
                 </span>
               ) : (
-                <span style={{cursor: "pointer"}}>
+                <span style={{ cursor: 'pointer' }}>
                   <Icon component={arrowBottom} />
                 </span>
-              )
+              );
             }}
             onChange={handleDemandTableChange}
             expandRowByClick
