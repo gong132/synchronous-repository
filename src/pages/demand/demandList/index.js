@@ -208,9 +208,13 @@ const Index = memo(
       ),
       TableColumnHelper.genPlanColumn('acceptTeam', '受理团队', { sorter: true }),
       TableColumnHelper.genPlanColumn('receiverId', '受理人', { sorter: true }),
-      TableColumnHelper.genPlanColumn('expectedCompletionDate', '期望完成日期', { sorter: true }),
-      TableColumnHelper.genPlanColumn('plannedLaunchDate', '计划上线日期', { sorter: true }),
-      TableColumnHelper.genPlanColumn('actualLineDate', '实际上线日期'),
+      TableColumnHelper.genDateTimeColumn('expectedCompletionDate', '期望完成日期', 'YYYY-MM-DD', {
+        sorter: true,
+      }),
+      TableColumnHelper.genDateTimeColumn('plannedLaunchDate', '计划上线日期', 'YYYY-MM-DD', {
+        sorter: true,
+      }),
+      TableColumnHelper.genDateTimeColumn('actualLineDate', '实际上线日期', 'YYYY-MM-DD'),
       TableColumnHelper.genPlanColumn('estimatedDevelopmentEffort', '开发预计工作量'),
       TableColumnHelper.genPlanColumn('estimatedTestWorkload', '测试预计工作量'),
       TableColumnHelper.genPlanColumn('introducer', '需求提出人', { sorter: true }),

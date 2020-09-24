@@ -236,14 +236,14 @@ function genSelectColumn(key, title, options, extend) {
   };
 }
 
-function genDateTimeColumn(key, title, format = 'YYYY-MM-DD HH:mm', extend) {
+function genDateTimeColumn(key, title, format = 'YYYY-MM-DD HH:mm:ss', extend) {
   return {
     title,
     key,
     align: 'center',
     dataIndex: key,
     ...extend,
-    render: text => (text && moment(text).format(format)) || '',
+    render: text => (!isEmpty(text) && moment(text).format(format)) || '',
   };
 }
 
