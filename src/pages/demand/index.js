@@ -113,6 +113,7 @@ const Index = memo(
           ...DefaultPage,
           ids: '1,2,3,4,5,6,7,8,9,10',
           ...params,
+          ...searchForm,
         },
       });
     };
@@ -131,11 +132,11 @@ const Index = memo(
         type: 'demand/setData',
         payload: { formType: type },
       });
-      if (type === 'list') {
-        handleQueryDemandList();
-      } else if (type === 'board') {
-        handleQueryBoard();
-      }
+      // if (type === 'list') {
+      //   handleQueryDemandList();
+      // } else if (type === 'board') {
+      //   handleQueryBoard();
+      // }
     };
 
     useEffect(() => {
