@@ -17,6 +17,7 @@ import moment from "moment";
 import {PagerHelper, TableColumnHelper} from "@/utils/helper";
 import Editor from "@/components/TinyEditor";
 import StandardTable from "@/components/StandardTable";
+import storage from "@/utils/storage";
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -251,6 +252,7 @@ const Index = withRouter(props => {
     )
   }
 
+  const { userInfo } = storage.get("gd-user", {})
   return (
     <Fragment>
       <GlobalSandBox
@@ -260,12 +262,13 @@ const Index = withRouter(props => {
           <>
             <Popconfirm
               title="确定要同步JIRA吗?"
-              onConfirm={handleSyncStory}
+              onConfirm={(userInfo.userId !== storyDetails.assessor || storyDetails?.issueId) && handleSyncStory}
               okText="确定"
               cancelText="取消"
             >
               <OptButton
                 text="同步JIRA"
+                disabled={(userInfo.userId !== storyDetails.assessor || storyDetails?.issueId)}
                 loading={syncStoryLoading}
                 img={syncJIRAButton}
               />

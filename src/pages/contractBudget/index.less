@@ -1,3 +1,4 @@
+/* eslint-disable */
 @import '~antd/lib/style/themes/default.less';
 @import '~@/utils/utils.less'; // eslint-disable-line
 
@@ -87,16 +88,14 @@
   :global {
     .ant-form-item {
       margin-bottom: 12px;
+      width: 240px;
     }
     .ant-select {
       width: 100%;
     }
-    .ant-form-item {
-      width: 240px;
-    }
   }
 }
-/*修改滚动条样式*/
+// 修改滚动条样式
 .moreSearch::-webkit-scrollbar{
   width:10px;
   height:10px;
@@ -113,7 +112,7 @@
   background: #333;
 }
 .moreSearch::-webkit-scrollbar-corner{
-  background: #179a16;
+  background: #bfbfbf;
 }
 .moreSearchButton {
   width: 200px;

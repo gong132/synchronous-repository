@@ -9,6 +9,8 @@ import {
   tempAddDemand,
   copyStory,
   searchStory,
+  queryBudgetList,
+  estimate,
   batchAssessStory,
   fetchStoryDetails,
   syncStory,
@@ -54,6 +56,7 @@ const Demand = {
     groupList: [],
     groupMap: {},
     budgetList: [],
+    allBudgetList: [],
     budgetMap: {},
     systemList: [],
     userList: [],
@@ -62,7 +65,9 @@ const Demand = {
     storyDetails: {},
     userData: [],
     userDataMap: {},
-    userDataMapId: {}
+    userDataMapId: {},
+    ITAssignVisible: false,
+    assignorVisible: false,
   },
   effects: {
     *queryFile({ payload }, { call}) {
@@ -502,7 +507,52 @@ const Demand = {
         }
       })
       return true
-    }
+    },
+    // 查询 评估权限
+    *ITAssignAuth({payload}, {call, put}) {
+      const {data, msg, code} = yield call(estimate, payload)
+      if(code !== 200) {
+        message.error(msg)
+        return false
+      }
+      yield put({
+        type: 'saveData',
+        payload: {
+          ITAssignVisible: data,
+        }
+      })
+      return data
+    },
+    // 查询 评估权限
+    *assignorAuth({payload}, {call, put}) {
+      const {data, msg, code} = yield call(estimate, payload)
+      if(code !== 200) {
+        message.error(msg)
+        return false
+      }
+      yield put({
+        type: 'saveData',
+        payload: {
+          assignorVisible: data,
+        }
+      })
+      return data
+    },
+    // 查询所有预算列表
+    *queryBudgetList({payload}, {call, put}) {
+      const {data, msg, code} = yield call(queryBudgetList, payload)
+      if(code !== 200) {
+        message.error(msg)
+        return false
+      }
+      yield put({
+        type: 'saveData',
+        payload: {
+          allBudgetList: data?.data,
+        }
+      })
+      return data
+    },
   },
   reducers: {
     saveData(state, { payload }) {

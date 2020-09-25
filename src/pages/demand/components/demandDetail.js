@@ -177,6 +177,8 @@ class Detail extends Component {
           descriptionState: requirementDescription,
         });
         this.handleQueryStoryList();
+        this.handSearchITAssignAuth()
+        this.handSearchAssignorAuth()
       });
   };
 
@@ -330,6 +332,28 @@ class Detail extends Component {
       })
   }
 
+  handSearchITAssignAuth = () => {
+    const { dispatch, demand: { demandInfo } } = this.props;
+    dispatch({
+      type: "demand/ITAssignAuth",
+      payload: {
+        demandNumber: demandInfo?.demandNumber,
+        type: 1,
+      }
+    })
+  }
+
+  handSearchAssignorAuth = () => {
+    const { dispatch, demand: { demandInfo } } = this.props;
+    dispatch({
+      type: "demand/assignorAuth",
+      payload: {
+        demandNumber: demandInfo?.demandNumber,
+        type: 2,
+      }
+    })
+  }
+
   render() {
     const { editBool, descriptionState } = this.state;
     const {
@@ -337,7 +361,8 @@ class Detail extends Component {
       loadingQueryInfo,
       loadingQueryLogData,
       loadingEditDemand,
-      demand: { budgetList, demandInfo, groupList, logList, flowList },
+      demand: { budgetList, demandInfo, groupList, logList, flowList, ITAssignVisible, assignorVisible, },
+
     } = this.props;
     const w = '100%';
     const {
@@ -1052,7 +1077,14 @@ class Detail extends Component {
             turnAssessModalVisible={this.state.turnAssessModalVisible}
           />
         </GlobalSandBox>
-        {title && <ChartCard handleModalVisible={this.handleModalVisible} title={title} />}
+        {title && (
+          <ChartCard
+            ITAssignVisible={ITAssignVisible}
+            assignorVisible={assignorVisible}
+            handleModalVisible={this.handleModalVisible}
+            title={title}
+          />
+        )}
         <GlobalSandBox title="系统需求" img={sdIcon}></GlobalSandBox>
         <GlobalSandBox img={budgetLogIcon} title="操作日志">
           <StandardTable

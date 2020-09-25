@@ -60,6 +60,7 @@ const Index = memo(props => {
     {
       title: "IT预计上线日期",
       align: "center",
+      key: "evaluateTime",
       width: 180,
       render: rows => (
         <DatePicker
@@ -72,6 +73,7 @@ const Index = memo(props => {
     {
       title: "开发预计工作量",
       align: "center",
+      key: "developWorkload",
       width: 150,
       render: rows => (
         <Input
@@ -83,6 +85,7 @@ const Index = memo(props => {
     {
       title: "测试预计工作量",
       align: "center",
+      key: "testWorkload",
       width: 150,
       render: rows => (
         <Input
@@ -103,13 +106,33 @@ const Index = memo(props => {
   };
 
   const handleOk = () => {
-    const monitorErr = changeRows.map(v => {
-      if (!v.evaluateTime || !v.developWorkload || !v.testWorkload) return false
+    if (changeRows.length === 0) {
+      message.warning("当前数据未修改, 请修改后提交.")
+      return
+    }
+    const monitorErrEvaluateTime = changeRows.map(v => {
+      if (!v.evaluateTime) return false
+      return true
+    }).filter(v => !v).length > 0
+    const monitorErrDevelopWorkload = changeRows.map(v => {
+      if (!v.developWorkload) return false
+      return true
+    }).filter(v => !v).length > 0
+    const monitorErrTestWorkload = changeRows.map(v => {
+      if (!v.testWorkload) return false
       return true
     }).filter(v => !v).length > 0
 
-    if (monitorErr) {
-      message.error("请输入完整内容")
+    if (monitorErrEvaluateTime) {
+      message.error("IT预计上线日期不能为空")
+      return
+    }
+    if (monitorErrDevelopWorkload) {
+      message.error("开发预计工作量不能为空")
+      return
+    }
+    if (monitorErrTestWorkload) {
+      message.error("测试预计工作量不能为空")
       return
     }
 

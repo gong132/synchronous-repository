@@ -13,7 +13,6 @@ const Index = props => {
       message.error("请选择指派人");
       return
     }
-    console.log(userId, 'userId')
     const params = {
       userId,
       demandId: rows.id,

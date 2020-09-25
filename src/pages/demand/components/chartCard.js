@@ -128,7 +128,7 @@ class ChartCard extends PureComponent {
 
   render() {
     const { sendData, contextMenuVisible, textContent, receiveMsg } = this.state;
-    const { handleModalVisible } = this.props;
+    const { handleModalVisible, assignorVisible, ITAssignVisible } = this.props;
     const styleObj = {
       backgroundColor: 'white',
       borderColor: '#2E5BFF',
@@ -157,17 +157,15 @@ class ChartCard extends PureComponent {
             </div>
           ) : null}
           {!_.isEmpty(receiveMsg) &&
-            receiveMsg.map(m => {
-              return (
-                <div className={styles.msgContent}>
-                  <div className={styles.msgContent_head}>
-                    <div className={styles.msgContent_head_name}>{m.userName}</div>
-                    <div className={styles.msgContent_head_time}>{m.createTime}</div>
-                  </div>
-                  <div className={styles.msgContent_body}>{m.content}</div>
+            receiveMsg.map((m, i) => (
+              <div key={i.toString()} className={styles.msgContent}>
+                <div className={styles.msgContent_head}>
+                  <div className={styles.msgContent_head_name}>{m.userName}</div>
+                  <div className={styles.msgContent_head_time}>{m.createTime}</div>
                 </div>
-              );
-            })}
+                <div className={styles.msgContent_body}>{m.content}</div>
+              </div>
+            ))}
         </div>
         <Row type="flex" gutter={{ xs: 8, sm: 16, md: 24 }}>
           <Col span={21}>
@@ -207,18 +205,18 @@ class ChartCard extends PureComponent {
             <div className={styles.sideBtn}>
               <OptButton
                 style={{
-                  ...styleObj,
                   marginTop: '12px',
                 }}
                 img={itIcon}
+                disabled={!ITAssignVisible}
                 onClick={() => handleModalVisible(true, "itAssessModalVisible")}
                 text="IT评估"
               />
               <OptButton
                 style={{
-                  ...styleObj,
                   marginTop: '12px',
                 }}
+                disabled={!assignorVisible}
                 onClick={() => handleModalVisible(true, "turnAssessModalVisible")}
                 img={turnIcon}
                 text="转评估人"

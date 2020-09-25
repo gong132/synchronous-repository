@@ -109,6 +109,13 @@ export async function fetchUserList(params) {
     params,
   });
 }
+// 获取预算列表
+export async function queryBudgetList(params) {
+  return request('/budget/query', {
+    method: 'post',
+    params,
+  });
+}
 // 新增Story
 export async function addStory(params) {
   return request('/story/add', {
@@ -166,6 +173,13 @@ export async function fetchStoryDetails(params) {
 // 同步story
 export async function syncStory(params) {
   return request('/story/sync', {
+    method: 'get',
+    params,
+  });
+}
+// 查询 评估权限
+export async function estimate(params) {
+  return request('/story/estimate', {
     method: 'get',
     params,
   });
