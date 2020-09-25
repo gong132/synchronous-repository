@@ -9,6 +9,7 @@ const TeamModel = {
   namespace: 'teamManage',
   state: {
     teamList: PagerHelper.genListState(),
+    managerList: []
   },
   effects: {
     *fetchTeamData({ payload }, { call, put }) {
@@ -26,6 +27,17 @@ const TeamModel = {
           ...others,
         },
       });
+      const arr = []
+      data.data.map(v => {
+        arr.push(v.teamHeaderName)
+        return true
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          managerList: arr
+        }
+      })
     },
   },
   reducers: {

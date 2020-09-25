@@ -536,7 +536,7 @@ class ProjectManage extends Component {
         align: 'left',
         render: (text, record) => {
           return (
-            <div style={{whiteSpace: 'nowrap'}}>
+            <div style={{ whiteSpace: 'nowrap' }}>
               {<ListOptBtn
                 title="编辑"
                 onClick={() => this.handleViewModal(true, '编辑', record)}
@@ -581,21 +581,27 @@ class ProjectManage extends Component {
 
   render() {
     return (
-      <Card>
+      <Card
+        bodyStyle={{
+          overflow: 'auto'
+        }}
+      >
         {this.renderSearchForm()}
-        <StandardTable
-          rowKey={(record, index) => index}
-          columns={this.genColumns()}
-          // data={constractList}
-          // loading={loadingQueryData}
-          dataSource={[
-            { number: 'gong', systemName: 'gg', name: '国庆放假不调休，哈哈哈' },
-            { number: 'gong2', systemName: 'gg' },
-            { number: 'gong3', systemName: 'gg' }
-          ]}
-          onChange={this.handleStandardTableChange}
-        // scroll={{ x: 1800 }}
-        />
+        <div className='cusOverflow'>
+          <StandardTable
+            rowKey={(record, index) => index}
+            columns={this.genColumns()}
+            // data={constractList}
+            // loading={loadingQueryData}
+            dataSource={[
+              { number: 'gong', systemName: 'gg', name: '国庆放假不调休，哈哈哈' },
+              { number: 'gong2', systemName: 'gg' },
+              { number: 'gong3', systemName: 'gg' }
+            ]}
+            onChange={this.handleStandardTableChange}
+          // scroll={{ x: 1800 }}
+          />
+        </div>
       </Card>
     );
   }

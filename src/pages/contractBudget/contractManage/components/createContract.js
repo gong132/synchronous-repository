@@ -81,6 +81,16 @@ const CreateContract = props => {
   //   }
   // }
 
+  // 查团队,团队框模糊搜索
+  const handleQueryTeam = (name) => {
+    handleQueryGroup({name})
+  }
+
+  // 团队负责人模糊搜索
+  const handleQueryTeamUser = (headerId) => {
+    handleQueryGroup({headerId})
+  }
+
   const submitAdd = params => {
     props
       .dispatch({
@@ -489,7 +499,7 @@ const CreateContract = props => {
                 <Select
                   allowClear
                   showSearch
-                  onSearch={_.debounce(handleQueryGroup, 500)}
+                  onSearch={_.debounce(handleQueryTeamUser, 500)}
                   optionFilterProp="children"
                   filterOption={(input, option) =>
                     JSON.stringify(option.props.children)
@@ -518,7 +528,7 @@ const CreateContract = props => {
                 <Select
                   allowClear
                   showSearch
-                  onSearch={_.debounce(handleQueryGroup, 500)}
+                  onSearch={_.debounce(handleQueryTeam, 500)}
                   optionFilterProp="children"
                   filterOption={(input, option) =>
                     JSON.stringify(option.props.children)

@@ -1,5 +1,4 @@
-import { queryUserList, updateUser, addUser } from '@/services/systemManage/userManage';
-import { fetchAllRoles } from '@/services/systemManage/authorManage'
+import { queryUserList, updateUser, fetchAllRolesList, queryHeaderGroup } from '@/services/systemManage/userManage';
 import {PagerHelper} from "@/utils/helper";
 import {message} from "antd";
 
@@ -9,6 +8,11 @@ const UserModel = {
   state: {
     userList: PagerHelper.genListState(),
     roleData: [],
+    roleDataMap: {},
+    groupList: [],
+    headerList: [],
+    headerMap: {},
+    groupMap: {}
   },
   effects: {
     *fetchUserData({ payload }, { call, put }) {
@@ -27,6 +31,7 @@ const UserModel = {
         },
       })
     },
+    
     *updateUser({ payload }, { call }) {
       const { code, msg } = yield call(updateUser, payload);
       if (!code || code !== 200) {
@@ -36,32 +41,59 @@ const UserModel = {
       return true
     },
 
-    *addUser({ payload }, { call }) {
-      const { code, msg } = yield call(addUser, payload);
-      if (!code || code !== 200) {
-        message.error(msg);
-        return false;
-      }
-      return true
-    },
-
     *queryAllRoles({ payload }, { call, put }) {
-      const { code, data, msg } = yield call(fetchAllRoles, payload)
+      const { code, data, msg } = yield call(fetchAllRolesList, payload)
       if (code !== 200) {
         message.error(msg);
         return
       }
+      let obj = {}
+      data.data.map(v => {
+        obj[v.id] = v.roleName
+      })
       yield put({
         type: 'saveData',
         payload: {
-          roleData: data
+          roleData: data.data,
+          roleDataMap: obj
         },
       })
     },
+
+    // 查询负责人和团队
+    *fetchHeaderGroup({ payload }, { call, put }) {
+      const { code, msg, data:{data} } = yield call(queryHeaderGroup, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      const obj = {}
+      const gObj = {}
+      if(data&&data.length < 1) return ''
+      data.map(v => {
+        v.id = String(v.id)
+        obj[String(v.id)] = v.name
+        return true
+      })
+      data.map(v => {
+        gObj[String(v.id)] = v.name
+        return true
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          groupList: data,
+          headerList: data,
+          headerMap: obj,
+          groupMap: gObj
+        }
+      })
+      return true
+    },
   },
   reducers: {
-    saveData(state, action) {
-      return { ...state, ...action };
+    saveData(state, {payload}) {
+      return { ...state, ...payload };
     },
     setUserData(state, action) {
       return {

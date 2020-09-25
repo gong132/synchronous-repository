@@ -187,3 +187,11 @@ export async function assignUser(params) {
     params,
   });
 }
+
+// 需求受理
+export async function receiverDemand(params) {
+  return request('/demand/receiver', {
+    method: 'post',
+    params,
+  });
+}

@@ -1,6 +1,7 @@
 import React, { PureComponent, Fragment } from 'react'
 import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
 import StandardTable from '@/components/StandardTable';
+import Editor from '@/components/TinyEditor';
 import OptButton from '@/components/commonUseModule/optButton';
 import { TableColumnHelper, DefaultPage } from '@/utils/helper';
 import { getParam } from '@/utils/utils'
@@ -8,14 +9,20 @@ import flowIcon from '@/assets/icon/modular_lcjd.svg';
 import budgetXqIcon from '@/assets/icon/modular_xq.svg';
 import budgetLogIcon from '@/assets/icon/modular_czrz.svg';
 import editIcon from '@/assets/icon/Button_bj.svg';
+import arrowBlueIcon from '@/assets/icon/arrow_blue.png';
+import arrowGreyIcon from '@/assets/icon/arrow_grey.png';
+import waitIcon from '@/assets/icon/xm_jxz.svg';
+import xqIcon from '@/assets/icon/xm.svg';
 import {
   Form,
   Descriptions,
   Input,
   Select,
-  DatePicker,
+  Icon
 } from 'antd'
 import { connect } from 'dva'
+import _ from 'lodash'
+import { DEMAND_PRIORITY_ARR, PROJECT_STATUS_ARR } from '../utils/constant'
 import styles from '../index.less'
 
 const DescriptionItem = Descriptions.Item
@@ -31,8 +38,15 @@ class Detail extends PureComponent {
     super(props)
     this.state = {
       editBool: false,
+      descriptionState: ''
     }
   }
+
+  handleChangeDesc = content => {
+    this.setState({
+      descriptionState: content,
+    });
+  };
 
   // 查日志
   handleQueryLogList = (obj = {}) => {
@@ -51,6 +65,16 @@ class Detail extends PureComponent {
     });
   };
 
+  // 查预算编号
+  handleQueryBudget = number => {
+    this.props.dispatch({
+      type: 'demand/fetchBudgetNumber',
+      payload: {
+        number,
+      },
+    });
+  };
+
   // 日志分页操作
   handleStandardTableChange = pagination => {
     const params = {
@@ -61,8 +85,9 @@ class Detail extends PureComponent {
   };
 
   render() {
-    const { editBool } = this.state
-    const { form } = this.props
+    const { editBool, descriptionState } = this.state
+    const { form, project } = this.props
+    const { budgetList } = project
     const columns = [
       TableColumnHelper.genPlanColumn('operateUserName', '操作人', { width: '100px' }),
       TableColumnHelper.genPlanColumn('content', '操作内容'),
@@ -137,12 +162,65 @@ class Detail extends PureComponent {
       color: '#D63649',
     };
 
-    const w = {width: '100%'}
+    const w = { width: '100%' }
+
+    const renderArrow = (count, index) => {
+      if (index === 6) return ''
+      if (count - index > 1) return <img alt='' src={arrowBlueIcon} />
+      return <img alt='' src={arrowGreyIcon} />
+    }
+
+    const renderFlowIcon = (count, index) => {
+      if (count - index > 1) return <Icon style={{ fontSize: '32px' }} component={xqIcon} />
+      if (count - 1 === index) return <Icon style={{ fontSize: '32px' }} component={waitIcon} />
+      return (
+        <div
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#606265',
+            fontSize: 14,
+            backgroundColor: '#e5e9f2',
+          }}
+        >
+          {index + 1}
+        </div>
+      );
+    }
 
     return (
       <Fragment>
         <GlobalSandBox title="项目进度" img={flowIcon}>
-          项目进度
+          <div className={styles.arrowBox}>
+            {PROJECT_STATUS_ARR.map((v, index) => {
+              const count = 3
+              return (
+                <div className={styles.arrowBox_arr} style={{ width: index === 6 ? '4vw' : '15vw' }}>
+                  <div className={styles.arrowBox_arr_left}>
+                    {renderFlowIcon(count, index)}
+                    {index === 6
+                      ? <span
+                        className={styles.arrowBox_arr_left_title}
+                        style={{ color: '#2E384D', left: '-15px' }}
+                      >{v.val}
+                      </span>
+                      : <span
+                        className={styles.arrowBox_arr_left_title}
+                        style={{ color: index < count ? '#2E5BFF' : '#2E384D' }}
+                      >{v.val}
+                      </span>}
+                  </div>
+                  <div className={styles.arrowBox_arr_arrow}>
+                    {renderArrow(count, index)}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </GlobalSandBox>
         <GlobalSandBox
           title="项目详情"
@@ -188,33 +266,311 @@ class Detail extends PureComponent {
               )
           }
         >
-          <Descriptions column={3} bordered className={styles.formatDetailDesc}>
-            {editBool ? (
+          {editBool
+            ? <Descriptions column={3} bordered className={styles.clearFormMargin}>
               <Fragment>
                 <DescriptionItem
-                  span={3}
-                  label={<>{<span style={{ color: 'red' }}>*</span>}项目名称</>}
+                  span={2}
+                  label={<>项目名称</>}
                 >
                   <FormItem>
                     {form.getFieldDecorator('name', {
-                      rules: [{ required: true, message: '请输入项目名称!' }],
                       // initialValue: name,
-                    })(<Input style={w} placeholder="请输入项目名称" />)}
+                    })(<Input style={w} disabled />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>项目编号</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} disabled />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>项目优先级</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('priority', {
+                      // initialValue: priority,
+                    })(
+                      <Select allowClear disabled style={w}>
+                        {DEMAND_PRIORITY_ARR.map(d => (
+                          <Option key={d.key} value={d.key}>
+                            {d.val}
+                          </Option>
+                        ))}
+                      </Select>,
+                    )}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>项目状态</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('priority', {
+                      rules: [{ required: false, message: '请输入项目状态' }],
+                      // initialValue: priority,
+                    })(
+                      <Select allowClear style={w} placeholder="请输入项目状态">
+                        {PROJECT_STATUS_ARR.map(d => (
+                          <Option key={d.key} value={d.key}>
+                            {d.val}
+                          </Option>
+                        ))}
+                      </Select>,
+                    )}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>项目进度</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} disabled />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>项目进度偏差</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} disabled />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>项目健康状态</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} disabled />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>需求优先级</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('priority', {
+                      // initialValue: priority,
+                    })(
+                      <Select disabled style={w}>
+                        {DEMAND_PRIORITY_ARR.map(d => (
+                          <Option key={d.key} value={d.key}>
+                            {d.val}
+                          </Option>
+                        ))}
+                      </Select>,
+                    )}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>预算编号</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('budgetNumbers', {
+                      // initialValue: budgetNumbers ? String(budgetNumbers) : '',
+                    })(
+                      <Select
+                        showSearch
+                        disabled
+                        style={w}
+                      >
+                        {!_.isEmpty(budgetList) &&
+                          budgetList.map(d => (
+                            <Option key={d.number} value={d.number}>
+                              {d.number}
+                            </Option>
+                          ))}
+                      </Select>,
+                    )}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>所属需求编号</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} disabled />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>需求提出部门</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} disabled />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>立项申请团队</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} disabled />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>技术评审立项金额（万）</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} disabled />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>立项评审金额（万）</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} disabled />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>合同成交金额（万）</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} disabled />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>业务集群/板块</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} disabled />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>供应商</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} disabled />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>技术评审状态</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} disabled />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>立项评审状态</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} disabled />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>商务状态</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} disabled />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>项目管理类型</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>建设方式</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>系统级别</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem
+                  span={1}
+                  label={<>项目负责人</>}
+                >
+                  <FormItem>
+                    {form.getFieldDecorator('name', {
+                      // initialValue: name,
+                    })(<Input style={w} disabled />)}
                   </FormItem>
                 </DescriptionItem>
                 <DescriptionItem
                   span={3}
-                  label={<>{<span style={{ color: 'red' }}>*</span>}项目编号</>}
+                  label={<>项目创建时间</>}
                 >
                   <FormItem>
                     {form.getFieldDecorator('name', {
-                      rules: [{ required: true, message: '请输入项目编号!' }],
                       // initialValue: name,
-                    })(<Input style={w} disabled placeholder="请输入项目编号" />)}
+                    })(<Input style={w} disabled />)}
+                  </FormItem>
+                </DescriptionItem>
+                <DescriptionItem span={3} label={<>描述</>}>
+                  <FormItem>
+                    <Editor
+                      editorKey="myContractAdd"
+                      height={300}
+                      content={descriptionState}
+                      onContentChange={content => this.handleChangeDesc(content)}
+                    />
                   </FormItem>
                 </DescriptionItem>
               </Fragment>
-            ) : (
+            </Descriptions>
+            : <Descriptions column={3} bordered className={styles.formatDetailDesc}>
+              {
                 detailList.map(
                   (v, i) =>
                     <DescriptionItem
@@ -239,9 +595,9 @@ class Detail extends PureComponent {
                           <div style={v.style}>{v.value}</div>
                         )}
                     </DescriptionItem>
-                )
-              )}
-          </Descriptions>
+                )}
+            </Descriptions>
+          }
         </GlobalSandBox>
         <GlobalSandBox title="项目里程碑计划" img={budgetXqIcon}>
           <StandardTable

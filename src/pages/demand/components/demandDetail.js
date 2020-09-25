@@ -209,9 +209,9 @@ class Detail extends Component {
         message.error('请补全需求描述！');
         return;
       }
-      values.expectedCompletionDate = moment(values.expectedCompletionDate).format('YYYY-MM-DD');
-      values.plannedLaunchDate = moment(values.plannedLaunchDate).format('YYYY-MM-DD');
-      values.actualLineDate = moment(values.actualLineDate).format('YYYY-MM-DD');
+      values.expectedCompletionDate = values.expectedCompletionDate ? moment(values.expectedCompletionDate).format('YYYY-MM-DD') : null;
+      values.plannedLaunchDate = values.plannedLaunchDate ? moment(values.plannedLaunchDate).format('YYYY-MM-DD') : null;
+      values.actualLineDate = values.actualLineDate ? moment(values.actualLineDate).format('YYYY-MM-DD'): null;
       values.requirementDescription = descriptionState;
       values.id = id;
       this.editDemand(values);

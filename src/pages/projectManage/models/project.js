@@ -1,7 +1,8 @@
 
 import { PagerHelper } from '@/utils/helper';
 import {
-  queryAllCluster
+  queryAllCluster,
+  queryBudgetNumber
 } from '@/services/project/project'
 import { queryLogList } from '@/services/global';
 import { message } from 'antd'
@@ -11,7 +12,9 @@ const Project = {
   state: {
     projectList: PagerHelper.genListState(),
     logList: PagerHelper.genListState(),
-    clusterList: []
+    clusterList: [],
+    budgetList: [],
+    budgetMap: {},
   },
   effects: {
     // 查询所有集群板块
@@ -44,6 +47,28 @@ const Project = {
           ...others,
         },
       });
+    },
+
+    // 查询预算编号
+    *fetchBudgetNumber({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(queryBudgetNumber, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      const obj = {};
+      data.map(v => {
+        obj[v.number] = v.name;
+        return true;
+      });
+      yield put({
+        type: 'saveData',
+        payload: {
+          budgetList: data,
+          budgetMap: obj,
+        },
+      });
+      return true;
     },
   },
   reducers: {

@@ -6,7 +6,7 @@ const Ellipse = (props) => {
   const { text, className, style, onClick } = props
   console.log(style)
   return (
-    <Tooltip overlayClassName='tooTipStyle' placement="top" title={text}>
+    <Tooltip mouseEnterDelay={0.5} overlayClassName='tooTipStyle' placement="top" title={text}>
       <div onClick={onClick} className={className} style={style}>
         <span className={styles.cusEllipse}>{text}</span>
       </div>

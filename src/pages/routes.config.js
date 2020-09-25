@@ -147,6 +147,13 @@ module.exports = {
           // buttons: [{ name: '编辑', key: 'edit' }],
         },
         {
+          path: '/survey',
+          name: 'satisfactionSurvey',
+          icon: 'project',
+          hideInMenu: true,
+          component: './survey',
+        },
+        {
           path: '/systemManage',
           name: 'systemManage',
           icon: 'setting',

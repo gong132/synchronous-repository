@@ -73,6 +73,8 @@ export default {
   'menu.projectDetail': '项目管理详情',
   'menu.menuConfig': '菜单管理',
 
+  'menu.satisfactionSurvey':'满意度调查',
+
   'menu.demand': '我的需求',
   'menu.demand.demandDetail': '需求详情',
   'menu.demand.myDemand': '我的需求',

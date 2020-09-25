@@ -5,7 +5,7 @@ const ListOptBtn = (props) => {
   const { title, style, onClick, icon } = props
 
   return (
-    <Tooltip overlayClassName='tooTipStyle' placement="top" title={title}>
+    <Tooltip mouseEnterDelay={0.5} overlayClassName='tooTipStyle' placement="top" title={title}>
       <Icon
         onClick={onClick}
         style={style}

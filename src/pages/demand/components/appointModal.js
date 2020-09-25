@@ -9,10 +9,15 @@ const Appoint = (props) => {
   const {
     visible,
     demandId,
+    title,
+    demand,
     handleViewModal,
     handleQueryBoard,
     form,
   } = props
+
+  const { userData, userDataMap, userDataMapId } = demand
+  console.log(userData)
 
   // 关注
   const handleFocusDemand = (params) => {
@@ -31,19 +36,46 @@ const Appoint = (props) => {
     });
   }
 
+  // 受理
+  const handleReceiverDemand = (values) => {
+    props.dispatch({
+      type: 'demand/receiverDemand',
+      payload: {
+        ...values
+      }
+    }).then(res => {
+      if (res) {
+        handleViewModal(false)
+        handleQueryBoard()
+      }
+    });
+  }
+
   const handleSubmit = () => {
     form.validateFieldsAndScroll((err, values) => {
       if (err) return true
       console.log(values)
+      if (title === '指派受理人') {
+        values.receiverId = values.user
+        values.receiverName = userDataMap[values.user]
+        values.demandId = demandId
+        delete values.user
+        handleReceiverDemand(values)
+        return true
+      }
+      console.log(userDataMapId)
+      values.userName = userDataMapId[values.user]
+      values.userId = values.user
+      delete values.user
       handleFocusDemand(values)
     })
   }
 
-  
+
 
   return (
     <Modal
-      title='指派关注人'
+      title={title}
       visible={visible}
       onCancel={() => handleViewModal(false)}
       footer={
@@ -61,8 +93,8 @@ const Appoint = (props) => {
       }
     >
       <Form>
-        <Form.Item label='关注人' labelCol={{ span: 4 }} wrapperCol={{ span: 18 }}>
-          {form.getFieldDecorator('type', {
+        <Form.Item label={title === '指派受理人' ? '受理人' : '关注人'} labelCol={{ span: 4 }} wrapperCol={{ span: 18 }}>
+          {form.getFieldDecorator('user', {
             rules: [{ required: true, message: '请输入姓名或工号' }],
             // initialValue: type,
           })(
@@ -71,19 +103,21 @@ const Appoint = (props) => {
               // showSearch
               placeholder="请输入姓名或工号"
             >
-              {/* {DEMAND_TYPE_ARR.map(d => (
-                <Option key={d.key} value={d.key}>
-                  {d.val}
-                </Option>
-              ))} */}
-              <Option key='1' value='1'>暂无数据</Option>
+              {userData.map(d => {
+                return title === '指派受理人'
+                  ? <Option key={d.loginid} value={d.loginid}>
+                    {d.lastname}
+                  </Option>
+                  : <Option key={d.id} value={d.id}>
+                    {d.lastname}
+                  </Option>
+              })}
             </Select>,
           )}
         </Form.Item>
       </Form>
     </Modal>
   )
-
 }
 
 export default connect(({ demand }) => ({

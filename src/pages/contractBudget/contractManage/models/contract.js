@@ -213,6 +213,7 @@ const Contract = {
       }
       const obj = {}
       data.map(v => {
+        v.id = String(v.id)
         obj[v.id] = v.name
         return true
       })
@@ -235,6 +236,7 @@ const Contract = {
       }
       const obj = {}
       data.map(v => {
+        v.id = String(v.id)
         obj[v.id] = v.name
         return true
       })

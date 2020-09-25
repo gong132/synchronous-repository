@@ -23,6 +23,7 @@ import {
   queryBudgetNumber,
   queryFlow,
   focusDemand,
+  receiverDemand,
 } from '@/services/demand/demand';
 import {
   addMilePlan,
@@ -32,6 +33,7 @@ import {
   queryMilePlanStage,
   // queryMilePlanInfo,
 } from '@/services/milestonePlan/mileStonePlan'
+import {queryUserList} from '@/services/systemManage/userManage'
 import { queryLogList, queryFile } from '@/services/global';
 import { PagerHelper } from '@/utils/helper';
 import { message } from 'antd';
@@ -58,6 +60,9 @@ const Demand = {
     tempDemandId: '',
     flowList: [],
     storyDetails: {},
+    userData: [],
+    userDataMap: {},
+    userDataMapId: {}
   },
   effects: {
     *queryFile({ payload }, { call}) {
@@ -89,6 +94,40 @@ const Demand = {
     // 关注需求
     *focusDemand({payload}, {call}) {
       const { code, msg } = yield call(focusDemand, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    },
+
+    // 查询人员
+    *fetchUserData({ payload }, { call, put }) {
+      const { code, data, msg } = yield call(queryUserList, payload);
+      if (code !== 200) {
+        message.error(msg);
+        return
+      }
+      const obj = {}
+      const objId = {}
+      data.data.map(v => {
+        obj[v.loginid] = v.lastname
+        objId[v.id] = v.lastname
+        return true
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          userData: data.data,
+          userDataMap: obj,
+          userDataMapId: objId,
+        },
+      })
+    },
+
+    // 受理需求 
+    *receiverDemand({payload}, {call}) {
+      const { code, msg } = yield call(receiverDemand, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;

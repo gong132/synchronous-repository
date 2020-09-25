@@ -4,18 +4,17 @@ import { withRouter } from 'umi'
 import { DefaultPage } from '@/utils/helper';
 // import _ from 'lodash'
 import CustomBtn from '@/components/commonUseModule/customBtn';
-// import {
-//   Form,
-//   Select,
-//   DatePicker
-// } from 'antd'
+import {
+  Dropdown,
+  Button,
+  Icon
+} from 'antd'
 
 import CreateDemand from './components/createModal';
 import DemandBoard from './demandBoard';
 import DemandList from './demandList/index';
 import styles from './index.less';
-// import spIcon from '@/assets/icon/Button_oajssp.svg'
-// import gzIcon from '@/assets/icon/Button_gz.svg'
+import {QUICK_SELECT, QUICK_SELECT_DICT} from './util/constant'
 
 const demandRoutes = {
   '/demand/myDemand': '我的需求',
@@ -30,7 +29,7 @@ const Index = memo(
     } = props;
     const [visibleModal, setVisibleModal] = useState(false);
     const [modalTitle, setModalTitle] = useState('创建需求');
-
+    const [extraMenuKey, setExtraMenuKey] = useState('myDemand')
     // const [searchMore, setSearchMore] = useState(false)
 
     const handleViewModal = (bool, title) => {
@@ -108,11 +107,20 @@ const Index = memo(
         type: 'demand/queryDemandBoard',
         payload: {
           ...DefaultPage,
-          ids: '1,2,3,4,5,6,7,8,9',
+          ids: '1,2,3,4,5,6,7,8,9,10',
           ...params,
         },
       });
     };
+
+    const handleQueryUser = () => {
+      dispatch({
+        type: 'demand/fetchUserData',
+        payload: {
+          ...DefaultPage,
+        },
+      });
+    }
 
     const handleFormMenuClick = type => {
       dispatch({
@@ -137,6 +145,7 @@ const Index = memo(
     useEffect(() => {
       handleQueryGroup()
       handleQueryBudget()
+      handleQueryUser()
     }, [])
 
     // 查看详情
@@ -192,6 +201,13 @@ const Index = memo(
               title="我的关注"
               style={{ marginLeft: '16px' }}
             />
+            <div>
+              <Dropdown>
+              <Button className={styles.extraBtn}>
+                {QUICK_SELECT_DICT[extraMenuKey]} <Icon type="down" />
+              </Button>
+              </Dropdown>
+            </div>
           </div>
         </div>
         {formType === 'list' && <DemandList />}

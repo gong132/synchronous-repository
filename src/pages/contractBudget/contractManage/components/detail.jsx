@@ -64,6 +64,8 @@ class Detail extends PureComponent {
     this.handleQuerySectorInfo();
     this.handleQueryLogList();
     this.handleQueryDept();
+    this.handleQuerySystem()
+    this.handleQuerySupplier()
   }
 
   // 查看板块详情
@@ -382,7 +384,7 @@ class Detail extends PureComponent {
       TableColumnHelper.genPlanColumn('updateTime', '操作时间', { width: '100px' }),
     ];
     const detailList = [
-      { span: 3, required: false, name: '合同名称', value: name, style: { whiteSpace: 'pre' } },
+      { span: 2, required: false, name: '合同名称', value: name, style: { whiteSpace: 'pre' } },
       { span: 1, required: false, name: '合同编号', value: number },
       { span: 1, required: false, name: '预算编号', value: budgetNumber },
       { span: 1, required: false, name: '所属集群/板块', value: clusterName },
@@ -398,9 +400,9 @@ class Detail extends PureComponent {
       { span: 1, required: false, name: '录入时间', value: createTime },
       { span: 1, required: false, name: '项目验收日期', value: projectCheckTime },
       { span: 1, required: false, name: '免费维保期', value: freeDefendDate },
-      { span: 1, required: false, name: '维保支付期', value: defendPayTime },
-      // { span: 3, required: false, name: '项目报告', value: name },
-      { span: 3, required: false, name: '涉及系统', value: systemName },
+      { span: 3, required: false, name: '维保支付日期', value: defendPayTime },
+      // { span: 3, required: false, name: '项目报告', value: '' },
+      // { span: 3, required: false, name: '涉及系统', value: systemName },
       { span: 3, required: false, name: '合同描述', value: description, dataIndex: 'description' },
       // { span: 3, required: false, name: '附件', value: name },
     ];
@@ -550,7 +552,7 @@ class Detail extends PureComponent {
                   <FormItem>
                     {form.getFieldDecorator('providerCompanyId', {
                       rules: [{ required: true, message: '请输入供应商' }],
-                      initialValue: providerCompanyId,
+                      initialValue: providerCompanyId ? String(providerCompanyId) : '',
                     })(
                       <Select
                         showSearch
@@ -794,27 +796,28 @@ class Detail extends PureComponent {
                     )}
                   </FormItem>
                 </DescriptionItem>
-                <DescriptionItem span={1} label={<>维保支付期</>}>
+                <DescriptionItem span={1} label={<>维保支付日期</>}>
                   <FormItem>
                     {form.getFieldDecorator('defendPayTimeEdit', {
                       rules: [
                         {
                           required: false,
-                          message: '请输入维保支付期',
+                          message: '请输入维保支付日期',
                         },
                       ],
                       initialValue: payChange ? freePayDayEdit : defendPayTime,
                     })(<Input style={{ width: w }} disabled placeholder="请输入维保支付日期" />)}
                   </FormItem>
                 </DescriptionItem>
-                <DescriptionItem
+                {/* <DescriptionItem
                   span={3}
                   label={<>{<span style={{ color: 'red' }}>*</span>}涉及系统</>}
                 >
                   <FormItem>
+                    {console.log(systemId, systemList)}
                     {form.getFieldDecorator('systemId', {
                       rules: [{ required: true, message: '请输入所属系统' }],
-                      initialValue: systemId,
+                      initialValue: systemId ? String(systemId) : '',
                     })(
                       <Select
                         allowClear
@@ -839,7 +842,7 @@ class Detail extends PureComponent {
                       </Select>,
                     )}
                   </FormItem>
-                </DescriptionItem>
+                </DescriptionItem> */}
                 <DescriptionItem span={3} label={<>描述</>}>
                   <FormItem>
                     <Editor

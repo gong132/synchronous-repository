@@ -7,3 +7,11 @@ export async function queryAllCluster(params) {
     params,
   });
 }
+
+// 查预算编号
+export async function queryBudgetNumber(params) {
+  return request('/budget/search', {
+    method: 'get',
+    params,
+  });
+}

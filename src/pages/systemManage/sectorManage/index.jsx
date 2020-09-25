@@ -271,7 +271,7 @@ class SectorManage extends Component {
     const { global: { authActions } } = this.props
     const columns = [
       {
-        title: <Ellipse text='集群/模块名称' style={{width: '10vw'}} />,
+        title: <Ellipse text='集群/模块名称' style={{ width: '10vw' }} />,
         dataIndex: 'name',
         key: 'name',
         render: (text, record) => {
@@ -280,13 +280,13 @@ class SectorManage extends Component {
               text={text}
               onClick={() => this.handleViewDetail(record)}
               className="globalStyle"
-              style={{width: '10vw'}}
+              style={{ width: '10vw' }}
             />
           );
         },
       },
       {
-        title: <Ellipse text='所属部门' style={{width: '10vw'}} />,
+        title: <Ellipse text='所属部门' style={{ width: '15vw' }} />,
         dataIndex: 'deptName',
         key: 'deptName',
         render: (text, record) => {
@@ -302,12 +302,12 @@ class SectorManage extends Component {
           });
           return <Ellipse
             text={str}
-            style={{width: '10vw'}}
+            style={{ width: '15vw' }}
           />;
         },
       },
       {
-        title: <Ellipse text='创建人' style={{width: '10vw'}} />,
+        title: <Ellipse text='创建人' style={{ width: '5vw' }} />,
         dataIndex: 'createUserName',
         key: 'createUserName',
         render: (text) => {
@@ -319,31 +319,33 @@ class SectorManage extends Component {
         },
       },
       {
-        title: <Ellipse text='创建时间' style={{width: '10vw'}} />,
+        title: <Ellipse text='创建时间' style={{ width: '10vw' }} />,
         dataIndex: 'createTime',
         key: 'createTime',
         render: (text) => {
           return (
             <Ellipse
               text={text}
+              style={{ width: '10vw' }}
             />
           );
         },
       },
       {
-        title: <Ellipse text='修改时间' style={{width: '10vw'}} />,
+        title: <Ellipse text='修改时间' style={{ width: '10vw' }} />,
         dataIndex: 'updateTime',
         key: 'updateTime',
         render: (text) => {
           return (
             <Ellipse
               text={text}
+              style={{ width: '10vw' }}
             />
           );
         },
       },
       {
-        title: <Ellipse text='修改人' style={{width: '10vw'}} />,
+        title: <Ellipse text='修改人' style={{ width: '5vw' }} />,
         dataIndex: 'updateUserName',
         key: 'updateUserName',
         render: (text) => {
@@ -359,7 +361,7 @@ class SectorManage extends Component {
         align: 'left',
         render: (text, record) => {
           return (
-            <div style={{whiteSpace: 'nowrap'}}>
+            <div style={{ whiteSpace: 'nowrap' }}>
               {authActions.includes(MENU_ACTIONS.EDIT) && <ListOptBtn
                 title="编辑"
                 onClick={() => this.handleViewModal(true, '编辑', record)}
@@ -410,11 +412,7 @@ class SectorManage extends Component {
             icon='plus'
           />}
         </div>
-        <Card 
-          bodyStyle={{
-            overflow: 'auto'
-          }}
-        >
+        <Card>
           <Modal
             title={modalTitle}
             visible={modalVisible}
@@ -477,13 +475,15 @@ class SectorManage extends Component {
             </Row>
           </Modal>
           <div className={styles.customSearchForm}>{this.renderSearchForm()}</div>
-          <StandardTable
-            rowKey={(r, index) => index}
-            columns={this.genColumns()}
-            data={sectorList}
-            loading={loadingQueryData}
-            onChange={this.handleStandardTableChange}
-          />
+          <div className='cusOverflow'>
+            <StandardTable
+              rowKey={(r, index) => index}
+              columns={this.genColumns()}
+              data={sectorList}
+              loading={loadingQueryData}
+              onChange={this.handleStandardTableChange}
+            />
+          </div>
         </Card>
       </Fragment>
     );

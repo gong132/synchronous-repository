@@ -75,6 +75,16 @@ class CreateDemand extends PureComponent {
   //   })
   // }
 
+  // 查预算编号
+  handleQueryBudget = number => {
+    this.props.dispatch({
+      type: 'demand/fetchBudgetNumber',
+      payload: {
+        number,
+      },
+    });
+  };
+
   // 查询团队
   handleQueryGroup = (params) => {
     this.props.dispatch({
@@ -199,7 +209,7 @@ class CreateDemand extends PureComponent {
   };
 
   renderForm = () => {
-    const { form, recordValue = {}, demand: { groupList } } = this.props
+    const { form, recordValue = {}, demand: { groupList, budgetList } } = this.props
     const { description } = this.state
     const {
       title,
@@ -210,6 +220,7 @@ class CreateDemand extends PureComponent {
       acceptTeam,
       receiver,
       communicate,
+      budgetNumbers,
       // id,
     } = recordValue;
     return (
@@ -229,6 +240,35 @@ class CreateDemand extends PureComponent {
                 rules: [{ required: true, message: '请输入期望完成日期' }],
                 initialValue: expectedCompletionDate ? moment(expectedCompletionDate) : null,
               })(<DatePicker placeholder="请输入期望完成日期" />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="预算编号">
+              {form.getFieldDecorator('budgetNumbers', {
+                rules: [{ required: true, message: '请输入预算编号' }],
+                initialValue: budgetNumbers,
+              })(
+                <Select
+                  allowClear
+                  showSearch
+                  onSearch={_.debounce(this.handleQueryBudget, 500)}
+                  onFocus={this.handleQueryBudget}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  placeholder="请输入预算编号"
+                >
+                  {!_.isEmpty(budgetList) &&
+                    budgetList.map(d => (
+                      <Option key={d.number} value={d.number}>
+                        {d.number}
+                      </Option>
+                    ))}
+                </Select>,
+              )}
             </FormItem>
           </Col>
           <Col span={12}>

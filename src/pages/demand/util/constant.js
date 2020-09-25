@@ -109,6 +109,25 @@ const IS_OR_NOT = {
   'y': '是',
 };
 
+// 快速搜索
+const QUICK_SELECT = [
+  {key: 'myDemand', value: '我的需求'},
+  {key: 'myCreated', value: '我创建的'},
+  {key: 'myAccepted', value: '我受理的'},
+  {key: 'myFocused', value: '我关注的'},
+  {key: 'myTeam', value: '我团队的'},
+  {key: 'myDept', value: '我部门的'},
+]
+
+const QUICK_SELECT_DICT = {
+  'myDemand': '我的需求',
+  'myCreated': '我创建的',
+  'myAccepted': '我受理的',
+  'myFocused': '我关注的',
+  'myTeam': '我团队的',
+  'myDept': '我部门的',
+}
+
 export {
   BOARD_TITLE,
   DEMAND_TYPE_ARR,
@@ -119,6 +138,8 @@ export {
   DEFAULT_DESC,
   FLOW_STATUS,
   BOARD_TITLE_OBJ,
+  QUICK_SELECT,
+  QUICK_SELECT_DICT
 };
 
 export const STORY_TYPE = [
