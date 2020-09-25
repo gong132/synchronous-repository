@@ -34,7 +34,7 @@ const Index = memo(
     const [visibleModal, setVisibleModal] = useState(false);
     const [modalTitle, setModalTitle] = useState('创建需求');
 
-    const [searchForm, setSearchForm] = useState();
+    const [searchForm, setSearchForm] = useState({});
     const [commonSearchValue, setCommonSearchValue] = useState({ active: '0', myGroup: '1' });
 
     const handleViewModal = (bool, title) => {
