@@ -15,3 +15,27 @@ export async function queryBudgetNumber(params) {
     params,
   });
 }
+
+// 获取项目所有阶段状态
+export async function queryAllStageStatus(params) {
+  return request('/project/all/stage', {
+    method: 'get',
+    params,
+  });
+}
+
+// 项目详情
+export async function queryProjectInfo(params) {
+  return request('/project/info', {
+    method: 'get',
+    params,
+  });
+}
+
+// 项目列表
+export async function queryProjectList(params) {
+  return request('/project/list', {
+    method: 'post',
+    params,
+  });
+}

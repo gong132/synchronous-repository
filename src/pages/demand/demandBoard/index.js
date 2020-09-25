@@ -170,6 +170,16 @@ class DemandBoard extends Component {
     })
   }
 
+  // 拖拽变更状态
+  handleDragDemand = (params) => {
+    this.props.dispatch({
+      type: 'demand/dragDemand',
+      payload: {
+       ...params
+      }
+    })
+  }
+
   // 取消关注
 
   quickResolveStory = async (item, key, keyPath, domEvent, editValue) => {
@@ -218,13 +228,19 @@ class DemandBoard extends Component {
       console.log('不允许******************')
       return true
     }
+    const params = {
+      demandId: Number(draggableId)
+    }
     if (source.droppableId === '2' && destination.droppableId === '3') {
       // 受理
-      this.handleReceiverDemand(draggableId)
+      params.status = '3'
+      this.handleDragDemand(params)
       return true
     }
     if (source.droppableId === '3' && destination.droppableId === '4') {
       console.log('允许******************')
+      params.status = '4'
+      this.handleDragDemand(params)
       return true
     }
     console.log('不允许******************')

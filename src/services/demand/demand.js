@@ -209,3 +209,11 @@ export async function receiverDemand(params) {
     params,
   });
 }
+
+// 看板拖拽接口
+export async function dragDemand(params) {
+  return request('/demand/pointReceiver', {
+    method: 'post',
+    params,
+  });
+}

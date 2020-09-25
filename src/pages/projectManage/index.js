@@ -3,7 +3,7 @@ import { connect } from 'dva'
 import { router } from 'umi'
 import moment from 'moment'
 import StandardTable from "@/components/StandardTable";
-import { TableColumnHelper } from "@/utils/helper";
+import { TableColumnHelper, DefaultPage } from "@/utils/helper";
 import ListOptBtn from '@/components/commonUseModule/listOptBtn'
 import Ellipse from '@/components/commonUseModule/ellipse'
 import editIcon from '@/assets/icon/cz_bj.svg';
@@ -13,6 +13,7 @@ import { formLayoutItem } from '@/utils/constant'
 import downIcon from '@/assets/icon/drop_down.svg'
 import upIcon from '@/assets/icon/Pull_up.svg'
 import CustomBtn from '@/components/commonUseModule/customBtn'
+import EditModal from './components/editModal'
 import {
   Form,
   Input,
@@ -40,7 +41,9 @@ class ProjectManage extends Component {
     super(props)
     this.state = {
       searchMore: false,
+      viewModal: false,
     }
+    this.handleDebounceQueryData = _.debounce(this.handleDebounceQueryData, 500);
   }
 
   // 查询集群列表
@@ -51,7 +54,22 @@ class ProjectManage extends Component {
     })
   }
 
-  saveParams = () => { }
+  // 查询阶段
+  handleQueryStage = () => {
+    this.props.dispatch({
+      type: 'project/queryAllStageStatus',
+    })
+  }
+
+  handleQueryData = (params = {}) => {
+    this.props.dispatch({
+      type: 'project/queryProjectList',
+      payload: {
+        ...DefaultPage,
+        ...params,
+      },
+    });
+  };
 
   // 更多查询
   moreQuery = () => {
@@ -69,6 +87,11 @@ class ProjectManage extends Component {
     this.moreQuery();
   };
 
+   // 搜索时防抖
+   handleDebounceQueryData = params => {
+    this.handleQueryData(params);
+  };
+
   setSearchMore = bool => {
     this.setState({
       searchMore: bool,
@@ -79,10 +102,23 @@ class ProjectManage extends Component {
 
   }
 
-  handleViewDetail = () => {
-    router.push({
-      pathname: '/projectDetail'
+  handleViewModal = (bool) => {
+    this.setState({
+      viewModal: bool
     })
+  }
+
+  handleViewDetail = (record={}) => {
+    router.push({
+      pathname: '/projectDetail',
+      query: {
+        id: record.id
+      }
+    })
+  }
+
+  handleSubmit = () => {
+
   }
 
   // 分页操作
@@ -104,7 +140,7 @@ class ProjectManage extends Component {
       orderFlag: sorter.order === 'ascend' ? 1 : -1,
     };
 
-    // this.handleQueryData({ ...params, ...sortParams });
+    this.handleQueryData({ ...params, ...sortParams });
   };
 
   renderSearchForm = () => {
@@ -580,12 +616,19 @@ class ProjectManage extends Component {
   }
 
   render() {
+    const {viewModal} = this.state
+    const editModalProps = {
+      visible: viewModal,
+      handleViewModal: this.handleViewModal,
+      handleSubmit: this.handleSubmit
+    }
     return (
       <Card
         bodyStyle={{
           overflow: 'auto'
         }}
       >
+        {viewModal && <EditModal {...editModalProps} />}
         {this.renderSearchForm()}
         <div className='cusOverflow'>
           <StandardTable

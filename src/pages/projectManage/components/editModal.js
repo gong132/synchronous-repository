@@ -1,22 +1,341 @@
-// import React from 'react'
-// import {
-//   Modal,
-//   Input,
-//   Select,
-//   Form,
-//   DatePicker
-// } from 'antd'
+import React, {useState} from 'react'
+import CustomBtn from '@/components/commonUseModule/customBtn';
+import { formLayoutItemAddDouble, formLayoutItemAddEdit } from '@/utils/constant';
+import { connect } from 'dva'
+import _ from 'lodash'
+import {
+  Modal,
+  Input,
+  Select,
+  Form,
+  DatePicker,
+  Row,
+  Col
+} from 'antd'
+import Editor from '@/components/TinyEditor';
 
-// const EditModal = (props) => {
-//   const {
-//     visible,
-//   } = props
-//   return (
-//     <Modal
-//       title='编辑'
-//       visible={visible}
-//     >
+const FormItem = Form.Item
+const { Option } = Select
 
-//     </Modal>
-//   )
-// }
+const EditModal = (props) => {
+  const {
+    visible,
+    handleViewModal,
+    handleSubmit,
+    recordValue={},
+    project,
+    form
+  } = props
+  const {
+    stageStatus
+  } = project
+
+  const {
+    pjName,
+    pjSn,
+    pjStage,
+    pjProgress,
+    pjProgressDeviation,
+    pjHealthStatus,
+    demandLevel,
+    budgetNo,
+    demandNo,
+    estTeam,
+    estAmount,
+    techStage,
+    estStage,
+    bnStatus,
+    pjMgType,
+    buildType,
+    systemLevel,
+    pjDesc,
+    pjType,
+    pjId,
+    createTime,
+    updateTime,
+    pjUpdateUserId,
+    pjUpdateUserName,
+    pmId,
+    pm,
+    contractAmount,
+    pretermId
+  } = recordValue
+
+  const [description, setDescription] = useState(pjDesc)
+
+
+  const renderForm = () => {
+    return (
+      <Form>
+        <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="项目名称">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(<Input disabled />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="项目编号">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(<Input disabled />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="项目状态">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(
+                <Select
+                  allowClear
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  placeholder="请输入项目状态"
+                >
+                  {!_.isEmpty(stageStatus) &&
+                    stageStatus.map(d => (
+                      <Option key={d.id} value={d.id}>
+                        {d.pjStageName}
+                      </Option>
+                    ))}
+                </Select>,
+              )}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="项目管理类型">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(
+                <Select
+                  allowClear
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  placeholder="请输入项目管理类型"
+                >
+                  {!_.isEmpty(stageStatus) &&
+                    stageStatus.map(d => (
+                      <Option key={d.id} value={d.id}>
+                        {d.pjStageName}
+                      </Option>
+                    ))}
+                </Select>,
+              )}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="项目建设方式">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(
+                <Select
+                  allowClear
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  placeholder="请输入项目建设方式"
+                >
+                  {!_.isEmpty(stageStatus) &&
+                    stageStatus.map(d => (
+                      <Option key={d.id} value={d.id}>
+                        {d.pjStageName}
+                      </Option>
+                    ))}
+                </Select>,
+              )}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="系统级别">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(
+                <Select
+                  allowClear
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  placeholder="请输入系统级别"
+                >
+                  {!_.isEmpty(stageStatus) &&
+                    stageStatus.map(d => (
+                      <Option key={d.id} value={d.id}>
+                        {d.pjStageName}
+                      </Option>
+                    ))}
+                </Select>,
+              )}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="项目进度">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(<Input disabled />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="需求优先级">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(<Input disabled />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="预算编号">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(<Input disabled />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="所属需求编号">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(<Input disabled />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="需求提出部门">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(<Input disabled />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="立项申请团队">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(<Input disabled />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="立项金额">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(<Input addonAfter='万' disabled />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="合同成交金额">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(<Input addonAfter='万' disabled />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="业务集群/板块">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(<Input disabled />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="供应商">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(<Input disabled />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="技术评审阶段">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(<Input disabled />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="立项评审阶段">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(<Input disabled />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="商务状态">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(<Input disabled />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="项目负责人">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(<Input disabled />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="项目优先级">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(<Input disabled />)}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem {...formLayoutItemAddDouble} label="项目创建时间">
+              {form.getFieldDecorator('pjName', {
+                initialValue: pjName,
+              })(<Input disabled />)}
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem label='描述' {...formLayoutItemAddEdit}>
+              <Editor
+                editorKey="myContractAdd"
+                height={300}
+                content={description}
+                onContentChange={content => setDescription(content)}
+              />
+            </FormItem>
+          </Col>
+        </Row>
+      </Form>
+    )
+  }
+
+  return (
+    <Modal
+      width={794}
+      style={{ top: 0 }}
+      title='编辑'
+      visible={visible}
+      onCancel={() => handleViewModal(false)}
+      footer={
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <CustomBtn
+            onClick={() => handleViewModal(false)}
+            type="cancel"
+            style={{ marginRight: '18px' }}
+          />
+          <CustomBtn
+            // loading={loadingAdd}
+            onClick={() => handleSubmit()}
+            type="save"
+          />
+        </div>
+      }
+    >
+      {renderForm()}
+    </Modal>
+  )
+}
+
+export default connect(({ project }) => ({
+  project
+}))(Form.create()(EditModal)) 
