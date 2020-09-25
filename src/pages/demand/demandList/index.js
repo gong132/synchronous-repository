@@ -17,7 +17,7 @@ import {
   Select,
   Tooltip,
 } from 'antd';
-import { DefaultPage, PagerHelper, TableColumnHelper } from '@/utils/helper';
+import { PagerHelper, TableColumnHelper } from '@/utils/helper';
 // import {MENU_ACTIONS} from "@/utils/constant";
 import OptButton from '@/components/commonUseModule/optButton';
 import edit from '@/assets/icon/Button_bj.svg';
@@ -61,6 +61,7 @@ const Index = memo(
       dispatch,
       form,
       setSearchForm,
+      handleQueryDemandList,
       demand: { demandList, allBudgetList, groupList },
       global: { userList },
       location: { pathname },
@@ -71,33 +72,6 @@ const Index = memo(
     const [searchMore, setSearchMore] = useState(false);
 
     const [assignVisible, setAssignVisible] = useState(false);
-    const handleQueryMyDemand = params => {
-      dispatch({
-        type: 'demand/queryDemand',
-        payload: {
-          ...DefaultPage,
-          ...params,
-        },
-      });
-    };
-
-    const handleQueryDemandProject = params => {
-      dispatch({
-        type: 'demand/queryDemandProject',
-        payload: {
-          ...DefaultPage,
-          ...params,
-        },
-      });
-    };
-
-    const handleQueryDemandList = params => {
-      if (demandRoutes[props.location.pathname] === '我的需求') {
-        handleQueryMyDemand(params);
-        return;
-      }
-      handleQueryDemandProject(params);
-    };
 
     const handleQueryUserList = () => {
       dispatch({
@@ -730,7 +704,6 @@ const Index = memo(
     };
 
     useEffect(() => {
-      handleQueryDemandList();
       handleQueryUserList();
       handleQueryBudgetList();
       handleQueryHeaderGroupList();

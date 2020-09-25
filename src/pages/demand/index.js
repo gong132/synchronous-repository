@@ -229,7 +229,9 @@ const Index = memo(
             </div>
           </div>
         </div>
-        {formType === 'list' && <DemandList setSearchForm={setSearchForm} />}
+        {formType === 'list' && (
+          <DemandList handleQueryDemandList={handleQueryDemandList} setSearchForm={setSearchForm} />
+        )}
         {formType === 'board' && <DemandBoard handleQueryBoard={handleQueryBoard} />}
       </Fragment>
     );
