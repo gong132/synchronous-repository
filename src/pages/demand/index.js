@@ -4,11 +4,11 @@ import { withRouter } from 'umi';
 import { DefaultPage } from '@/utils/helper';
 // import _ from 'lodash'
 import CustomBtn from '@/components/commonUseModule/customBtn';
-import {
-  Dropdown,
-  Button,
-  Icon
-} from 'antd'
+// import {
+//   Dropdown,
+//   Button,
+//   Icon
+// } from 'antd'
 
 import CreateDemand from './components/createModal';
 import DemandBoard from './demandBoard';
@@ -34,7 +34,8 @@ const Index = memo(
     const [visibleModal, setVisibleModal] = useState(false);
     const [modalTitle, setModalTitle] = useState('创建需求');
 
-    const [searchForm, setSearchForm] = useState({ active: '0', myGroup: '1' });
+    const [searchForm, setSearchForm] = useState();
+    const [commonSearchValue, setCommonSearchValue] = useState({ active: '0', myGroup: '1' });
 
     const handleViewModal = (bool, title) => {
       setVisibleModal(bool);
@@ -99,10 +100,10 @@ const Index = memo(
     // 根据路由查询不同接口
     const handleQueryDemandList = params => {
       if (demandRoutes[props.location.pathname] === '我的需求') {
-        handleQueryList({ ...searchForm, ...params });
+        handleQueryList({ ...searchForm, ...commonSearchValue, ...params });
         return;
       }
-      handleQueryDemandProject({ ...searchForm, ...params });
+      handleQueryDemandProject({ ...searchForm, ...commonSearchValue, ...params });
     };
 
     // 查询看板
@@ -112,6 +113,7 @@ const Index = memo(
         payload: {
           ...DefaultPage,
           ids: '1,2,3,4,5,6,7,8,9,10',
+          ...commonSearchValue,
           ...params,
         },
       });
@@ -124,7 +126,7 @@ const Index = memo(
           ...DefaultPage,
         },
       });
-    }
+    };
 
     const handleFormMenuClick = type => {
       dispatch({
@@ -144,13 +146,13 @@ const Index = memo(
       } else if (formType === 'board') {
         handleQueryBoard();
       }
-    }, [searchForm, formType]);
+    }, [searchForm, formType, commonSearchValue]);
 
     useEffect(() => {
-      handleQueryGroup()
-      handleQueryBudget()
-      handleQueryUser()
-    }, [])
+      handleQueryGroup();
+      handleQueryBudget();
+      handleQueryUser();
+    }, []);
 
     // 查看详情
     // const handleViewDetail = () => {
@@ -206,17 +208,17 @@ const Index = memo(
 
             <CustomBtn
               onClick={() => {
-                setSearchForm(obj => ({ ...obj, active: obj.active === '1' ? '0' : '1' }));
+                setCommonSearchValue(obj => ({ ...obj, active: obj.active === '1' ? '0' : '1' }));
               }}
               type="others"
-              icon={searchForm?.active === '1' ? gzIcon : unGzIcon}
+              icon={commonSearchValue?.active === '1' ? gzIcon : unGzIcon}
               title="我的关注"
               style={{ marginLeft: '16px' }}
             />
             <div className={styles.dropStyle}>
               <Select
-                value={searchForm.myGroup}
-                onChange={val => setSearchForm(obj => ({ ...obj, myGroup: val }))}
+                value={commonSearchValue.myGroup}
+                onChange={val => setCommonSearchValue(obj => ({ ...obj, myGroup: val }))}
               >
                 {DEMAND_GROUP.map(v => (
                   <Select.Option value={v.key} key={v.key}>

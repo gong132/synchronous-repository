@@ -698,7 +698,7 @@ const Index = memo(
                 <Button
                   ghost
                   className={classNames('margin-right-6', styles.orangeForm)}
-                  onClick={() => setSearchForm({ active: '0', myGroup: '1' })}
+                  onClick={() => setSearchForm({})}
                 >
                   重置
                 </Button>
