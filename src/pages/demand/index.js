@@ -133,11 +133,11 @@ const Index = memo(
         type: 'demand/setData',
         payload: { formType: type },
       });
-      if (type === 'list') {
-        handleQueryDemandList();
-      } else if (type === 'board') {
-        handleQueryBoard();
-      }
+      // if (type === 'list') {
+      //   handleQueryDemandList();
+      // } else if (type === 'board') {
+      //   handleQueryBoard();
+      // }
     };
 
     useEffect(() => {
@@ -229,7 +229,9 @@ const Index = memo(
             </div>
           </div>
         </div>
-        {formType === 'list' && <DemandList setSearchForm={setSearchForm} />}
+        {formType === 'list' && (
+          <DemandList handleQueryDemandList={handleQueryDemandList} setSearchForm={setSearchForm} />
+        )}
         {formType === 'board' && <DemandBoard handleQueryBoard={handleQueryBoard} />}
       </Fragment>
     );
