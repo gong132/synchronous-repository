@@ -66,7 +66,6 @@ class ContractManage extends Component {
 
   // 导出
   handleExportExcel = () => {
-    exportExcel({ budgetNumber: '20A001-001-002' }, 'contract/export', 'post', '合同表单数据.xls')
     const formValues = this.props.form.getFieldsValue();
     if (formValues.signTime && !_.isEmpty(formValues.signTime)) {
       formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYY-MM-DD')
@@ -519,7 +518,9 @@ class ContractManage extends Component {
                   className="activeColor"
                   onClick={() => this.setSearchMore(!searchMore)}
                   style={{
-                    float: 'right'
+                    float: 'right',
+                    position: 'relative',
+                    top: '5px'
                   }}
                 >
                   <div className={styles.moreBtn}>

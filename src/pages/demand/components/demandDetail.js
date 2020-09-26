@@ -47,7 +47,7 @@ import {
   BOARD_TITLE_OBJ,
   FLOW_STATUS,
 } from '../util/constant';
-import { getParam } from '@/utils/utils';
+import { getParam, getUserInfo } from '@/utils/utils';
 import styles from '../index.less';
 
 import StoryList from "./story/storyList"
@@ -76,6 +76,7 @@ class Detail extends Component {
       itAssessModalVisible: false,
       turnAssessModalVisible: false,
       selectedStoryRows: [],
+      showCreateMilePlan: false,
       // urls: ''
     };
   }
@@ -171,7 +172,6 @@ class Detail extends Component {
       })
       .then(res => {
         if (!res) return;
-        console.log(1, '1');
         const { requirementDescription } = res || {};
         this.setState({
           descriptionState: requirementDescription,
@@ -213,7 +213,7 @@ class Detail extends Component {
       }
       values.expectedCompletionDate = values.expectedCompletionDate ? moment(values.expectedCompletionDate).format('YYYY-MM-DD') : null;
       values.plannedLaunchDate = values.plannedLaunchDate ? moment(values.plannedLaunchDate).format('YYYY-MM-DD') : null;
-      values.actualLineDate = values.actualLineDate ? moment(values.actualLineDate).format('YYYY-MM-DD'): null;
+      values.actualLineDate = values.actualLineDate ? moment(values.actualLineDate).format('YYYY-MM-DD') : null;
       values.requirementDescription = descriptionState;
       values.id = id;
       this.editDemand(values);
@@ -354,21 +354,70 @@ class Detail extends Component {
     })
   }
 
+  // 团队经理受理需求
+  handleChangeStatusByManage = (status, demandId) => {
+    const params = {
+      demandId,
+    }
+    if (status === '2') {
+      params.status = '3'
+    }
+    if (status === '3') {
+      params.status = '4'
+    }
+
+    this.props.dispatch({
+      type: 'demand/dragDemand',
+      payload: {
+        ...params
+      }
+    }).then(res => {
+      if (res) {
+        this.handleQueryDetail();
+        this.handleQueryLogList();
+        this.handleQueryFlowList()
+      }
+    });
+  }
+
+  // 控制打开填写里程碑计划框
+  handleViewCreatePlan = (bool) => {
+    this.setState({
+      showCreateMilePlan: bool
+    })
+  }
+
+  // 提交oa
+  handleOAaction = (type) => {
+    if (type === 'p') {
+      // 项目需求
+      Modal.confirm({
+        title: '您的项目需求还没有里程碑计划，不能进入下一节点。现在是否去增加里程碑计划？',
+        okText: '是',
+        cancelText: '否',
+        onOk: () => this.handleViewCreatePlan(true)
+      })
+    }
+    if (type === 'u') {
+      // 一般需求
+    }
+  }
+
   render() {
-    const { editBool, descriptionState } = this.state;
+    const { editBool, descriptionState, showCreateMilePlan } = this.state;
+    const { userInfo: { roleName, userName } } = getUserInfo()
     const {
       form,
       loadingQueryInfo,
       loadingQueryLogData,
       loadingEditDemand,
       demand: { budgetList, demandInfo, groupList, logList, flowList, ITAssignVisible, assignorVisible, },
-
     } = this.props;
     const w = '100%';
     const {
       title, demandNumber, status, budgetNumbers, type = 'u', priority, introducer, acceptTeam, receiver,
       communicate, expectedCompletionDate, plannedLaunchDate, actualLineDate, projectNo, demandUrgency,
-      businessCompliance, riskControlFunction, creator, createTime, requirementDescription,
+      businessCompliance, riskControlFunction, creator, createTime, requirementDescription, id, receiver_name
     } = demandInfo || {};
     const btnStyle = {
       border: '1px solid #D63649',
@@ -484,38 +533,50 @@ class Detail extends Component {
           str = arr[index].createTime
         }
       }
-
       return str
     }
-
     return (
       <Fragment>
-        <div className="yCenter-between">
-          <CustomBtn type="create" title="下一节点" />
-          <div className="yCenter">
-
-            <CustomBtn
-              onClick={() => {
-                Modal.confirm({
-                  content: '需求被取消后可到取消看板查看, 是否确定取消？',
-                  onOk: () => this.handleResolveCancelOrBack('cancel')
-                })
-              }}
-              type="others"
-              title="取消"
-              style={{ ...btnStyle, marginRight: '16px' }}
-            />
-            <CustomBtn
-              onClick={() => {
-                Modal.confirm({
-                  content: '需求被打回后可到暂存看板中查看，是否确定打回？',
-                  onOk: () => this.handleResolveCancelOrBack('back')
-                })
-              }}
-              type="others"
-              title="打回"
-              style={btnStyle}
-            />
+        <div>
+          {
+            (roleName === '团队经理' || status === '3')
+              ? <CustomBtn
+                style={{ float: 'left' }}
+                onClick={() => this.handleChangeStatusByManage(status, id)}
+                type="create"
+                title="下一节点"
+              />
+              : null
+          }
+          <div className="yCenter" style={{ float: 'right' }}>
+            {(status === '4' || status === '6' || status === '7' || status === '10')
+              && receiver_name === userName
+              && <CustomBtn
+                onClick={() => {
+                  Modal.confirm({
+                    content: '需求被取消后可到取消看板查看, 是否确定取消？',
+                    onOk: () => this.handleResolveCancelOrBack('cancel')
+                  })
+                }}
+                type="others"
+                title="取消"
+                style={{ ...btnStyle, marginRight: '16px' }}
+              />
+            }
+            {(status === '4' || status === '5')
+              && receiver_name === userName
+              && <CustomBtn
+                onClick={() => {
+                  Modal.confirm({
+                    content: '需求被打回后可到暂存看板中查看，是否确定打回？',
+                    onOk: () => this.handleResolveCancelOrBack('back')
+                  })
+                }}
+                type="others"
+                title="打回"
+                style={btnStyle}
+              />
+            }
           </div>
         </div>
         <GlobalSandBox title="流程进度" img={flowIcon}>
@@ -547,7 +608,7 @@ class Detail extends Component {
               ))}
           </Steps>
         </GlobalSandBox>
-        <Spin spinning={loadingQueryInfo}>
+        <Spin spinning={!loadingQueryInfo}>
           <GlobalSandBox
             title="需求详情"
             img={budgetXqIcon}
@@ -565,34 +626,36 @@ class Detail extends Component {
                       img={psIcon}
                       text="已提交OA技术评审"
                     />
-                    <OptButton
+                    {receiver_name === userName && <OptButton
                       style={{
                         backgroundColor: 'white',
                       }}
                       img={apsIcon}
                       text="提交OA技术评审"
-                    />
+                      onClick={() => this.handleOAaction('p')}
+                    />}
                   </Fragment>
                 ) : (
-                  <Fragment>
-                    <OptButton
-                      style={{
+                    <Fragment>
+                      <OptButton
+                        style={{
                           backgroundColor: 'white',
                           color: '#B0BAC9',
                           borderColor: '#B0BAC9',
                         }}
-                      disabled
-                      img={psIcon}
-                      text="已提交OA审批"
-                    />
-                    <OptButton
-                      style={{
+                        disabled
+                        img={psIcon}
+                        text="已提交OA审批"
+                      />
+                      { receiver_name === userName && <OptButton
+                        style={{
                           backgroundColor: 'white',
                         }}
-                      img={apsIcon}
-                      text="提交OA审批"
-                    />
-                  </Fragment>
+                        img={apsIcon}
+                        text="提交OA审批"
+                        onClick={() => this.handleOAaction('u')}
+                      />}
+                    </Fragment>
                   )}
                 {editBool ? (
                   <Fragment>
@@ -619,18 +682,18 @@ class Detail extends Component {
                     />
                   </Fragment>
                 ) : (
-                  <OptButton
-                    onClick={() =>
+                    <OptButton
+                      onClick={() =>
                         this.setState({
                           editBool: true,
                         })
                       }
-                    style={{
+                      style={{
                         backgroundColor: 'white',
                       }}
-                    img={editIcon}
-                    text="编辑"
-                  />
+                      img={editIcon}
+                      text="编辑"
+                    />
                   )}
               </Fragment>
             }
@@ -1005,8 +1068,8 @@ class Detail extends Component {
                 </DescriptionItem> */}
               </Descriptions>
             ) : (
-              <Descriptions column={3} bordered className={styles.formatDetailDesc}>
-                {detailList.map(
+                <Descriptions column={3} bordered className={styles.formatDetailDesc}>
+                  {detailList.map(
                     (v, i) =>
                       (v.type === type || v.type === 'p') && (
                         <DescriptionItem
@@ -1036,9 +1099,16 @@ class Detail extends Component {
                 </Descriptions>
               )}
           </GlobalSandBox>
-        </Spin>
+        </Spin >
+        {console.log(this.planRef)}
         {
-          type === 'p' && <MilePlan handleQueryLogList={this.handleQueryLogList} demandNumber={demandNumber} />
+          type === 'p'
+          && <MilePlan
+            handleQueryLogList={this.handleQueryLogList}
+            handleViewCreatePlan={this.handleViewCreatePlan}
+            demandNumber={demandNumber}
+            showCreateMilePlan={showCreateMilePlan}
+          />
         }
         <GlobalSandBox
           title="新建story"
@@ -1077,14 +1147,16 @@ class Detail extends Component {
             turnAssessModalVisible={this.state.turnAssessModalVisible}
           />
         </GlobalSandBox>
-        {title && (
-          <ChartCard
-            ITAssignVisible={ITAssignVisible}
-            assignorVisible={assignorVisible}
-            handleModalVisible={this.handleModalVisible}
-            title={title}
-          />
-        )}
+        {
+          title && (
+            <ChartCard
+              ITAssignVisible={ITAssignVisible}
+              assignorVisible={assignorVisible}
+              handleModalVisible={this.handleModalVisible}
+              title={title}
+            />
+          )
+        }
         <GlobalSandBox title="系统需求" img={sdIcon}></GlobalSandBox>
         <GlobalSandBox img={budgetLogIcon} title="操作日志">
           <StandardTable

@@ -391,9 +391,9 @@ const CreateContract = props => {
             </FormItem>
           </Col>
           <Col span={12}>
-            <FormItem {...formLayoutItemAddDouble} label="所属系统">
+            <FormItem {...formLayoutItemAddDouble} label="涉及系统">
               {form.getFieldDecorator('systemId', {
-                rules: [{ required: true, message: '请输入所属系统' }],
+                rules: [{ required: true, message: '请输入涉及系统' }],
                 initialValue: systemId,
               })(
                 <Select
@@ -407,7 +407,7 @@ const CreateContract = props => {
                       .toLowerCase()
                       .indexOf(input.toLowerCase()) >= 0
                   }
-                  placeholder="请输入所属系统"
+                  placeholder="请输入涉及系统"
                 >
                   {!_.isEmpty(systemList) &&
                     systemList.map(d => (

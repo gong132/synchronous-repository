@@ -77,15 +77,15 @@ const EditModal = (props) => {
           </Col>
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="项目编号">
-              {form.getFieldDecorator('pjName', {
-                initialValue: pjName,
+              {form.getFieldDecorator('pjSn', {
+                initialValue: pjSn,
               })(<Input disabled />)}
             </FormItem>
           </Col>
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="项目状态">
-              {form.getFieldDecorator('pjName', {
-                initialValue: pjName,
+              {form.getFieldDecorator('pjStage', {
+                initialValue: pjStage,
               })(
                 <Select
                   allowClear
@@ -109,8 +109,8 @@ const EditModal = (props) => {
           </Col>
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="项目管理类型">
-              {form.getFieldDecorator('pjName', {
-                initialValue: pjName,
+              {form.getFieldDecorator('pjMgType', {
+                initialValue: pjMgType,
               })(
                 <Select
                   allowClear
@@ -134,8 +134,8 @@ const EditModal = (props) => {
           </Col>
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="项目建设方式">
-              {form.getFieldDecorator('pjName', {
-                initialValue: pjName,
+              {form.getFieldDecorator('buildType', {
+                initialValue: buildType,
               })(
                 <Select
                   allowClear
@@ -159,8 +159,8 @@ const EditModal = (props) => {
           </Col>
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="系统级别">
-              {form.getFieldDecorator('pjName', {
-                initialValue: pjName,
+              {form.getFieldDecorator('systemLevel', {
+                initialValue: systemLevel,
               })(
                 <Select
                   allowClear
@@ -184,29 +184,29 @@ const EditModal = (props) => {
           </Col>
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="项目进度">
-              {form.getFieldDecorator('pjName', {
-                initialValue: pjName,
+              {form.getFieldDecorator('pjProgress', {
+                initialValue: pjProgress,
               })(<Input disabled />)}
             </FormItem>
           </Col>
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="需求优先级">
-              {form.getFieldDecorator('pjName', {
-                initialValue: pjName,
+              {form.getFieldDecorator('demandLevel', {
+                initialValue: demandLevel,
               })(<Input disabled />)}
             </FormItem>
           </Col>
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="预算编号">
-              {form.getFieldDecorator('pjName', {
-                initialValue: pjName,
+              {form.getFieldDecorator('budgetNo', {
+                initialValue: budgetNo,
               })(<Input disabled />)}
             </FormItem>
           </Col>
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="所属需求编号">
-              {form.getFieldDecorator('pjName', {
-                initialValue: pjName,
+              {form.getFieldDecorator('demandNo', {
+                initialValue: demandNo,
               })(<Input disabled />)}
             </FormItem>
           </Col>
@@ -219,15 +219,15 @@ const EditModal = (props) => {
           </Col>
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="立项申请团队">
-              {form.getFieldDecorator('pjName', {
-                initialValue: pjName,
+              {form.getFieldDecorator('estTeam', {
+                initialValue: estTeam,
               })(<Input disabled />)}
             </FormItem>
           </Col>
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="立项金额">
-              {form.getFieldDecorator('pjName', {
-                initialValue: pjName,
+              {form.getFieldDecorator('estAmount', {
+                initialValue: estAmount,
               })(<Input addonAfter='万' disabled />)}
             </FormItem>
           </Col>
@@ -254,22 +254,22 @@ const EditModal = (props) => {
           </Col>
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="技术评审阶段">
-              {form.getFieldDecorator('pjName', {
-                initialValue: pjName,
+              {form.getFieldDecorator('techStage', {
+                initialValue: techStage,
               })(<Input disabled />)}
             </FormItem>
           </Col>
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="立项评审阶段">
-              {form.getFieldDecorator('pjName', {
-                initialValue: pjName,
+              {form.getFieldDecorator('estStage', {
+                initialValue: estStage,
               })(<Input disabled />)}
             </FormItem>
           </Col>
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="商务状态">
-              {form.getFieldDecorator('pjName', {
-                initialValue: pjName,
+              {form.getFieldDecorator('bnStatus', {
+                initialValue: bnStatus,
               })(<Input disabled />)}
             </FormItem>
           </Col>
@@ -289,8 +289,8 @@ const EditModal = (props) => {
           </Col>
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="项目创建时间">
-              {form.getFieldDecorator('pjName', {
-                initialValue: pjName,
+              {form.getFieldDecorator('createTime', {
+                initialValue: createTime,
               })(<Input disabled />)}
             </FormItem>
           </Col>

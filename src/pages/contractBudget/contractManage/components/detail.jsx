@@ -411,49 +411,49 @@ class Detail extends PureComponent {
         <GlobalSandBox
           img={budget_xq}
           title="合同详情"
-          optNode={
-            authActions.includes(MENU_ACTIONS.EDIT) && !editBool ?
-              <OptButton
-                style={{
-                  backgroundColor: 'white',
-                }}
-                onClick={() =>
-                  this.setState({
-                    editBool: true,
-                    payChange: false,
-                    freePayDay: '',
-                    descriptionState: description,
-                  })
-                }
-                img={editIcon}
-                text="编辑"
-              />
-              :
-              <div>
-                <Button
-                  icon="close"
-                  onClick={() =>
-                    this.setState({
-                      editBool: false,
-                      freePayDay: '',
-                    })
-                  }
-                >
-                  取消
-                </Button>
-                <Button
-                  style={{
-                    marginLeft: '16px',
-                  }}
-                  type="primary"
-                  ghost
-                  loading={loadingUpdate}
-                  onClick={() => this.handleSubmit()}
-                >
-                  保存
-                </Button>
-              </div>
-          }
+          // optNode={
+          //   authActions.includes(MENU_ACTIONS.EDIT) && !editBool ?
+          //     <OptButton
+          //       style={{
+          //         backgroundColor: 'white',
+          //       }}
+          //       onClick={() =>
+          //         this.setState({
+          //           editBool: true,
+          //           payChange: false,
+          //           freePayDay: '',
+          //           descriptionState: description,
+          //         })
+          //       }
+          //       img={editIcon}
+          //       text="编辑"
+          //     />
+          //     :
+          //     <div>
+          //       <Button
+          //         icon="close"
+          //         onClick={() =>
+          //           this.setState({
+          //             editBool: false,
+          //             freePayDay: '',
+          //           })
+          //         }
+          //       >
+          //         取消
+          //       </Button>
+          //       <Button
+          //         style={{
+          //           marginLeft: '16px',
+          //         }}
+          //         type="primary"
+          //         ghost
+          //         loading={loadingUpdate}
+          //         onClick={() => this.handleSubmit()}
+          //       >
+          //         保存
+          //       </Button>
+          //     </div>
+          // }
         >
           <Spin spinning={loadingQueryInfo}>
             {editBool ? (

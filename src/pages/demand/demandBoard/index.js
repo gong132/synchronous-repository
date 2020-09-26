@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react'
-import { Empty, Dropdown, Icon, Menu, Spin, Modal } from 'antd'
+import { Empty, Dropdown, Icon, Menu, Spin, Modal, message } from 'antd'
 import { connect } from 'dva'
 import { router } from 'umi'
 import { BOARD_TITLE } from '../util/constant'
@@ -63,20 +63,20 @@ class DemandBoard extends Component {
 
   handleViewDetail = (item) => {
     const { id, demandNumber } = item
-    router.push({
-      pathname: '/survey',
-      query: {
-        t: item.title,
-        no: demandNumber
-      }
-    });
     // router.push({
-    //   pathname: '/demand/myDemand/detail',
+    //   pathname: '/survey',
     //   query: {
-    //     id,
+    //     t: item.title,
     //     no: demandNumber
     //   }
     // });
+    router.push({
+      pathname: '/demand/myDemand/detail',
+      query: {
+        id,
+        no: demandNumber
+      }
+    });
   };
 
   stopPropogation = (e) => {
@@ -103,22 +103,38 @@ class DemandBoard extends Component {
   }
 
   renderBoardMenu = (record, boardId) => {
-    const { attention, creator } = record
+    const { attention, creator, receiver_name } = record
     const { userInfo } = getUserInfo()
-    const { userName } = userInfo
+    const { userName, roleName } = userInfo
     return (
       <Menu onClick={({ item, key, keyPath, domEvent }) => this.quickResolveStory(item, key, keyPath, domEvent, record)}>
-        {boardId !== 1 && <Menu.Item key='appointFocus'>指派关注人</Menu.Item>}
-        {boardId === 2 && <Menu.Item key='appointAccept'>指派受理人</Menu.Item>}
-        {(boardId === 1 || boardId === 3) && creator === userName && <Menu.Item key='edit'>编辑</Menu.Item>}
-        {boardId === 3 && <Menu.Item key='accept'>受理</Menu.Item>}
-        {(boardId === 1 || boardId === 2)
-          && creator === userName && <Menu.Item key='del'>删除</Menu.Item>
+        {((boardId === 2 && roleName === '团队经理')
+          || (boardId === 3 || boardId === 5 || boardId === 6 || boardId === 7 || boardId === 10))
+          && <Menu.Item key='appointFocus'>指派关注人</Menu.Item>
         }
-        {
-          attention === 1 ?
-            <Menu.Item key='cancelFocus'>取消关注</Menu.Item>
-            : <Menu.Item key='focus'>关注</Menu.Item>
+        {(boardId === 2 || boardId === 3)
+          && roleName === '团队经理'
+          && <Menu.Item key='appointAccept'>指派受理人</Menu.Item>
+        }
+        {((boardId === 1 || boardId === 3 || boardId === 2)
+          && creator === userName)
+          || ((boardId === 4 || boardId === 5) && receiver_name === userName)
+          && <Menu.Item key='edit'>编辑</Menu.Item>
+        }
+        {boardId === 3
+          && <Menu.Item key='accept'>受理</Menu.Item>
+        }
+        {(boardId === 1 || boardId === 2 || boardId === 3)
+          && creator === userName
+          && <Menu.Item key='del'>删除</Menu.Item>
+        }
+        {((boardId === 1 && creator === userName)
+          || (boardId === 3 || boardId === 2 || boardId === 5 || boardId === 6 || boardId === 7 || boardId === 10))
+          && (
+            attention === 1 ?
+              <Menu.Item key='cancelFocus'>取消关注</Menu.Item>
+              : <Menu.Item key='focus'>关注</Menu.Item>
+          )
         }
       </Menu>
     )
@@ -167,7 +183,11 @@ class DemandBoard extends Component {
         receiver_id: String(userId),
         receiver_name: userName
       }
-    })
+    }).then(res => {
+      if (res) {
+        this.props.handleQueryBoard()
+      }
+    });
   }
 
   // 拖拽变更状态
@@ -175,9 +195,13 @@ class DemandBoard extends Component {
     this.props.dispatch({
       type: 'demand/dragDemand',
       payload: {
-       ...params
+        ...params
       }
-    })
+    }).then(res => {
+      if (res) {
+        this.props.handleQueryBoard()
+      }
+    });
   }
 
   // 取消关注
@@ -213,7 +237,7 @@ class DemandBoard extends Component {
         console.log('appointAccept')
         break;
       case 'accept':
-        console.log('accept')
+        this.handleDragDemand({ status: '4', demandId: editValue.id })
         break;
       default:
         break;
@@ -223,9 +247,11 @@ class DemandBoard extends Component {
   // 拖拽处理
   onDragEnd = result => {
     console.log(result)
+    const { userInfo: { roleName } } = getUserInfo()
     const { source, destination, draggableId } = result
     if (destination === null) {
       console.log('不允许******************')
+      message.warning('这不是一次有效的操作！')
       return true
     }
     const params = {
@@ -234,15 +260,19 @@ class DemandBoard extends Component {
     if (source.droppableId === '2' && destination.droppableId === '3') {
       // 受理
       params.status = '3'
+      if (roleName !== '团队经理') {
+        message.warning('只有团队经理可执行该操作！')
+        return false
+      }
       this.handleDragDemand(params)
       return true
     }
     if (source.droppableId === '3' && destination.droppableId === '4') {
-      console.log('允许******************')
       params.status = '4'
       this.handleDragDemand(params)
       return true
     }
+    message.warning('这不是一次有效的操作！')
     console.log('不允许******************')
     return true
   }
@@ -357,13 +387,13 @@ class DemandBoard extends Component {
                                         </div>
                                         <div className={styles.dragBoard_thirdLine}>
                                           <div className={styles.dragBoard_thirdLine_time}>
-                                            {`${item.creator}于${item.create_time}提交`}
+                                            {`${item.creator}于${item.createTime}提交`}
                                           </div>
-                                          <div className={styles.dragBoard_thirdLine_type}>
+                                          {/* <div className={styles.dragBoard_thirdLine_type}>
                                             {item.type === 'p'
                                               ? '项目'
                                               : '一般需求'}
-                                          </div>
+                                          </div> */}
                                         </div>
                                       </div>
                                     </div>
@@ -412,13 +442,13 @@ class DemandBoard extends Component {
                             </div>
                             <div className={styles.dragBoard_thirdLine}>
                               <div className={styles.dragBoard_thirdLine_time}>
-                                {`${item.creator}于${item.create_time}提交`}
+                                {`${item.creator}于${item.createTime}提交`}
                               </div>
-                              <div className={styles.dragBoard_thirdLine_type}>
+                              {/* <div className={styles.dragBoard_thirdLine_type}>
                                 {item.type === 'p'
                                   ? '项目'
                                   : '一般需求'}
-                              </div>
+                              </div> */}
                             </div>
                           </div>
                         )) : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
