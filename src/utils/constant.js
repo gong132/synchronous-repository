@@ -127,3 +127,8 @@ const judgeFileType = (file = {}, fileArr = []) => {
   return bool;
 };
 export { imgTypes, fileTypes, judgeFileType };
+
+export const MESSAGE_STATUS = [
+  { key: 0, value: "未读消息" },
+  { key: 1, value: "已读消息" },
+]
