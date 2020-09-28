@@ -162,7 +162,7 @@ class CreateDemand extends PureComponent {
   };
 
   handleSubmitForm = (saveType) => {
-    const { form, modalTitle, demand: { tempDemandId }, recordValue } = this.props
+    const { form, modalTitle, demand: { tempDemandId, userDataMap }, recordValue } = this.props
     const { description } = this.state
     form.validateFieldsAndScroll((err, values) => {
       if (saveType === 'clickBtn') {
@@ -174,6 +174,8 @@ class CreateDemand extends PureComponent {
       }
       values.expectedCompletionDate = values.expectedCompletionDate ? moment(values.expectedCompletionDate).format('YYYY-MM-DD') : '';
       values.requirementDescription = description;
+      values.receiver_id = values.receiver
+      values.receiver_name = values.receiver ? userDataMap[values.receiver] : ''
       if (saveType === 'clickBtn') {
         // 如果是编辑页面走编辑接口
         if (modalTitle === '编辑') {
@@ -209,7 +211,7 @@ class CreateDemand extends PureComponent {
   };
 
   renderForm = () => {
-    const { form, recordValue = {}, demand: { groupList, budgetList } } = this.props
+    const { form, recordValue = {}, demand: { groupList, budgetList, userData } } = this.props
     const { description } = this.state
     const {
       title,
@@ -279,15 +281,20 @@ class CreateDemand extends PureComponent {
               })(
                 <Select
                   allowClear
-                  // showSearch
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
                   placeholder="请输入提出人"
                 >
-                  {/* {!_.isEmpty(headerList) && headerList.map(d => (
-                                <Option key={d.leaderId} value={d.leaderId}>{d.leaderName}</Option>
-                            ))} */}
-                  <Option key="1" value="1">
-                    {1}
-                  </Option>
+                  {!_.isEmpty(userData) && userData.map(d => (
+                    <Option key={d.loginid} value={d.loginid}>
+                      {d.lastname}
+                    </Option>
+                  ))}
                 </Select>,
               )}
             </FormItem>
@@ -365,15 +372,20 @@ class CreateDemand extends PureComponent {
               })(
                 <Select
                   allowClear
-                  // showSearch
+                  showSearch
                   placeholder="请输入受理人"
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
                 >
-                  {/* {!_.isEmpty(headerList) && headerList.map(d => (
-                                <Option key={d.leaderId} value={d.leaderId}>{d.leaderName}</Option>
-                            ))} */}
-                  <Option key="1" value="1">
-                    {1}
-                  </Option>
+                  {!_.isEmpty(userData) && userData.map(d => (
+                    <Option key={d.loginid} value={d.loginid}>
+                      {d.lastname}
+                    </Option>
+                  ))}
                 </Select>,
               )}
             </FormItem>

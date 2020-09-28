@@ -400,7 +400,7 @@ class Detail extends PureComponent {
       { span: 1, required: false, name: '录入时间', value: createTime },
       { span: 1, required: false, name: '项目验收日期', value: projectCheckTime },
       { span: 1, required: false, name: '免费维保期', value: freeDefendDate },
-      { span: 3, required: false, name: '维保支付日期', value: defendPayTime },
+      { span: 1, required: false, name: '维保支付日期', value: defendPayTime },
       // { span: 3, required: false, name: '项目报告', value: '' },
       // { span: 3, required: false, name: '涉及系统', value: systemName },
       { span: 3, required: false, name: '合同描述', value: description, dataIndex: 'description' },
@@ -411,49 +411,49 @@ class Detail extends PureComponent {
         <GlobalSandBox
           img={budget_xq}
           title="合同详情"
-          optNode={
-            authActions.includes(MENU_ACTIONS.EDIT) && !editBool ?
-              <OptButton
-                style={{
-                  backgroundColor: 'white',
-                }}
-                onClick={() =>
-                  this.setState({
-                    editBool: true,
-                    payChange: false,
-                    freePayDay: '',
-                    descriptionState: description,
-                  })
-                }
-                img={editIcon}
-                text="编辑"
-              />
-              :
-              <div>
-                <Button
-                  icon="close"
-                  onClick={() =>
-                    this.setState({
-                      editBool: false,
-                      freePayDay: '',
-                    })
-                  }
-                >
-                  取消
-                </Button>
-                <Button
-                  style={{
-                    marginLeft: '16px',
-                  }}
-                  type="primary"
-                  ghost
-                  loading={loadingUpdate}
-                  onClick={() => this.handleSubmit()}
-                >
-                  保存
-                </Button>
-              </div>
-          }
+          // optNode={
+          //   authActions.includes(MENU_ACTIONS.EDIT) && !editBool ?
+          //     <OptButton
+          //       style={{
+          //         backgroundColor: 'white',
+          //       }}
+          //       onClick={() =>
+          //         this.setState({
+          //           editBool: true,
+          //           payChange: false,
+          //           freePayDay: '',
+          //           descriptionState: description,
+          //         })
+          //       }
+          //       img={editIcon}
+          //       text="编辑"
+          //     />
+          //     :
+          //     <div>
+          //       <Button
+          //         icon="close"
+          //         onClick={() =>
+          //           this.setState({
+          //             editBool: false,
+          //             freePayDay: '',
+          //           })
+          //         }
+          //       >
+          //         取消
+          //       </Button>
+          //       <Button
+          //         style={{
+          //           marginLeft: '16px',
+          //         }}
+          //         type="primary"
+          //         ghost
+          //         loading={loadingUpdate}
+          //         onClick={() => this.handleSubmit()}
+          //       >
+          //         保存
+          //       </Button>
+          //     </div>
+          // }
         >
           <Spin spinning={loadingQueryInfo}>
             {editBool ? (
@@ -503,6 +503,7 @@ class Detail extends PureComponent {
                             .indexOf(input.toLowerCase()) >= 0
                         }
                         placeholder="请输入预算编号"
+                        style={{ width: w }}
                       >
                         {!_.isEmpty(budgetList) &&
                           budgetList.map(d => (
@@ -689,7 +690,7 @@ class Detail extends PureComponent {
                   label={<>{<span style={{ color: 'red' }}>*</span>}合同负责人团队</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('headerTeamId ', {
+                    {form.getFieldDecorator('headerTeamId', {
                       rules: [{ required: true, message: '请输入合同负责人团队' }],
                       initialValue: headerTeamId,
                     })(
@@ -796,7 +797,7 @@ class Detail extends PureComponent {
                     )}
                   </FormItem>
                 </DescriptionItem>
-                <DescriptionItem span={1} label={<>维保支付日期</>}>
+                <DescriptionItem span={3} label={<>维保支付日期</>}>
                   <FormItem>
                     {form.getFieldDecorator('defendPayTimeEdit', {
                       rules: [

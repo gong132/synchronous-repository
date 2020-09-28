@@ -3,7 +3,7 @@ import { connect } from 'dva'
 import { router } from 'umi'
 import moment from 'moment'
 import StandardTable from "@/components/StandardTable";
-import { TableColumnHelper } from "@/utils/helper";
+import { DefaultPage } from "@/utils/helper";
 import ListOptBtn from '@/components/commonUseModule/listOptBtn'
 import Ellipse from '@/components/commonUseModule/ellipse'
 import editIcon from '@/assets/icon/cz_bj.svg';
@@ -13,6 +13,7 @@ import { formLayoutItem } from '@/utils/constant'
 import downIcon from '@/assets/icon/drop_down.svg'
 import upIcon from '@/assets/icon/Pull_up.svg'
 import CustomBtn from '@/components/commonUseModule/customBtn'
+import EditModal from './components/editModal'
 import {
   Form,
   Input,
@@ -40,7 +41,14 @@ class ProjectManage extends Component {
     super(props)
     this.state = {
       searchMore: false,
+      viewModal: false,
     }
+    this.handleDebounceQueryData = _.debounce(this.handleDebounceQueryData, 500);
+  }
+
+  componentDidMount() {
+    this.handleQueryCluster()
+    this.handleQueryStage()
   }
 
   // 查询集群列表
@@ -51,7 +59,22 @@ class ProjectManage extends Component {
     })
   }
 
-  saveParams = () => { }
+  // 查询阶段
+  handleQueryStage = () => {
+    this.props.dispatch({
+      type: 'project/queryAllStageStatus',
+    })
+  }
+
+  handleQueryData = (params = {}) => {
+    this.props.dispatch({
+      type: 'project/queryProjectList',
+      payload: {
+        ...DefaultPage,
+        ...params,
+      },
+    });
+  };
 
   // 更多查询
   moreQuery = () => {
@@ -69,6 +92,11 @@ class ProjectManage extends Component {
     this.moreQuery();
   };
 
+  // 搜索时防抖
+  handleDebounceQueryData = params => {
+    this.handleQueryData(params);
+  };
+
   setSearchMore = bool => {
     this.setState({
       searchMore: bool,
@@ -79,10 +107,23 @@ class ProjectManage extends Component {
 
   }
 
-  handleViewDetail = () => {
-    router.push({
-      pathname: '/projectDetail'
+  handleViewModal = (bool) => {
+    this.setState({
+      viewModal: bool
     })
+  }
+
+  handleViewDetail = (record = {}) => {
+    router.push({
+      pathname: '/projectDetail',
+      query: {
+        id: record.id
+      }
+    })
+  }
+
+  handleSubmit = () => {
+
   }
 
   // 分页操作
@@ -104,7 +145,7 @@ class ProjectManage extends Component {
       orderFlag: sorter.order === 'ascend' ? 1 : -1,
     };
 
-    // this.handleQueryData({ ...params, ...sortParams });
+    this.handleQueryData({ ...params, ...sortParams });
   };
 
   renderSearchForm = () => {
@@ -113,30 +154,12 @@ class ProjectManage extends Component {
     const {
       loadingQueryData,
       clusterList,
+      stageStatus,
     } = project;
     const { getFieldDecorator } = form
     const content = (
       <div className={styles.moreSearch}>
         <Row>
-          <Col span={24}>
-            <FormItem colon={false} label="商务状态">
-              {getFieldDecorator(
-                'providerCompanyName',
-                {},
-              )(
-                <Select
-                  allowClear
-                  // showSearch
-                  style={{
-                    width: '100%',
-                  }}
-                  placeholder="请输入商务状态"
-                >
-                  <Option key='p' value='p'>未定义</Option>
-                </Select>,
-              )}
-            </FormItem>
-          </Col>
           <Col span={24}>
             <FormItem colon={false} label="所属需求编号">
               {getFieldDecorator('budgetNumber', {
@@ -277,7 +300,7 @@ class ProjectManage extends Component {
     );
     return (
       <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
-        <Col span={7}>
+        <Col span={5}>
           <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} colon={false} label="项目名称和描述">
             {getFieldDecorator('name', {
             })(<Input
@@ -287,7 +310,7 @@ class ProjectManage extends Component {
             />)}
           </FormItem>
         </Col>
-        <Col span={6}>
+        <Col span={5}>
           <FormItem {...formLayoutItem} colon={false} label="项目状态">
             {getFieldDecorator('projectNumber', {
             })(
@@ -306,19 +329,19 @@ class ProjectManage extends Component {
                 }}
                 placeholder="请输入项目状态"
               >
-                {/* {!_.isEmpty(projectList) &&
-                projectList.map(d => (
+                {!_.isEmpty(stageStatus) &&
+                stageStatus.map(d => (
                   <Option key={d.number} value={d.number}>
                     {d.name}
                   </Option>
-                ))} */}
-                <Option key='p' value='p'>未定义</Option>
+                ))}
+                {/* <Option key='p' value='p'>未定义</Option> */}
               </Select>
             )}
           </FormItem>
         </Col>
-        <Col span={7}>
-          <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 14 }} colon={false} label="业务集群/板块">
+        <Col span={5}>
+          <FormItem labelCol={{ span: 7 }} wrapperCol={{ span: 17 }} colon={false} label="业务集群/板块">
             {getFieldDecorator('clusterId', {
             })(
               <Select
@@ -347,7 +370,26 @@ class ProjectManage extends Component {
             )}
           </FormItem>
         </Col>
-        <Col span={4}>
+        <Col span={6}>
+          <FormItem {...formLayoutItem} colon={false} label="商务状态">
+            {getFieldDecorator(
+              'providerCompanyName',
+              {},
+            )(
+              <Select
+                allowClear
+                // showSearch
+                style={{
+                  width: '100%',
+                }}
+                placeholder="请输入商务状态"
+              >
+                <Option key='p' value='p'>未定义</Option>
+              </Select>,
+            )}
+          </FormItem>
+        </Col>
+        <Col span={3}>
           <FormItem>
             <CustomBtn
               onClick={() => this.handleResetSearch()}
@@ -360,7 +402,9 @@ class ProjectManage extends Component {
                   className="activeColor"
                   onClick={() => this.setSearchMore(!searchMore)}
                   style={{
-                    float: 'right'
+                    float: 'right',
+                    position: 'relative',
+                    top: '5px'
                   }}
                 >
                   <div className={styles.moreBtn}>
@@ -580,13 +624,20 @@ class ProjectManage extends Component {
   }
 
   render() {
+    const { viewModal } = this.state
+    const editModalProps = {
+      visible: viewModal,
+      handleViewModal: this.handleViewModal,
+      handleSubmit: this.handleSubmit
+    }
     return (
       <Card
         bodyStyle={{
           overflow: 'auto'
         }}
       >
-        {this.renderSearchForm()}
+        {viewModal && <EditModal {...editModalProps} />}
+        <div className={styles.customSearchForm}>{this.renderSearchForm()}</div>
         <div className='cusOverflow'>
           <StandardTable
             rowKey={(record, index) => index}

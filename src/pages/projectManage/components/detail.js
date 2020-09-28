@@ -42,11 +42,27 @@ class Detail extends PureComponent {
     }
   }
 
+  componentDidMount() {
+    this.handleQueryStage()
+    this.handleQueryLogList()
+  }
+
   handleChangeDesc = content => {
     this.setState({
       descriptionState: content,
     });
   };
+  
+  // 查询详情
+  handleQueryStage = () => {
+    const id = getParam('id');
+    this.props.dispatch({
+      type: 'project/queryProjectInfo',
+      payload: {
+        id,
+      }
+    })
+  }
 
   // 查日志
   handleQueryLogList = (obj = {}) => {

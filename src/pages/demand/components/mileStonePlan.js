@@ -21,7 +21,7 @@ import {
   DatePicker,
   Popconfirm
 } from 'antd'
-import { getParam } from '@/utils/utils';
+import { getParam, getUserInfo } from '@/utils/utils';
 
 const FormItem = Form.Item
 const { Option } = Select
@@ -39,10 +39,18 @@ class MilePlan extends PureComponent {
       modalTitle: '新建里程碑计划',
       recordValue: {}
     }
+    this.handleVisibleModal = this.handleVisibleModal.bind(this)
   }
 
   componentDidMount() {
     this.handleQueryList()
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.showCreateMilePlan) {
+      this.handleVisibleModal(true, '新建里程碑计划')
+      nextProps.handleViewCreatePlan(false)
+    }
   }
 
   // 查询
@@ -126,7 +134,7 @@ class MilePlan extends PureComponent {
     });
   }
 
-  handleVisibleModal = (bool, modalTitle, record = {}) => {
+  handleVisibleModal(bool, modalTitle, record = {}){
     this.setState({
       visibleModal: bool,
       modalTitle: bool ? modalTitle : '',
@@ -260,8 +268,10 @@ class MilePlan extends PureComponent {
 
   render() {
     const { demand } = this.props
-    const { milePlanList, planStageListMap } = demand
+    const { milePlanList, planStageListMap, demandInfo={} } = demand
+    const { receiver_name, status } = demandInfo
     const { visibleModal } = this.state
+    const { userInfo:{userName} } = getUserInfo()
     const proColumns = [
       {
         title: '里程碑阶段',
@@ -335,6 +345,7 @@ class MilePlan extends PureComponent {
               style={{
                 backgroundColor: 'white',
               }}
+              disabled={ (status !== '4' || status !== '5') && receiver_name !== userName}
               icon="plus"
               text="新建"
             />

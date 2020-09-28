@@ -6,6 +6,7 @@ import StandardTable from "@/components/StandardTable";
 import ListOptBtn from '@/components/commonUseModule/listOptBtn'
 import { DefaultPage, TableColumnHelper } from "@/utils/helper";
 import { formLayoutItem, MENU_ACTIONS } from '@/utils/constant'
+import Ellipse from '@/components/commonUseModule/ellipse'
 import { exportExcel } from '@/utils/utils'
 import CustomBtn from '@/components/commonUseModule/customBtn'
 import editIcon from '@/assets/icon/cz_bj.svg'
@@ -65,7 +66,6 @@ class ContractManage extends Component {
 
   // 导出
   handleExportExcel = () => {
-    exportExcel({ budgetNumber: '20A001-001-002' }, 'contract/export', 'post', '合同表单数据.xls')
     const formValues = this.props.form.getFieldsValue();
     if (formValues.signTime && !_.isEmpty(formValues.signTime)) {
       formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYY-MM-DD')
@@ -410,14 +410,6 @@ class ContractManage extends Component {
             </FormItem>
           </Col>
           <Col span={24}>
-            <FormItem colon={false} label="合同签订日期">
-              {getFieldDecorator('signTime', {
-              })(
-                <RangePicker />
-              )}
-            </FormItem>
-          </Col>
-          <Col span={24}>
             <FormItem colon={false} label="维保支付提醒日期">
               {getFieldDecorator('defendPayTime', {
               })(
@@ -436,8 +428,8 @@ class ContractManage extends Component {
     );
     return (
       <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
-        <Col span={6}>
-          <FormItem {...formLayoutItem} colon={false} label="合同名称">
+        <Col span={5}>
+          <FormItem labelCol={{ span: 7 }} wrapperCol={{ span: 17 }} colon={false} label="合同名称">
             {getFieldDecorator('name', {
             })(<Input
               allowClear
@@ -446,8 +438,8 @@ class ContractManage extends Component {
             />)}
           </FormItem>
         </Col>
-        <Col span={6}>
-          <FormItem {...formLayoutItem} colon={false} label="所属项目">
+        <Col span={5}>
+          <FormItem labelCol={{ span: 7 }} wrapperCol={{ span: 17 }} colon={false} label="所属项目">
             {getFieldDecorator('projectNumber', {
             })(
               <Select
@@ -475,8 +467,8 @@ class ContractManage extends Component {
             )}
           </FormItem>
         </Col>
-        <Col span={8}>
-          <FormItem labelCol={{ span: 7 }} wrapperCol={{ span: 14 }} colon={false} label="所属集群/板块">
+        <Col span={5}>
+          <FormItem labelCol={{ span: 7 }} wrapperCol={{ span: 17 }} colon={false} label="所属集群/板块">
             {getFieldDecorator('clusterId', {
             })(
               <Select
@@ -505,7 +497,15 @@ class ContractManage extends Component {
             )}
           </FormItem>
         </Col>
-        <Col span={4}>
+        <Col span={6}>
+          <FormItem colon={false} labelCol={{span: 7}} wrapperCol={{span: 17}} label="合同签订日期">
+            {getFieldDecorator('signTime', {
+            })(
+              <RangePicker onChange={_.debounce(this.saveParams, 500)} />
+            )}
+          </FormItem>
+        </Col>
+        <Col span={3}>
           <FormItem>
             <CustomBtn
               onClick={() => this.handleResetSearch()}
@@ -518,7 +518,9 @@ class ContractManage extends Component {
                   className="activeColor"
                   onClick={() => this.setSearchMore(!searchMore)}
                   style={{
-                    float: 'right'
+                    float: 'right',
+                    position: 'relative',
+                    top: '5px'
                   }}
                 >
                   <div className={styles.moreBtn}>
@@ -552,8 +554,38 @@ class ContractManage extends Component {
           );
         },
       },
-      TableColumnHelper.genPlanColumn('name', '合同名称'),
-      TableColumnHelper.genPlanColumn('projectName', '所属项目', { sorter: true }),
+      {
+        title: '合同名称',
+        dataIndex: 'name',
+        key: 'name',
+        sorter: true,
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '8vw'
+              }}
+            />
+          );
+        },
+      },
+      {
+        title: '所属项目',
+        dataIndex: 'projectName',
+        key: 'projectName',
+        sorter: true,
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '8vw'
+              }}
+            />
+          );
+        },
+      },
       TableColumnHelper.genPlanColumn('clusterName', '所属集群/板块', { sorter: true }),
       TableColumnHelper.genPlanColumn('transactionAmount', '合同成交金额（元）', { sorter: true, width: 180 }),
       TableColumnHelper.genPlanColumn('payAmount', '合同已支付金额（元）', { sorter: true, width: 200 }, ''),
@@ -561,7 +593,22 @@ class ContractManage extends Component {
       TableColumnHelper.genPlanColumn('projectCheckTime', '项目验收日期', { sorter: true }, ''),
       TableColumnHelper.genPlanColumn('budgetNumber', '预算编号', { sorter: true }),
       TableColumnHelper.genPlanColumn('headerName', '合同负责人', { sorter: true }),
-      TableColumnHelper.genPlanColumn('headerTeamName', '合同负责团队', { sorter: true }),
+      {
+        title: '合同负责团队',
+        dataIndex: 'headerTeamName',
+        key: 'headerTeamName',
+        sorter: true,
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '6vw'
+              }}
+            />
+          );
+        },
+      },
       TableColumnHelper.genPlanColumn('signingTime', '合同签订日期', { sorter: true }),
       TableColumnHelper.genPlanColumn('userName', '录入人', { sorter: true }),
       TableColumnHelper.genDateTimeColumn('createTime', '录入时间', 'YYYY-MM-DD', { sorter: true }),

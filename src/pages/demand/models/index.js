@@ -26,6 +26,7 @@ import {
   queryFlow,
   focusDemand,
   receiverDemand,
+  dragDemand,
 } from '@/services/demand/demand';
 import {
   addMilePlan,
@@ -133,6 +134,16 @@ const Demand = {
     // 受理需求 
     *receiverDemand({payload}, {call}) {
       const { code, msg } = yield call(receiverDemand, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    },
+
+    // 拖拽需求看板变更状态
+    *dragDemand({payload}, {call}) {
+      const { code, msg } = yield call(dragDemand, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
