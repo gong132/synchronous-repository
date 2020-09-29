@@ -8,7 +8,7 @@ import CustomBtn from '@/components/commonUseModule/customBtn';
 import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
 import StandardTable from '@/components/StandardTable';
 import ChartCard from './chartCard';
-import MilePlan from './mileStonePlan'
+import MilePlan from './mileStonePlan';
 import { TableColumnHelper, DefaultPage, PagerHelper } from '@/utils/helper';
 import OptButton from '@/components/commonUseModule/optButton';
 import flowIcon from '@/assets/icon/modular_lcjd.svg';
@@ -36,7 +36,7 @@ import {
   Spin,
   message,
   Icon,
-  Modal
+  Modal,
   // Button
 } from 'antd';
 import {
@@ -52,7 +52,7 @@ import {
 import { getParam, getUserInfo } from '@/utils/utils';
 import styles from '../index.less';
 
-import StoryList from "./story/storyList"
+import StoryList from './story/storyList';
 
 const { Step } = Steps;
 const RadioGroup = Radio.Group;
@@ -66,7 +66,7 @@ const { Option } = Select;
   loadingQueryInfo: loading.effects['demand/queryDemandInfo'],
   loadingQueryLogData: loading.effects['demand/fetchLogList'],
   loadingQueryStoryData: loading.effects['demand/queryStoryList'],
-  loadingEditDemand: loading.effects['demand/updateDemand']
+  loadingEditDemand: loading.effects['demand/updateDemand'],
 }))
 class Detail extends Component {
   constructor(props) {
@@ -84,12 +84,12 @@ class Detail extends Component {
   }
 
   componentDidMount() {
-    this.handlePlanStage()
-    this.handleQueryPlanList()
+    this.handlePlanStage();
+    this.handleQueryPlanList();
     this.handleQueryBudget();
     this.handleQueryDetail();
     this.handleQueryLogList();
-    this.handleQueryFlowList()
+    this.handleQueryFlowList();
   }
 
   // 更改描述
@@ -106,24 +106,24 @@ class Detail extends Component {
   // }
 
   // 查询
-  handleQueryPlanList = (params) => {
-    const no = getParam('no')
+  handleQueryPlanList = params => {
+    const no = getParam('no');
     this.props.dispatch({
       type: 'demand/queryMilePlan',
       payload: {
         demandNo: no,
         ...DefaultPage,
-        ...params
+        ...params,
       },
     });
-  }
+  };
 
   // 查询里程碑计划所有阶段
   handlePlanStage = () => {
     this.props.dispatch({
       type: 'demand/queryMilePlanStage',
     });
-  }
+  };
 
   // 查日志
   handleQueryLogList = (obj = {}) => {
@@ -148,10 +148,19 @@ class Detail extends Component {
     this.props.dispatch({
       type: 'demand/queryFlow',
       payload: {
-        demandNumber: no
-      }
-    })
-  }
+        demandNumber: no,
+      },
+    });
+  };
+
+  handleQueryUser = () => {
+    this.props.dispatch({
+      type: 'demand/fetchUserData',
+      payload: {
+        ...DefaultPage,
+      },
+    });
+  };
 
   // 日志分页操作
   handleStandardTableChange = pagination => {
@@ -179,8 +188,8 @@ class Detail extends Component {
           descriptionState: requirementDescription,
         });
         this.handleQueryStoryList();
-        this.handSearchITAssignAuth()
-        this.handSearchAssignorAuth()
+        this.handSearchITAssignAuth();
+        this.handSearchAssignorAuth();
       });
   };
 
@@ -195,15 +204,44 @@ class Detail extends Component {
   };
 
   handleQueryGroup = params => {
-    this.props.dispatch({
-      type: 'demand/fetchHeaderGroup',
-      payload: {
-        ...params,
-      },
-    });
+    return this.props
+      .dispatch({
+        type: 'demand/fetchHeaderGroup',
+        payload: {
+          ...params,
+        },
+      })
+      .then(res => {
+        if (res) {
+          return res;
+        }
+      });
+  };
+
+  // 通过团队查人员
+  handleChangeGroup = val => {
+    const { form } = this.props;
+    console.log(val);
+    form.resetFields(['receiver']);
+  };
+
+  // 通过人员id查团队
+  handleQueryGroupBy = async (type, val) => {
+    if (type === 'user') {
+      const res = await this.handleQueryGroup({ userId: String(val) });
+      const {
+        demand: { groupList },
+        form,
+      } = this.props;
+      if (res && !_.isEmpty(groupList)) {
+        form.setFieldsValue({ acceptTeam: groupList[0].id });
+      }
+    }
   };
 
   handleSubmit = () => {
+    const { demand } = this.props;
+    const { groupMap, userDataMap } = demand;
     const { descriptionState } = this.state;
     const id = getParam('id');
     // const { projectMap, systemMap, deptListMap, supplierMap, headerMap, groupMap } = this.props;
@@ -213,10 +251,20 @@ class Detail extends Component {
         message.error('请补全需求描述！');
         return;
       }
-      values.expectedCompletionDate = values.expectedCompletionDate ? moment(values.expectedCompletionDate).format('YYYY-MM-DD') : null;
-      values.plannedLaunchDate = values.plannedLaunchDate ? moment(values.plannedLaunchDate).format('YYYY-MM-DD') : null;
-      values.actualLineDate = values.actualLineDate ? moment(values.actualLineDate).format('YYYY-MM-DD') : null;
+      values.expectedCompletionDate = values.expectedCompletionDate
+        ? moment(values.expectedCompletionDate).format('YYYY-MM-DD')
+        : null;
+      values.plannedLaunchDate = values.plannedLaunchDate
+        ? moment(values.plannedLaunchDate).format('YYYY-MM-DD')
+        : null;
+      values.actualLineDate = values.actualLineDate
+        ? moment(values.actualLineDate).format('YYYY-MM-DD')
+        : null;
       values.requirementDescription = descriptionState;
+      values.receiverId = values.receiver;
+      values.receiverName = values.receiver ? userDataMap[values.receiver] : '';
+      values.acceptTeamId = values.acceptTeam;
+      values.acceptTeam = groupMap[values.acceptTeam];
       values.id = id;
       this.editDemand(values);
     });
@@ -239,7 +287,7 @@ class Detail extends Component {
             () => {
               this.handleQueryDetail();
               this.handleQueryLogList();
-              this.handleQueryFlowList()
+              this.handleQueryFlowList();
             },
           );
         }
@@ -291,8 +339,8 @@ class Detail extends Component {
     const { selectedStoryRows } = this.state;
 
     if (selectedStoryRows && selectedStoryRows.length === 0) {
-      message.warning("请选择story")
-      return
+      message.warning('请选择story');
+      return;
     }
     dispatch({
       type: 'demand/copyStory',
@@ -311,19 +359,19 @@ class Detail extends Component {
 
   handleModalVisible = (flag, tag) => {
     this.setState({
-      [tag]: !!flag
-    })
-  }
+      [tag]: !!flag,
+    });
+  };
 
-  handleResolveCancelOrBack = (type) => {
-    const id = getParam('id')
+  handleResolveCancelOrBack = type => {
+    const id = getParam('id');
     const params = {
       id,
-    }
+    };
     if (type === 'cancel') {
-      params.status = 10
+      params.status = 10;
     } else if (type === 'back') {
-      params.status = 1
+      params.status = 1;
     }
     this.props
       .dispatch({
@@ -331,99 +379,139 @@ class Detail extends Component {
         payload: {
           ...params,
         },
-      }).then(res => {
-        if (res) {
-          window.history.back()
-        }
       })
-  }
+      .then(res => {
+        if (res) {
+          window.history.back();
+        }
+      });
+  };
 
   handSearchITAssignAuth = () => {
-    const { dispatch, demand: { demandInfo } } = this.props;
+    const {
+      dispatch,
+      demand: { demandInfo },
+    } = this.props;
     dispatch({
-      type: "demand/ITAssignAuth",
+      type: 'demand/ITAssignAuth',
       payload: {
         demandNumber: demandInfo?.demandNumber,
         type: 1,
-      }
-    })
-  }
+      },
+    });
+  };
 
   handSearchAssignorAuth = () => {
-    const { dispatch, demand: { demandInfo } } = this.props;
+    const {
+      dispatch,
+      demand: { demandInfo },
+    } = this.props;
     dispatch({
-      type: "demand/assignorAuth",
+      type: 'demand/assignorAuth',
       payload: {
         demandNumber: demandInfo?.demandNumber,
         type: 2,
-      }
-    })
-  }
+      },
+    });
+  };
 
   // 团队经理受理需求
   handleChangeStatusByManage = (status, demandId) => {
     const params = {
       demandId,
-    }
+    };
     if (status === '2') {
-      params.status = '3'
+      params.status = '3';
     }
     if (status === '3') {
-      params.status = '4'
+      params.status = '4';
     }
 
-    this.props.dispatch({
-      type: 'demand/dragDemand',
-      payload: {
-        ...params
-      }
-    }).then(res => {
-      if (res) {
-        this.handleQueryDetail();
-        this.handleQueryLogList();
-        this.handleQueryFlowList()
-      }
-    });
-  }
+    this.props
+      .dispatch({
+        type: 'demand/dragDemand',
+        payload: {
+          ...params,
+        },
+      })
+      .then(res => {
+        if (res) {
+          this.handleQueryDetail();
+          this.handleQueryLogList();
+          this.handleQueryFlowList();
+        }
+      });
+  };
 
   // 控制打开填写里程碑计划框
-  handleViewCreatePlan = (bool) => {
+  handleViewCreatePlan = bool => {
     this.setState({
-      showCreateMilePlan: bool
-    })
-  }
+      showCreateMilePlan: bool,
+    });
+  };
 
   // 提交oa
-  handleOAaction = (type) => {
+  handleOAaction = type => {
     if (type === 'p') {
       // 项目需求
       Modal.confirm({
         title: '您的项目需求还没有里程碑计划，不能进入下一节点。现在是否去增加里程碑计划？',
         okText: '是',
         cancelText: '否',
-        onOk: () => this.handleViewCreatePlan(true)
-      })
+        onOk: () => this.handleViewCreatePlan(true),
+      });
     }
     if (type === 'u') {
       // 一般需求
     }
-  }
+  };
 
   render() {
     const { editBool, descriptionState, showCreateMilePlan } = this.state;
-    const { userInfo: { roleName, userName } } = getUserInfo()
+    const {
+      userInfo: { roleName, userName },
+    } = getUserInfo();
     const {
       form,
       loadingQueryInfo,
       loadingQueryLogData,
       loadingEditDemand,
-      demand: { budgetList, demandInfo, groupList, logList, flowList, ITAssignVisible, assignorVisible, },
+      demand: {
+        budgetList,
+        demandInfo,
+        groupList,
+        logList,
+        flowList,
+        ITAssignVisible,
+        assignorVisible,
+        userData,
+      },
     } = this.props;
     const w = '100%';
     const {
-      title, demandNumber, status, budgetNumbers, type = 'u', priority, introducer, acceptTeam, receiver,
-      communicate, expectedCompletionDate, plannedLaunchDate, actualLineDate, projectNo, demandUrgency,
-      businessCompliance, riskControlFunction, creator, createTime, requirementDescription, id, receiver_name
+      title,
+      demandNumber,
+      status,
+      budgetNumbers,
+      type = 'u',
+      priority,
+      introducer,
+      acceptTeam,
+      communicate,
+      expectedCompletionDate,
+      plannedLaunchDate,
+      actualLineDate,
+      projectNo,
+      demandUrgency,
+      businessCompliance,
+      riskControlFunction,
+      creator,
+      createTime,
+      requirementDescription,
+      id,
+      receiverName,
+      receiverId,
+      acceptTeamId,
     } = demandInfo || {};
     const btnStyle = {
       border: '1px solid #D63649',
@@ -474,7 +562,7 @@ class Detail extends Component {
       },
       { span: 1, required: false, name: '提出人', value: introducer, type: 'p' },
       { span: 1, required: false, name: '受理团队', value: acceptTeam, type: 'p' },
-      { span: 1, required: false, name: '受理人', value: receiver, type: 'p' },
+      { span: 1, required: false, name: '受理人', value: receiverName, type: 'p' },
       {
         span: 1,
         required: false,
@@ -524,65 +612,62 @@ class Detail extends Component {
     ];
 
     const resolveFlowData = (arr, index, typeFlow) => {
-      let str = ''
+      let str = '';
       if (arr[index] && typeFlow === 'name') {
         if (arr[index].processUsers) {
           if (arr[index].processUsers[0]) {
-            str = arr[index].processUsers[0].userName
+            str = arr[index].processUsers[0].userName;
           }
         }
       }
       if (arr[index] && typeFlow === 'time') {
         if (String(arr[index].status) === '2') {
-          str = arr[index].handleTime
+          str = arr[index].handleTime;
         } else {
-          str = arr[index].createTime
+          str = arr[index].createTime;
         }
       }
-      return str
-    }
+      return str;
+    };
     return (
       <Fragment>
         <div>
-          {
-            (roleName === '团队经理' || status === '3')
-              ? <CustomBtn
-                style={{ float: 'left' }}
-                onClick={() => this.handleChangeStatusByManage(status, id)}
-                type="create"
-                title="下一节点"
-              />
-              : null
-          }
+          {roleName === '团队经理' || status === '3' ? (
+            <CustomBtn
+              style={{ float: 'left' }}
+              onClick={() => this.handleChangeStatusByManage(status, id)}
+              type="create"
+              title="下一节点"
+            />
+          ) : null}
           <div className="yCenter" style={{ float: 'right' }}>
-            {(status === '4' || status === '6' || status === '7' || status === '10')
-              && receiver_name === userName
-              && <CustomBtn
-                onClick={() => {
-                  Modal.confirm({
-                    content: '需求被取消后可到取消看板查看, 是否确定取消？',
-                    onOk: () => this.handleResolveCancelOrBack('cancel')
-                  })
-                }}
-                type="others"
-                title="取消"
-                style={{ ...btnStyle, marginRight: '16px' }}
-              />
-            }
-            {(status === '4' || status === '5')
-              && receiver_name === userName
-              && <CustomBtn
+            {(status === '4' || status === '6' || status === '7' || status === '10') &&
+              receiverName === userName && (
+                <CustomBtn
+                  onClick={() => {
+                    Modal.confirm({
+                      content: '需求被取消后可到取消看板查看, 是否确定取消？',
+                      onOk: () => this.handleResolveCancelOrBack('cancel'),
+                    });
+                  }}
+                  type="others"
+                  title="取消"
+                  style={{ ...btnStyle, marginRight: '16px' }}
+                />
+              )}
+            {(status === '4' || status === '5') && receiverName === userName && (
+              <CustomBtn
                 onClick={() => {
                   Modal.confirm({
                     content: '需求被打回后可到暂存看板中查看，是否确定打回？',
-                    onOk: () => this.handleResolveCancelOrBack('back')
-                  })
+                    onOk: () => this.handleResolveCancelOrBack('back'),
+                  });
                 }}
                 type="others"
                 title="打回"
                 style={btnStyle}
               />
-            }
+            )}
           </div>
         </div>
         <GlobalSandBox title="流程进度" img={flowIcon}>
@@ -604,17 +689,22 @@ class Detail extends Component {
                   title={<div className={styles.step}>{v.label}</div>}
                   description={
                     <div className={styles.stepContent}>
-                      <div className={styles.stepContent_userName} title={resolveFlowData(flowList, index, 'name')}>
+                      <div
+                        className={styles.stepContent_userName}
+                        title={resolveFlowData(flowList, index, 'name')}
+                      >
                         {resolveFlowData(flowList, index, 'name')}
                       </div>
-                      <div title={resolveFlowData(flowList, index, 'time')}>{resolveFlowData(flowList, index, 'time')}</div>
+                      <div title={resolveFlowData(flowList, index, 'time')}>
+                        {resolveFlowData(flowList, index, 'time')}
+                      </div>
                     </div>
                   }
                 />
               ))}
           </Steps>
         </GlobalSandBox>
-        <Spin spinning={!loadingQueryInfo}>
+        <Spin spinning={loadingQueryInfo}>
           <GlobalSandBox
             title="需求详情"
             img={budgetXqIcon}
@@ -632,14 +722,16 @@ class Detail extends Component {
                       img={psIcon}
                       text="已提交OA技术评审"
                     />
-                    {receiver_name === userName && <OptButton
-                      style={{
-                        backgroundColor: 'white',
-                      }}
-                      img={apsIcon}
-                      text="提交OA技术评审"
-                      onClick={() => this.handleOAaction('p')}
-                    />}
+                    {receiverName === userName && (
+                      <OptButton
+                        style={{
+                          backgroundColor: 'white',
+                        }}
+                        img={apsIcon}
+                        text="提交OA技术评审"
+                        onClick={() => this.handleOAaction('p')}
+                      />
+                    )}
                   </Fragment>
                 ) : (
                   <Fragment>
@@ -653,24 +745,27 @@ class Detail extends Component {
                       img={psIcon}
                       text="已提交OA审批"
                     />
-                    { receiver_name === userName && <OptButton
-                      style={{
-                        backgroundColor: 'white',
-                      }}
-                      img={apsIcon}
-                      text="提交OA审批"
-                      onClick={() => this.handleOAaction('u')}
-                    />}
+                    {receiverName === userName && (
+                      <OptButton
+                        style={{
+                          backgroundColor: 'white',
+                        }}
+                        img={apsIcon}
+                        text="提交OA审批"
+                        onClick={() => this.handleOAaction('u')}
+                      />
+                    )}
                   </Fragment>
-                  )}
+                )}
                 {editBool ? (
                   <Fragment>
                     <OptButton
                       style={{
                         ...btnStyle,
                         backgroundColor: 'white',
+                        // color: 'red'
                       }}
-                      icon="close"
+                      // icon="close"
                       onClick={() =>
                         this.setState({
                           editBool: false,
@@ -700,7 +795,7 @@ class Detail extends Component {
                     img={editIcon}
                     text="编辑"
                   />
-                  )}
+                )}
               </Fragment>
             }
           >
@@ -732,7 +827,7 @@ class Detail extends Component {
                   <FormItem>
                     {form.getFieldDecorator('status', {
                       rules: [{ required: true, message: '请输入状态' }],
-                      initialValue: String(status),
+                      initialValue: Number(status),
                     })(
                       <Select placeholder="请输入状态" style={{ width: w }}>
                         {BOARD_TITLE.map(d => (
@@ -744,10 +839,7 @@ class Detail extends Component {
                     )}
                   </FormItem>
                 </DescriptionItem>
-                <DescriptionItem
-                  span={1}
-                  label={<>预算编号</>}
-                >
+                <DescriptionItem span={1} label={<>预算编号</>}>
                   <FormItem>
                     {form.getFieldDecorator('budgetNumbers', {
                       rules: [{ required: false, message: '请输入预算编号' }],
@@ -794,10 +886,7 @@ class Detail extends Component {
                     )}
                   </FormItem>
                 </DescriptionItem>
-                <DescriptionItem
-                  span={1}
-                  label={<>优先级</>}
-                >
+                <DescriptionItem span={1} label={<>优先级</>}>
                   <FormItem>
                     {form.getFieldDecorator('priority', {
                       rules: [{ required: false, message: '请输入优先级' }],
@@ -813,10 +902,7 @@ class Detail extends Component {
                     )}
                   </FormItem>
                 </DescriptionItem>
-                <DescriptionItem
-                  span={1}
-                  label={<>提出人</>}
-                >
+                <DescriptionItem span={1} label={<>提出人</>}>
                   <FormItem>
                     {form.getFieldDecorator('introducer', {
                       rules: [{ required: true, message: '请输入提出人' }],
@@ -824,20 +910,19 @@ class Detail extends Component {
                     })(<Input disabled style={{ width: w }} />)}
                   </FormItem>
                 </DescriptionItem>
-                <DescriptionItem
-                  span={1}
-                  label={<>受理团队</>}
-                >
+                <DescriptionItem span={1} label={<>受理团队</>}>
                   <FormItem>
                     {form.getFieldDecorator('acceptTeam', {
                       rules: [{ required: false, message: '请输入受理团队' }],
-                      initialValue: acceptTeam,
+                      initialValue: acceptTeamId,
                     })(
                       <Select
                         allowClear
                         style={{ width: w }}
                         showSearch
                         onSearch={_.debounce(this.handleQueryGroup, 500)}
+                        onFocus={this.handleQueryGroup}
+                        onChange={this.handleChangeGroup}
                         optionFilterProp="children"
                         filterOption={(input, option) =>
                           JSON.stringify(option.props.children)
@@ -856,27 +941,31 @@ class Detail extends Component {
                     )}
                   </FormItem>
                 </DescriptionItem>
-                <DescriptionItem
-                  span={1}
-                  label={<>受理人</>}
-                >
+                <DescriptionItem span={1} label={<>受理人</>}>
                   <FormItem>
                     {form.getFieldDecorator('receiver', {
                       rules: [{ required: false, message: '请输入受理人' }],
-                      initialValue: receiver,
+                      initialValue: receiverId,
                     })(
                       <Select
                         allowClear
+                        showSearch
                         style={{ width: w }}
-                        // showSearch
                         placeholder="请输入受理人"
+                        onChange={val => this.handleQueryGroupBy('user', val)}
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                          JSON.stringify(option.props.children)
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
                       >
-                        {/* {!_.isEmpty(headerList) && headerList.map(d => (
-                                <Option key={d.leaderId} value={d.leaderId}>{d.leaderName}</Option>
-                            ))} */}
-                        <Option key="1" value="1">
-                          {1}
-                        </Option>
+                        {!_.isEmpty(userData) &&
+                          userData.map(d => (
+                            <Option key={d.loginid} value={d.loginid}>
+                              {d.lastname}
+                            </Option>
+                          ))}
                       </Select>,
                     )}
                   </FormItem>
@@ -912,10 +1001,7 @@ class Detail extends Component {
                     })(<DatePicker style={{ width: w }} placeholder="请输入期望完成日期" />)}
                   </FormItem>
                 </DescriptionItem>
-                <DescriptionItem
-                  span={1}
-                  label={<>计划上线日期</>}
-                >
+                <DescriptionItem span={1} label={<>计划上线日期</>}>
                   <FormItem>
                     {form.getFieldDecorator('plannedLaunchDate', {
                       rules: [{ required: false, message: '请输入计划上线日期' }],
@@ -933,10 +1019,7 @@ class Detail extends Component {
                     )}
                   </FormItem>
                 </DescriptionItem>
-                <DescriptionItem
-                  span={1}
-                  label={<>项目编号</>}
-                >
+                <DescriptionItem span={1} label={<>项目编号</>}>
                   <FormItem>
                     {form.getFieldDecorator('projectNo', {
                       rules: [{ required: false, message: '请输入项目编号' }],
@@ -1096,26 +1179,25 @@ class Detail extends Component {
                             dangerouslySetInnerHTML={{ __html: v.value ? v.value : '--' }}
                           /> /* eslint-disable */
                         )) ||
-                        (v.arrDict && <div style={v.style}>{v.arrDict[v.value]}</div>) || (
-                          <div style={v.style}>{v.value}</div>
-                        )}
+                          (v.arrDict && <div style={v.style}>{v.arrDict[v.value]}</div>) || (
+                            <div style={v.style}>{v.value}</div>
+                          )}
                       </DescriptionItem>
                     ),
                 )}
               </Descriptions>
-              )}
+            )}
           </GlobalSandBox>
-        </Spin >
+        </Spin>
         {console.log(this.planRef)}
-        {
-          type === 'p'
-          && <MilePlan
+        {type === 'p' && (
+          <MilePlan
             handleQueryLogList={this.handleQueryLogList}
             handleViewCreatePlan={this.handleViewCreatePlan}
             demandNumber={demandNumber}
             showCreateMilePlan={showCreateMilePlan}
           />
-        }
+        )}
         <GlobalSandBox
           title="新建story"
           img={sdIcon}
@@ -1144,25 +1226,25 @@ class Detail extends Component {
             handleQueryStoryList={this.handleQueryStoryList}
             demandInfo={demandInfo}
             selectedStoryRows={this.state.selectedStoryRows}
-            setSelectedStoryRows={rows => this.setState({
-              selectedStoryRows: rows
-            })}
+            setSelectedStoryRows={rows =>
+              this.setState({
+                selectedStoryRows: rows,
+              })
+            }
             handleModalVisible={this.handleModalVisible}
             itAssessModalVisible={this.state.itAssessModalVisible}
             addStoryModalVisible={this.state.addStoryModalVisible}
             turnAssessModalVisible={this.state.turnAssessModalVisible}
           />
         </GlobalSandBox>
-        {
-          title && (
-            <ChartCard
-              ITAssignVisible={ITAssignVisible}
-              assignorVisible={assignorVisible}
-              handleModalVisible={this.handleModalVisible}
-              title={title}
-            />
-          )
-        }
+        {title && (
+          <ChartCard
+            ITAssignVisible={ITAssignVisible}
+            assignorVisible={assignorVisible}
+            handleModalVisible={this.handleModalVisible}
+            title={title}
+          />
+        )}
         <GlobalSandBox title="系统需求" img={sdIcon}></GlobalSandBox>
         <GlobalSandBox img={budgetLogIcon} title="操作日志">
           <StandardTable
@@ -1173,7 +1255,7 @@ class Detail extends Component {
             onChange={this.handleStandardTableChange}
           />
         </GlobalSandBox>
-      </Fragment >
+      </Fragment>
     );
   }
 }
