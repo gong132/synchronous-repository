@@ -17,7 +17,6 @@ import {
   assignUser,
   // updateDemand,
   queryDemand,
-  queryGroup,
   queryDemandInfo,
   // queryDemandProject,
   queryDemandBoard,
@@ -27,6 +26,10 @@ import {
   focusDemand,
   receiverDemand,
   dragDemand,
+  unFocusDemand,
+  addCommonLang,
+  updateCommonLang,
+  queryCommonLang,
 } from '@/services/demand/demand';
 import {
   addMilePlan,
@@ -36,8 +39,8 @@ import {
   queryMilePlanStage,
   // queryMilePlanInfo,
 } from '@/services/milestonePlan/mileStonePlan'
-import {queryUserList} from '@/services/systemManage/userManage'
-import { queryLogList, queryFile } from '@/services/global';
+import {queryTeamBy} from '@/services/systemManage/teamManage'
+import { queryLogList, queryFile, queryUserList } from '@/services/global';
 import { PagerHelper } from '@/utils/helper';
 import { message } from 'antd';
 
@@ -67,6 +70,7 @@ const Demand = {
     userData: [],
     userDataMap: {},
     userDataMapId: {},
+    userLoginIdMap: {},
     ITAssignVisible: false,
     assignorVisible: false,
   },
@@ -107,6 +111,16 @@ const Demand = {
       return true;
     },
 
+    // 取消关注
+    *unFocusDemand({payload}, {call}) {
+      const { code, msg } = yield call(unFocusDemand, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    },
+
     // 查询人员
     *fetchUserData({ payload }, { call, put }) {
       const { code, data, msg } = yield call(queryUserList, payload);
@@ -116,17 +130,20 @@ const Demand = {
       }
       const obj = {}
       const objId = {}
-      data.data.map(v => {
+      const objLoginId={}
+      data.map(v => {
         obj[v.loginid] = v.lastname
         objId[v.id] = v.lastname
+        objLoginId[v.loginid]=v.id
         return true
       })
       yield put({
         type: 'saveData',
         payload: {
-          userData: data.data,
+          userData: data,
           userDataMap: obj,
           userDataMapId: objId,
+          userLoginIdMap: objLoginId
         },
       })
     },
@@ -205,13 +222,13 @@ const Demand = {
       return true;
     },
 
-    // 查询负责人和团队
+    // 查询团队
     *fetchHeaderGroup({ payload }, { call, put }) {
       const {
         code,
         msg,
-        data: { data },
-      } = yield call(queryGroup, payload);
+        data,
+      } = yield call(queryTeamBy, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
@@ -564,6 +581,12 @@ const Demand = {
       })
       return data
     },
+
+    // 添加常用语
+
+    // 修改常用语
+
+    // 查询常用语
   },
   reducers: {
     saveData(state, { payload }) {

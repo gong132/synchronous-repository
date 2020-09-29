@@ -223,7 +223,7 @@ class SectorDetail extends PureComponent {
                       ...btnStyle,
                       backgroundColor: 'white',
                     }}
-                    icon="close"
+                    // icon="close"
                     onClick={() =>
                       this.setState({
                         editBool: false,

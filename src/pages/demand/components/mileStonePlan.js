@@ -9,7 +9,7 @@ import delIcon from '@/assets/icon/cz_del.svg';
 import OptButton from '@/components/commonUseModule/optButton';
 import sdIcon from '@/assets/icon/modular_xtxq.svg';
 import CustomBtn from '@/components/commonUseModule/customBtn';
-import { TableColumnHelper, DefaultPage, PagerHelper } from '@/utils/helper';
+import { TableColumnHelper, DefaultPage } from '@/utils/helper';
 import { connect } from 'dva'
 import {
   Modal,
@@ -269,7 +269,7 @@ class MilePlan extends PureComponent {
   render() {
     const { demand } = this.props
     const { milePlanList, planStageListMap, demandInfo={} } = demand
-    const { receiver_name, status } = demandInfo
+    const { receiverName, status } = demandInfo
     const { visibleModal } = this.state
     const { userInfo:{userName} } = getUserInfo()
     const proColumns = [
@@ -345,7 +345,7 @@ class MilePlan extends PureComponent {
               style={{
                 backgroundColor: 'white',
               }}
-              disabled={ (status !== '4' || status !== '5') && receiver_name !== userName}
+              disabled={(status !== '4' || status !== '5') && receiverName !== userName}
               icon="plus"
               text="新建"
             />

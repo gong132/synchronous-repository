@@ -191,7 +191,7 @@ class ChartCard extends PureComponent {
                   type="others"
                   title="确定"
                   style={{
-                    padding: '8px 23px',
+                    padding: '8px 30px',
                     backgroundColor: '#2E5BFF',
                     color: 'white',
                     marginLeft: '16px',

@@ -69,7 +69,7 @@ class App extends Component {
       disabled = false, // 控制文本框是否可编辑
       editorKey,
     } = this.props;
-    let cusToolbar = toolbar;
+    const cusToolbar = toolbar;
     const pastProps = {
       paste_retain_style_properties: 'all',
       paste_word_valid_elements: '*[*]',

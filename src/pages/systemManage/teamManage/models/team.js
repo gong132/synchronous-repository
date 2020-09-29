@@ -1,5 +1,5 @@
 import { queryTeamList,
-  // queryTeamBy
+  queryTeamHeader
 } from '@/services/systemManage/teamManage';
 import {PagerHelper} from "@/utils/helper";
 import {message} from "antd";
@@ -9,14 +9,15 @@ const TeamModel = {
   namespace: 'teamManage',
   state: {
     teamList: PagerHelper.genListState(),
-    managerList: []
+    managerList: [],
+    teamHeader: []
   },
   effects: {
     *fetchTeamData({ payload }, { call, put }) {
       const { code, data, msg } = yield call(queryTeamList, payload);
       if (code !== 200) {
         message.error(msg);
-        return
+        return false
       }
       const { records, ...others } = data;
       yield put({
@@ -38,11 +39,27 @@ const TeamModel = {
           managerList: arr
         }
       })
+      return true
     },
+
+    // 查团队经理
+    *queryTeamHeader({payload}, {call, put}) {
+      const { code, data, msg } = yield call(queryTeamHeader, payload)
+      if (code !== 200) {
+        message.error(msg);
+        return false
+      }
+      yield put({
+        type: 'saveData',
+        payload: {
+          teamHeader: data
+        }
+      })
+    }
   },
   reducers: {
-    saveData(state, action) {
-      return { ...state, ...action };
+    saveData(state, {payload}) {
+      return { ...state, ...payload };
     },
     setTeamData(state, action) {
       return {

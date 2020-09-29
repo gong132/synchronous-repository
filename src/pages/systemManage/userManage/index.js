@@ -5,12 +5,10 @@ import { formLayoutItem } from '@/utils/constant';
 import editIcon from '@/assets/icon/cz_bj.svg';
 import _ from 'lodash'
 import StandardTable from '@/components/StandardTable';
-import { DefaultPage } from '@/utils/helper';
 import ListOptBtn from '@/components/commonUseModule/listOptBtn'
-import { TableColumnHelper } from '@/utils/helper';
+import { TableColumnHelper, DefaultPage } from '@/utils/helper';
 import { Modal, Form, Input, Select, Row, Col, Checkbox, Card } from 'antd';
 import styles from './index.less';
-import { useMemo } from 'react';
 
 const FormItem = Form.Item;
 
@@ -75,8 +73,8 @@ class UserManage extends Component {
 
   // 模糊查询
   moreQuery = () => {
-    console.log('编号')
     const formValues = this.props.form.getFieldsValue();
+    formValues.roleId = String(formValues.roleId)
     this.handleDebounceQueryData(formValues);
   };
 
@@ -92,6 +90,14 @@ class UserManage extends Component {
       modalVisible: bool,
       record,
     });
+    if(bool) {
+      this.props.dispatch({
+        type: 'userManage/queryRoleById',
+        payload:{
+          id: record.id
+        }
+      })
+    }
   };
 
   handleSubmit = () => {
@@ -138,13 +144,13 @@ class UserManage extends Component {
       <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
         <Col span={6}>
           <FormItem {...formLayoutItem} colon={false} label="搜索人员">
-            {getFieldDecorator('name', {})(<Input onChange={_.debounce(this.moreQuery, 500)} allowClear placeholder="请输入姓名或工号" />)}
+            {getFieldDecorator('searchKey', {})(<Input onChange={_.debounce(this.moreQuery, 500)} allowClear placeholder="请输入姓名或工号" />)}
           </FormItem>
         </Col>
         <Col span={6}>
           <FormItem {...formLayoutItem} colon={false} label="用户角色">
             {getFieldDecorator(
-              'projectNumber',
+              'roleId',
               {},
             )(
               <Select
@@ -176,7 +182,7 @@ class UserManage extends Component {
         <Col span={6}>
           <FormItem {...formLayoutItem} colon={false} label="所属团队">
             {getFieldDecorator(
-              'manager',
+              'teamId',
               {},
             )(
               <Select
@@ -237,6 +243,7 @@ class UserManage extends Component {
           let str = ''
           text.map(v => {
             str += `${roleDataMap[v.id]} `
+            return true
           })
           return str
         }
@@ -273,10 +280,9 @@ class UserManage extends Component {
   renderEditModal = () => {
     const { modalVisible, record } = this.state;
     const { form, userManage } = this.props;
-    const { lastname, loginid, roleList } = record;
-    const arr = []
-    roleList.map(v => arr.push(v.id))
-    const { roleData } = userManage
+    const { lastname, loginid } = record;
+    const { roleData, checkRole } = userManage
+    console.log(checkRole)
     return (
       <Modal
         title="编辑"
@@ -323,7 +329,7 @@ class UserManage extends Component {
               >
                 {form.getFieldDecorator('roleArr', {
                   rules: [{ required: true, message: '请至少选择一个角色！' }],
-                  initialValue: arr,
+                  initialValue: checkRole,
                 })(
                   <Checkbox.Group style={{ width: '100%' }}>
                     <Row>

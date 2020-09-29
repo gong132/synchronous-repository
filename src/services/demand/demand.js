@@ -80,14 +80,6 @@ export async function queryProjectDemandBoard(params) {
   });
 }
 
-// 团队
-export async function queryGroup(params) {
-  return request('/team/query', {
-    method: 'post',
-    params,
-  });
-}
-
 // 查预算编号
 export async function queryBudgetNumber(params) {
   return request('/budget/search', {
@@ -194,6 +186,14 @@ export async function focusDemand(params) {
   });
 }
 
+// q取消关注
+export async function unFocusDemand(params) {
+  return request('/attention/deleteAttention', {
+    method: 'post',
+    params,
+  });
+}
+
 // 指派关注人
 export async function assignUser(params) {
   return request('/attention/add', {
@@ -213,6 +213,30 @@ export async function receiverDemand(params) {
 // 看板拖拽接口
 export async function dragDemand(params) {
   return request('/demand/pointReceiver', {
+    method: 'post',
+    params,
+  });
+}
+
+// 添加常用语
+export async function addCommonLang(params) {
+  return request('/message/commonLanguage/add', {
+    method: 'post',
+    params,
+  });
+}
+
+// 修改常用语
+export async function updateCommonLang(params) {
+  return request('/message/commonLanguage/update', {
+    method: 'post',
+    params,
+  });
+}
+
+// 查询常用语
+export async function queryCommonLang(params) {
+  return request('/message/commonLanguage/update', {
     method: 'post',
     params,
   });

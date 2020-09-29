@@ -41,6 +41,7 @@ class TeamManage extends Component {
 
   componentDidMount() {
     this.handleQueryData()
+    this.handleQueryTeamHeader()
   }
 
   handleQueryData = (params = {}) => {
@@ -54,6 +55,13 @@ class TeamManage extends Component {
       },
     });
   };
+
+  // 查团队经理
+  handleQueryTeamHeader = () => {
+    this.props.dispatch({
+      type: 'teamManage/queryTeamHeader',
+    });
+  }
 
   // 搜索时防抖
   handleDebounceQueryData = () => {
@@ -73,7 +81,7 @@ class TeamManage extends Component {
   saveParams = (val, type) => {
     const { searchParams } = this.state;
     const obj = searchParams;
-    if (type === 'deptInfo') {
+    if (type === 'headerId') {
       obj[type] = val;
     } else if (type === 'name' || type === 'id') {
       obj[type] = val.target.value;
@@ -131,7 +139,7 @@ class TeamManage extends Component {
   };
 
   renderSearchForm = () => {
-    const { form: { getFieldDecorator } } = this.props;
+    const { form: { getFieldDecorator }, teamManage: { teamHeader } } = this.props;
     return (
       <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
         {/* <Col span={6}>
@@ -159,13 +167,16 @@ class TeamManage extends Component {
             {getFieldDecorator('headerId', {
             })(
               <Select
+                allowClear
                 placeholder='请输入团队经理'
+                onChange={e => this.saveParams(e, 'headerId')}
                 style={{
                   width: '100%'
                 }}
               >
-                <Option key='1' value='1'>未定义</Option>
-                <Option key='2' value='2'>未定义</Option>
+                {teamHeader.map(v => (
+                  <Option key={v.loginid} value={v.loginid}>{v.lastname}</Option>
+                ))}
               </Select>)}
           </FormItem>
         </Col>

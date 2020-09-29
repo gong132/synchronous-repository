@@ -14,3 +14,11 @@ export async function queryTeamBy(params) {
     params,
   });
 }
+
+// 查团队经理
+export async function queryTeamHeader(params) {
+  return request('/personnel/queryTeamHead', {
+    method: 'get',
+    params,
+  });
+}

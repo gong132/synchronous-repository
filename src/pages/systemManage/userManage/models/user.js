@@ -1,6 +1,13 @@
-import { queryUserList, updateUser, fetchAllRolesList, queryHeaderGroup } from '@/services/systemManage/userManage';
-import {PagerHelper} from "@/utils/helper";
-import {message} from "antd";
+import {
+  queryUserList,
+  updateUser,
+  fetchAllRolesList,
+  queryHeaderGroup,
+  queryRoleById
+} from '@/services/systemManage/userManage';
+import _ from 'lodash'
+import { PagerHelper } from "@/utils/helper";
+import { message } from "antd";
 
 
 const UserModel = {
@@ -12,7 +19,8 @@ const UserModel = {
     groupList: [],
     headerList: [],
     headerMap: {},
-    groupMap: {}
+    groupMap: {},
+    checkRole: []
   },
   effects: {
     *fetchUserData({ payload }, { call, put }) {
@@ -31,7 +39,7 @@ const UserModel = {
         },
       })
     },
-    
+
     *updateUser({ payload }, { call }) {
       const { code, msg } = yield call(updateUser, payload);
       if (!code || code !== 200) {
@@ -62,14 +70,14 @@ const UserModel = {
 
     // 查询负责人和团队
     *fetchHeaderGroup({ payload }, { call, put }) {
-      const { code, msg, data:{data} } = yield call(queryHeaderGroup, payload)
+      const { code, msg, data: { data } } = yield call(queryHeaderGroup, payload)
       if (!code || code !== 200) {
         message.error(msg);
         return false;
       }
       const obj = {}
       const gObj = {}
-      if(data&&data.length < 1) return ''
+      if (data && data.length < 1) return ''
       data.map(v => {
         v.id = String(v.id)
         obj[String(v.id)] = v.name
@@ -90,9 +98,32 @@ const UserModel = {
       })
       return true
     },
+
+    // 根据用户id查询绑定的角色
+    *queryRoleById({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(queryRoleById, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      const arr = []
+      if (_.isEmpty(data)) {
+        return false
+      }
+      data.map(v => {
+        arr.push(v.id)
+        return true
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          checkRole: arr
+        }
+      })
+    }
   },
   reducers: {
-    saveData(state, {payload}) {
+    saveData(state, { payload }) {
       return { ...state, ...payload };
     },
     setUserData(state, action) {

@@ -51,9 +51,37 @@
   :global {
     .ant-form-item {
       margin-bottom: 16px;
+
       .ant-form-item-label {
-        text-align: left;
+        // text-align: left;
       }
+    }
+  }
+}
+
+.box {
+  border: 1px solid #EBEEF5;
+  border-radius: 2px;
+  padding: 16px;
+
+  :global {
+    .ant-checkbox {
+      position: relative;
+      top: .5px;
+    }
+
+    .ant-checkbox+span {
+      display: inline-block;
+      width: 130px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .ant-checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      width: 100%;
     }
   }
 }

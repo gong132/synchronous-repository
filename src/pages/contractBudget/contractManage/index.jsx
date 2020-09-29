@@ -419,10 +419,20 @@ class ContractManage extends Component {
           </Col>
         </Row>
         <div className={styles.moreSearchButton}>
-          <Button onClick={() => this.moreQuery()} loading={loadingQueryData} type="primary" ghost>
+          {/* <Button onClick={() => this.moreQuery()} loading={loadingQueryData} type="primary" ghost>
             查询
-          </Button>
-          <Button onClick={() => this.setSearchMore(false)}>取消</Button>
+          </Button> */}
+          <CustomBtn 
+             onClick={() => this.setSearchMore(false)}
+             type='cancel'
+          />
+          <CustomBtn 
+             onClick={() => this.moreQuery(false)}
+             type='save'
+             title='确认'
+             loading={loadingQueryData}
+          />
+          {/* <Button onClick={() => this.setSearchMore(false)}>取消</Button> */}
         </div>
       </div>
     );
@@ -671,8 +681,8 @@ class ContractManage extends Component {
     }
     return (
       <Fragment>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <CustomBtn onClick={() => this.handleViewModal(true, '新建')} icon='plus' type="create" />
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          {/* <CustomBtn onClick={() => this.handleViewModal(true, '新建')} icon='plus' type="create" /> */}
           <CustomBtn
             onClick={() => this.handleExportExcel()}
             type='export'

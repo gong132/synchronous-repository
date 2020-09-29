@@ -72,27 +72,57 @@
 }
 
 // 看板样式
+.spectaculars__set{
+  ::-webkit-scrollbar-thumb {
+    background: #8798AD;
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #A9ACAF;
+    border-radius: 7px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+}
+
+.drag::-webkit-scrollbar-thumb {
+  background: #8798AD;
+  border-radius: 6px;
+}
+.drag::-webkit-scrollbar-thumb:hover {
+  background-color: #A9ACAF;
+  border-radius: 7px;
+}
+.drag::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
 .drag {
   display: flex;
   overflow-y: hidden;
   overflow-x: auto;
 
-  :global {
-    ::-webkit-scrollbar-thumb {
-      background: #8798AD;
-      border-radius: 6px;
-    }
+  // :global {
+    // ::-webkit-scrollbar-thumb {
+    //   background: #8798AD;
+    //   border-radius: 6px;
+    // }
 
-    ::-webkit-scrollbar-thumb:hover {
-      background-color: #A9ACAF;
-      border-radius: 7px;
-    }
+    // ::-webkit-scrollbar-thumb:hover {
+    //   background-color: #A9ACAF;
+    //   border-radius: 7px;
+    // }
 
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 11px;
-    }
-  }
+    // ::-webkit-scrollbar {
+    //   width: 6px;
+    //   height: 6px;
+    // }
+  // }
 }
 
 .drag::after {
