@@ -4,7 +4,6 @@ import styles from './ellipse.less'
 
 const Ellipse = (props) => {
   const { text, className, style, onClick } = props
-  console.log(style)
   return (
     <Tooltip mouseEnterDelay={0.5} overlayClassName='tooTipStyle' placement="top" title={text}>
       <div onClick={onClick} className={className} style={style}>

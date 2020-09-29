@@ -418,7 +418,7 @@ class SectorManage extends Component {
             visible={modalVisible}
             maskClosable={false}
             onCancel={() => this.handleViewModal(false)}
-            width="794px"
+            width="694px"
             footer={
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <CustomBtn
@@ -446,11 +446,7 @@ class SectorManage extends Component {
               <Col span={24}>
                 <FormItem label="所属部门" labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
                   <div
-                    style={{
-                      border: '1px solid #EBEEF5',
-                      borderRadius: '2px',
-                      padding: '16px',
-                    }}
+                    className={styles.box}
                   >
                     {form.getFieldDecorator('dept', {
                       rules: [{ required: true, message: '请至少选择一个部门！' }],
@@ -460,7 +456,7 @@ class SectorManage extends Component {
                         <Row>
                           {!_.isEmpty(deptList) &&
                             deptList.map(v => (
-                              <Col key={v.id} span={6}>
+                              <Col key={v.id} title={v.name} span={6}>
                                 <Checkbox key={v.id} value={v.id}>
                                   {v.name}
                                 </Checkbox>

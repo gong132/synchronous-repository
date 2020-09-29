@@ -681,8 +681,8 @@ class ContractManage extends Component {
     }
     return (
       <Fragment>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <CustomBtn onClick={() => this.handleViewModal(true, '新建')} icon='plus' type="create" />
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          {/* <CustomBtn onClick={() => this.handleViewModal(true, '新建')} icon='plus' type="create" /> */}
           <CustomBtn
             onClick={() => this.handleExportExcel()}
             type='export'

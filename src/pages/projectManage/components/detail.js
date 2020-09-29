@@ -735,7 +735,7 @@ class Detail extends PureComponent {
           <StandardTable
             rowKey={(record, index) => index}
             columns={columns}
-            // data={logList}
+            data={logList}
             // loading={loadingQueryLogData}
             onChange={this.handleStandardTableChange}
           />

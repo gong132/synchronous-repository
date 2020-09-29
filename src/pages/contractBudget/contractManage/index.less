@@ -24,6 +24,7 @@
   width: 200px;
   /* margin: 0 auto; */
   display: flex;
+  margin: 12px 0;
   float: right;
   justify-content: space-between;
 }
@@ -32,11 +33,17 @@
   width: 270px;
   margin-top: 12px;
   max-height: 350px;
+  padding: 0 16px;
   overflow: auto;
 
   :global {
     .ant-form-item {
       margin-bottom: 0;
+    }
+
+    .ant-form-item-label {
+      line-height: unset;
+      margin-top: 12px;
     }
   }
 }

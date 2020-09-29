@@ -27,6 +27,9 @@ import {
   receiverDemand,
   dragDemand,
   unFocusDemand,
+  addCommonLang,
+  updateCommonLang,
+  queryCommonLang,
 } from '@/services/demand/demand';
 import {
   addMilePlan,
@@ -36,9 +39,8 @@ import {
   queryMilePlanStage,
   // queryMilePlanInfo,
 } from '@/services/milestonePlan/mileStonePlan'
-import {queryUserList} from '@/services/systemManage/userManage'
 import {queryTeamBy} from '@/services/systemManage/teamManage'
-import { queryLogList, queryFile } from '@/services/global';
+import { queryLogList, queryFile, queryUserList } from '@/services/global';
 import { PagerHelper } from '@/utils/helper';
 import { message } from 'antd';
 
@@ -129,7 +131,7 @@ const Demand = {
       const obj = {}
       const objId = {}
       const objLoginId={}
-      data.data.map(v => {
+      data.map(v => {
         obj[v.loginid] = v.lastname
         objId[v.id] = v.lastname
         objLoginId[v.loginid]=v.id
@@ -138,7 +140,7 @@ const Demand = {
       yield put({
         type: 'saveData',
         payload: {
-          userData: data.data,
+          userData: data,
           userDataMap: obj,
           userDataMapId: objId,
           userLoginIdMap: objLoginId
@@ -220,7 +222,7 @@ const Demand = {
       return true;
     },
 
-    // 查询负责人和团队
+    // 查询团队
     *fetchHeaderGroup({ payload }, { call, put }) {
       const {
         code,
@@ -579,6 +581,12 @@ const Demand = {
       })
       return data
     },
+
+    // 添加常用语
+
+    // 修改常用语
+
+    // 查询常用语
   },
   reducers: {
     saveData(state, { payload }) {

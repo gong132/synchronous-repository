@@ -105,11 +105,22 @@ class CreateDemand extends PureComponent {
     });
   };
 
+  // 查询人员
+  handleQueryUser = (params) => {
+    this.props.dispatch({
+      type: 'demand/fetchUserData',
+      payload: {
+        ...params,
+      },
+    });
+  };
+
   // 通过团队查人员
   handleChangeGroup = (val) => {
     const { form } = this.props
     console.log(val)
     form.resetFields(['receiver'])
+    this.handleQueryUser({teamId: val})
   }
 
   // 通过人员id查团队

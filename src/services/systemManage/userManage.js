@@ -30,3 +30,11 @@ export async function queryHeaderGroup(params) {
     params,
   });
 }
+
+// 根据人员id查角色，编辑用
+export async function queryRoleById(params) {
+  return request('/personnel/queryListByPersonnelId', {
+    method: 'get',
+    params,
+  });
+}

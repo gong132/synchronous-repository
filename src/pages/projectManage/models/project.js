@@ -9,7 +9,7 @@ import {
   updateProject,
   querySupplier,
 } from '@/services/project/project'
-import { queryLogList } from '@/services/global';
+import { queryLogList, queryUserList, queryGroup } from '@/services/global';
 import { message } from 'antd'
 
 const Project = {
@@ -24,7 +24,10 @@ const Project = {
     stageStatusMap: {},
     projectInfo: {},
     supplierList: [],
-    supplierMap: {}
+    supplierMap: {},
+    userList: [],
+    groupList: [],
+    groupMap: {},
   },
   effects: {
     // 查询所有集群板块
@@ -171,7 +174,46 @@ const Project = {
         }
       })
       return true
-    }
+    },
+
+    // 查人员
+    *queryUser({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(queryUserList, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return;
+      }
+      yield put({
+        type: 'saveData',
+        payload: {
+          userList: data,
+        },
+      });
+    },
+
+    // 查团队
+    *queryTeam({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(queryGroup, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      const gObj = {};
+      if (data && data.length < 1) return '';
+      data.map(v => {
+        v.id = String(v.id);
+        gObj[v.id] = v.name;
+        return true;
+      });
+      yield put({
+        type: 'setData',
+        payload: {
+          groupList: data,
+          groupMap: gObj,
+        },
+      });
+      return true;
+    },
   },
   reducers: {
     saveData(state, { payload }) {

@@ -217,3 +217,27 @@ export async function dragDemand(params) {
     params,
   });
 }
+
+// 添加常用语
+export async function addCommonLang(params) {
+  return request('/message/commonLanguage/add', {
+    method: 'post',
+    params,
+  });
+}
+
+// 修改常用语
+export async function updateCommonLang(params) {
+  return request('/message/commonLanguage/update', {
+    method: 'post',
+    params,
+  });
+}
+
+// 查询常用语
+export async function queryCommonLang(params) {
+  return request('/message/commonLanguage/update', {
+    method: 'post',
+    params,
+  });
+}

@@ -33,8 +33,9 @@ const { Option } = Select
 const FormItem = Form.Item
 const { RangePicker } = DatePicker
 @Form.create()
-@connect(({ project }) => ({
-  project
+@connect(({ project, loading }) => ({
+  project,
+  loadingQueryData: loading.effects['project/queryProjectList']
 }))
 class ProjectManage extends Component {
   constructor(props) {
@@ -52,6 +53,28 @@ class ProjectManage extends Component {
     this.handleQueryData()
     this.handleQueryBudget()
     this.handleQuerySupplier()
+    this.handleQueryUser()
+    this.handleQueryGroup()
+  }
+
+  // 查人员
+  handleQueryUser = (params) => {
+    this.props.dispatch({
+      type: 'project/queryUser',
+      payload: {
+        ...params
+      }
+    })
+  }
+
+  // 查团队
+  handleQueryGroup = (params) => {
+    this.props.dispatch({
+      type: 'project/queryTeam',
+      payload: {
+        ...params
+      }
+    })
   }
 
   // 查预算编号
@@ -187,6 +210,8 @@ class ProjectManage extends Component {
       stageStatus,
       budgetList,
       supplierList,
+      userList,
+      groupList,
     } = project;
     const { getFieldDecorator } = form
     const content = (
@@ -195,7 +220,7 @@ class ProjectManage extends Component {
           <Col span={24}>
             <FormItem colon={false} label="所属需求编号">
               {getFieldDecorator('demandKey', {
-              })(<Input allowClear placeholder="请输入所属需求编号" />)}
+              })(<Input allowClear placeholder="请输入需求编号/名称关键字" />)}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -208,7 +233,7 @@ class ProjectManage extends Component {
           </Col>
           <Col span={24}>
             <FormItem colon={false} label="项目进度百分比">
-              <div className="yCenter" style={{ height: 30 }}>
+              <div className="yCenter" style={{ height: 41 }}>
                 {getFieldDecorator(
                   'pjProgressStart',
                   {},
@@ -223,7 +248,7 @@ class ProjectManage extends Component {
           </Col>
           <Col span={24}>
             <FormItem colon={false} label="项目进度偏差">
-              <div className="yCenter" style={{ height: 30 }}>
+              <div className="yCenter" style={{ height: 41 }}>
                 {getFieldDecorator(
                   'expectTotalAmountLow',
                   {},
@@ -248,7 +273,7 @@ class ProjectManage extends Component {
                   style={{
                     width: '100%',
                   }}
-                  placeholder="请输入项目健康状态"
+                  placeholder="请选择项目健康状态"
                 >
                   <Option key='p' value='p'>未定义</Option>
                 </Select>,
@@ -267,7 +292,7 @@ class ProjectManage extends Component {
                   style={{
                     width: '100%',
                   }}
-                  placeholder="请输入供应商"
+                  placeholder="请选择项目优先级"
                 >
                   {!_.isEmpty(supplierList) &&
                     supplierList.map(d => (
@@ -295,7 +320,7 @@ class ProjectManage extends Component {
                       .toLowerCase()
                       .indexOf(input.toLowerCase()) >= 0
                   }
-                  placeholder="请输入预算编号"
+                  placeholder="请输入预算编号关键字"
                   style={{
                     width: '100%',
                   }}
@@ -312,7 +337,7 @@ class ProjectManage extends Component {
           </Col>
           <Col span={24}>
             <FormItem colon={false} label="合同成交金额">
-              <div className="yCenter" style={{ height: 30 }}>
+              <div className="yCenter" style={{ height: 41 }}>
                 {getFieldDecorator(
                   'expectTotalAmountLow',
                   {},
@@ -337,7 +362,7 @@ class ProjectManage extends Component {
                   style={{
                     width: '100%',
                   }}
-                  placeholder="请输入供应商"
+                  placeholder="请输入供应商名称关键字"
                 >
                   {!_.isEmpty(supplierList) &&
                     supplierList.map(d => (
@@ -351,18 +376,99 @@ class ProjectManage extends Component {
             </FormItem>
           </Col>
           <Col span={24}>
-            <FormItem colon={false} label="合同签订日期">
+            <FormItem colon={false} label="建设方式">
+              {getFieldDecorator(
+                'headerTeamId ',
+                {},
+              )(
+                <Select
+                  allowClear
+                  // showSearch
+                  style={{
+                    width: '100%',
+                  }}
+                  placeholder='请选择建设方式'
+                >
+                  {/* {!_.isEmpty(supplierList) &&
+                    supplierList.map(d => (
+                      <Option key={d.id} value={d.id}>
+                        {d.name}
+                      </Option>
+                    ))} */}
+                  <Option key='p' value='p'>未定义</Option>
+                </Select>,
+              )}
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem colon={false} label="项目负责人">
               {getFieldDecorator('signTime', {
+              })(
+                <Select
+                  allowClear
+                  showSearch
+                  optionFilterProp="children"
+                  onSearch={val => this.handleQueryUser({lastname: val})}
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  placeholder="请输入负责人工号/名称关键字"
+                  style={{
+                    width: '100%',
+                  }}
+                >
+                  {!_.isEmpty(userList) &&
+                    userList.map(d => (
+                      <Option key={d.loginid} value={d.loginid}>
+                        {d.lastname}
+                      </Option>
+                    ))}
+                </Select>,
+              )}
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem colon={false} label="立项申请团队">
+              {getFieldDecorator('estTeam', {
+              })(
+                <Select
+                  allowClear
+                  showSearch
+                  onSearch={_.debounce(this.handleQueryGroup, 500)}
+                  onFocus={this.handleQueryGroup}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  style={{
+                    width: '100%',
+                  }}
+                  placeholder='请输入团队名称关键字'
+                >
+                  {!_.isEmpty(groupList) && groupList.map(d => (
+                    <Option key={d.id} value={d.id}>{d.name}</Option>
+                  ))}
+                </Select>,
+              )}
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem colon={false} label="技术评审申请时间">
+              {getFieldDecorator('defendPayTime', {
               })(
                 <RangePicker />
               )}
             </FormItem>
           </Col>
           <Col span={24}>
-            <FormItem colon={false} label="维保支付提醒日期">
+            <FormItem colon={false} label="立项评审申请时间">
               {getFieldDecorator('defendPayTime', {
               })(
-                <DatePicker />
+                <RangePicker />
               )}
             </FormItem>
           </Col>
@@ -714,7 +820,7 @@ class ProjectManage extends Component {
       handleViewModal: this.handleViewModal,
       moreQuery: this.moreQuery
     }
-    const { project: { projectList } } = this.props
+    const { project: { projectList }, loadingQueryData } = this.props
     return (
       <Card>
         {viewModal && <EditModal {...editModalProps} />}
@@ -724,7 +830,7 @@ class ProjectManage extends Component {
             rowKey={(record, index) => index}
             columns={this.genColumns()}
             data={projectList}
-            // loading={loadingQueryData}
+            loading={loadingQueryData}
             // dataSource={[
             //   { number: 'gong', systemName: 'gg', name: '国庆放假不调休，哈哈哈' },
             //   { number: 'gong2', systemName: 'gg' },

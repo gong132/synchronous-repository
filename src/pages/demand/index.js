@@ -120,11 +120,11 @@ const Index = memo(
       });
     };
 
-    const handleQueryUser = () => {
+    const handleQueryUser = (params) => {
       dispatch({
         type: 'demand/fetchUserData',
         payload: {
-          ...DefaultPage,
+          ...params,
         },
       });
     };

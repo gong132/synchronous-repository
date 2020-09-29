@@ -3,7 +3,9 @@ import {
   updateUser,
   fetchAllRolesList,
   queryHeaderGroup,
+  queryRoleById
 } from '@/services/systemManage/userManage';
+import _ from 'lodash'
 import { PagerHelper } from "@/utils/helper";
 import { message } from "antd";
 
@@ -17,7 +19,8 @@ const UserModel = {
     groupList: [],
     headerList: [],
     headerMap: {},
-    groupMap: {}
+    groupMap: {},
+    checkRole: []
   },
   effects: {
     *fetchUserData({ payload }, { call, put }) {
@@ -36,9 +39,6 @@ const UserModel = {
         },
       })
     },
-
-    // 根据团队查人员
-
 
     *updateUser({ payload }, { call }) {
       const { code, msg } = yield call(updateUser, payload);
@@ -98,6 +98,29 @@ const UserModel = {
       })
       return true
     },
+
+    // 根据用户id查询绑定的角色
+    *queryRoleById({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(queryRoleById, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      const arr = []
+      if (_.isEmpty(data)) {
+        return false
+      }
+      data.map(v => {
+        arr.push(v.id)
+        return true
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          checkRole: arr
+        }
+      })
+    }
   },
   reducers: {
     saveData(state, { payload }) {

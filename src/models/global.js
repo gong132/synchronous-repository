@@ -4,7 +4,7 @@ import storage from "@/utils/storage";
 import {PagerHelper} from "@/utils/helper";
 import {isArray, isEmpty} from "@/utils/lang";
 import { queryLogList, fetchUserList, saveFile, fetchSystemList } from '@/services/global'
-import { queryNotices, fetchMenuList, fetchCurrentUserInfo, fetchListByRoleId, queryCurrentUserMenuList } from '@/services/user';
+import { queryNotices, fetchMenuList, fetchCurrentUserInfo, queryCurrentUserMenuList } from '@/services/user';
 import {fetchMessageList} from "@/services/message/message";
 
 const GlobalModel = {
