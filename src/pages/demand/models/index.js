@@ -17,7 +17,6 @@ import {
   assignUser,
   // updateDemand,
   queryDemand,
-  queryGroup,
   queryDemandInfo,
   // queryDemandProject,
   queryDemandBoard,
@@ -27,6 +26,7 @@ import {
   focusDemand,
   receiverDemand,
   dragDemand,
+  unFocusDemand,
 } from '@/services/demand/demand';
 import {
   addMilePlan,
@@ -37,6 +37,7 @@ import {
   // queryMilePlanInfo,
 } from '@/services/milestonePlan/mileStonePlan'
 import {queryUserList} from '@/services/systemManage/userManage'
+import {queryTeamBy} from '@/services/systemManage/teamManage'
 import { queryLogList, queryFile } from '@/services/global';
 import { PagerHelper } from '@/utils/helper';
 import { message } from 'antd';
@@ -67,6 +68,7 @@ const Demand = {
     userData: [],
     userDataMap: {},
     userDataMapId: {},
+    userLoginIdMap: {},
     ITAssignVisible: false,
     assignorVisible: false,
   },
@@ -107,6 +109,16 @@ const Demand = {
       return true;
     },
 
+    // 取消关注
+    *unFocusDemand({payload}, {call}) {
+      const { code, msg } = yield call(unFocusDemand, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    },
+
     // 查询人员
     *fetchUserData({ payload }, { call, put }) {
       const { code, data, msg } = yield call(queryUserList, payload);
@@ -116,9 +128,11 @@ const Demand = {
       }
       const obj = {}
       const objId = {}
+      const objLoginId={}
       data.data.map(v => {
         obj[v.loginid] = v.lastname
         objId[v.id] = v.lastname
+        objLoginId[v.loginid]=v.id
         return true
       })
       yield put({
@@ -127,6 +141,7 @@ const Demand = {
           userData: data.data,
           userDataMap: obj,
           userDataMapId: objId,
+          userLoginIdMap: objLoginId
         },
       })
     },
@@ -210,8 +225,8 @@ const Demand = {
       const {
         code,
         msg,
-        data: { data },
-      } = yield call(queryGroup, payload);
+        data,
+      } = yield call(queryTeamBy, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;

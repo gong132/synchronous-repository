@@ -80,14 +80,6 @@ export async function queryProjectDemandBoard(params) {
   });
 }
 
-// 团队
-export async function queryGroup(params) {
-  return request('/team/query', {
-    method: 'post',
-    params,
-  });
-}
-
 // 查预算编号
 export async function queryBudgetNumber(params) {
   return request('/budget/search', {
@@ -189,6 +181,14 @@ export async function estimate(params) {
 // attention/add
 export async function focusDemand(params) {
   return request('/attention/add', {
+    method: 'post',
+    params,
+  });
+}
+
+// q取消关注
+export async function unFocusDemand(params) {
+  return request('/attention/deleteAttention', {
     method: 'post',
     params,
   });

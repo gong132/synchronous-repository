@@ -103,8 +103,8 @@ class DemandBoard extends Component {
   }
 
   renderBoardMenu = (record, boardId) => {
-    const { attention, creator, receiver_name } = record
-    const { userInfo } = getUserInfo()
+    const { attention, creator, receiverName } = record
+    const { userInfo={} } = getUserInfo()
     const { userName, roleName } = userInfo
     return (
       <Menu onClick={({ item, key, keyPath, domEvent }) => this.quickResolveStory(item, key, keyPath, domEvent, record)}>
@@ -118,7 +118,7 @@ class DemandBoard extends Component {
         }
         {((boardId === 1 || boardId === 3 || boardId === 2)
           && creator === userName)
-          || ((boardId === 4 || boardId === 5) && receiver_name === userName)
+          || ((boardId === 4 || boardId === 5) && receiverName === userName)
           && <Menu.Item key='edit'>编辑</Menu.Item>
         }
         {boardId === 3
@@ -172,6 +172,20 @@ class DemandBoard extends Component {
     });
   }
 
+  // 取消关注
+  handleUnFocusDemand = (id) => {
+    this.props.dispatch({
+      type: 'demand/unFocusDemand',
+      payload: {
+        demandId: Number(id)
+      }
+    }).then(res => {
+      if (res) {
+        this.props.handleQueryBoard()
+      }
+    });
+  }
+
   // 受理需求
   handleReceiverDemand = (id) => {
     const { userInfo } = getUserInfo()
@@ -180,8 +194,8 @@ class DemandBoard extends Component {
       type: 'demand/receiverDemand',
       payload: {
         id: Number(id),
-        receiver_id: String(userId),
-        receiver_name: userName
+        receiverId: String(userId),
+        receiverName: userName
       }
     }).then(res => {
       if (res) {
@@ -217,6 +231,7 @@ class DemandBoard extends Component {
         this.handleFocusDemand(editValue.id)
         break;
       case 'cancelFocus':
+        this.handleUnFocusDemand(editValue.id)
         console.log('cancelFocus');
         break;
       case 'edit':
@@ -390,10 +405,10 @@ class DemandBoard extends Component {
                                             {`${item.creator}于${item.createTime}提交`}
                                           </div>
                                           {/* <div className={styles.dragBoard_thirdLine_type}>
-                                            {item.type === 'p'
-                                              ? '项目'
-                                              : '一般需求'}
-                                          </div> */}
+                                              {item.type === 'p'
+                                                ? '项目'
+                                                : '一般需求'}
+                                            </div> */}
                                         </div>
                                       </div>
                                     </div>

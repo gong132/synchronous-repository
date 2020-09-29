@@ -5,7 +5,9 @@ import {
   queryBudgetNumber,
   queryAllStageStatus,
   queryProjectInfo,
-  queryProjectList
+  queryProjectList,
+  updateProject,
+  querySupplier,
 } from '@/services/project/project'
 import { queryLogList } from '@/services/global';
 import { message } from 'antd'
@@ -20,7 +22,9 @@ const Project = {
     budgetMap: {},
     stageStatus: [],
     stageStatusMap: {},
-    projectInfo: {}
+    projectInfo: {},
+    supplierList: [],
+    supplierMap: {}
   },
   effects: {
     // 查询所有集群板块
@@ -28,7 +32,7 @@ const Project = {
       const { code, data, msg } = yield call(queryAllCluster, payload)
       if (code !== 200) {
         message.error(msg);
-        return
+        return false
       }
       yield put({
         type: 'saveData',
@@ -36,6 +40,7 @@ const Project = {
           clusterList: data
         },
       })
+      return true
     },
 
     *fetchLogList({ payload }, { call, put }) {
@@ -53,6 +58,7 @@ const Project = {
           ...others,
         },
       });
+      return true
     },
 
     // 查列表
@@ -71,6 +77,7 @@ const Project = {
           ...others,
         },
       });
+      return true
     },
 
     // 查询预算编号
@@ -130,8 +137,41 @@ const Project = {
           projectInfo: data,
         },
       });
-      return true;
+      return data;
     },
+
+    // 编辑项目
+    *updateProject({ payload }, { call }) {
+      const { code, msg } = yield call(updateProject, payload)
+      if (code !== 200) {
+        message.error(msg);
+        return false
+      }
+      return true
+    },
+
+    // 查供应商
+    *querySupplier({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(querySupplier, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      const obj = {}
+      data.map(v => {
+        v.id = String(v.id)
+        obj[v.id] = v.name
+        return true
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          supplierList: data,
+          supplierMap: obj
+        }
+      })
+      return true
+    }
   },
   reducers: {
     saveData(state, { payload }) {
@@ -143,7 +183,7 @@ const Project = {
     setProjectData(state, action) {
       return {
         ...state,
-        sectorList: PagerHelper.resolveListState(action.payload),
+        projectList: PagerHelper.resolveListState(action.payload),
       };
     },
     setLogData(state, action) {

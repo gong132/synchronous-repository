@@ -30,4 +30,3 @@ export async function queryHeaderGroup(params) {
     params,
   });
 }
-

@@ -419,10 +419,20 @@ class ContractManage extends Component {
           </Col>
         </Row>
         <div className={styles.moreSearchButton}>
-          <Button onClick={() => this.moreQuery()} loading={loadingQueryData} type="primary" ghost>
+          {/* <Button onClick={() => this.moreQuery()} loading={loadingQueryData} type="primary" ghost>
             查询
-          </Button>
-          <Button onClick={() => this.setSearchMore(false)}>取消</Button>
+          </Button> */}
+          <CustomBtn 
+             onClick={() => this.setSearchMore(false)}
+             type='cancel'
+          />
+          <CustomBtn 
+             onClick={() => this.moreQuery(false)}
+             type='save'
+             title='确认'
+             loading={loadingQueryData}
+          />
+          {/* <Button onClick={() => this.setSearchMore(false)}>取消</Button> */}
         </div>
       </div>
     );

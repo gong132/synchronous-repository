@@ -1,6 +1,11 @@
-import { queryUserList, updateUser, fetchAllRolesList, queryHeaderGroup } from '@/services/systemManage/userManage';
-import {PagerHelper} from "@/utils/helper";
-import {message} from "antd";
+import {
+  queryUserList,
+  updateUser,
+  fetchAllRolesList,
+  queryHeaderGroup,
+} from '@/services/systemManage/userManage';
+import { PagerHelper } from "@/utils/helper";
+import { message } from "antd";
 
 
 const UserModel = {
@@ -31,7 +36,10 @@ const UserModel = {
         },
       })
     },
-    
+
+    // 根据团队查人员
+
+
     *updateUser({ payload }, { call }) {
       const { code, msg } = yield call(updateUser, payload);
       if (!code || code !== 200) {
@@ -62,14 +70,14 @@ const UserModel = {
 
     // 查询负责人和团队
     *fetchHeaderGroup({ payload }, { call, put }) {
-      const { code, msg, data:{data} } = yield call(queryHeaderGroup, payload)
+      const { code, msg, data: { data } } = yield call(queryHeaderGroup, payload)
       if (!code || code !== 200) {
         message.error(msg);
         return false;
       }
       const obj = {}
       const gObj = {}
-      if(data&&data.length < 1) return ''
+      if (data && data.length < 1) return ''
       data.map(v => {
         v.id = String(v.id)
         obj[String(v.id)] = v.name
@@ -92,7 +100,7 @@ const UserModel = {
     },
   },
   reducers: {
-    saveData(state, {payload}) {
+    saveData(state, { payload }) {
       return { ...state, ...payload };
     },
     setUserData(state, action) {

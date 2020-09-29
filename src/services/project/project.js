@@ -39,3 +39,19 @@ export async function queryProjectList(params) {
     params,
   });
 }
+
+// 项目编辑
+export async function updateProject(params) {
+  return request('/project/update', {
+    method: 'post',
+    params,
+  });
+}
+
+// 查供应商
+export async function querySupplier(params) {
+  return request('/supplier/list', {
+    method: 'post',
+    params,
+  });
+}

@@ -5,12 +5,10 @@ import { formLayoutItem } from '@/utils/constant';
 import editIcon from '@/assets/icon/cz_bj.svg';
 import _ from 'lodash'
 import StandardTable from '@/components/StandardTable';
-import { DefaultPage } from '@/utils/helper';
 import ListOptBtn from '@/components/commonUseModule/listOptBtn'
-import { TableColumnHelper } from '@/utils/helper';
+import { TableColumnHelper, DefaultPage } from '@/utils/helper';
 import { Modal, Form, Input, Select, Row, Col, Checkbox, Card } from 'antd';
 import styles from './index.less';
-import { useMemo } from 'react';
 
 const FormItem = Form.Item;
 
@@ -75,7 +73,6 @@ class UserManage extends Component {
 
   // 模糊查询
   moreQuery = () => {
-    console.log('编号')
     const formValues = this.props.form.getFieldsValue();
     this.handleDebounceQueryData(formValues);
   };
@@ -237,6 +234,7 @@ class UserManage extends Component {
           let str = ''
           text.map(v => {
             str += `${roleDataMap[v.id]} `
+            return true
           })
           return str
         }

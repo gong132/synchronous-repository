@@ -63,6 +63,14 @@ class CreateDemand extends PureComponent {
     })
   }
 
+  // componentWillReceiveProps(nextProps) {
+  //   const {demand: {groupList}} = nextProps
+  //   const {form} = this.props
+  //   if(!_.isEmpty(groupList) && groupList.length === 1) {
+  //     form.se
+  //   }
+  // }
+
   handleChangeDes = content => {
     this.setState({
       description: content
@@ -87,13 +95,33 @@ class CreateDemand extends PureComponent {
 
   // 查询团队
   handleQueryGroup = (params) => {
-    this.props.dispatch({
+    return this.props.dispatch({
       type: 'demand/fetchHeaderGroup',
       payload: {
         ...params
       }
+    }).then(res => {
+      return res
     });
   };
+
+  // 通过团队查人员
+  handleChangeGroup = (val) => {
+    const { form } = this.props
+    console.log(val)
+    form.resetFields(['receiver'])
+  }
+
+  // 通过人员id查团队
+  handleQueryGroupBy = async (type, val) => {
+    if (type === 'user') {
+      const res = await this.handleQueryGroup({ userId: String(val) })
+      const { demand: { groupList }, form } = this.props
+      if (res && !_.isEmpty(groupList)) {
+        form.setFieldsValue({'acceptTeam': groupList[0].id })
+      }
+    }
+  }
 
   createDemand = values => {
     const { demand: { formType }, handleViewModal, handleQueryList, handleQueryBoard } = this.props
@@ -162,7 +190,7 @@ class CreateDemand extends PureComponent {
   };
 
   handleSubmitForm = (saveType) => {
-    const { form, modalTitle, demand: { tempDemandId, userDataMap }, recordValue } = this.props
+    const { form, modalTitle, demand: { tempDemandId, userDataMap, groupMap }, recordValue } = this.props
     const { description } = this.state
     form.validateFieldsAndScroll((err, values) => {
       if (saveType === 'clickBtn') {
@@ -174,8 +202,12 @@ class CreateDemand extends PureComponent {
       }
       values.expectedCompletionDate = values.expectedCompletionDate ? moment(values.expectedCompletionDate).format('YYYY-MM-DD') : '';
       values.requirementDescription = description;
-      values.receiver_id = values.receiver
-      values.receiver_name = values.receiver ? userDataMap[values.receiver] : ''
+      values.receiverId = values.receiver
+      values.receiverName = values.receiver ? userDataMap[values.receiver] : ''
+      values.acceptTeamId = values.acceptTeam
+      values.acceptTeam = groupMap[values.acceptTeam]
+      console.log(values)
+      // return
       if (saveType === 'clickBtn') {
         // 如果是编辑页面走编辑接口
         if (modalTitle === '编辑') {
@@ -349,6 +381,8 @@ class CreateDemand extends PureComponent {
                   allowClear
                   showSearch
                   onSearch={_.debounce(this.handleQueryGroup, 500)}
+                  onFocus={this.handleQueryGroup}
+                  onChange={this.handleChangeGroup}
                   optionFilterProp="children"
                   filterOption={(input, option) =>
                     JSON.stringify(option.props.children)
@@ -374,6 +408,7 @@ class CreateDemand extends PureComponent {
                   allowClear
                   showSearch
                   placeholder="请输入受理人"
+                  onChange={(val) => this.handleQueryGroupBy('user', val)}
                   optionFilterProp="children"
                   filterOption={(input, option) =>
                     JSON.stringify(option.props.children)

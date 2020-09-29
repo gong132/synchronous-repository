@@ -22,7 +22,7 @@ import {
 } from 'antd'
 import { connect } from 'dva'
 import _ from 'lodash'
-import { DEMAND_PRIORITY_ARR, PROJECT_STATUS_ARR } from '../utils/constant'
+import { DEMAND_PRIORITY_ARR, PROJECT_STATUS_ARR, PROJECT_STATUS_OBJ } from '../utils/constant'
 import styles from '../index.less'
 
 const DescriptionItem = Descriptions.Item
@@ -43,7 +43,7 @@ class Detail extends PureComponent {
   }
 
   componentDidMount() {
-    this.handleQueryStage()
+    this.handleQueryInfo()
     this.handleQueryLogList()
   }
 
@@ -52,9 +52,9 @@ class Detail extends PureComponent {
       descriptionState: content,
     });
   };
-  
+
   // 查询详情
-  handleQueryStage = () => {
+  handleQueryInfo = () => {
     const id = getParam('id');
     this.props.dispatch({
       type: 'project/queryProjectInfo',
@@ -100,10 +100,68 @@ class Detail extends PureComponent {
     this.handleQueryLogList(params);
   };
 
+  handleSubmit = () => {
+    const { form } = this.props
+    const { descriptionState } = this.state
+    const id = getParam('id')
+    form.validateFields(['pjStage', 'pjMgType', 'buildType', 'systemLevel'], (err, values) => {
+      if (err) {
+        return false
+      }
+      console.log(values)
+      values.id = id
+      values.pjDesc = descriptionState
+      this.props.dispatch({
+        type: 'project/updateProject',
+        payload: {
+          ...values
+        }
+      }).then(res => {
+        if (res) {
+          this.handleQueryInfo()
+          this.handleQueryLogList()
+          this.setState({
+            editBool: false,
+          })
+        }
+      })
+    })
+  }
+
   render() {
     const { editBool, descriptionState } = this.state
     const { form, project } = this.props
-    const { budgetList } = project
+    const { budgetList, projectInfo, stageStatus } = project
+    const {
+      pjName,
+      pjSn,
+      pjStage,
+      pjProgress,
+      pjProgressDeviation,
+      pjHealthStatus,
+      demandLevel,
+      budgetNo,
+      demandNo,
+      estTeam,
+      estAmount,
+      techStage,
+      estStage,
+      pjMgType,
+      bnStatus,
+      buildType,
+      systemLevel,
+      pjDesc,
+      pjType,
+      pjId,
+      createTime,
+      updateTime,
+      pjUpdateUserId,
+      pjUpdateUserName,
+      pmId,
+      pm,
+      contractAmount,
+      pretermId
+    } = projectInfo
     const columns = [
       TableColumnHelper.genPlanColumn('operateUserName', '操作人', { width: '100px' }),
       TableColumnHelper.genPlanColumn('content', '操作内容'),
@@ -125,10 +183,10 @@ class Detail extends PureComponent {
         span: 2,
         required: false,
         name: '项目名称',
-        value: 'title',
+        value: pjName,
         style: { whiteSpace: 'pre' },
       },
-      { span: 1, required: false, name: '项目编号', value: 'demandNumber' },
+      { span: 1, required: false, name: '项目编号', value: pjSn },
       {
         span: 1,
         required: false,
@@ -137,39 +195,39 @@ class Detail extends PureComponent {
         type: 'p',
         // arrDict: BOARD_TITLE_OBJ,
       },
-      { span: 1, required: false, name: '项目状态', value: 'budgetNumbers' },
+      { span: 1, required: false, name: '项目状态', value: pjStage, arrDict: PROJECT_STATUS_OBJ },
       {
         span: 1,
         required: false,
         name: '项目进度',
-        value: 'type',
+        value: pjProgress,
       },
       {
         span: 1,
         required: false,
         name: '项目进度偏差',
-        value: 'priority',
+        value: pjProgressDeviation,
       },
-      { span: 1, required: false, name: '项目健康状态', value: 'introducer' },
-      { span: 1, required: false, name: '需求优先级', value: 'introducer' },
-      { span: 1, required: false, name: '预算编号', value: 'introducer' },
-      { span: 1, required: false, name: '所属需求编号', value: 'introducer' },
+      { span: 1, required: false, name: '项目健康状态', value: pjHealthStatus },
+      { span: 1, required: false, name: '需求优先级', value: demandLevel },
+      { span: 1, required: false, name: '预算编号', value: budgetNo },
+      { span: 1, required: false, name: '所属需求编号', value: demandNo },
       { span: 1, required: false, name: '需求提出部门', value: 'introducer' },
-      { span: 1, required: false, name: '立项申请团队', value: 'introducer' },
-      { span: 1, required: false, name: '技术评审立项金额（万）', value: 'introducer' },
+      { span: 1, required: false, name: '立项申请团队', value: estTeam },
+      { span: 1, required: false, name: '技术评审立项金额（万）', value: estAmount },
       { span: 1, required: false, name: '立项评审金额（万）', value: 'introducer' },
       { span: 1, required: false, name: '合同成交金额（万）', value: 'introducer' },
       { span: 1, required: false, name: '业务集群/板块', value: 'introducer' },
       { span: 1, required: false, name: '供应商', value: 'introducer' },
-      { span: 1, required: false, name: '技术评审状态', value: 'introducer' },
-      { span: 1, required: false, name: '立项评审状态', value: 'introducer' },
-      { span: 1, required: false, name: '商务状态', value: 'introducer' },
-      { span: 1, required: false, name: '项目管理类型', value: 'introducer' },
-      { span: 1, required: false, name: '建设方式', value: 'introducer' },
-      { span: 1, required: false, name: '系统级别', value: 'introducer' },
+      { span: 1, required: false, name: '技术评审状态', value: techStage },
+      { span: 1, required: false, name: '立项评审状态', value: estStage },
+      { span: 1, required: false, name: '商务状态', value: bnStatus },
+      { span: 1, required: false, name: '项目管理类型', value: pjMgType },
+      { span: 1, required: false, name: '建设方式', value: buildType },
+      { span: 1, required: false, name: '系统级别', value: systemLevel },
       { span: 1, required: false, name: '项目负责人', value: 'introducer' },
-      { span: 2, required: false, name: '项目创建时间', value: 'introducer' },
-      { span: 1, required: false, name: '项目描述', value: 'introducer', dataIndex: 'description' },
+      { span: 2, required: false, name: '项目创建时间', value: createTime },
+      { span: 1, required: false, name: '项目描述', value: pjDesc, dataIndex: 'description' },
     ];
 
     const btnStyle = {
@@ -251,6 +309,7 @@ class Detail extends PureComponent {
                   this.setState({
                     editBool: true,
                   });
+                  this.handleChangeDesc(pjDesc)
                 }}
                 img={editIcon}
                 text="编辑"
@@ -262,7 +321,7 @@ class Detail extends PureComponent {
                       ...btnStyle,
                       backgroundColor: 'white',
                     }}
-                    icon="close"
+                    // icon="close"
                     onClick={() =>
                       this.setState({
                         editBool: false,
@@ -275,7 +334,7 @@ class Detail extends PureComponent {
                       backgroundColor: 'white',
                       marginLeft: '16px',
                     }}
-                    // onClick={() => this.handleSubmit()}
+                    onClick={() => this.handleSubmit()}
                     text="保存"
                   />
                 </div>
@@ -290,8 +349,8 @@ class Detail extends PureComponent {
                   label={<>项目名称</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('name', {
-                      // initialValue: name,
+                    {form.getFieldDecorator('pjName', {
+                      initialValue: pjName,
                     })(<Input style={w} disabled />)}
                   </FormItem>
                 </DescriptionItem>
@@ -300,8 +359,8 @@ class Detail extends PureComponent {
                   label={<>项目编号</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('name', {
-                      // initialValue: name,
+                    {form.getFieldDecorator('pjSn', {
+                      initialValue: pjSn,
                     })(<Input style={w} disabled />)}
                   </FormItem>
                 </DescriptionItem>
@@ -328,16 +387,17 @@ class Detail extends PureComponent {
                   label={<>项目状态</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('priority', {
+                    {form.getFieldDecorator('pjStage', {
                       rules: [{ required: false, message: '请输入项目状态' }],
-                      // initialValue: priority,
+                      initialValue: pjStage ? Number(pjStage) : '',
                     })(
                       <Select allowClear style={w} placeholder="请输入项目状态">
-                        {PROJECT_STATUS_ARR.map(d => (
-                          <Option key={d.key} value={d.key}>
-                            {d.val}
-                          </Option>
-                        ))}
+                        {!_.isEmpty(stageStatus) &&
+                          stageStatus.map(d => (
+                            <Option key={d.id} value={d.id}>
+                              {d.pjStageName}
+                            </Option>
+                          ))}
                       </Select>,
                     )}
                   </FormItem>
@@ -347,8 +407,8 @@ class Detail extends PureComponent {
                   label={<>项目进度</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('name', {
-                      // initialValue: name,
+                    {form.getFieldDecorator('pjProgress', {
+                      initialValue: pjProgress,
                     })(<Input style={w} disabled />)}
                   </FormItem>
                 </DescriptionItem>
@@ -357,8 +417,8 @@ class Detail extends PureComponent {
                   label={<>项目进度偏差</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('name', {
-                      // initialValue: name,
+                    {form.getFieldDecorator('pjProgressDeviation', {
+                      initialValue: pjProgressDeviation,
                     })(<Input style={w} disabled />)}
                   </FormItem>
                 </DescriptionItem>
@@ -367,8 +427,8 @@ class Detail extends PureComponent {
                   label={<>项目健康状态</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('name', {
-                      // initialValue: name,
+                    {form.getFieldDecorator('pjHealthStatus', {
+                      initialValue: pjHealthStatus,
                     })(<Input style={w} disabled />)}
                   </FormItem>
                 </DescriptionItem>
@@ -377,8 +437,8 @@ class Detail extends PureComponent {
                   label={<>需求优先级</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('priority', {
-                      // initialValue: priority,
+                    {form.getFieldDecorator('demandLevel', {
+                      initialValue: demandLevel,
                     })(
                       <Select disabled style={w}>
                         {DEMAND_PRIORITY_ARR.map(d => (
@@ -395,21 +455,10 @@ class Detail extends PureComponent {
                   label={<>预算编号</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('budgetNumbers', {
-                      // initialValue: budgetNumbers ? String(budgetNumbers) : '',
+                    {form.getFieldDecorator('budgetNo', {
+                      initialValue: budgetNo,
                     })(
-                      <Select
-                        showSearch
-                        disabled
-                        style={w}
-                      >
-                        {!_.isEmpty(budgetList) &&
-                          budgetList.map(d => (
-                            <Option key={d.number} value={d.number}>
-                              {d.number}
-                            </Option>
-                          ))}
-                      </Select>,
+                      <Input disabled />
                     )}
                   </FormItem>
                 </DescriptionItem>
@@ -418,8 +467,8 @@ class Detail extends PureComponent {
                   label={<>所属需求编号</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('name', {
-                      // initialValue: name,
+                    {form.getFieldDecorator('demandNo', {
+                      initialValue: demandNo,
                     })(<Input style={w} disabled />)}
                   </FormItem>
                 </DescriptionItem>
@@ -438,8 +487,8 @@ class Detail extends PureComponent {
                   label={<>立项申请团队</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('name', {
-                      // initialValue: name,
+                    {form.getFieldDecorator('estTeam', {
+                      initialValue: estTeam,
                     })(<Input style={w} disabled />)}
                   </FormItem>
                 </DescriptionItem>
@@ -448,8 +497,8 @@ class Detail extends PureComponent {
                   label={<>技术评审立项金额（万）</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('name', {
-                      // initialValue: name,
+                    {form.getFieldDecorator('estAmount', {
+                      initialValue: estAmount,
                     })(<Input style={w} disabled />)}
                   </FormItem>
                 </DescriptionItem>
@@ -498,8 +547,8 @@ class Detail extends PureComponent {
                   label={<>技术评审状态</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('name', {
-                      // initialValue: name,
+                    {form.getFieldDecorator('techStage', {
+                      initialValue: techStage,
                     })(<Input style={w} disabled />)}
                   </FormItem>
                 </DescriptionItem>
@@ -508,8 +557,8 @@ class Detail extends PureComponent {
                   label={<>立项评审状态</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('name', {
-                      // initialValue: name,
+                    {form.getFieldDecorator('estStage', {
+                      initialValue: estStage,
                     })(<Input style={w} disabled />)}
                   </FormItem>
                 </DescriptionItem>
@@ -518,8 +567,8 @@ class Detail extends PureComponent {
                   label={<>商务状态</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('name', {
-                      // initialValue: name,
+                    {form.getFieldDecorator('bnStatus', {
+                      initialValue: bnStatus,
                     })(<Input style={w} disabled />)}
                   </FormItem>
                 </DescriptionItem>
@@ -528,9 +577,27 @@ class Detail extends PureComponent {
                   label={<>项目管理类型</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('name', {
-                      // initialValue: name,
-                    })(<Input style={w} />)}
+                    {form.getFieldDecorator('pjMgType', {
+                      initialValue: pjMgType,
+                    })(<Select
+                      allowClear
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        JSON.stringify(option.props.children)
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                      style={w}
+                      placeholder="请输入项目管理类型"
+                    >
+                      {/* {!_.isEmpty(stageStatus) &&
+                        stageStatus.map(d => (
+                          <Option key={d.id} value={d.id}>
+                            {d.pjStageName}
+                          </Option>
+                        ))} */}
+                      <Option key='1' value='1'>研发管理类</Option>
+                    </Select>)}
                   </FormItem>
                 </DescriptionItem>
                 <DescriptionItem
@@ -538,9 +605,29 @@ class Detail extends PureComponent {
                   label={<>建设方式</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('name', {
-                      // initialValue: name,
-                    })(<Input style={w} />)}
+                    {form.getFieldDecorator('buildType', {
+                      initialValue: buildType,
+                    })(
+                      <Select
+                        allowClear
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                          JSON.stringify(option.props.children)
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
+                        style={w}
+                        placeholder="请输入项目建设方式"
+                      >
+                        {/* {!_.isEmpty(stageStatus) &&
+                    stageStatus.map(d => (
+                      <Option key={d.id} value={d.id}>
+                        {d.pjStageName}
+                      </Option>
+                    ))} */}
+                        <Option key='1' value='1'>外包采购</Option>
+                      </Select>,
+                    )}
                   </FormItem>
                 </DescriptionItem>
                 <DescriptionItem
@@ -548,9 +635,29 @@ class Detail extends PureComponent {
                   label={<>系统级别</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('name', {
-                      // initialValue: name,
-                    })(<Input style={w} />)}
+                    {form.getFieldDecorator('systemLevel', {
+                      initialValue: systemLevel,
+                    })(
+                      <Select
+                        allowClear
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                          JSON.stringify(option.props.children)
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
+                        style={w}
+                        placeholder="请输入系统级别"
+                      >
+                        {/* {!_.isEmpty(stageStatus) &&
+                    stageStatus.map(d => (
+                      <Option key={d.id} value={d.id}>
+                        {d.pjStageName}
+                      </Option>
+                    ))} */}
+                        <Option key='1' value='1'>未定义</Option>
+                      </Select>,
+                    )}
                   </FormItem>
                 </DescriptionItem>
                 <DescriptionItem
@@ -558,8 +665,8 @@ class Detail extends PureComponent {
                   label={<>项目负责人</>}
                 >
                   <FormItem>
-                    {form.getFieldDecorator('name', {
-                      // initialValue: name,
+                    {form.getFieldDecorator('createTime', {
+                      initialValue: createTime,
                     })(<Input style={w} disabled />)}
                   </FormItem>
                 </DescriptionItem>

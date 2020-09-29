@@ -154,6 +154,29 @@ module.exports = {
           component: './survey',
         },
         {
+          path: '/reportFormManage',
+          name: 'reportFormManage',
+          icon: 'pie-chart',
+          routes: [
+            { path: '/reportFormManage', redirect: '/reportFormManage/demandForm' },
+            {
+              path: '/reportFormManage/demandForm',
+              name: 'demandForm',
+              component: './reportFormManage/demandForm',
+            },
+            {
+              path: '/reportFormManage/projectForm',
+              name: 'projectForm',
+              component: './reportFormManage/projectForm',
+            },
+            {
+              path: '/reportFormManage/budgetForm',
+              name: 'budgetForm',
+              component: './reportFormManage/budgetForm',
+            },
+          ],
+        },
+        {
           path: '/systemManage',
           name: 'systemManage',
           icon: 'setting',

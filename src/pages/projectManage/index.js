@@ -23,10 +23,10 @@ import {
   Icon,
   Row,
   Col,
-  Button,
   DatePicker
 } from 'antd'
 import * as _ from 'lodash'
+import { PROJECT_STATUS_OBJ } from './utils/constant'
 import styles from './index.less'
 
 const { Option } = Select
@@ -49,6 +49,29 @@ class ProjectManage extends Component {
   componentDidMount() {
     this.handleQueryCluster()
     this.handleQueryStage()
+    this.handleQueryData()
+    this.handleQueryBudget()
+    this.handleQuerySupplier()
+  }
+
+  // 查预算编号
+  handleQueryBudget = (number) => {
+    this.props.dispatch({
+      type: 'project/fetchBudgetNumber',
+      payload: {
+        number
+      }
+    })
+  }
+
+  // 查供应商
+  handleQuerySupplier = (name) => {
+    this.props.dispatch({
+      type: 'project/querySupplier',
+      payload: {
+        name
+      }
+    })
   }
 
   // 查询集群列表
@@ -70,6 +93,9 @@ class ProjectManage extends Component {
     this.props.dispatch({
       type: 'project/queryProjectList',
       payload: {
+        teamId: '申请团队1',
+        sort: 'id',
+        order: 'desc',
         ...DefaultPage,
         ...params,
       },
@@ -107,10 +133,18 @@ class ProjectManage extends Component {
 
   }
 
-  handleViewModal = (bool) => {
+  handleViewModal = (bool, record) => {
     this.setState({
-      viewModal: bool
+      viewModal: bool,
     })
+    if (bool) {
+      this.props.dispatch({
+        type: 'project/queryProjectInfo',
+        payload: {
+          id: record.id,
+        }
+      })
+    }
   }
 
   handleViewDetail = (record = {}) => {
@@ -120,10 +154,6 @@ class ProjectManage extends Component {
         id: record.id
       }
     })
-  }
-
-  handleSubmit = () => {
-
   }
 
   // 分页操作
@@ -155,6 +185,8 @@ class ProjectManage extends Component {
       loadingQueryData,
       clusterList,
       stageStatus,
+      budgetList,
+      supplierList,
     } = project;
     const { getFieldDecorator } = form
     const content = (
@@ -162,14 +194,14 @@ class ProjectManage extends Component {
         <Row>
           <Col span={24}>
             <FormItem colon={false} label="所属需求编号">
-              {getFieldDecorator('budgetNumber', {
+              {getFieldDecorator('demandKey', {
               })(<Input allowClear placeholder="请输入所属需求编号" />)}
             </FormItem>
           </Col>
           <Col span={24}>
             <FormItem colon={false} label="项目编号">
               {getFieldDecorator(
-                'description',
+                'pjCodeKey',
                 {},
               )(<Input allowClear placeholder="请输入项目编号" />)}
             </FormItem>
@@ -178,12 +210,12 @@ class ProjectManage extends Component {
             <FormItem colon={false} label="项目进度百分比">
               <div className="yCenter" style={{ height: 30 }}>
                 {getFieldDecorator(
-                  'expectTotalAmountLow',
+                  'pjProgressStart',
                   {},
                 )(<Input allowClear addonAfter="%" />)}
                 <span style={{ padding: '0 3px' }}>—</span>
                 {getFieldDecorator(
-                  'expectTotalAmountMax',
+                  'pjProgressEnd',
                   {},
                 )(<Input allowClear addonAfter="%" />)}
               </div>
@@ -207,7 +239,7 @@ class ProjectManage extends Component {
           <Col span={24}>
             <FormItem colon={false} label="项目健康状态">
               {getFieldDecorator(
-                'providerCompanyName',
+                'pjProgressDeviation',
                 {},
               )(
                 <Select
@@ -237,19 +269,64 @@ class ProjectManage extends Component {
                   }}
                   placeholder="请输入供应商"
                 >
-                  {/* {!_.isEmpty(supplierList) &&
+                  {!_.isEmpty(supplierList) &&
                     supplierList.map(d => (
-                      <Option key={d.supplierId} value={d.supplierName}>
-                        {d.supplierName}
+                      <Option key={d.id} value={d.id}>
+                        {d.name}
                       </Option>
-                    ))} */}
+                    ))}
                   <Option key='p' value='p'>未定义</Option>
                 </Select>,
               )}
             </FormItem>
           </Col>
           <Col span={24}>
-            <FormItem colon={false} label="合同负责人团队">
+            <FormItem colon={false} label='预算编号'>
+              {getFieldDecorator('budgetNoKey', {
+              })(
+                <Select
+                  allowClear
+                  showSearch
+                  onSearch={_.debounce(this.handleQueryBudget, 500)}
+                  onFocus={this.handleQueryBudget}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  placeholder="请输入预算编号"
+                  style={{
+                    width: '100%',
+                  }}
+                >
+                  {!_.isEmpty(budgetList) &&
+                    budgetList.map(d => (
+                      <Option key={d.number} value={d.number}>
+                        {d.number}
+                      </Option>
+                    ))}
+                </Select>,
+              )}
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem colon={false} label="合同成交金额">
+              <div className="yCenter" style={{ height: 30 }}>
+                {getFieldDecorator(
+                  'expectTotalAmountLow',
+                  {},
+                )(<Input allowClear addonAfter="万" />)}
+                <span style={{ padding: '0 3px' }}>—</span>
+                {getFieldDecorator(
+                  'expectTotalAmountMax',
+                  {},
+                )(<Input allowClear addonAfter="万" />)}
+              </div>
+            </FormItem>
+          </Col>
+          <Col span={24}>
+            <FormItem colon={false} label="供应商">
               {getFieldDecorator(
                 'headerTeamId ',
                 {},
@@ -262,13 +339,13 @@ class ProjectManage extends Component {
                   }}
                   placeholder="请输入供应商"
                 >
-                  {/* {!_.isEmpty(supplierList) &&
+                  {!_.isEmpty(supplierList) &&
                     supplierList.map(d => (
-                      <Option key={d.supplierId} value={d.supplierName}>
-                        {d.supplierName}
+                      <Option key={d.id} value={d.id}>
+                        {d.name}
                       </Option>
-                    ))} */}
-                  <Option key='p' value='p'>未定义</Option>
+                    ))}
+                  {/* <Option key='p' value='p'>未定义</Option> */}
                 </Select>,
               )}
             </FormItem>
@@ -291,10 +368,16 @@ class ProjectManage extends Component {
           </Col>
         </Row>
         <div className={styles.moreSearchButton}>
-          <Button onClick={() => this.moreQuery()} loading={loadingQueryData} type="primary" ghost>
-            查询
-          </Button>
-          <Button onClick={() => this.setSearchMore(false)}>取消</Button>
+          <CustomBtn
+            onClick={() => this.setSearchMore(false)}
+            type='cancel'
+          />
+          <CustomBtn
+            onClick={() => this.moreQuery(false)}
+            type='save'
+            title='确认'
+            loading={loadingQueryData}
+          />
         </div>
       </div>
     );
@@ -302,7 +385,7 @@ class ProjectManage extends Component {
       <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
         <Col span={5}>
           <FormItem labelCol={{ span: 8 }} wrapperCol={{ span: 16 }} colon={false} label="项目名称和描述">
-            {getFieldDecorator('name', {
+            {getFieldDecorator('searchKey', {
             })(<Input
               allowClear
               onChange={_.debounce(this.saveParams, 500)}
@@ -312,7 +395,7 @@ class ProjectManage extends Component {
         </Col>
         <Col span={5}>
           <FormItem {...formLayoutItem} colon={false} label="项目状态">
-            {getFieldDecorator('projectNumber', {
+            {getFieldDecorator('pjStage', {
             })(
               <Select
                 allowClear
@@ -330,11 +413,11 @@ class ProjectManage extends Component {
                 placeholder="请输入项目状态"
               >
                 {!_.isEmpty(stageStatus) &&
-                stageStatus.map(d => (
-                  <Option key={d.number} value={d.number}>
-                    {d.name}
-                  </Option>
-                ))}
+                  stageStatus.map(d => (
+                    <Option key={d.id} value={d.id}>
+                      {d.pjStageName}
+                    </Option>
+                  ))}
                 {/* <Option key='p' value='p'>未定义</Option> */}
               </Select>
             )}
@@ -342,7 +425,7 @@ class ProjectManage extends Component {
         </Col>
         <Col span={5}>
           <FormItem labelCol={{ span: 7 }} wrapperCol={{ span: 17 }} colon={false} label="业务集群/板块">
-            {getFieldDecorator('clusterId', {
+            {getFieldDecorator('clusterName', {
             })(
               <Select
                 allowClear
@@ -373,7 +456,7 @@ class ProjectManage extends Component {
         <Col span={6}>
           <FormItem {...formLayoutItem} colon={false} label="商务状态">
             {getFieldDecorator(
-              'providerCompanyName',
+              'bnStatus',
               {},
             )(
               <Select
@@ -424,8 +507,8 @@ class ProjectManage extends Component {
     const columns = [
       {
         title: <Ellipse text='项目编号' style={{ width: 57 }} />,
-        dataIndex: 'number',
-        key: 'number',
+        dataIndex: 'pjCode',
+        key: 'pjCode',
         sorter: true,
         align: 'center',
         render: (text, record) => {
@@ -443,25 +526,8 @@ class ProjectManage extends Component {
       },
       {
         title: <Ellipse text='项目名称' style={{ width: 57 }} />,
-        dataIndex: 'name',
-        key: 'name',
-        align: 'center',
-        render: (text) => {
-          return (
-            <Ellipse
-              text={text}
-              style={{
-                width: '8vw'
-              }}
-            />
-          );
-        },
-      },
-      {
-        title: <Ellipse text='项目状态' style={{ width: 57 }} />,
-        dataIndex: 'number',
-        key: 'number',
-        sorter: true,
+        dataIndex: 'pjName',
+        key: 'pjName',
         align: 'center',
         render: (text) => {
           return (
@@ -475,9 +541,27 @@ class ProjectManage extends Component {
         },
       },
       {
+        title: <Ellipse text='项目状态' style={{ width: 57 }} />,
+        dataIndex: 'pjStage',
+        key: 'pjStage',
+        sorter: true,
+        align: 'center',
+        render: (text) => {
+          text = PROJECT_STATUS_OBJ[text]
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '6vw'
+              }}
+            />
+          );
+        },
+      },
+      {
         title: <Ellipse text='项目进度' style={{ width: 57 }} />,
-        dataIndex: 'number',
-        key: 'number',
+        dataIndex: 'pjProgress',
+        key: 'pjProgress',
         sorter: true,
         align: 'center',
         render: (text) => {
@@ -509,8 +593,8 @@ class ProjectManage extends Component {
       },
       {
         title: <Ellipse text='立项金额' style={{ width: 57 }} />,
-        dataIndex: 'number',
-        key: 'number',
+        dataIndex: 'estAmount',
+        key: 'estAmount',
         sorter: true,
         align: 'center',
         render: (text) => {
@@ -543,8 +627,8 @@ class ProjectManage extends Component {
       },
       {
         title: <Ellipse text='商务状态' style={{ width: 57 }} />,
-        dataIndex: 'number',
-        key: 'number',
+        dataIndex: 'bnStatus',
+        key: 'bnStatus',
         sorter: true,
         align: 'center',
         render: (text) => {
@@ -560,8 +644,8 @@ class ProjectManage extends Component {
       },
       {
         title: <Ellipse text='立项申请团队' style={{ width: 57 }} />,
-        dataIndex: 'number',
-        key: 'number',
+        dataIndex: 'estTeam',
+        key: 'estTeam',
         sorter: true,
         align: 'center',
         render: (text) => {
@@ -583,7 +667,7 @@ class ProjectManage extends Component {
             <div style={{ whiteSpace: 'nowrap' }}>
               {<ListOptBtn
                 title="编辑"
-                onClick={() => this.handleViewModal(true, '编辑', record)}
+                onClick={() => this.handleViewModal(true, record)}
                 style={{
                   fontSize: '20px',
                   marginRight: '12px',
@@ -628,27 +712,24 @@ class ProjectManage extends Component {
     const editModalProps = {
       visible: viewModal,
       handleViewModal: this.handleViewModal,
-      handleSubmit: this.handleSubmit
+      moreQuery: this.moreQuery
     }
+    const { project: { projectList } } = this.props
     return (
-      <Card
-        bodyStyle={{
-          overflow: 'auto'
-        }}
-      >
+      <Card>
         {viewModal && <EditModal {...editModalProps} />}
         <div className={styles.customSearchForm}>{this.renderSearchForm()}</div>
         <div className='cusOverflow'>
           <StandardTable
             rowKey={(record, index) => index}
             columns={this.genColumns()}
-            // data={constractList}
+            data={projectList}
             // loading={loadingQueryData}
-            dataSource={[
-              { number: 'gong', systemName: 'gg', name: '国庆放假不调休，哈哈哈' },
-              { number: 'gong2', systemName: 'gg' },
-              { number: 'gong3', systemName: 'gg' }
-            ]}
+            // dataSource={[
+            //   { number: 'gong', systemName: 'gg', name: '国庆放假不调休，哈哈哈' },
+            //   { number: 'gong2', systemName: 'gg' },
+            //   { number: 'gong3', systemName: 'gg' }
+            // ]}
             onChange={this.handleStandardTableChange}
           // scroll={{ x: 1800 }}
           />

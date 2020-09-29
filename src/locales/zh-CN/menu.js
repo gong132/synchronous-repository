@@ -83,4 +83,9 @@ export default {
   'menu.demand.projectDemand': '项目需求',
   'menu.demand.projectDemandDetail': '项目需求详情',
   'menu.demand.storyDetail': 'story详情',
+
+  'menu.reportFormManage': '报表管理',
+  'menu.reportFormManage.demandForm': '需求报表',
+  'menu.reportFormManage.projectForm': '项目报表',
+  'menu.reportFormManage.budgetForm': '预算报表',
 };
