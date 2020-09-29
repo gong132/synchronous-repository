@@ -25,6 +25,7 @@ const demandRoutes = {
   '/demand/generalDemand': '一般需求',
   '/demand/projectDemand': '项目',
 };
+let timer;
 const Index = memo(
   withRouter(props => {
     const {
@@ -44,7 +45,7 @@ const Index = memo(
 
     // 启动定时器
     const startTimer = callback => {
-      window.timer = setInterval(() => {
+      timer = setInterval(() => {
         callback && callback();
         // 自动保存功能暂时不上
       }, 2000000000);
@@ -52,7 +53,7 @@ const Index = memo(
 
     // 关闭定时器
     const clearTimer = () => {
-      clearInterval(window.timer);
+      clearInterval(timer);
     };
 
     // 查询我的需求列表

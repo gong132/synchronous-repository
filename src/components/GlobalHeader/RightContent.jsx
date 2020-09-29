@@ -1,18 +1,16 @@
 /* eslint-disable no-undef */
-import { Icon, Badge, Breadcrumb } from 'antd';
-import React from 'react';
+import {Icon, Badge, Breadcrumb, Popover, message} from 'antd';
+import React, { useState } from 'react';
 import { connect } from 'dva';
+import classNames from "classnames";
 import Avatar from './AvatarDropdown';
 import styles from './index.less';
+import {PagerHelper} from "@/utils/helper";
 
-// const ENVTagColor = {
-//   dev: 'orange',
-//   test: 'green',
-//   pre: '#87d068',
-// };
+import Message from "./message"
 
 const GlobalHeaderRight = props => {
-  const { theme, layout } = props;
+  const { dispatch, theme, layout, global: { messageList } } = props;
   let className = styles.right;
 
   if (theme === 'dark' && layout === 'topmenu') {
@@ -66,17 +64,78 @@ const GlobalHeaderRight = props => {
     )
   }
 
+
+  const [msgType, setMsgType] = useState("1")
+
+  const handleQueryMessageList = params => {
+    dispatch({
+      type: "global/queryMessageList",
+      payload: {
+        readStatus: 0,
+        type:msgType,
+        ...PagerHelper.DefaultPage,
+        ...params,
+      }
+    })
+  }
+
+  const handleBatchModifyRead = params => {
+    dispatch({
+      type: "home/batchModifyRead",
+      payload: {
+        ...params,
+      }
+    }).then(res => {
+      if (!res) return;
+      message.success("标记成功")
+      handleQueryMessageList()
+    })
+  }
   return (
     <div className={className}>
       <div className={styles.lContent}>
         {createBreadcrumb()}
       </div>
       <div className={styles.rContent}>
-        <Badge count={1}>
-          <span className={styles.rContent_mail}>
-            <Icon type='mail' />
-          </span>
-        </Badge>
+        <Popover
+          placement="bottomLeft"
+          title={(
+            <div className={styles.tabsContainer}>
+              <div
+                onClick={() => {
+                  setMsgType("1")
+                  handleQueryMessageList({type: 1})
+                }}
+                className={classNames(styles.tab,msgType === "1" && styles.tabActive || "")}
+              >
+                系统@我
+              </div>
+              <div
+                onClick={() => {
+                  setMsgType("2")
+                  handleQueryMessageList({type: 2})
+                }}
+                className={classNames(styles.tab,msgType === "2" && styles.tabActive || "")}
+              >
+                普通@我
+              </div>
+            </div>
+          )}
+          content={(
+            <Message
+              handleQueryMessageList={handleQueryMessageList}
+              messageList={messageList}
+              handleBatchModifyRead={handleBatchModifyRead}
+            />
+          )}
+          trigger="click"
+        >
+          <Badge count={messageList?.unReadCount}>
+            <span className={styles.rContent_mail}>
+              <Icon type='mail' />
+            </span>
+          </Badge>
+        </Popover>
       </div>
       <Avatar />
       {/* {BUILD_ENV && <Tag color={ENVTagColor[BUILD_ENV]}>{BUILD_ENV}</Tag>} */}
@@ -84,7 +143,9 @@ const GlobalHeaderRight = props => {
   );
 };
 
-export default connect(({ settings }) => ({
+export default connect(({ global, settings, loading }) => ({
+  global,
   theme: settings.navTheme,
   layout: settings.layout,
+  loading: loading.models.message,
 }))(GlobalHeaderRight);

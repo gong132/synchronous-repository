@@ -67,6 +67,20 @@ module.exports = {
           ],
         },
         {
+          path: '/demandManage',
+          name: 'demandManage',
+          icon: 'home',
+          component: './demandManage',
+          routes: [
+            {
+              path: '/demandManage/list',
+              name: 'demandManageList',
+              hideInMenu: true,
+              component: './demandManage/list',
+            },
+            ]
+        },
+        {
           path: '/table',
           name: 'table',
           icon: 'TableOutlined',

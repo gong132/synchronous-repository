@@ -5,6 +5,7 @@ import {PagerHelper} from "@/utils/helper";
 import {isArray, isEmpty} from "@/utils/lang";
 import { queryLogList, fetchUserList, saveFile, fetchSystemList } from '@/services/global'
 import { queryNotices, fetchMenuList, fetchCurrentUserInfo, fetchListByRoleId, queryCurrentUserMenuList } from '@/services/user';
+import {fetchMessageList} from "@/services/message/message";
 
 const GlobalModel = {
   namespace: 'global',
@@ -18,6 +19,7 @@ const GlobalModel = {
     currentUserMenuList: [],
     authActions: [],
     currentUser: {},
+    messageList: {},
   },
   effects: {
     *queryAllMenuList({ payload, callback }, { call, put }) {
@@ -134,6 +136,24 @@ const GlobalModel = {
         },
       })
     },
+    *queryMessageList({payload}, { call, put }) {
+      const res = yield call(fetchMessageList, payload);
+      if (!res || res.code !== 200) {
+        message.error(res.msg)
+        return
+      }
+      const { data, unReadCount = 0, ...other } = res.data
+      yield put({
+        type: 'saveData',
+        payload: {
+          messageList: {
+            data,
+            ...other,
+            unReadCount,
+          },
+        },
+      })
+    },
   },
   reducers: {
     saveData(state, { payload }) {
@@ -212,6 +232,7 @@ const GlobalModel = {
       const authActionsList = currentUserMenuList
           .filter(menu => menu.pid === currentMenu.id && menu.type === 2)
           .map(menu => menu.url);
+
       return {
         ...state,
         // 更新属于当前菜单的authActions
@@ -268,6 +289,7 @@ const GlobalModel = {
       // 通过订阅history，监听路由变化后，对当前路由更新authActions
       return history.listen(({ pathname }) => {
         dispatch({ type: 'updateAuthData', payload: { pathname } });
+        dispatch({ type: 'queryMessageList', payload: { readStatus: 0, type: 1 } });
       });
     },
   },

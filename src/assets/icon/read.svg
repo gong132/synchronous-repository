@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20.6 20.6">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: #d61518;
+      }
+
+      .cls-1 {
+        stroke: #d61518;
+        stroke-width: 0.6px;
+      }
+    </style>
+  </defs>
+  <g id="xxtz_bwyd" transform="translate(0.3 0.3)">
+    <path id="路径_12" data-name="路径 12" class="cls-1" d="M10,20A10,10,0,1,1,20,10,10,10,0,0,1,10,20ZM10,1.25A8.75,8.75,0,1,0,18.75,10,8.75,8.75,0,0,0,10,1.25Z"/>
+    <path id="路径_13" data-name="路径 13" class="cls-2" d="M181.8,482h-9.771c-.281,0-.508-.448-.508-1s.228-1,.508-1H181.8c.281,0,.508.448.508,1S182.08,482,181.8,482Z" transform="translate(-166.994 -471)"/>
+  </g>
+</svg>
