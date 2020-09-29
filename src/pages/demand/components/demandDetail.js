@@ -20,6 +20,8 @@ import apsIcon from '@/assets/icon/nav_xqgl_hover.svg';
 import xqIcon from '@/assets/icon/xq.svg';
 import budgetLogIcon from '@/assets/icon/modular_czrz.svg';
 import budgetXqIcon from '@/assets/icon/modular_xq.svg';
+import addIcon from '@/assets/icon/Button_xz.svg';
+import copyIcon from '@/assets/icon/Button_fz.svg';
 // import xmIcon from '@/assets/icon/xm.svg'
 // import xmwaitIcon from '@/assets/icon/xm_jxz.svg'
 
@@ -288,6 +290,10 @@ class Detail extends Component {
     const { dispatch } = this.props;
     const { selectedStoryRows } = this.state;
 
+    if (selectedStoryRows && selectedStoryRows.length === 0) {
+      message.warning("请选择story")
+      return
+    }
     dispatch({
       type: 'demand/copyStory',
       payload: {
@@ -636,26 +642,26 @@ class Detail extends Component {
                     />}
                   </Fragment>
                 ) : (
-                    <Fragment>
-                      <OptButton
-                        style={{
-                          backgroundColor: 'white',
-                          color: '#B0BAC9',
-                          borderColor: '#B0BAC9',
-                        }}
-                        disabled
-                        img={psIcon}
-                        text="已提交OA审批"
-                      />
-                      { receiver_name === userName && <OptButton
-                        style={{
-                          backgroundColor: 'white',
-                        }}
-                        img={apsIcon}
-                        text="提交OA审批"
-                        onClick={() => this.handleOAaction('u')}
-                      />}
-                    </Fragment>
+                  <Fragment>
+                    <OptButton
+                      style={{
+                        backgroundColor: 'white',
+                        color: '#B0BAC9',
+                        borderColor: '#B0BAC9',
+                      }}
+                      disabled
+                      img={psIcon}
+                      text="已提交OA审批"
+                    />
+                    { receiver_name === userName && <OptButton
+                      style={{
+                        backgroundColor: 'white',
+                      }}
+                      img={apsIcon}
+                      text="提交OA审批"
+                      onClick={() => this.handleOAaction('u')}
+                    />}
+                  </Fragment>
                   )}
                 {editBool ? (
                   <Fragment>
@@ -682,18 +688,18 @@ class Detail extends Component {
                     />
                   </Fragment>
                 ) : (
-                    <OptButton
-                      onClick={() =>
-                        this.setState({
-                          editBool: true,
-                        })
-                      }
-                      style={{
-                        backgroundColor: 'white',
-                      }}
-                      img={editIcon}
-                      text="编辑"
-                    />
+                  <OptButton
+                    onClick={() =>
+                      this.setState({
+                        editBool: true,
+                      })
+                    }
+                    style={{
+                      backgroundColor: 'white',
+                    }}
+                    img={editIcon}
+                    text="编辑"
+                  />
                   )}
               </Fragment>
             }
@@ -1068,35 +1074,35 @@ class Detail extends Component {
                 </DescriptionItem> */}
               </Descriptions>
             ) : (
-                <Descriptions column={3} bordered className={styles.formatDetailDesc}>
-                  {detailList.map(
-                    (v, i) =>
-                      (v.type === type || v.type === 'p') && (
-                        <DescriptionItem
-                          key={i.toString()}
-                          span={v.span}
-                          label={
-                            <>
-                              {v.required && <span style={{ color: 'red' }}>*</span>}
-                              {v.name}
-                            </>
-                          }
-                        >
-                          {(v.dataIndex === 'description' && (
-                            /* eslint-disable */
-                            <div
-                              className="infoDescription"
-                              style={{ border: 0 }}
-                              dangerouslySetInnerHTML={{ __html: v.value ? v.value : '--' }}
-                            /> /* eslint-disable */
-                          )) ||
-                            (v.arrDict && <div style={v.style}>{v.arrDict[v.value]}</div>) || (
-                              <div style={v.style}>{v.value}</div>
-                            )}
-                        </DescriptionItem>
-                      ),
-                  )}
-                </Descriptions>
+              <Descriptions column={3} bordered className={styles.formatDetailDesc}>
+                {detailList.map(
+                  (v, i) =>
+                    (v.type === type || v.type === 'p') && (
+                      <DescriptionItem
+                        key={i.toString()}
+                        span={v.span}
+                        label={
+                          <>
+                            {v.required && <span style={{ color: 'red' }}>*</span>}
+                            {v.name}
+                          </>
+                        }
+                      >
+                        {(v.dataIndex === 'description' && (
+                          /* eslint-disable */
+                          <div
+                            className="infoDescription"
+                            style={{ border: 0 }}
+                            dangerouslySetInnerHTML={{ __html: v.value ? v.value : '--' }}
+                          /> /* eslint-disable */
+                        )) ||
+                        (v.arrDict && <div style={v.style}>{v.arrDict[v.value]}</div>) || (
+                          <div style={v.style}>{v.value}</div>
+                        )}
+                      </DescriptionItem>
+                    ),
+                )}
+              </Descriptions>
               )}
           </GlobalSandBox>
         </Spin >
@@ -1117,7 +1123,7 @@ class Detail extends Component {
             <div>
               <OptButton
                 style={{ backgroundColor: 'unset' }}
-                icon="plus"
+                img={addIcon}
                 onClick={() => {
                   this.setState({
                     addStoryModalVisible: true,
@@ -1127,7 +1133,7 @@ class Detail extends Component {
               />
               <OptButton
                 style={{ backgroundColor: 'unset' }}
-                icon="plus"
+                img={copyIcon}
                 text="复制Story"
                 onClick={this.handleCopyStory}
               />

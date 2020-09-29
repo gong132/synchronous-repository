@@ -274,12 +274,12 @@ const GlobalModel = {
 
         // 监听当前页面路由是否在菜单池, 如果不在, 并且不是异常页面和登陆页时, 跳转到403页面
         // 异常页面不监听路由
-        if (!isEmpty(currentUserMenuList) && !findCurrentPage && pathname.indexOf('/exception') < 0 && pathname !== '/user/login' && pathname !== '/menuConfig' && pathname !== '/') {
-          router.replace('/exception/403');
-        }
-        if (isEmpty(findCurrentPage) && pathname.indexOf('/exception') < 0 && pathname !== '/user/login' && pathname !== '/menuConfig' && pathname !== '/') {
-          router.replace('/exception/403');
-        }
+        // if (!isEmpty(currentUserMenuList) && !findCurrentPage && pathname.indexOf('/exception') < 0 && pathname !== '/user/login' && pathname !== '/menuConfig' && pathname !== '/') {
+        //   router.replace('/exception/403');
+        // }
+        // if (isEmpty(findCurrentPage) && pathname.indexOf('/exception') < 0 && pathname !== '/user/login' && pathname !== '/menuConfig' && pathname !== '/') {
+        //   router.replace('/exception/403');
+        // }
         // 如果路径名为' / '，则触发' load '操作
         if (typeof window.ga !== 'undefined') {
           window.ga('send', 'pageview', pathname + search);

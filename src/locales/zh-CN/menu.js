@@ -84,5 +84,5 @@ export default {
   'menu.demand.projectDemandDetail': '项目需求详情',
   'menu.demand.storyDetail': 'story详情',
   'menu.demandManage': '需求管理',
-  'menu.demandManage.demandManageList': '需求管理列表',
+  'menu.demandManageList': '需求管理列表',
 };

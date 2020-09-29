@@ -93,7 +93,7 @@ const Index = props => {
       },
     },
     TableColumnHelper.genSelectColumn('type', '项目类型', PROJECT_TYPE, { sorter: true }),
-    TableColumnHelper.genLangColumn('name', '預算名称', { sorter: true }, 4),
+    TableColumnHelper.genLangColumn('name', '预算名称', { sorter: true }, 4),
     TableColumnHelper.genPlanColumn('userName', '录入人', { sorter: true }),
     TableColumnHelper.genDateTimeColumn('createTime', '录入时间', 'YYYY-MM-DD', { sorter: true }),
     TableColumnHelper.genPlanColumn('deptName', '需求部门', { sorter: true }),
@@ -166,8 +166,16 @@ const Index = props => {
   };
 
   const handleSearchForm = params=> {
-    const formValues = form.getFieldsValue();
-    handleQueryBudgetData({ ...formValues, ...params });
+    const {expectSetTime, ...others} = form.getFieldsValue();
+    console.log(yearTime, "yearTime")
+    const { year = moment.isMoment(yearTime) && yearTime.format("YYYY") } = params
+    console.log(form.getFieldsValue(), "form.getFieldsValue()")
+    const formValues = {
+      ...others,
+      expectSetTime: expectSetTime && expectSetTime.format("YYYY-MM-DD"),
+      year,
+    }
+    handleQueryBudgetData(formValues);
   };
 
   const handleDownLoad = () => {
@@ -318,7 +326,10 @@ const Index = props => {
                 'type',
                 {},
               )(
-                <Select allowClear>
+                <Select
+                  placeholder="请选择项目类型"
+                  allowClear
+                >
                   {PROJECT_TYPE.map(v => (
                     <Option value={v.key} key={v.key.toString()}>
                       {v.value}
@@ -334,7 +345,10 @@ const Index = props => {
                 'budgetType',
                 {},
               )(
-                <Select allowClear>
+                <Select
+                  placeholder="请选择预算类型"
+                  allowClear
+                >
                   {BUDGET_TYPE.map(v => (
                     <Option value={v.key} key={v.key.toString()}>
                       {v.value}
@@ -353,6 +367,7 @@ const Index = props => {
                 <Select
                   allowClear
                   showSearch
+                  placeholder="请选择承建团队"
                   onSearch={val => handleSearch(handleQueryAllTeam({ deptName: val }))}
                 >
                   {teamList &&
@@ -367,8 +382,8 @@ const Index = props => {
           </Col>
         </Row>
         <div className={styles.moreSearchButton}>
-          <Button onClick={handleSearchForm}>查询</Button>
-          <Button onClick={() => setSearchMore(false)}>取消</Button>
+          <Button ghost type="primary" onClick={() => setSearchMore(false)}>取消</Button>
+          <Button type="primary" className="margin-left-12" onClick={handleSearchForm}>确认</Button>
         </div>
       </div>
     );

@@ -1,12 +1,13 @@
 import { PagerHelper } from "@/utils/helper";
 import { message } from "antd";
-import { fetchDemandInfo } from "@/services/demandManage";
+import { fetchDemandInfo, fetchDemandList } from "@/services/demandManage";
 
 
 const UserModel = {
   namespace: 'demandManage',
   state: {
     demandTableList: PagerHelper.genListState(),
+    demandManageList: PagerHelper.genListState(),
     demandDeptInfo: [],
     demandTeamList: [],
     demandStatusList: [],
@@ -50,6 +51,25 @@ const UserModel = {
         },
       })
     },
+    *queryDemandList({payload}, { call, put }) {
+      const res = yield call(fetchDemandList, payload);
+
+      if (!res || res.code !== 200) {
+        message.error(res.msg)
+        return
+      }
+
+      const { data, ...other } = res.data;
+
+      yield put({
+        type: 'setDemandManageData',
+        payload: {
+          filter: payload,
+          data,
+          ...other
+        },
+      })
+    },
   },
   reducers: {
     saveData(state, { payload }) {
@@ -59,6 +79,12 @@ const UserModel = {
       return {
         ...state,
         demandTableList: PagerHelper.resolveListState(action.payload),
+      };
+    },
+    setDemandManageData(state, action) {
+      return {
+        ...state,
+        demandManageList: PagerHelper.resolveListState(action.payload),
       };
     },
   },

@@ -1,12 +1,13 @@
 import React, {memo} from "react";
 import Pie from "@/components/Charts/Pie";
+import {withRouter} from "umi/index";
 
 const isEqual = (preProps, nextProps) => {
   if (preProps.demandDeptInfo?.data !== nextProps.demandDeptInfo?.data) return false
   return true
 }
 
-const Index = memo(props => {
+const Index = memo(withRouter(props => {
   const { demandDeptInfo } = props
   const salesPieData = demandDeptInfo?.data && demandDeptInfo?.data.map(v => ({
     ...v,
@@ -14,10 +15,17 @@ const Index = memo(props => {
     y: Number(v.demandCount),
   }))
 
-  console.log(salesPieData, "salesPieData")
+  console.log(props, "salesPieData")
 
   const handleClick = e => {
     console.log(e, "E")
+
+    props.history.push({
+      pathname: '/demandManage/list',
+      query: {
+        id: "zhangsan",
+      },
+    });
   }
   return (
     <Pie
@@ -29,6 +37,6 @@ const Index = memo(props => {
       geomLabel
     />
   )
-}, isEqual)
+}), isEqual)
 
 export default Index

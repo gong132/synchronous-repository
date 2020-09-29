@@ -7,3 +7,11 @@ export async function fetchDemandInfo(params) {
     params,
   });
 }
+
+// 获取需求管理列表
+export async function fetchDemandList(params) {
+  return request('/demand/manage/list', {
+    method: 'post',
+    params,
+  });
+}
