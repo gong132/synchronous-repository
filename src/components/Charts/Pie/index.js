@@ -239,7 +239,7 @@ class Pie extends Component {
                     htmlTemplate={(text, item)=>{
                       if (!item?._origin) return ""
                       if (item?._origin.demandCount * 1 === 0) return ""
-                      return `<span style="width: 100%;height: 12px;font-size: 12px;display: flex;flex-wrap: nowrap;justify-content: flex-end;">${item?._origin?.name}: ${item?._origin?.demandCount}个</span>`
+                      return `<span style="width: 150px;height: 12px;font-size: 12px;display: flex;flex-wrap: nowrap;">${item?._origin?.name}: ${item?._origin?.demandCount}个</span>`
                     }}
                   />
                 )}

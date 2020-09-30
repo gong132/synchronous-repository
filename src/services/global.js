@@ -51,7 +51,7 @@ export async function saveFile(params) {
 // 查询人员列表
 export async function fetchUserList(params) {
   return request('/personnel/search', {
-    method: 'post',
+    method: 'get',
     params,
   });
 }
@@ -68,6 +68,13 @@ export async function queryUserList(params) {
 export async function fetchSystemList(params) {
   return request('/system/list', {
     method: 'post',
+    params,
+  });
+}
+// 查询部门
+export async function fetchDeptList(params) {
+  return request('/dept/search', {
+    method: 'get',
     params,
   });
 }

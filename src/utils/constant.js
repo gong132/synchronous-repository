@@ -6,6 +6,10 @@ const formLayoutItemAddDouble = {
   labelCol: { span: 8 },
   wrapperCol: { span: 16 },
 };
+export const formLayoutItemLabel7 = {
+  labelCol: { span: 7 },
+  wrapperCol: { span: 17 },
+};
 const formLayoutItem1 = {
   labelCol: { span: 10 },
   wrapperCol: { span: 14 },

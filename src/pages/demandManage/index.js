@@ -1,6 +1,6 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { connect } from "dva"
-import {Card, Col, Row} from "antd";
+import { DatePicker, Col, Form, Row, Button, Select } from "antd";
 
 import DeptPie from "./chart/deptPie"
 import TeamBar from "./chart/teamBar"
@@ -8,18 +8,34 @@ import StatusBar from "./chart/statusBar"
 import SystemLine from "./chart/systemLine"
 import DetailTable from "./chart/detailTable"
 import storage from "@/utils/storage";
+import {formLayoutItemLabel7} from "@/utils/constant";
+import classNames from "classnames";
+import styles from "./index.less";
+import {PagerHelper} from "@/utils/helper";
+import {DEMAND_STATUS} from "@/pages/demandManage/utils/constant";
 
 const { userInfo } = storage.get("gd-user", {})
+const FormItem = Form.Item;
+const { RangePicker } = DatePicker;
+const { Option } = Select;
 const Index = props => {
-  const { dispatch, demandManage: {
-    demandTableList,
-    demandDeptInfo,
-    demandTeamList,
-    demandStatusList,
-    demandSystemList,
-    pendingCount,
-    othersData,
-  }} = props;
+  const { form, dispatch, loading,
+    demandManage: {
+      demandTableList,
+      demandDeptInfo,
+      demandTeamList,
+      demandStatusList,
+      demandSystemList,
+      pendingCount,
+      othersData,
+    },
+    global: {
+      systemList,
+      deptList,
+      userList,
+    }
+  } = props;
+
 
   const handleQueryDemandInfo = params => {
     dispatch({
@@ -30,45 +46,180 @@ const Index = props => {
       }
     })
   }
+  const handleQueryUserList = () => {
+    dispatch({
+      type: "global/queryUserList",
+      payload: {
+        ...PagerHelper.MaxPage,
+      }
+    })
+  }
+  const handleQuerySystemList = () => {
+    dispatch({
+      type: "global/querySystemList",
+      payload: {
+        ...PagerHelper.MaxPage,
+      }
+    })
+  }
+  const handleQueryDeptList = () => {
+    dispatch({
+      type: "global/queryDeptList",
+      payload: {
+        ...PagerHelper.MaxPage,
+      }
+    })
+  }
 
   useEffect(() => {
     handleQueryDemandInfo()
+    handleQueryUserList()
+    handleQuerySystemList()
+    handleQueryDeptList()
   }, [])
 
+  const handleSearchForm = () => {
+    const { rangeDate, ...others } = form.getFieldsValue();
+    const params = {
+      ...others,
+      startTime: rangeDate && rangeDate[0].format("YYYY-MM-DD"),
+      endTime: rangeDate && rangeDate[1].format("YYYY-MM-DD"),
+    }
+    handleQueryDemandInfo(params)
+  }
+  const handleResetForm = () => {
+    form.resetFields()
+    handleQueryDemandInfo()
+  }
+  const renderForm = () => {
+    const { getFieldDecorator } = form;
+    return (
+      <Form layout="inline">
+        <Row>
+          <Col span={5}>
+            <FormItem {...formLayoutItemLabel7} label="需求创建时间" colon={false}>
+              {getFieldDecorator(
+                'rangeDate',
+              )(<RangePicker allowClear onBlur={handleSearchForm} format="YYYY-MM-DD" />)}
+            </FormItem>
+          </Col>
+          <Col span={4}>
+            <FormItem {...formLayoutItemLabel7} label="所属系统" colon={false}>
+              {getFieldDecorator(
+                'systemId',
+              )(
+                <Select
+                  allowClear
+                  onBlur={handleSearchForm}
+                  placeholder="请选择所属系统"
+                >
+                  {
+                    systemList?.list && systemList.list.map(v => (
+                      <Option value={v.id} key={v.id}>{v.name}</Option>
+                    ))
+                  }
+                </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={4}>
+            <FormItem {...formLayoutItemLabel7} label="团队成员" colon={false}>
+              {getFieldDecorator(
+                'userId',
+              )(
+                <Select
+                  allowClear
+                  onBlur={handleSearchForm}
+                  placeholder="请选择团队成员"
+                >
+                  {
+                    userList?.list && userList.list.map(v => (
+                      <Option value={v.loginid} key={v.loginid}>{v.lastname}</Option>
+                    ))
+                  }
+                </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={5}>
+            <FormItem {...formLayoutItemLabel7} label="需求所属部门" colon={false}>
+              {getFieldDecorator(
+                'deptId',
+              )(
+                <Select
+                  allowClear
+                  onBlur={handleSearchForm}
+                  placeholder="请选择需求所属部门"
+                >
+                  {
+                    deptList?.list && deptList.list.map(v => (
+                      <Option value={v.id} key={v.id}>{v.name}</Option>
+                    ))
+                  }
+                </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={4}>
+            <FormItem {...formLayoutItemLabel7} label="需求状态">
+              {getFieldDecorator(
+                'boardId',
+              )(
+                <Select
+                  allowClear
+                  onBlur={handleSearchForm}
+                  placeholder="请选择需求状态"
+                >
+                  {DEMAND_STATUS.map(v => (
+                    <Option value={v.key} key={v.key.toString()}>
+                      {v.value}
+                    </Option>
+                  ))}
+                </Select>,
+              )}
+            </FormItem>
+          </Col>
+          <Col span={2}>
+            <Button
+              ghost
+              className={classNames('margin-left-6', styles.orangeForm)}
+              onClick={handleResetForm}
+            >
+              重置
+            </Button>
+          </Col>
+        </Row>
+      </Form>
+    )
+  }
   return (
     <div className="main">
+      <div className={styles.tableListForm}>{renderForm()}</div>
+      <Row style={{ marginTop: 16 }}>
+        <Col span={12} className="padding-right-8">
+          <DeptPie demandDeptInfo={demandDeptInfo} />
+        </Col>
+        <Col span={12} className="padding-left-8">
+          <TeamBar demandTeamList={demandTeamList} />
+        </Col>
+      </Row>
       <Row>
-        <Col span={24}>搜索</Col>
-      </Row>
-      <Row style={{ marginTop: 16 }}>
-        <Col span={12}>
-          <Card style={{ marginRight: 8 }} title="需求所属部门">
-            <DeptPie demandDeptInfo={demandDeptInfo} />
-          </Card>
+        <Col span={12} className="padding-right-8">
+          <StatusBar demandStatusList={demandStatusList} />
         </Col>
-        <Col span={12}>
-          <Card style={{ marginLeft: 8 }}>
-            <TeamBar />
-          </Card>
+        <Col span={12} className="padding-left-8">
+          <SystemLine demandSystemList={demandSystemList} />
         </Col>
       </Row>
-      <Row style={{ marginTop: 16 }}>
-        <Col span={12}>
-          <Card style={{ marginRight: 8 }}>
-            <StatusBar />
-          </Card>
-        </Col>
-        <Col span={12}>
-          <Card style={{ marginLeft: 8 }}>
-            <SystemLine />
-          </Card>
-        </Col>
-      </Row>
-      <Row style={{ marginTop: 16 }}>
+      <Row style={{height: 600 }}>
         <Col span={24}>
-          <Card>
-            <DetailTable />
-          </Card>
+          <DetailTable
+            demandTableList={demandTableList}
+            pendingCount={pendingCount}
+            othersData={othersData}
+            handleQueryDemandInfo={handleQueryDemandInfo}
+            loading={loading}
+          />
         </Col>
       </Row>
     </div>
@@ -77,7 +228,11 @@ const Index = props => {
 
 export default connect(
   ({
+    global,
     demandManage,
+    loading,
   }) => ({
+    global,
     demandManage,
-  }))(Index)
+    loading: loading.models.demandManage,
+  }))(Form.create()(Index))

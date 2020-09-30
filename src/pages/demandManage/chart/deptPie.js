@@ -1,6 +1,7 @@
 import React, {memo} from "react";
 import Pie from "@/components/Charts/Pie";
 import {withRouter} from "umi/index";
+import GlobalSandBox from "@/components/commonUseModule/globalSandBox";
 
 const isEqual = (preProps, nextProps) => {
   if (preProps.demandDeptInfo?.data !== nextProps.demandDeptInfo?.data) return false
@@ -15,27 +16,25 @@ const Index = memo(withRouter(props => {
     y: Number(v.demandCount),
   }))
 
-  console.log(props, "salesPieData")
-
   const handleClick = e => {
     console.log(e, "E")
 
-    props.history.push({
-      pathname: '/demandManage/list',
-      query: {
-        id: "zhangsan",
-      },
-    });
+
   }
   return (
-    <Pie
-      hasLegend
-      data={salesPieData}
-      inner={0}
-      height={300}
-      onPlotClick={handleClick}
-      geomLabel
-    />
+    <GlobalSandBox
+      title="需求所属部门"
+      sandboxStyle={{ height: 400 }}
+    >
+      <Pie
+        hasLegend
+        data={salesPieData}
+        inner={0}
+        height={320}
+        onPlotClick={handleClick}
+        geomLabel
+      />
+    </GlobalSandBox>
   )
 }), isEqual)
 
