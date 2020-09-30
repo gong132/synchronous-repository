@@ -766,7 +766,7 @@ class Detail extends Component {
                       rules: [{ required: true, message: '请输入状态' }],
                       initialValue: Number(status),
                     })(
-                      <Select placeholder="请输入状态" style={{ width: w }}>
+                      <Select disabled placeholder="请输入状态" style={{ width: w }}>
                         {BOARD_TITLE.map(d => (
                           <Option key={d.boardId} value={d.boardId}>
                             {d.name}
@@ -863,7 +863,7 @@ class Detail extends Component {
                   <FormItem>
                     {form.getFieldDecorator('acceptTeam', {
                       rules: [{ required: false, message: '请输入受理团队' }],
-                      initialValue: acceptTeamId,
+                      initialValue: acceptTeamId ? String(acceptTeamId) : '',
                     })(
                       <Select
                         allowClear
@@ -960,7 +960,7 @@ class Detail extends Component {
                     {form.getFieldDecorator('plannedLaunchDate', {
                       rules: [{ required: false, message: '请输入计划上线日期' }],
                       initialValue: plannedLaunchDate ? moment(plannedLaunchDate) : null,
-                    })(<DatePicker style={{ width: w }} placeholder="请输入计划上线日期" />)}
+                    })(<DatePicker disabled style={{ width: w }} placeholder="请输入计划上线日期" />)}
                   </FormItem>
                 </DescriptionItem>
                 <DescriptionItem span={1} label={<>实际上线日期</>}>
@@ -982,19 +982,7 @@ class Detail extends Component {
                       rules: [{ required: false, message: '请输入项目编号' }],
                       initialValue: projectNo,
                     })(
-                      <Select
-                        allowClear
-                        style={{ width: w }}
-                        // showSearch
-                        placeholder="请输入项目编号"
-                      >
-                        {/* {!_.isEmpty(headerList) && headerList.map(d => (
-                                <Option key={d.leaderId} value={d.leaderId}>{d.leaderName}</Option>
-                            ))} */}
-                        <Option key="1" value="1">
-                          {1}
-                        </Option>
-                      </Select>,
+                      <Input disabled />,
                     )}
                   </FormItem>
                 </DescriptionItem>

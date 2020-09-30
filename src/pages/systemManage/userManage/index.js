@@ -74,7 +74,9 @@ class UserManage extends Component {
   // 模糊查询
   moreQuery = () => {
     const formValues = this.props.form.getFieldsValue();
-    formValues.roleId = String(formValues.roleId)
+    if(formValues.teamId) {
+      formValues.teamId = Number(formValues.teamId)
+    }
     this.handleDebounceQueryData(formValues);
   };
 
@@ -83,17 +85,20 @@ class UserManage extends Component {
     this.handleQueryData(params);
   };
 
-  handleResetSearch = () => { };
+  handleResetSearch = () => {
+    this.props.form.resetFields()
+    this.handleDebounceQueryData()
+  };
 
   handleViewModal = (bool, record = {}) => {
     this.setState({
       modalVisible: bool,
       record,
     });
-    if(bool) {
+    if (bool) {
       this.props.dispatch({
         type: 'userManage/queryRoleById',
-        payload:{
+        payload: {
           id: record.id
         }
       })
@@ -101,8 +106,8 @@ class UserManage extends Component {
   };
 
   handleSubmit = () => {
-    const {record} = this.state
-    const {id} = record
+    const { record } = this.state
+    const { id } = record
     this.props.form.validateFields((err, values) => {
       if (err) return;
       values.id = id
@@ -139,7 +144,7 @@ class UserManage extends Component {
       groupList,
       userManage
     } = this.props;
-    const {roleData} = userManage
+    const { roleData } = userManage
     return (
       <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
         <Col span={6}>
@@ -214,7 +219,7 @@ class UserManage extends Component {
         <Col span={6}>
           <FormItem>
             <CustomBtn
-              // onClick={() => this.handleResetSearch()}
+              onClick={() => this.handleResetSearch()}
               style={{
                 display: 'inline-block',
                 marginRight: '5rem',

@@ -206,7 +206,7 @@ const Project = {
         return true;
       });
       yield put({
-        type: 'setData',
+        type: 'saveData',
         payload: {
           groupList: data,
           groupMap: gObj,

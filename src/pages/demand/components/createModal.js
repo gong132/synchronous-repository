@@ -94,7 +94,13 @@ class CreateDemand extends PureComponent {
   };
 
   // 查询团队
-  handleQueryGroup = (params) => {
+  handleQueryGroup = (val, type) => {
+    const params = {}
+    if(type) {
+      params[type] = val
+    } else {
+      params.teamName = val
+    }
     return this.props.dispatch({
       type: 'demand/fetchHeaderGroup',
       payload: {
@@ -126,7 +132,7 @@ class CreateDemand extends PureComponent {
   // 通过人员id查团队
   handleQueryGroupBy = async (type, val) => {
     if (type === 'user') {
-      const res = await this.handleQueryGroup({ userId: String(val) })
+      const res = await this.handleQueryGroup( String(val),'userId')
       const { demand: { groupList }, form } = this.props
       if (res && !_.isEmpty(groupList)) {
         form.setFieldsValue({'acceptTeam': groupList[0].id })

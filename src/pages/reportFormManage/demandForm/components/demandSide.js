@@ -1,5 +1,6 @@
 import React, { PureComponent, Fragment } from 'react'
-import Bar from '@/components/EchartsComponents/barEcharts'
+import Bar from '@/components/EchartsComponents/Bar'
+import Pie from '@/components/EchartsComponents/Pie'
 import { connect } from 'dva'
 import {
   Row,
@@ -12,11 +13,25 @@ import {
 }))
 class DemandSide extends PureComponent {
 
+  // 点击柱形图事件
+  handleClickBar = (params) => {
+    console.log(params)
+  }
+
   render() {
     const { demandForm } = this.props
-    const { deptList, deptNameArr } = demandForm
+    const { deptNameArr, clusterList } = demandForm
+    console.log(clusterList, deptNameArr)
     const barProps = {
-      xAxis: deptNameArr
+      data: deptNameArr,
+      title: '需求发起部门',
+      barColor: ['#FE9D4E'],
+      handleClickBar: this.handleClickBar
+    }
+
+    const pieProps = {
+      title: '需求所属板块',
+      data: clusterList
     }
 
     return (
@@ -24,20 +39,18 @@ class DemandSide extends PureComponent {
         <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
           <Col span={24}>
             <Card
-              style={{marginTop: '16px'}}
+              style={{ marginTop: '16px' }}
             >
               <Bar {...barProps} />
             </Card>
           </Col>
           <Col span={12}>
-            <Card
-            >
-              图
+            <Card style={{ marginTop: '16px' }}>
+              <Pie {...pieProps} />
             </Card>
           </Col>
           <Col span={12}>
-            <Card
-            >
+            <Card>
               图
             </Card>
           </Col>

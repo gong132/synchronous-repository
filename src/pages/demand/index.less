@@ -29,6 +29,7 @@
       width: 230px;
       margin-bottom: 12px;
     }
+
     .ant-select-selection {
       width: 230px;
     }
@@ -70,7 +71,7 @@
 }
 
 // 看板样式
-.spectaculars__set{
+.spectaculars__set {
   ::-webkit-scrollbar-thumb {
     background: #8798AD;
     border-radius: 6px;
@@ -91,10 +92,12 @@
   background: #8798AD;
   border-radius: 6px;
 }
+
 .drag::-webkit-scrollbar-thumb:hover {
   background-color: #A9ACAF;
   border-radius: 7px;
 }
+
 .drag::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -106,20 +109,20 @@
   overflow-x: auto;
 
   // :global {
-    // ::-webkit-scrollbar-thumb {
-    //   background: #8798AD;
-    //   border-radius: 6px;
-    // }
+  // ::-webkit-scrollbar-thumb {
+  //   background: #8798AD;
+  //   border-radius: 6px;
+  // }
 
-    // ::-webkit-scrollbar-thumb:hover {
-    //   background-color: #A9ACAF;
-    //   border-radius: 7px;
-    // }
+  // ::-webkit-scrollbar-thumb:hover {
+  //   background-color: #A9ACAF;
+  //   border-radius: 7px;
+  // }
 
-    // ::-webkit-scrollbar {
-    //   width: 6px;
-    //   height: 6px;
-    // }
+  // ::-webkit-scrollbar {
+  //   width: 6px;
+  //   height: 6px;
+  // }
   // }
 }
 
@@ -140,6 +143,7 @@
     border-radius: 4px 4px 0 0;
     background: linear-gradient(135deg, #2E5BFF 0%, #2496EE 100%);
     margin-bottom: 6px;
+
     &_count {
       position: relative;
       left: 2px;
@@ -174,18 +178,27 @@
     }
 
     &_secondLine {
+      display: flex;
+      align-items: center;
       margin: 8px;
       padding-bottom: 8px;
       color: #2E384D;
       font-weight: 700;
       border-bottom: 1px solid #D8DCE6;
+
       :global {
         .anticon {
           position: relative;
           top: -1px;
           margin-right: 6px;
-
         }
+      }
+
+      span {
+        width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
 
@@ -235,6 +248,7 @@
       left: 8px;
       font-weight: 700 !important;
     }
+
     .ant-steps-item-description {
       position: relative;
       left: 8px;
@@ -308,7 +322,7 @@
 
 .childrenTable {
   :global {
-    tr.ant-table-expanded-row > td {
+    tr.ant-table-expanded-row>td {
       padding: 2px;
     }
   }
@@ -326,8 +340,10 @@
 .tableList {
   background-color: #fff;
   padding: 16px;
+
   .tableListOperator {
     margin-bottom: 16px;
+
     button {
       margin-right: 8px;
     }
@@ -336,24 +352,29 @@
 
 .tableListForm {
   padding-bottom: 16px;
+
   :global {
     .ant-form-item {
       margin-right: 0;
       display: flex;
-      > .ant-form-item-label {
+
+      >.ant-form-item-label {
         width: auto;
         line-height: 32px;
         padding-right: 8px;
       }
+
       .ant-form-item-control {
         line-height: 32px;
       }
     }
+
     .ant-form-item-control-wrapper {
       flex: 1;
       padding-right: 12px;
     }
   }
+
   .submitButtons {
     display: block;
     white-space: nowrap;
@@ -369,27 +390,40 @@
   color: #999;
   transition: all 0.3s;
 }
-.addForm, .addForm:hover, .addForm:active, .addForm:focus, .addForm:visited {
+
+.addForm,
+.addForm:hover,
+.addForm:active,
+.addForm:focus,
+.addForm:visited {
   background: #fff;
-  opacity:1;
-  border-radius:2px;
+  opacity: 1;
+  border-radius: 2px;
   color: #2E5BFF;
   border: 1px solid #2E5BFF;
 }
-.orangeForm, .orangeForm:hover, .orangeForm:active, .orangeForm:focus, .orangeForm:visited {
+
+.orangeForm,
+.orangeForm:hover,
+.orangeForm:active,
+.orangeForm:focus,
+.orangeForm:visited {
   width: 80px;
   background: #fff;
-  opacity:1;
-  border-radius:2px;
+  opacity: 1;
+  border-radius: 2px;
   border: 1px solid #2E5BFF;
   color: #2E5BFF;
 }
+
 .dropStyle {
   width: 220px;
   margin-left: 16px;
+
   :global {
     .ant-select {
       width: 100%;
+
       .ant-select-selection--single {
         height: 34px;
         border: 1px solid #2E5BFF;

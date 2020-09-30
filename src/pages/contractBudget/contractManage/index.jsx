@@ -62,6 +62,7 @@ class ContractManage extends Component {
     this.handleQueryGroup()
     this.handleQueryBudget()
     this.handleQueryCluster()
+    this.handleQueryUser()
   }
 
   // 导出
@@ -130,7 +131,7 @@ class ContractManage extends Component {
   // 查项目
   handleQueryProject = () => {
     this.props.dispatch({
-      type: 'contract/fetchProject',
+      type: 'contract/fetchAllProject',
     });
   };
 
@@ -164,8 +165,14 @@ class ContractManage extends Component {
     });
   };
 
-  // 查询负责人和团队
-  handleQueryGroup = (params) => {
+  // 查询团队
+  handleQueryGroup = (val, type) => {
+    const params = {}
+    if(type) {
+      params[type] = val
+    } else {
+      params.teamName = val
+    }
     this.props.dispatch({
       type: 'contract/fetchHeaderGroup',
       payload: {
@@ -173,6 +180,34 @@ class ContractManage extends Component {
       }
     });
   };
+
+  // 查人员
+  handleQueryUser = (params) => {
+    this.props.dispatch({
+      type: 'contract/fetchUserData',
+      payload: {
+        ...params
+      }
+    });
+  };
+
+  // 通过团队查人员
+  handleChangeGroup = (val) => {
+    const { form } = this.props
+    form.resetFields(['headerId'])
+    this.handleQueryUser({ teamId: val })
+  }
+
+  // 通过人员id查团队
+  handleQueryGroupBy = async (type, val) => {
+    if (type === 'user') {
+      const res = await this.handleQueryGroup( String(val), 'userId' )
+      const { contract: { groupList }, form } = this.props
+      if (res && !_.isEmpty(groupList)) {
+        form.setFieldsValue({ 'headerTeamId': groupList[0].id })
+      }
+    }
+  }
 
   // 查询集群列表
   handleQueryCluster = (name) => {
@@ -257,7 +292,7 @@ class ContractManage extends Component {
   renderSearchForm = () => {
     const { searchMore } = this.state
     const {
-      contract: { deptList, projectList, supplierList, clusterList, budgetList },
+      contract: { deptList, userData, groupList, projectList, supplierList, clusterList, budgetList },
       loadingQueryData,
       form: { getFieldDecorator }
     } = this.props;
@@ -369,18 +404,24 @@ class ContractManage extends Component {
               )(
                 <Select
                   allowClear
-                  // showSearch
+                  showSearch
+                  onChange={(val) => this.handleQueryGroupBy('user', val)}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
                   style={{
                     width: '100%',
                   }}
-                  placeholder="请输入供应商"
+                  placeholder="请输入合同负责人"
                 >
-                  {!_.isEmpty(supplierList) &&
-                    supplierList.map(d => (
-                      <Option key={d.supplierId} value={d.supplierName}>
-                        {d.supplierName}
-                      </Option>
-                    ))}
+                  {!_.isEmpty(userData) && userData.map(d => (
+                    <Option key={d.loginid} value={d.loginid}>
+                      {d.lastname}
+                    </Option>
+                  ))}
                 </Select>,
               )}
             </FormItem>
@@ -393,18 +434,24 @@ class ContractManage extends Component {
               )(
                 <Select
                   allowClear
-                  // showSearch
+                  showSearch
+                  onSearch={_.debounce(this.handleQueryGroup, 500)}
+                  onFocus={this.handleQueryGroup}
+                  onChange={this.handleChangeGroup}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
                   style={{
                     width: '100%',
                   }}
-                  placeholder="请输入供应商"
+                  placeholder="请输入合同负责人团队"
                 >
-                  {!_.isEmpty(supplierList) &&
-                    supplierList.map(d => (
-                      <Option key={d.supplierId} value={d.supplierName}>
-                        {d.supplierName}
-                      </Option>
-                    ))}
+                  {!_.isEmpty(groupList) && groupList.map(d => (
+                    <Option key={d.id} value={d.id}>{d.name}</Option>
+                  ))}
                 </Select>,
               )}
             </FormItem>
@@ -422,15 +469,15 @@ class ContractManage extends Component {
           {/* <Button onClick={() => this.moreQuery()} loading={loadingQueryData} type="primary" ghost>
             查询
           </Button> */}
-          <CustomBtn 
-             onClick={() => this.setSearchMore(false)}
-             type='cancel'
+          <CustomBtn
+            onClick={() => this.setSearchMore(false)}
+            type='cancel'
           />
-          <CustomBtn 
-             onClick={() => this.moreQuery(false)}
-             type='save'
-             title='确认'
-             loading={loadingQueryData}
+          <CustomBtn
+            onClick={() => this.moreQuery(false)}
+            type='save'
+            title='确认'
+            loading={loadingQueryData}
           />
           {/* <Button onClick={() => this.setSearchMore(false)}>取消</Button> */}
         </div>
@@ -469,8 +516,8 @@ class ContractManage extends Component {
               >
                 {!_.isEmpty(projectList) &&
                   projectList.map(d => (
-                    <Option key={d.number} value={d.number}>
-                      {d.name}
+                    <Option key={d.id} value={d.id}>
+                      {d.pjName}
                     </Option>
                   ))}
               </Select>
@@ -508,7 +555,7 @@ class ContractManage extends Component {
           </FormItem>
         </Col>
         <Col span={6}>
-          <FormItem colon={false} labelCol={{span: 7}} wrapperCol={{span: 17}} label="合同签订日期">
+          <FormItem colon={false} labelCol={{ span: 7 }} wrapperCol={{ span: 17 }} label="合同签订日期">
             {getFieldDecorator('signTime', {
             })(
               <RangePicker onChange={_.debounce(this.saveParams, 500)} />

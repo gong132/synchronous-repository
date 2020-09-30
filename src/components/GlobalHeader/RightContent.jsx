@@ -44,7 +44,7 @@ const GlobalHeaderRight = props => {
             onClick={() => window.history.back(secPath)}
           >{breadcrumb[secPath] && breadcrumb[secPath].name}
           </Breadcrumb.Item>
-          <Breadcrumb.Item>{breadPath.name}</Breadcrumb.Item>
+          <Breadcrumb.Item>{breadPath.name.slice(-2)}</Breadcrumb.Item>
         </Breadcrumb>
       )
     }
