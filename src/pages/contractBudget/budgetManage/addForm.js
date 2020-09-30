@@ -46,13 +46,13 @@ const Index = props => {
             ? fieldsValue.expectSetTime.format('YYYY-MM-DD')
             : null,
           clusterName: fieldsValue.clusterId
-            ? clusterList.find(v => v.id === fieldsValue.clusterId).name
+            ? clusterList.find(v => String(v.id) === String(fieldsValue.clusterId)).name
             : null,
           deptName: fieldsValue.deptId
-            ? allDeptList.find(v => v.id === fieldsValue.deptId).name
+            ? allDeptList.find(v => String(v.id) === String(fieldsValue.deptId)).name
             : null,
           receiveTeamName: fieldsValue.receiveTeamId
-            ? teamList.find(v => v.id === fieldsValue.receiveTeamId).name
+            ? teamList.find(v => String(v.id) === String(fieldsValue.receiveTeamId)).name
             : null,
           hardwareExpectAmount: Number(fieldsValue.hardwareExpectAmount),
           softwareExpectAmount: Number(fieldsValue.softwareExpectAmount),
@@ -167,9 +167,9 @@ const Index = props => {
           </FormItem>
         </Col>
         <Col span={12}>
-          <FormItem {...formLayoutItemAddDouble} label="预计立项时间">
+          <FormItem {...formLayoutItemAddDouble} label="预计立项日期">
             {form.getFieldDecorator('expectSetTime', {
-              rules: [{ required: true, message: '请选择预计立项时间' }],
+              rules: [{ required: true, message: '请选择预计立项日期' }],
               initialValue: values && values.expectSetTime && moment(values.expectSetTime),
             })(<DatePicker format="YYYY-MM-DD" />)}
           </FormItem>
@@ -178,12 +178,12 @@ const Index = props => {
           <FormItem {...formLayoutItemAddDouble} label="需求部门">
             {form.getFieldDecorator('deptId', {
               rules: [{ required: true, message: '请选择需求部门' }],
-              initialValue: values && values.deptId,
+              initialValue: values && String(values?.deptId),
             })(
               <Select onChange={val => handleQueryGroupByDept(val)} placeholder="请选择需求部门">
                 {allDeptList &&
                   allDeptList.map(v => (
-                    <Option value={v.id} key={v.id}>
+                    <Option value={v.id.toString()} key={v.id}>
                       {v.name}
                     </Option>
                   ))}
@@ -258,12 +258,12 @@ const Index = props => {
           <FormItem {...formLayoutItemAddDouble} label="承建团队">
             {form.getFieldDecorator('receiveTeamId', {
               rules: [{ required: true, message: '请选择承建团队' }],
-              initialValue: values && values.receiveTeamId,
+              initialValue: values && String(values?.receiveTeamId),
             })(
               <Select placeholder="请选择承建团队">
                 {teamList &&
                   teamList.map(v => (
-                    <Option value={v.id} key={v.id}>
+                    <Option value={v.id.toString()} key={v.id}>
                       {v.name}
                     </Option>
                   ))}
@@ -280,16 +280,16 @@ const Index = props => {
           </FormItem>
         </Col>
         <Col span={12}>
-          <FormItem {...formLayoutItemAddDouble} label="所属集群或板块">
+          <FormItem {...formLayoutItemAddDouble} label="所属集群/板块">
             {form.getFieldDecorator('clusterId', {
               // rules: [{required: true, message: '请选择所属集群或板块'}],
               initialValue:
-                (!isEmpty(values) && values.clusterId) || (isEmpty(groupByDept) && groupByDept.id),
+                (!isEmpty(values) && String(values.clusterId)) || (isEmpty(groupByDept) && String(groupByDept.id)),
             })(
               <Select disabled>
                 {clusterList &&
                   clusterList.map(v => (
-                    <Option value={v.id} key={v.id}>
+                    <Option value={v.id.toString()} key={v.id}>
                       {v.name}
                     </Option>
                   ))}
@@ -298,7 +298,7 @@ const Index = props => {
           </FormItem>
         </Col>
         <Col span={24}>
-          <FormItem {...formLayoutItemAddEdit} label="描述">
+          <FormItem {...formLayoutItemAddEdit} label="项目描述">
             <Editor
               height={300}
               content={description}

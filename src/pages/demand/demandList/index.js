@@ -532,7 +532,7 @@ const Index = memo(
             </Col>
             <Col span={24}>
               <FormItem {...formLayoutItem2} colon={false} label="需求描述">
-                {getFieldDecorator('requirementDescription')(<Input />)}
+                {getFieldDecorator('requirementDescription')(<Input placeholder="请输入需求描述" />)}
               </FormItem>
             </Col>
             <Col span={24}>

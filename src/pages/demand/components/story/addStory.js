@@ -64,7 +64,7 @@ const Index = props => {
         evaluateTime: isEmpty(val.evaluateTime) ? null : val.evaluateTime.format('YYYY-MM-DD'),
         systemName: isEmpty(val.systemId)
           ? null
-          : systemList.find(v => v.systemId === val.systemId).systemName,
+          : systemList.find(v => v.id === val.systemId).name,
       };
 
       type === 'add' && delete params.id;
@@ -175,8 +175,8 @@ const Index = props => {
                 >
                   {systemList &&
                     systemList.map(v => (
-                      <Option value={v.systemId} key={v.systemId}>
-                        {v.systemName}
+                      <Option value={v.id} key={v.id}>
+                        {v.name}
                       </Option>
                     ))}
                 </Select>,

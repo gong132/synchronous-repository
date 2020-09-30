@@ -49,8 +49,8 @@ const Index = props => {
     handleQueryStoryList,
     loadingQueryStoryData,
     demandInfo,
-    demand: { storyList },
-    global: { systemList, userList },
+    demand: { systemList, storyList },
+    global: { userList },
   } = props;
 
   const [searchMore, setSearchMore] = useState(false);
@@ -80,7 +80,7 @@ const Index = props => {
 
   const handleQuerySystemList = () => {
     dispatch({
-      type: 'global/querySystemList',
+      type: 'demand/querySystemList',
       payload: {
         ...PagerHelper.MaxPage,
       },
@@ -161,13 +161,13 @@ const Index = props => {
     TableColumnHelper.genPlanColumn('status', '状态', { sorter: true }),
     TableColumnHelper.genPlanColumn('priority', '优先级', { sorter: true }),
     TableColumnHelper.genPlanColumn('type', 'story类型', { sorter: true }),
-    TableColumnHelper.genPlanColumn('systemName', '所属系统'),
+    TableColumnHelper.genLangColumn('systemName', '所属系统', {}, 10),
     TableColumnHelper.genDateTimeColumn('evaluateTime', 'IT预计上线时间', 'YYYY-MM-DD', { width: 150, sorter: true }),
     TableColumnHelper.genPlanColumn('developWorkload', '开发预计测试工作量', { width: 180, sorter: true }),
     TableColumnHelper.genPlanColumn('testWorkload', '测试预计测试工作量', { width: 180, sorter: true }),
     TableColumnHelper.genPlanColumn('assessor', '评估人'),
     TableColumnHelper.genPlanColumn('userName', '创建人'),
-    TableColumnHelper.genDateTimeColumn('createTime', '创建时间', { sorter: true }),
+    TableColumnHelper.genDateTimeColumn('createTime', '创建时间',  'YYYY-MM-DD', { sorter: true }),
     {
       title: '操作',
       width: 170,
@@ -338,8 +338,8 @@ const Index = props => {
             <FormItem {...formLayoutItem} label="所属系统" colon={false}>
               {getFieldDecorator('systemId')(
                 <Select placeholder="请选择所属系统">
-                  {systemList?.list &&
-                    systemList.list.map(v => (
+                  {systemList &&
+                    systemList.map(v => (
                       <Option value={v.id} key={v.id}>
                         {v.name}
                       </Option>

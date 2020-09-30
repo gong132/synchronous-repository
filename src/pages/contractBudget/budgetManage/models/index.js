@@ -29,9 +29,7 @@ const budgetManage = {
   },
   effects: {
     *fetchBudgetData({ payload }, { call, put }) {
-      console.log(payload,"payload")
       const res = yield call(queryBudgetList, payload);
-      console.log(res,"热")
       if (!res?.code || res?.code !== 200) {
         message.error(res?.msg);
         return;

@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'dva';
 import classNames from 'classnames';
-import { DefaultPage, TableColumnHelper } from '@/utils/helper';
+import {DefaultPage, PagerHelper, TableColumnHelper} from '@/utils/helper';
 import StandardTable from '@/components/StandardTable';
 import {
   Button,
@@ -40,7 +40,7 @@ const Index = props => {
     loading,
     form,
     global: { authActions },
-    budgetManage: { budgetList },
+    budgetManage: { budgetList, clusterList },
   } = props;
 
   // 查询更多
@@ -59,6 +59,15 @@ const Index = props => {
       type: 'budgetManage/fetchBudgetData',
       payload: {
         ...DefaultPage,
+        ...params,
+      },
+    });
+  };
+  const handleQueryClusterList = params => {
+    dispatch({
+      type: 'budgetManage/queryClusterList',
+      payload: {
+        ...PagerHelper.MaxPage,
         ...params,
       },
     });
@@ -92,18 +101,13 @@ const Index = props => {
         );
       },
     },
+    TableColumnHelper.genLangColumn('name', '预算名称', { sorter: true }, 8),
+    TableColumnHelper.genLangColumn('clusterName', '所属集群/板块', { sorter: true, width: 150 }, 6),
+    TableColumnHelper.genLangColumn('deptName', '需求部门', { sorter: true }, 8),
     TableColumnHelper.genSelectColumn('type', '项目类型', PROJECT_TYPE, { sorter: true }),
-    TableColumnHelper.genLangColumn('name', '预算名称', { sorter: true }, 4),
-    TableColumnHelper.genPlanColumn('userName', '录入人', { sorter: true }),
-    TableColumnHelper.genDateTimeColumn('createTime', '录入时间', 'YYYY-MM-DD', { sorter: true }),
-    TableColumnHelper.genPlanColumn('deptName', '需求部门', { sorter: true }),
-    TableColumnHelper.genLangColumn('clusterName', '集群或板块', { sorter: true, width: 150 }, 4),
-    TableColumnHelper.genDateTimeColumn('expectSetTime', '预计立项时间', 'YYYY-MM-DD', {
-      sorter: true,
-      width: 170,
-    }),
-    TableColumnHelper.genMoneyColumn('expectTotalAmount', '预算总金额', { sorter: true, width: 150 }),
-    TableColumnHelper.genMoneyColumn('hardwareExpectAmount', '硬件预算金额', { sorter: true, width: 170 }),
+    TableColumnHelper.genMoneyColumn('expectTotalAmount', '预算总金额(万)', { sorter: true, width: 150 }, ""),
+    TableColumnHelper.genMoneyColumn('hardwareExpectAmount', '硬件预算金额(万)', { sorter: true, width: 170 }, ""),
+    TableColumnHelper.genMoneyColumn('otherExpectAmount', '其他预计金额(万)', { sorter: true, width: 170 }, ""),
     {
       title: '操作',
       width: 100,
@@ -165,11 +169,9 @@ const Index = props => {
     handleQueryBudgetData();
   };
 
-  const handleSearchForm = params=> {
+  const handleSearchForm = (params = {}) => {
     const {expectSetTime, ...others} = form.getFieldsValue();
-    console.log(yearTime, "yearTime")
-    const { year = moment.isMoment(yearTime) && yearTime.format("YYYY") } = params
-    console.log(form.getFieldsValue(), "form.getFieldsValue()")
+    const { year = yearTime && moment.isMoment(yearTime) && yearTime.format("YYYY") } = params
     const formValues = {
       ...others,
       expectSetTime: expectSetTime && expectSetTime.format("YYYY-MM-DD"),
@@ -187,12 +189,6 @@ const Index = props => {
     exportExcel(params, exportUrl, 'post', '预算管理表.xls');
   };
 
-  const handleQueryClusterList = () => {
-    dispatch({
-      type: 'budgetManage/queryClusterList',
-      payload: {},
-    });
-  };
   const handleQueryAllTeam = params => {
     dispatch({
       type: 'budgetManage/queryAllTeam',
@@ -321,22 +317,11 @@ const Index = props => {
             </FormItem>
           </Col>
           <Col span={24}>
-            <FormItem {...formLayoutItem2} label="项目类型">
+            <FormItem {...formLayoutItem2} label="项目描述">
               {getFieldDecorator(
-                'type',
+                'description',
                 {},
-              )(
-                <Select
-                  placeholder="请选择项目类型"
-                  allowClear
-                >
-                  {PROJECT_TYPE.map(v => (
-                    <Option value={v.key} key={v.key.toString()}>
-                      {v.value}
-                    </Option>
-                  ))}
-                </Select>,
-              )}
+              )(<Input placeholder="请输入项目描述" />)}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -391,19 +376,11 @@ const Index = props => {
       <Form layout="inline">
         <Row>
           <Col span={5}>
-            <FormItem {...formLayoutItem} label="预算编号" colon={false}>
-              {getFieldDecorator(
-                'number',
-                {},
-              )(<Input allowClear onBlur={handleSearchForm} placeholder="请输入预算编号" />)}
-            </FormItem>
-          </Col>
-          <Col span={5}>
-            <FormItem {...formLayoutItem} label="项目名称" colon={false}>
+            <FormItem {...formLayoutItem} label="预算名称" colon={false}>
               {getFieldDecorator(
                 'name',
                 {},
-              )(<Input allowClear onBlur={handleSearchForm} placeholder="请输入项目名称" />)}
+              )(<Input allowClear onBlur={handleSearchForm} placeholder="请输入预算名称" />)}
             </FormItem>
           </Col>
           <Col span={5}>
@@ -424,6 +401,28 @@ const Index = props => {
                     <Option value={v.id} key={v.id.toString()}>
                       {v.name}
                     </Option>
+                  ))}
+                </Select>,
+              )}
+            </FormItem>
+          </Col>
+          <Col span={5}>
+            <FormItem {...formLayoutItem} label="所属集群/板块" colon={false}>
+              {getFieldDecorator(
+                'clusterId',
+                {},
+              )(
+                <Select
+                  allowClear
+                  showSearch
+                  onBlur={handleSearchForm}
+                  placeholder="请输入所属集群或板块"
+                >
+                  {clusterList &&
+                    clusterList.map(v => (
+                      <Option value={v.id} key={v.id.toString()}>
+                        {v.name}
+                      </Option>
                   ))}
                 </Select>,
               )}
@@ -505,7 +504,6 @@ const Index = props => {
             data={budgetList}
             columns={columns}
             onChange={handleStandardTableChange}
-            scroll={{ x: 1500 }}
           />
         </Card>
         {addModalVisible && (

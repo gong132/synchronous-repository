@@ -98,7 +98,6 @@ const Index = props => {
         message.error('总金额必须大于0');
         return;
       }
-      console.log(allDeptList, fieldsValue.deptId, 'allDeptList');
       dispatch({
         type: 'budgetManage/updateBudget',
         payload: {
@@ -109,13 +108,13 @@ const Index = props => {
             ? fieldsValue.expectSetTime.format('YYYY-MM-DD')
             : null,
           clusterName: fieldsValue.clusterId
-            ? clusterList.find(v => v.id === fieldsValue.clusterId).name
+            ? clusterList.find(v => String(v.id) === String(fieldsValue.clusterId)).name
             : null,
           deptName: fieldsValue.deptId
-            ? allDeptList.find(v => v.id === fieldsValue.deptId).name
+            ? allDeptList.find(v => String(v.id) === String(fieldsValue.deptId)).name
             : null,
           receiveTeamName: fieldsValue.receiveTeamId
-            ? teamList.find(v => v.id === fieldsValue.receiveTeamId).name
+            ? teamList.find(v => String(v.id) === String(fieldsValue.receiveTeamId)).name
             : null,
           hardwareExpectAmount: Number(fieldsValue.hardwareExpectAmount),
           softwareExpectAmount: Number(fieldsValue.softwareExpectAmount),
@@ -158,8 +157,8 @@ const Index = props => {
 
   // 详情描述列表
   const detailsList = [
-    { span: 2, required: false, name: '项目名称', value: budgetDetails?.name },
-    { span: 1, required: true, name: '预算编号', value: budgetDetails?.number },
+    { span: 2, required: false, name: '预算名称', value: budgetDetails?.name },
+    { span: 1, required: false, name: '预算编号', value: budgetDetails?.number },
     { span: 1, required: false, name: '需求部门', value: budgetDetails?.deptName },
     { span: 1, required: false, name: '预计立项时间', value: budgetDetails?.expectSetTime },
     {
@@ -188,19 +187,19 @@ const Index = props => {
     },
     {
       span: 1,
-      required: true,
+      required: false,
       name: '项目类型',
       value: findValueByArray(PROJECT_TYPE, 'key', budgetDetails?.type, 'value'),
     },
     {
       span: 1,
-      required: true,
+      required: false,
       name: '预算类型',
       value: findValueByArray(BUDGET_TYPE, 'key', budgetDetails?.budgetType, 'value'),
     },
     { span: 1, required: false, name: '承建团队', value: budgetDetails?.receiveTeamName },
     { span: 1, required: false, name: '录入人', value: budgetDetails?.userName },
-    { span: 1, required: false, name: '所属集群或板块', value: budgetDetails?.clusterName },
+    { span: 1, required: false, name: '所属集群/板块', value: budgetDetails?.clusterName },
     { span: 3, required: false, name: '录入时间', value: budgetDetails?.createTime },
   ];
 
