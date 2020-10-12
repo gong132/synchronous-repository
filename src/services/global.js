@@ -71,9 +71,26 @@ export async function fetchSystemList(params) {
     params,
   });
 }
+
+// 查询所有集群板块
+export async function fetchAllCluster(params) {
+  return request('/cluster/all', {
+    method: 'get',
+    params,
+  });
+}
+
 // 查询部门
 export async function fetchDeptList(params) {
   return request('/dept/search', {
+    method: 'get',
+    params,
+  });
+}
+
+// 查询所有项目
+export async function fetchAllProject(params) {
+  return request('/project/searchPro', {
     method: 'get',
     params,
   });

@@ -26,7 +26,7 @@ import {
   DatePicker
 } from 'antd'
 import * as _ from 'lodash'
-import { PROJECT_STATUS_OBJ } from './utils/constant'
+import { PROJECT_STATUS_OBJ, DEMAND_PRIORITY_ARR } from './utils/constant'
 import styles from './index.less'
 
 const { Option } = Select
@@ -116,7 +116,7 @@ class ProjectManage extends Component {
     this.props.dispatch({
       type: 'project/queryProjectList',
       payload: {
-        teamId: '申请团队1',
+        teamId: '申请团队',
         sort: 'id',
         order: 'desc',
         ...DefaultPage,
@@ -128,11 +128,16 @@ class ProjectManage extends Component {
   // 更多查询
   moreQuery = () => {
     const formValues = this.props.form.getFieldsValue();
-    if (formValues.signTime && !_.isEmpty(formValues.signTime)) {
-      formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYY-MM-DD')
-      formValues.signingEndTime = moment(formValues.signTime[1]).format('YYYY-MM-DD')
-    } else if (formValues.defendPayTime) {
-      formValues.defendPayTime = moment(formValues.defendPayTime).format('YYYY-MM-DD')
+    if (formValues.techTime && !_.isEmpty(formValues.techTime)) {
+      formValues.techTimeStart = moment(formValues.techTime[0]).format('YYYY-MM-DD')
+      formValues.techTimeEnd = moment(formValues.techTime[1]).format('YYYY-MM-DD')
+    }
+    if (formValues.estTime && !_.isEmpty(formValues.estTime)) {
+      formValues.estTimeStart = moment(formValues.estTime[0]).format('YYYY-MM-DD')
+      formValues.estTimeEnd = moment(formValues.estTime[1]).format('YYYY-MM-DD')
+    }
+    if(formValues.clusterName) {
+      formValues.clusterName=String(formValues.clusterName)
     }
     this.handleDebounceQueryData(formValues);
   };
@@ -183,9 +188,16 @@ class ProjectManage extends Component {
   handleStandardTableChange = (pagination, filters, sorter) => {
     console.log(pagination, filters, sorter)
     const formValues = this.props.form.getFieldsValue();
-    if (formValues.signTime && !_.isEmpty(formValues.signTime)) {
-      formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYY-MM-DD');
-      formValues.signingEndTime = moment(formValues.signTime[1]).format('YYYY-MM-DD');
+    if (formValues.techTime && !_.isEmpty(formValues.techTime)) {
+      formValues.techTimeStart = moment(formValues.techTime[0]).format('YYYY-MM-DD')
+      formValues.techTimeEnd = moment(formValues.techTime[1]).format('YYYY-MM-DD')
+    }
+    if (formValues.estTime && !_.isEmpty(formValues.estTime)) {
+      formValues.estTimeStart = moment(formValues.estTime[0]).format('YYYY-MM-DD')
+      formValues.estTimeEnd = moment(formValues.estTime[1]).format('YYYY-MM-DD')
+    }
+    if(formValues.clusterName) {
+      formValues.clusterName=String(formValues.clusterName)
     }
     const params = {
       currentPage: pagination.current,
@@ -250,12 +262,12 @@ class ProjectManage extends Component {
             <FormItem colon={false} label="项目进度偏差">
               <div className="yCenter" style={{ height: 41 }}>
                 {getFieldDecorator(
-                  'expectTotalAmountLow',
+                  'pjProgressDeviationStart',
                   {},
                 )(<Input allowClear addonAfter="%" />)}
                 <span style={{ padding: '0 3px' }}>—</span>
                 {getFieldDecorator(
-                  'expectTotalAmountMax',
+                  'pjProgressDeviationEnd',
                   {},
                 )(<Input allowClear addonAfter="%" />)}
               </div>
@@ -264,7 +276,7 @@ class ProjectManage extends Component {
           <Col span={24}>
             <FormItem colon={false} label="项目健康状态">
               {getFieldDecorator(
-                'pjProgressDeviation',
+                'pjHealthStatus',
                 {},
               )(
                 <Select
@@ -283,7 +295,7 @@ class ProjectManage extends Component {
           <Col span={24}>
             <FormItem colon={false} label="项目优先级">
               {getFieldDecorator(
-                'headerId',
+                'demandLevel',
                 {},
               )(
                 <Select
@@ -294,13 +306,11 @@ class ProjectManage extends Component {
                   }}
                   placeholder="请选择项目优先级"
                 >
-                  {!_.isEmpty(supplierList) &&
-                    supplierList.map(d => (
-                      <Option key={d.id} value={d.id}>
-                        {d.name}
-                      </Option>
-                    ))}
-                  <Option key='p' value='p'>未定义</Option>
+                  {DEMAND_PRIORITY_ARR.map(d => (
+                    <Option key={d.key} value={d.key}>
+                      {d.val}
+                    </Option>
+                  ))}
                 </Select>,
               )}
             </FormItem>
@@ -339,12 +349,12 @@ class ProjectManage extends Component {
             <FormItem colon={false} label="合同成交金额">
               <div className="yCenter" style={{ height: 41 }}>
                 {getFieldDecorator(
-                  'expectTotalAmountLow',
+                  'contractAmountStart',
                   {},
                 )(<Input allowClear addonAfter="万" />)}
                 <span style={{ padding: '0 3px' }}>—</span>
                 {getFieldDecorator(
-                  'expectTotalAmountMax',
+                  'contractAmountEnd',
                   {},
                 )(<Input allowClear addonAfter="万" />)}
               </div>
@@ -353,7 +363,7 @@ class ProjectManage extends Component {
           <Col span={24}>
             <FormItem colon={false} label="供应商">
               {getFieldDecorator(
-                'headerTeamId ',
+                'supplier',
                 {},
               )(
                 <Select
@@ -378,7 +388,7 @@ class ProjectManage extends Component {
           <Col span={24}>
             <FormItem colon={false} label="建设方式">
               {getFieldDecorator(
-                'headerTeamId ',
+                'typeKey',
                 {},
               )(
                 <Select
@@ -402,13 +412,13 @@ class ProjectManage extends Component {
           </Col>
           <Col span={24}>
             <FormItem colon={false} label="项目负责人">
-              {getFieldDecorator('signTime', {
+              {getFieldDecorator('pmKey', {
               })(
                 <Select
                   allowClear
                   showSearch
                   optionFilterProp="children"
-                  onSearch={val => this.handleQueryUser({lastname: val})}
+                  onSearch={val => this.handleQueryUser({ lastname: val })}
                   filterOption={(input, option) =>
                     JSON.stringify(option.props.children)
                       .toLowerCase()
@@ -458,7 +468,7 @@ class ProjectManage extends Component {
           </Col>
           <Col span={24}>
             <FormItem colon={false} label="技术评审申请时间">
-              {getFieldDecorator('defendPayTime', {
+              {getFieldDecorator('estTime', {
               })(
                 <RangePicker />
               )}
@@ -466,7 +476,7 @@ class ProjectManage extends Component {
           </Col>
           <Col span={24}>
             <FormItem colon={false} label="立项评审申请时间">
-              {getFieldDecorator('defendPayTime', {
+              {getFieldDecorator('techTime', {
               })(
                 <RangePicker />
               )}
@@ -495,7 +505,7 @@ class ProjectManage extends Component {
             })(<Input
               allowClear
               onChange={_.debounce(this.saveParams, 500)}
-              placeholder='请输入项目名称和描述'
+              placeholder='请输入项目名称或描述关键字'
             />)}
           </FormItem>
         </Col>
@@ -518,6 +528,7 @@ class ProjectManage extends Component {
                 }}
                 placeholder="请输入项目状态"
               >
+                <Option key='all' value=''>全部</Option>
                 {!_.isEmpty(stageStatus) &&
                   stageStatus.map(d => (
                     <Option key={d.id} value={d.id}>
@@ -549,6 +560,7 @@ class ProjectManage extends Component {
                 }}
                 placeholder="请输入业务集群/板块"
               >
+                <Option key='all' value=''>全部</Option>
                 {
                   clusterList.map(d => (
                     <Option key={d.id} value={d.id}>
@@ -568,12 +580,14 @@ class ProjectManage extends Component {
               <Select
                 allowClear
                 // showSearch
+                onChange={_.debounce(this.saveParams, 500)}
                 style={{
                   width: '100%',
                 }}
                 placeholder="请输入商务状态"
               >
-                <Option key='p' value='p'>未定义</Option>
+                <Option key='all' value={1}>全部</Option>
+                {/* <Option key='p' value={1}>未定义</Option> */}
               </Select>,
             )}
           </FormItem>

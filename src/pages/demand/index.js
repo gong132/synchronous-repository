@@ -109,6 +109,11 @@ const Index = memo(
 
     // 查询看板
     const handleQueryBoard = (params = {}) => {
+      console.log(props.location.pathname)
+      let type = 'u'
+      if (demandRoutes[props.location.pathname] === '项目') {
+        type='p'
+      }
       dispatch({
         type: 'demand/queryDemandBoard',
         payload: {
@@ -116,6 +121,7 @@ const Index = memo(
           ids: '1,2,3,4,5,6,7,8,9,10',
           ...commonSearchValue,
           ...params,
+          type,
         },
       });
     };

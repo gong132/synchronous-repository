@@ -106,6 +106,7 @@ class DemandBoard extends Component {
     const { attention, creator, receiverName } = record
     const { userInfo={} } = getUserInfo()
     const { userName, roleName } = userInfo
+    
     return (
       <Menu onClick={({ item, key, keyPath, domEvent }) => this.quickResolveStory(item, key, keyPath, domEvent, record)}>
         {((boardId === 2 && roleName === '团队经理')
@@ -116,9 +117,9 @@ class DemandBoard extends Component {
           && roleName === '团队经理'
           && <Menu.Item key='appointAccept'>指派受理人</Menu.Item>
         }
-        {((boardId === 1 || boardId === 3 || boardId === 2)
+        {(((boardId === 1 || boardId === 3 || boardId === 2)
           && creator === userName)
-          || ((boardId === 4 || boardId === 5) && receiverName === userName)
+          || ((boardId === 4 || boardId === 5) && receiverName === userName))
           && <Menu.Item key='edit'>编辑</Menu.Item>
         }
         {boardId === 3
@@ -398,7 +399,7 @@ class DemandBoard extends Component {
                                         </div>
                                         <div className={styles.dragBoard_secondLine}>
                                           {item.attention === 1 && <Icon component={focusIcon} />}
-                                          <span>{item.title}</span>
+                                          <span title={item.title}>{item.title}</span>
                                         </div>
                                         <div className={styles.dragBoard_thirdLine}>
                                           <div className={styles.dragBoard_thirdLine_time}>
@@ -453,7 +454,7 @@ class DemandBoard extends Component {
                             </div>
                             <div className={styles.dragBoard_secondLine}>
                               {item.attention === 1 && <Icon component={focusIcon} />}
-                              <span>{item.title}</span>
+                              <span title={item.title}>{item.title}</span>
                             </div>
                             <div className={styles.dragBoard_thirdLine}>
                               <div className={styles.dragBoard_thirdLine_time}>

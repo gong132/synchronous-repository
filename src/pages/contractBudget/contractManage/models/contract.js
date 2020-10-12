@@ -11,7 +11,14 @@ import {
   checkProject,
   queryAllCluster,
 } from '@/services/contractBudget/contract'
-import { queryLogList, queryDept, queryComp } from '@/services/global'
+import {
+  queryLogList,
+  queryDept,
+  queryComp,
+  queryUserList,
+  queryGroup,
+  fetchAllProject
+} from '@/services/global'
 import { PagerHelper } from "@/utils/helper";
 import { message } from "antd";
 
@@ -36,7 +43,12 @@ const Contract = {
     groupMap: {},
     budgetList: [],
     budgetMap: {},
-    clusterList: []
+    clusterList: [],
+    userData: [],
+    userDataMap: {},
+    userDataMapId: {},
+    userLoginIdMap: {},
+    groupList: [],
   },
   effects: {
     *fetchLogList({ payload }, { call, put }) {
@@ -55,7 +67,7 @@ const Contract = {
         },
       })
     },
-    
+
     *queryData({ payload }, { call, put }) {
       const { code, data, msg } = yield call(queryContractList, payload)
       if (code !== 200) {
@@ -160,28 +172,6 @@ const Contract = {
       return true
     },
 
-    // 查询项目
-    *fetchProject({ payload }, { call, put }) {
-      const { code, msg, data } = yield call(queryProject, payload)
-      if (!code || code !== 200) {
-        message.error(msg);
-        return false;
-      }
-      const obj = {}
-      data.map(v => {
-        obj[v.number] = v.name
-        return true
-      })
-      yield put({
-        type: 'saveData',
-        payload: {
-          projectList: data,
-          projectMap: obj
-        }
-      })
-      return true
-    },
-
     // 查询预算编号
     *fetchBudgetNumber({ payload }, { call, put }) {
       const { code, msg, data } = yield call(queryBudgetNumber, payload)
@@ -250,16 +240,16 @@ const Contract = {
       return true
     },
 
-    // 查询负责人和团队
+    // 查询团队
     *fetchHeaderGroup({ payload }, { call, put }) {
-      const { code, msg, data:{data} } = yield call(queryHeaderGroup, payload)
+      const { code, msg, data } = yield call(queryGroup, payload)
       if (!code || code !== 200) {
         message.error(msg);
         return false;
       }
       const obj = {}
       const gObj = {}
-      if(data&&data.length < 1) return ''
+      if (data && data.length < 1) return ''
       data.map(v => {
         v.id = String(v.id)
         obj[String(v.id)] = v.name
@@ -279,6 +269,49 @@ const Contract = {
         }
       })
       return true
+    },
+
+    // 查项目 fetchAllProject
+    *fetchAllProject({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(fetchAllProject, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      yield put({
+        type: 'saveData',
+        payload: {
+          projectList:data
+        }
+      })
+      return true
+    },
+
+    // 查询人员
+    *fetchUserData({ payload }, { call, put }) {
+      const { code, data, msg } = yield call(queryUserList, payload);
+      if (code !== 200) {
+        message.error(msg);
+        return
+      }
+      const obj = {}
+      const objId = {}
+      const objLoginId = {}
+      data.map(v => {
+        obj[v.loginid] = v.lastname
+        objId[v.id] = v.lastname
+        objLoginId[v.loginid] = v.id
+        return true
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          userData: data,
+          userDataMap: obj,
+          userDataMapId: objId,
+          userLoginIdMap: objLoginId
+        },
+      })
     },
 
     // 查看合同详情

@@ -322,7 +322,6 @@ const Demand = {
         message.error(msg);
         return;
       }
-      console.log(data);
       yield put({
         type: 'setData',
         payload: {

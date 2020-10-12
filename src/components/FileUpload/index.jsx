@@ -1,8 +1,7 @@
-import { Upload, Modal, message, Icon } from 'antd'
+import { Upload, Modal, message } from 'antd'
 import React, { Component } from 'react'
 import Config from '@/utils/config';
 import { isObjEqual, getUserInfo } from '@/utils/utils'
-import reqwest from 'reqwest';
 import axios from 'axios'
 import styles from './index.less'
 import {
@@ -23,7 +22,7 @@ class FileUploadNo extends Component {
   }
 
   componentDidMount() {
-    this.handleQueryFile()
+    // this.handleQueryFile()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -50,8 +49,19 @@ class FileUploadNo extends Component {
     })
   }
 
+  handleDownLoad = (url) => {
+    window.location.href = url;
+  }
+
+  handlePreview = (url, bool) => {
+    this.setState({
+      preImg: bool,
+      curUrl: url
+    })
+  }
+
   renderFile = (v, index) => {
-    const { createTime, name, path, type, uploadType, id, bool } = v
+    const { name, path, type, uploadType, id, bool } = v
     return (
       <div
         key={id}
@@ -64,8 +74,12 @@ class FileUploadNo extends Component {
           <div>
             {
               type === 2
-                ? <div className={styles.fileStyle_btn}>下载</div>
-                : <div className={styles.fileStyle_btn}>查看</div>
+                ? <div className={styles.fileStyle_btn}
+                  onClick={() => this.handleDownLoad(path)}
+                >下载</div>
+                : <div className={styles.fileStyle_btn}
+                onClick={() => this.handlePreview(path, true)}
+                >查看</div>
             }
             <div
               onClick={() => this.handleDeleteFile(v, index)}
@@ -83,17 +97,17 @@ class FileUploadNo extends Component {
   handleQueryFile = () => {
     const { linkId, uploadType } = this.props
     const { token } = getUserInfo()
-    const params = {linkId: String(linkId), uploadType}
-    if(!linkId) return
+    const params = { linkId: String(linkId), uploadType }
+    if (!linkId) return
     axios({
       url: '/server/attachment/query',
       type: 'json',
       method: 'post',
       contentType: 'application/json',
-      headers: {Authorization: token},
+      headers: { Authorization: token },
       data: params,
     }).then((res) => {
-      if(res.data.data && !_.isEmpty(res.data.data)) {
+      if (res.data.data && !_.isEmpty(res.data.data)) {
         this.props.handleSaveFileUrl(JSON.stringify(res.data.data))
       }
     });
@@ -102,15 +116,16 @@ class FileUploadNo extends Component {
   // 删除附件
   handleDeleteFile = (v, index) => {
     const { token } = getUserInfo()
+    console.log(v)
     axios({
       url: '/server/attachment/delete',
       type: 'json',
       method: 'get',
       contentType: 'application/json',
-      headers: {Authorization: token},
-      data: { id: v.id },
+      headers: { Authorization: token },
+      params: { id: v.id },
     }).then(() => {
-      const {arrUrl} = this.state
+      const { arrUrl } = this.state
       arrUrl.splice(index, 1)
       this.props.handleSaveFileUrl(JSON.stringify(arrUrl))
       this.setState({
@@ -167,17 +182,16 @@ class FileUploadNo extends Component {
     }
     return (
       <div className={styles.myUpload}>
-        {/* <Modal
+        <Modal
           visible={preImg}
-          onCancel={() => this.previewImage('', '', false)}
-          width={'80%'}
+          onCancel={() => this.handlePreview('', false)}
+          width="80%"
           style={{ top: 30 }}
           footer={null}
         >
           <img style={{ width: '100%' }} src={curUrl} alt='' title={imgName} />
-        </Modal> */}
-        <Upload {...uploadProps}
-        >
+        </Modal>
+        <Upload {...uploadProps}>
           {children}
         </Upload>
 

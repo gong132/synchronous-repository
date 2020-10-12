@@ -4,9 +4,8 @@ import { queryDemandBoard, } from '@/services/demand/demand'
 import { message } from 'antd'
 
 const Demand = {
-  namespace: 'demandForm',
+  namespace: 'projectForm',
   state: {
-    formType: 'demandSide',
     deptList: [],
     deptNameArr:[],
     systemList: [],
