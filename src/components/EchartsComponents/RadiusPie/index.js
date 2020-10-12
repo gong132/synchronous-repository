@@ -15,7 +15,7 @@ class Pie extends Component {
   }
 
   componentDidMount() {
-    const { data, handleClickLegend, handleClickPie } = this.props
+    const { data, handleClickPie, handleClickLegend } = this.props
     const myChart = this.handleGenPie()
     if (typeof handleClickPie === 'function') {
       myChart.on('click', handleClickPie)
@@ -29,7 +29,7 @@ class Pie extends Component {
   }
 
   handleGenPie = (data) => {
-    const dom = document.getElementById('pie')
+    const dom = document.getElementById('radiusPie')
     const myChart = echarts.init(dom)
     myChart.setOption(this.getOption(data))
     return myChart
@@ -60,7 +60,7 @@ class Pie extends Component {
         legendData.push(v.name)
         arr.push({
           name: v.name,
-          value: Math.ceil((Math.random() + i) * 10)
+          value: v.demandList.length
         })
       }
     })
@@ -73,13 +73,12 @@ class Pie extends Component {
         },
       },
 
-      color: barColor || ['#6395F9', '#62DAAB', '#657798', '#F6C022', '#E96C5B', '#6DC8EC', '#9967BD', '#299999', '#FE9D4E', '#F29DC8'],
+      color: ['#6395F9', '#62DAAB', '#657798', '#F6C022', '#E96C5B', '#6DC8EC', '#9967BD', '#299999', '#FE9D4E'],
 
       legend: {
         orient: 'vertical',
         icon: 'circle',
         right: 10,
-        // top: 200,
         bottom: '5%',
         textStyle: {
           color: '#69707F'
@@ -115,8 +114,7 @@ class Pie extends Component {
       series: [{
         name: '集群',
         type: 'pie',
-        radius: '55%',
-        center: ['40%', '50%'],
+        radius: ['35%', '55%'],
         data: arr,
         label: {
           color: '#69707F',
@@ -141,7 +139,7 @@ class Pie extends Component {
 
   render() {
     return (
-      <div id='pie' style={{ width: '100%', height: 440 }} />
+      <div id='radiusPie' style={{ width: '100%', height: 440 }} />
     )
   }
 }

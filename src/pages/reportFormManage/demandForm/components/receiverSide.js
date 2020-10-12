@@ -1,6 +1,7 @@
 import React, { PureComponent, Fragment } from 'react'
-import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
 import Bar from '@/components/EchartsComponents/Bar'
+import Pie from '@/components/EchartsComponents/Pie'
+import MultiPie from '@/components/EchartsComponents/MultiPie/index'
 import _ from 'lodash'
 import { connect } from 'dva'
 import {
@@ -15,7 +16,7 @@ import {
 class Receiver extends PureComponent {
   constructor(props) {
     super(props)
-    this.handleSlideBar=_.throttle(this.handleSlideBar, 1000)
+    this.handleSlideBar = _.throttle(this.handleSlideBar, 1000)
   }
 
   // 点击柱形事件
@@ -28,47 +29,75 @@ class Receiver extends PureComponent {
     console.log(params)
   }
 
+  // 点击饼图扇面事件
+  handleClickPie = (params) => {
+    console.log(params)
+  }
+
+  // 点击legend事件
+  handleClickLegend = (params) => {
+    console.log(params)
+  }
+
   render() {
     const { demandForm } = this.props
-    const { systemNameArr } = demandForm
+    const { systemNameArr, teamData } = demandForm
     const barProps = {
       data: systemNameArr,
       title: '所属系统',
       barColor: ['#6395F9'],
-      cusConfig:{
-        dataZoom: [{
-          height: 24,
-          bottom: 0,
-          throttle: 500,
-          zoomOnMouseWheel: true
-        }],
-      },
+      cusConfigBool: false,
       handleClickBar: this.handleClickBar,
       handleSlideBar: this.handleSlideBar
+    }
+
+    const pieProps = {
+      title: '整体完成度',
+      data: [
+        { name: '未完成' },
+        { name: '已完成' }
+      ],
+      barColor: ['#E96C5B', '#6395F9'],
+      handleClickPie: this.handleClickPie,
+      handleClickLegend: this.handleClickLegend,
+    }
+
+    teamData.map((v, i) => {
+      v.unfinished = Math.ceil((Math.random() + i) * 10)
+      v.finished = Math.ceil((Math.random() + i) * 10)
+      return true
+    })
+
+    const multiPieProps = {
+      title: '团队分布',
+      data: teamData,
+      handleClickPie: this.handleClickPie,
+      handleClickLegend: this.handleClickLegend,
     }
 
     return (
       <Fragment>
         <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
           <Col span={12}>
-            <GlobalSandBox
-              title='整体完成度'
-              sandboxStyle={{ marginTop: '16px' }}
+            <Card
+              style={{ marginTop: '16px' }}
             >
-              图
-            </GlobalSandBox>
+              <Pie {...pieProps} />
+            </Card>
           </Col>
           <Col span={12}>
-            <GlobalSandBox
-              title='团队分布'
-              sandboxStyle={{ marginTop: '16px' }}
+            <Card
+              style={{ marginTop: '16px' }}
             >
-              图
-            </GlobalSandBox>
+              <MultiPie {...multiPieProps} />
+            </Card>
           </Col>
           <Col span={24}>
             <Card
               style={{ marginTop: '16px' }}
+              headStyle={{
+                borderBottom: 'none'
+              }}
             >
               <Bar {...barProps} />
             </Card>

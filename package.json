@@ -50,7 +50,7 @@
     "@tinymce/tinymce-react": "^3.6.0",
     "antd": "^3.23.6",
     "axios": "^0.20.0",
-    "bizcharts": "^3.5.2",
+    "bizcharts": "^3.5.9",
     "bizcharts-plugin-slider": "^2.0.3",
     "classnames": "^2.2.6",
     "commitlint": "^9.1.2",

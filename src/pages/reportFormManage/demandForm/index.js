@@ -22,6 +22,8 @@ class Demand extends PureComponent {
     this.handleQueryDept()
     this.handleQuerySystem()
     this.handleQueryCluster()
+    this.handleQueryDemand()
+    this.handleQueryTeam()
     
     const dateStart = new Date()
     const dateEnd = moment(dateStart)
@@ -67,6 +69,23 @@ class Demand extends PureComponent {
       payload: {
         ...params
       }
+    })
+  }
+
+  // 查需求和状态
+  handleQueryDemand = () => {
+    this.props.dispatch({
+      type:'demandForm/queryDemandBoard',
+      payload: {
+        ids: '1,2,3,4,5,6,7,8,9,10',
+      }
+    })
+  }
+
+  // 查团队
+  handleQueryTeam = () => {
+    this.props.dispatch({
+      type:'demandForm/queryTeam',
     })
   }
 

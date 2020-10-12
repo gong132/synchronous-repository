@@ -4,16 +4,19 @@ import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/grid'
 import 'echarts/lib/chart/bar'
+import 'echarts/lib/component/dataZoom'
 
 class Bar extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      data: []
+      data: [],
+      sliderWidth: 0,
+      barWidth: 0,
     }
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
     const { handleClickBar, handleSlideBar, data } = this.props
     const myChart = this.handleGenBar(data)
     if (typeof handleClickBar === 'function') {
@@ -28,19 +31,73 @@ class Bar extends Component {
   }
 
   handleGenBar = (data) => {
+    let res = {}
     const dom = document.getElementById('bar')
     const myChart = echarts.init(dom)
+    if (data.length > 0) {
+      res = this.calc(10, data.length)
+      const { w, sliderWidth } = res
+      this.setState({
+        barWidth: w,
+        sliderWidth,
+        data,
+      }, () => {
+        myChart.setOption(this.getOption(data, w, sliderWidth))
+      })
+      return myChart
+    }
     myChart.setOption(this.getOption(data))
     return myChart
   }
 
+  calc = (count, len) => {
+    const dom = document.getElementById('bar')
+    const iWidth = dom.offsetWidth
+    // 两边占用的宽度
+    const gridWidth = iWidth * 0.1
+    // y轴占用的宽度, 30 是估值
+    const yWidth = 12 + 30
+    // 所有条数占用的margin
+    const barMargin = count * 48
+    // 初始展示的滑动条的宽度
+    const w = (iWidth - (gridWidth + yWidth + barMargin)) / count
+    const sliderWidth = count / len * 100
+    return { w, sliderWidth }
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     let bool = false
-    if (nextProps.data.length !== nextState.length) {
-      bool = true
-      this.handleGenBar(nextProps.data)
-    }
     const len = nextProps.data.length
+    if (len === 0) {
+      return bool
+    }
+
+    if (len !== nextState.data.length) {
+      bool = true
+      // 计算x轴下滑动条初始设置的大小
+      // count 是展示的条数
+      // total是总条数
+      // eslint-disable-next-line no-new
+      // new Promise((resolve) => {
+      //   const res = this.calc(10, len)
+      //   resolve(res)
+      // }).then((res) => {
+      //   console.log(res)
+      //   const { w, sliderWidth } = res
+      //   this.setState({
+      //     barWidth: w,
+      //     sliderWidth,
+      //     data: nextProps.data
+      //   }, () => {
+      //     console.log('barWidth:', w)
+      //     if (w > 0) {
+      //       this.handleGenBar(nextProps.data, w, sliderWidth)
+      //     }
+      //   })
+      // })
+      this.handleGenBar(nextProps.data)
+
+    }
     for (let i = 0; i < len; i++) {
       if (nextProps.data[i] !== nextState.data[i]) {
         bool = true
@@ -50,13 +107,13 @@ class Bar extends Component {
     return bool
   }
 
-  getOption = (data=[]) => {
-    const { title, barColor, cusConfig } = this.props
+  getOption = (data = [], barWidthProps, sliderWidthProps) => {
+    const { barWidth = barWidthProps, sliderWidth = sliderWidthProps } = this.state
+    const { title, barColor, cusConfigBool } = this.props
     const arr = []
     Array(data.length * 2).fill('').map((v, i) => {
       arr.push(Number(Math.ceil((Math.random() + i)) * 20))
     })
-    // console.log(Number((Math.random()+i)*10))
     // x,y轴共同配置
     const commonConfig = {
       splitLine: {
@@ -75,6 +132,18 @@ class Bar extends Component {
           color: '#E9EBF1',
         },
       },
+    }
+
+    const cusConfig = {
+      dataZoom: [{
+        show: cusConfigBool,
+        start: 0,
+        end: sliderWidth,
+        height: 24,
+        bottom: 0,
+        throttle: 500,
+        zoomOnMouseWheel: true
+      }],
     }
 
     // 
@@ -106,6 +175,16 @@ class Bar extends Component {
         }
       },
 
+      toolbox: {
+        feature: {
+          dataZoom: {
+            yAxisIndex: 'none'
+          },
+          restore: {},
+          saveAsImage: {}
+        }
+      },
+
       tooltip: {
         renderMode: 'html',
         formatter: params => {
@@ -123,11 +202,14 @@ class Bar extends Component {
           margin: 12,
           interval: 0,
           formatter: value => {
-            return echarts.format.truncateText(value, 50, '14px Microsoft Yahei', '…');
+            if(data.length < 10) {
+              return echarts.format.truncateText(value, (10-data.length)*barWidth/data.length + barWidth+48, '14px Microsoft Yahei', '…');
+            }
+            return echarts.format.truncateText(value, barWidth+48, '14px Microsoft Yahei', '…');
             // return value.substr(0, 5) + '\n' + value.substr(5, value.length - 1)
           }
         },
-        data: data.concat(data),
+        data,
       },
       yAxis: {
         type: 'value',
@@ -145,10 +227,10 @@ class Bar extends Component {
         itemStyle: {
           barBorderRadius: [100, 100, 0, 0],
         },
-        barWidth: 28,
+        barWidth,
       },
       ],
-      ...cusConfig
+      ...cusConfig,
     }
   }
 

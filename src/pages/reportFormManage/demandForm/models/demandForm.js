@@ -1,5 +1,6 @@
 
-import { queryDept, fetchSystemList, fetchAllCluster } from '@/services/global'
+import { queryDept, fetchSystemList, fetchAllCluster, queryGroup } from '@/services/global'
+import { queryDemandBoard, } from '@/services/demand/demand'
 import { message } from 'antd'
 
 const Demand = {
@@ -10,7 +11,9 @@ const Demand = {
     deptNameArr:[],
     systemList: [],
     systemNameArr: [],
-    clusterList: []
+    clusterList: [],
+    demandData: [],
+    teamData: [],
   },
   effects: {
     // 查询部门
@@ -69,6 +72,37 @@ const Demand = {
           clusterList: data,
         },
       });
+    },
+
+    // 查需求
+    *queryDemandBoard({ payload }, { call, put }) {
+      const { code, data, msg } = yield call(queryDemandBoard, payload);
+      if (code !== 200) {
+        message.error(msg);
+        return;
+      }
+      yield put({
+        type: 'saveData',
+        payload: {
+          demandData: data,
+        },
+      });
+    },
+
+    // 查团队
+    *queryTeam({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(queryGroup, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      yield put({
+        type: 'saveData',
+        payload: {
+          teamData: data,
+        },
+      });
+      return true;
     },
   },
   reducers: {
