@@ -2,6 +2,7 @@ import React, { PureComponent, Fragment } from 'react'
 import { connect } from 'dva'
 import moment from 'moment'
 import Pie from '@/components/EchartsComponents/Pie'
+import PieRose from '@/components/EchartsComponents/RosePie'
 import { DatePicker, Card, Row, Col } from 'antd'
 import styles from './index.less'
 
@@ -21,6 +22,7 @@ class Project extends PureComponent {
     this.handleQueryDept()
     this.handleQueryCluster()
     this.handleQueryTeam()
+    this.handleQueryStage()
 
     const dateStart = new Date()
     const dateEnd = moment(dateStart)
@@ -49,15 +51,7 @@ class Project extends PureComponent {
     })
   }
 
-  // 查询系统
-  handleQuerySystem = (params) => {
-    this.props.dispatch({
-      type: 'projectForm/querySystemList',
-      payload: {
-        ...params
-      }
-    })
-  }
+  // 
 
   // 查询集群板块
   handleQueryCluster = (params) => {
@@ -70,12 +64,9 @@ class Project extends PureComponent {
   }
 
   // 查需求和状态
-  handleQueryDemand = () => {
+  handleQueryStage = () => {
     this.props.dispatch({
-      type: 'projectForm/queryDemandBoard',
-      payload: {
-        ids: '1,2,3,4,5,6,7,8,9,10',
-      }
+      type: 'projectForm/queryAllStageStatus',
     })
   }
 
@@ -97,11 +88,24 @@ class Project extends PureComponent {
 
   render() {
     const { rangeDate } = this.state
-    const { projectForm} = this.props
-    const {clusterList} = projectForm
+    const { projectForm } = this.props
+    const { clusterList, stageStatus } = projectForm
+    console.log(clusterList, stageStatus)
+    stageStatus.map(v => {
+      v.name=v.pjStageName
+      return true
+    })
     const pieProps = {
       title: '集群/板块分布',
       data: clusterList,
+      handleClickPie: this.handleClickPie,
+      handleClickLegend: this.handleClickLegend,
+    }
+
+    const pieRoseProps = {
+      title: '项目阶段分布',
+      data: stageStatus,
+      roseType: 'radius',
       handleClickPie: this.handleClickPie,
       handleClickLegend: this.handleClickLegend,
     }
@@ -119,7 +123,7 @@ class Project extends PureComponent {
           </Col>
           <Col span={12}>
             <Card style={{ marginTop: '16px' }}>
-              {/* <RadiusPie {...radiusPieProps} /> */}
+              <PieRose {...pieRoseProps} />
             </Card>
           </Col>
           <Col span={24}>

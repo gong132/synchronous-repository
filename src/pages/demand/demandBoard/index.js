@@ -147,7 +147,7 @@ class DemandBoard extends Component {
       .dispatch({
         type: 'demand/updateDemand',
         payload: {
-          id: params.id,
+          id: String(params.id),
           isDelete: 1
         },
       })
