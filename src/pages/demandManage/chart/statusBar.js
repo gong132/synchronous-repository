@@ -2,10 +2,11 @@ import React, { memo, useEffect } from 'react';
 import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
 import echarts from 'echarts';
 
-const isEqual = (preProps, nextProps) => preProps.demandStatusList !== nextProps.demandStatusList;
+const isEqual = (preProps, nextProps) => preProps.demandStatusList === nextProps.demandStatusList;
 const Index = memo(props => {
   const { demandStatusList } = props;
 
+  console.log(demandStatusList, 'demandStatusList');
   const initChart = () => {
     const element = document.getElementById('statusBar');
     const myChart = echarts.init(element);

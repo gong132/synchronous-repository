@@ -28,40 +28,56 @@ const Index = memo(
           '#657798',
         ],
         tooltip: {
-          trigger: 'axis',
+          trigger: 'item',
           axisPointer: {
             // 坐标轴指示器，坐标轴触发有效
             type: 'line', // 默认为直线，可选为：'line' | 'shadow'
           },
+          formatter: rows => `名称: ${rows?.name} <br /> 占比: ${rows?.percent}%`,
         },
         grid: {
           top: 30,
-          bottom: 60,
-          left: 10,
-          right: 100,
+          left: -30,
+          bottom: 20,
+          tooltip: {
+            trigger: 'item',
+            axisPointer: {
+              // 坐标轴指示器，坐标轴触发有效
+              type: 'line', // 默认为直线，可选为：'line' | 'shadow'
+            },
+            formatter: rows => `名称: ${rows?.name} <br /> 占比: ${rows?.percent}%`,
+          },
         },
         legend: {
           orient: 'vertical',
-          right: 10,
+          right: 0,
+          bottom: 15,
           data: demandDeptInfo.data.map(v => v.name),
+          formatter: name => {
+            // const txt = []
+            // for (let i = 0; i < Math.ceil(name.length / 6); i += 1) {
+            //   txt.push(name.substring(6 * i, 6 * (i+1)))
+            // }
+            const length = name?.length;
+            return length > 10 ? `${name.substring(0, 9)}...` : name;
+            // return txt.join('\n')
+          },
         },
         series: [
           {
-            name: '数量',
             type: 'pie',
             barWidth: 25,
-            stillShowZeroSum: true,
+            minShowLabelAngle: 0.0001,
             itemStyle: {
               barBorderRadius: [15, 15, 0, 0],
             },
             label: {
               show: true,
               formatter: rows => {
-                let labelValue = '';
                 if (String(rows?.data?.value) !== '0') {
-                  labelValue = `${rows?.data?.name} : ${rows?.data?.value}`;
+                  return `${rows?.data?.name} : ${rows?.data?.value}`;
                 }
-                return labelValue;
+                return null;
               },
             },
             data: demandDeptInfo.data.map(v => ({
@@ -72,6 +88,17 @@ const Index = memo(
         ],
       };
       myChart.setOption(option);
+      myChart.on('click', params => {
+        console.log(params, 'params');
+      });
+      myChart.on('legendselectchanged', function(params) {
+        // 获取点击图例的选中状态
+        const isSelected = params.selected[params.name];
+        // 在控制台中打印
+        console.log(isSelected ? '选中了' : '取消选中了', params.name);
+        // 打印所有图例的状态
+        console.log(params.selected);
+      });
     };
 
     useEffect(() => {
