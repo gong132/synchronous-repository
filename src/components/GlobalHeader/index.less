@@ -143,18 +143,21 @@
 .tabsContainer {
   display: flex;
   .tab {
-    width: 50%;
+    width: 264px;
     height: 38px;
     display: flex;
     justify-content: center;
     align-items: center;
     color: #606265;
     font-size: 14px;
+    margin: -5px -16px -4px;
   }
   .tabActive {
     background: #2E5BFF;
+    margin: -5px -16px -4px;
     color: #fff;
     opacity: 1;
+    border-radius: 2px;
     transition: opacity 2s;
     -moz-transition: opacity 2s; /* Firefox 4 */
     -webkit-transition: opacity 2s; /* Safari 和 Chrome */
@@ -164,12 +167,12 @@
 
 body {
   :global {
-    .ant-popover-title {
-      padding: 0;
-    }
-    .ant-popover-inner-content {
-      padding: 0 0 8px 0;
-    }
+    //.ant-popover-title {
+    //  padding: 0;
+    //}
+    //.ant-popover-inner-content {
+    //  padding: 0 0 8px 0;
+    //}
   }
 }
 

@@ -29,14 +29,14 @@ const budgetManage = {
   },
   effects: {
     *fetchBudgetData({ payload }, { call, put }) {
-      const { code, data, msg } = yield call(queryBudgetList, payload);
-      if (code !== 200) {
-        message.error(msg);
+      const res = yield call(queryBudgetList, payload);
+      if (!res?.code || res?.code !== 200) {
+        message.error(res?.msg);
         return;
       }
-      data.currentPage = data.current;
-      data.pageSize = data.size;
-      const { records, ...others } = data;
+      res.data.currentPage = res.data.current;
+      res.data.pageSize = res.data.size;
+      const { records, ...others } = res.data;
       yield put({
         type: 'setBudgetData',
         payload: {

@@ -64,7 +64,7 @@ const Index = props => {
         evaluateTime: isEmpty(val.evaluateTime) ? null : val.evaluateTime.format('YYYY-MM-DD'),
         systemName: isEmpty(val.systemId)
           ? null
-          : systemList.find(v => v.systemId === val.systemId).systemName,
+          : systemList.find(v => v.id === val.systemId).name,
       };
 
       type === 'add' && delete params.id;
@@ -93,7 +93,12 @@ const Index = props => {
       title={isEmpty(values) || type === 'add' ? '新建story' : '编辑story'}
       visible={modalVisible}
       onCancel={handleModalVisible}
-      onOk={handleOk}
+      footer={
+        <>
+          <Button onClick={handleModalVisible} ghost type="primary">取消</Button>
+          <Button onClick={handleOk} type="primary">提交</Button>
+        </>
+      }
     >
       <Form>
         <Row>
@@ -121,30 +126,33 @@ const Index = props => {
               )}
             </FormItem>
           </Col>
-          <Col span={12}>
-            <FormItem {...formLayoutItemAddDouble} label="经办人">
-              {form.getFieldDecorator('assignee', {
-                rules: [{ required: true, message: '请选择经办人' }],
-                initialValue: values?.assignee,
-              })(
-                <Select allowClear>
-                  {userList &&
-                    userList.map(v => (
-                      <Option value={v.loginid} key={v.loginid.toString()}>
-                        {v.lastname}
-                      </Option>
-                    ))}
-                </Select>,
-              )}
-            </FormItem>
-          </Col>
+          {/* <Col span={12}> */}
+          {/*  <FormItem {...formLayoutItemAddDouble} label="经办人"> */}
+          {/*    {form.getFieldDecorator('assignee', {* /}
+          {/*      rules: [{ required: true, message: '请选择经办人' }], */}
+          {/*      initialValue: values?.assignee, */}
+          {/*    })( */}
+          {/*      <Select allowClear> */}
+          {/*        {userList && */}
+          {/*          userList.map(v => ( */}
+          {/*            <Option value={v.loginid} key={v.loginid.toString()}> */}
+          {/*              {v.lastname} */}
+          {/*            </Option> */}
+          {/*          ))} */}
+          {/*      </Select>, */}
+          {/*    )} */}
+          {/*  </FormItem> */}
+          {/* </Col> */}
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="评估人">
               {form.getFieldDecorator('assessor', {
                 rules: [{ required: true, message: '请选择评估人' }],
                 initialValue: values?.assessor,
               })(
-                <Select allowClear>
+                <Select
+                  placeholder="请选择评估人"
+                  allowClear
+                >
                   {userList &&
                     userList.map(v => (
                       <Option value={v.loginid} key={v.loginid.toString()}>
@@ -161,23 +169,34 @@ const Index = props => {
                 rules: [{ required: true, message: '请选择所属系统' }],
                 initialValue: values?.systemId,
               })(
-                <Select allowClear>
+                <Select
+                  allowClear
+                  placeholder="请选择所属系统"
+                >
                   {systemList &&
                     systemList.map(v => (
-                      <Option value={v.systemId} key={v.systemId}>
-                        {v.systemName}
+                      <Option value={v.id} key={v.id}>
+                        {v.name}
                       </Option>
                     ))}
                 </Select>,
               )}
             </FormItem>
           </Col>
+          {/* <Col span={12}> */}
+          {/*  <FormItem {...formLayoutItemAddDouble} label="所属需求"> */}
+          {/*    {form.getFieldDecorator('demandName', {* /}
+          {/*      // rules: [{ required: true, message: "请选择所属需求" }], */}
+          {/*      initialValue: values?.demandName, */}
+          {/*    })(<Input disabled />)} */}
+          {/*  </FormItem> */}
+          {/* </Col> */}
           <Col span={12}>
-            <FormItem {...formLayoutItemAddDouble} label="所属需求">
-              {form.getFieldDecorator('demandName', {
-                // rules: [{ required: true, message: "请选择所属需求" }],
-                initialValue: values?.demandName,
-              })(<Input disabled />)}
+            <FormItem {...formLayoutItemAddDouble} label="IT预计上线日期">
+              {form.getFieldDecorator('evaluateTime', {
+                // rules: [{ required: true, message: "请选择计划上线日期" }],
+                initialValue: values?.evaluateTime && moment(values?.evaluateTime),
+              })(<DatePicker allowClear format="YYYY-MM-DD" placeholder="请选择IT预计上线日期" />)}
             </FormItem>
           </Col>
           <Col span={12}>
@@ -197,19 +216,11 @@ const Index = props => {
             </FormItem>
           </Col>
           <Col span={12}>
-            <FormItem {...formLayoutItemAddDouble} label="计划上线日期">
-              {form.getFieldDecorator('evaluateTime', {
-                // rules: [{ required: true, message: "请选择计划上线日期" }],
-                initialValue: values?.evaluateTime && moment(values?.evaluateTime),
-              })(<DatePicker allowClear format="YYYY-MM-DD" placeholder="请选择计划上线日期" />)}
-            </FormItem>
-          </Col>
-          <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="开发预计工作量">
               {form.getFieldDecorator('developWorkload', {
                 // rules: [{ required: true, message: "请输入开发工作量" }],
                 initialValue: values?.developWorkload,
-              })(<Input allowClear placeholder="请输入开发工作量" />)}
+              })(<Input allowClear placeholder="请输入开发工作量" addonAfter="人天" />)}
             </FormItem>
           </Col>
           <Col span={12}>
@@ -217,7 +228,7 @@ const Index = props => {
               {form.getFieldDecorator('testWorkload', {
                 // rules: [{ required: true, message: "请输入测试工作量" }],
                 initialValue: values?.testWorkload,
-              })(<Input allowClear placeholder="请输入测试工作量" />)}
+              })(<Input allowClear placeholder="请输入测试工作量" addonAfter="人天" />)}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -235,7 +246,7 @@ const Index = props => {
           <Col span={24}>
             <FormItem {...formLayoutItemAddEdit} label="上传附件">
               <FileUpload>
-                <Button type="primary">上传</Button>
+                <Button ghost type="primary">上传</Button>
                 <span style={{ fontSize: 12, color: '#69707F', marginLeft: 6 }}>
                   文件大小限制在20M之内
                 </span>

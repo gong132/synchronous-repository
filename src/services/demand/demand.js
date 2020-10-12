@@ -87,10 +87,10 @@ export async function queryBudgetNumber(params) {
     params,
   });
 }
-// 系统列表  临时暂用
+// 系统列表
 export async function fetchSystemList(params) {
-  return request('/temp/system', {
-    method: 'get',
+  return request('/system/list', {
+    method: 'post',
     params,
   });
 }

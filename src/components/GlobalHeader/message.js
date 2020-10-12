@@ -1,6 +1,6 @@
 import React, {memo} from "react";
 import styles from "./message.less"
-import {Button, Empty } from "antd";
+import {Button, Empty, Popconfirm} from "antd";
 import OptButton from "@/components/commonUseModule/optButton";
 import readButton from "@/assets/icon/read.svg";
 import storage from "@/utils/storage";
@@ -13,22 +13,28 @@ const { userInfo } = storage.get("gd-user", {})
 const Index = memo(props => {
   const { messageList, handleBatchModifyRead, handleQueryMessageList } = props
   return (
-    <div style={{ width: 460 }}>
+    <div style={{ width: 496, margin: '-12px -16px'}}>
       <div className={styles.msgContent}>
         {
           messageList?.data && messageList?.data.length > 0 ? messageList.data.map(v => (
             <div className={styles.msgItem} key={v.id}>
               <span>{v.toUserName}</span>
               <a>{v.content}</a>
-              <OptButton
-                img={readButton}
-                text="标为已读"
-                showText={false}
-                onClick={() => handleBatchModifyRead({
+              <Popconfirm
+                title={`确定要标记（${v.title}）为已读吗?`}
+                onConfirm={() => handleBatchModifyRead({
                   flag: 1,
                   notices: [v.id],
                 })}
-              />
+                okText="确定"
+                cancelText="取消"
+              >
+                <OptButton
+                  img={readButton}
+                  text="标为已读"
+                  showText={false}
+                />
+              </Popconfirm>
             </div>
           )) : (
             <div style={{ height: "100%" }} className="xyCenter">

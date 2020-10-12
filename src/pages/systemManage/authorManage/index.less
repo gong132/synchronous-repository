@@ -80,7 +80,7 @@
   background-color: #2E5BFF;
   opacity:1;
   border-radius:2px;
-  color: #ffffff;
+  color: #fff;
 }
 .orangeForm, .orangeForm:hover, .orangeForm:active, .orangeForm:focus, .orangeForm:visited {
   width: 90px;
@@ -171,13 +171,27 @@
         justify-content: space-between;
         align-items: center;
         div {
-          width: 14px;
-          height: 14px;
-          border: 1px solid #B0BAC9;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-size: 12px;
+          text-decoration: none;
+          cursor: pointer;
+          display: inline-block;
+          width: 17px;
+          height: 17px;
+          line-height: 13px;
+          text-align: center;
+          background: #fff;
+          border: 1px solid #e8e8e8;
+          border-radius: 2px;
+          outline: none;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+        }
+        .addOpt:before {
+          content: '+';
+        }
+        .minusOpt:before {
+          content: '-';
         }
       }
 

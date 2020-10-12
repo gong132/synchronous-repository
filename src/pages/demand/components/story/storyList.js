@@ -49,27 +49,38 @@ const Index = props => {
     handleQueryStoryList,
     loadingQueryStoryData,
     demandInfo,
-    demand: { storyList },
-    global: { systemList, userList },
+    demand: { systemList, storyList },
+    global: { userList },
   } = props;
 
   const [searchMore, setSearchMore] = useState(false);
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [selectedRows, setSelectedRows] = useState({});
 
-  const handleStoryTableChange = pagination => {
-    // const formValues = form.getFieldsValue();
+  const handleStoryTableChange = (pagination, filters, sorter)  => {
+    const { RangeDate, ...others } = form.getFieldsValue();
+    const formValues = {
+      ...others,
+      startTime: RangeDate ? RangeDate[0].format("YYYY-MM-DD") : null,
+      endTime: RangeDate ? RangeDate[1].format("YYYY-MM-DD") : null,
+    }
+    const sortParams = {
+      sortBy: sorter.columnKey,
+      orderFlag: sorter.order === 'ascend' ? 1 : -1,
+    };
     const params = {
       currentPage: pagination.current,
       pageSize: pagination.pageSize,
-      // ...formValues, // 添加已查询条件去获取分页
+      ...sortParams,
+      ...formValues, // 添加已查询条件去获取分页
     };
+
     handleQueryStoryList(params);
   };
 
   const handleQuerySystemList = () => {
     dispatch({
-      type: 'global/querySystemList',
+      type: 'demand/querySystemList',
       payload: {
         ...PagerHelper.MaxPage,
       },
@@ -147,16 +158,16 @@ const Index = props => {
       },
     },
     TableColumnHelper.genPlanColumn('title', '标题'),
-    TableColumnHelper.genPlanColumn('status', '状态'),
-    TableColumnHelper.genPlanColumn('priority', '优先级'),
-    TableColumnHelper.genPlanColumn('type', 'story类型'),
-    TableColumnHelper.genPlanColumn('systemName', '所属系统'),
-    TableColumnHelper.genDateTimeColumn('evaluateTime', 'IT预计上线时间', 'YYYY-MM-DD'),
-    TableColumnHelper.genPlanColumn('developWorkload', '开发预计测试工作量'),
-    TableColumnHelper.genPlanColumn('testWorkload', '测试预计测试工作量'),
+    TableColumnHelper.genPlanColumn('status', '状态', { sorter: true }),
+    TableColumnHelper.genPlanColumn('priority', '优先级', { sorter: true }),
+    TableColumnHelper.genPlanColumn('type', 'story类型', { sorter: true }),
+    TableColumnHelper.genLangColumn('systemName', '所属系统', {}, 10),
+    TableColumnHelper.genDateTimeColumn('evaluateTime', 'IT预计上线时间', 'YYYY-MM-DD', { width: 150, sorter: true }),
+    TableColumnHelper.genPlanColumn('developWorkload', '开发预计测试工作量', { width: 180, sorter: true }),
+    TableColumnHelper.genPlanColumn('testWorkload', '测试预计测试工作量', { width: 180, sorter: true }),
     TableColumnHelper.genPlanColumn('assessor', '评估人'),
     TableColumnHelper.genPlanColumn('userName', '创建人'),
-    TableColumnHelper.genDateTimeColumn('createTime', '创建时间'),
+    TableColumnHelper.genDateTimeColumn('createTime', '创建时间',  'YYYY-MM-DD', { sorter: true }),
     {
       title: '操作',
       width: 170,
@@ -254,7 +265,7 @@ const Index = props => {
           <Col span={24}>
             <FormItem {...formLayoutItem2} label="类型">
               {getFieldDecorator('type')(
-                <Select placeholder="请选择经办人" allowClear>
+                <Select placeholder="请选择类型" allowClear>
                   {STORY_TYPE.map(v => (
                     <Option value={v.key} key={v.key.toString()}>
                       {v.value}
@@ -291,8 +302,8 @@ const Index = props => {
       <Form layout="inline">
         <Row>
           <Col span={5}>
-            <FormItem {...formLayoutItem} label="story编号标题" colon={false}>
-              {getFieldDecorator('title')(
+            <FormItem {...formLayoutItem} label="story编号/标题" colon={false}>
+              {getFieldDecorator('titleAndNumber')(
                 <Input allowClear onBlur={handleSearchForm} placeholder="请输入story编号标题" />,
               )}
             </FormItem>
@@ -327,8 +338,8 @@ const Index = props => {
             <FormItem {...formLayoutItem} label="所属系统" colon={false}>
               {getFieldDecorator('systemId')(
                 <Select placeholder="请选择所属系统">
-                  {systemList?.list &&
-                    systemList.list.map(v => (
+                  {systemList &&
+                    systemList.map(v => (
                       <Option value={v.id} key={v.id}>
                         {v.name}
                       </Option>
@@ -390,6 +401,7 @@ const Index = props => {
         data={storyList}
         loading={loadingQueryStoryData}
         onChange={handleStoryTableChange}
+        scroll={{ x: 1880 }}
       />
 
       {addStoryModalVisible && (

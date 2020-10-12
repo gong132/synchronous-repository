@@ -3,7 +3,7 @@ import {router} from "umi";
 import storage from "@/utils/storage";
 import {PagerHelper} from "@/utils/helper";
 import {isArray, isEmpty} from "@/utils/lang";
-import { queryLogList, fetchUserList, saveFile, fetchSystemList } from '@/services/global'
+import { queryLogList, fetchUserList, saveFile, fetchSystemList, fetchDeptList } from '@/services/global'
 import { queryNotices, fetchMenuList, fetchCurrentUserInfo, queryCurrentUserMenuList } from '@/services/user';
 import {fetchMessageList} from "@/services/message/message";
 
@@ -15,6 +15,7 @@ const GlobalModel = {
     logList: PagerHelper.genListState(),
     userList: PagerHelper.genListState(),
     systemList: PagerHelper.genListState(),
+    deptList: PagerHelper.genListState(),
     allMenuList: [],
     currentUserMenuList: [],
     authActions: [],
@@ -106,27 +107,28 @@ const GlobalModel = {
       }
       return true;
     },
+    // 获取用户列表
     *queryUserList({payload}, {call, put}) {
-      const res = yield call(fetchUserList, payload);
-      if (!res || res.code !== 200) {
+      const { code, data , msg} = yield call(fetchUserList, payload);
+      if ( code !== 200) {
         message.error(msg);
-        return
+        return false
       }
-      const { data, ...others } = res.data;
       yield put({
         type: 'setUserData',
         payload: {
           filter: payload,
           data,
-          ...others
         },
       })
+      return data
     },
+    // 获取系统列表
     *querySystemList({payload}, {call, put}) {
       const res = yield call(fetchSystemList, payload);
       if (!res || res.code !== 200) {
         message.error(msg);
-        return
+        return false
       }
       yield put({
         type: 'setSystemData',
@@ -135,6 +137,23 @@ const GlobalModel = {
           data: res.data,
         },
       })
+      return res.data
+    },
+    // 获取部门列表
+    *queryDeptList({payload}, {call, put}) {
+      const res = yield call(fetchDeptList, payload);
+      if (!res || res.code !== 200) {
+        message.error(msg);
+        return false
+      }
+      yield put({
+        type: 'setDeptData',
+        payload: {
+          filter: payload,
+          data: res.data,
+        },
+      })
+      return res.data
     },
     *queryMessageList({payload}, { call, put }) {
       const res = yield call(fetchMessageList, payload);
@@ -198,6 +217,12 @@ const GlobalModel = {
       return {
         ...state,
         systemList: PagerHelper.resolveListState(action.payload),
+      };
+    },
+    setDeptData(state, action) {
+      return {
+        ...state,
+        deptList: PagerHelper.resolveListState(action.payload),
       };
     },
 
@@ -274,12 +299,12 @@ const GlobalModel = {
 
         // 监听当前页面路由是否在菜单池, 如果不在, 并且不是异常页面和登陆页时, 跳转到403页面
         // 异常页面不监听路由
-        if (!isEmpty(currentUserMenuList) && !findCurrentPage && pathname.indexOf('/exception') < 0 && pathname !== '/user/login' && pathname !== '/menuConfig' && pathname !== '/') {
-          router.replace('/exception/403');
-        }
-        if (isEmpty(findCurrentPage) && pathname.indexOf('/exception') < 0 && pathname !== '/user/login' && pathname !== '/menuConfig' && pathname !== '/') {
-          router.replace('/exception/403');
-        }
+        // if (!isEmpty(currentUserMenuList) && !findCurrentPage && pathname.indexOf('/exception') < 0 && pathname !== '/user/login' && pathname !== '/menuConfig' && pathname !== '/') {
+        //   router.replace('/exception/403');
+        // }
+        // if (isEmpty(findCurrentPage) && pathname.indexOf('/exception') < 0 && pathname !== '/user/login' && pathname !== '/menuConfig' && pathname !== '/') {
+        //   router.replace('/exception/403');
+        // }
         // 如果路径名为' / '，则触发' load '操作
         if (typeof window.ga !== 'undefined') {
           window.ga('send', 'pageview', pathname + search);

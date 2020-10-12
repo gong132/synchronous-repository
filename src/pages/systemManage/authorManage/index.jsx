@@ -9,7 +9,7 @@ import MenuTree from "./component/menuTree";
 import AddForm from "./addForm"
 import Detail from "./detail"
 import styles from "./index.less"
-import { Button, Card, Col, Form, message, Popconfirm, Row} from "antd";
+import {Button, Card, Col, Divider, Form, message, Popconfirm, Row} from "antd";
 import {isEmpty} from "@/utils/lang";
 import OptButton from "@/components/commonUseModule/optButton";
 import deleteIcon from "@/assets/icon/Button_del.svg"
@@ -118,19 +118,21 @@ const AuthorManage = props => {
         <>
           <OptButton
             icon="eye"
+            showText={false}
             onClick={() => {
               setDetailModalVisible(true);
               setSelectedRows(rows)
           }}
             text="查看"
           />
+          <Divider type="vertical" />
           <Popconfirm
             title={`确定要删除（${rows.roleName}）吗?`}
             onConfirm={() => handleDeleteRole(rows)}
             okText="确定"
             cancelText="取消"
           >
-            <OptButton img={deleteIcon} text="删除" iconStyle={{color: "#d63649"}} style={{color: "#d63649"}} />
+            <OptButton showText={false} img={deleteIcon} text="删除" iconStyle={{color: "#d63649"}} style={{color: "#d63649"}} />
           </Popconfirm>
         </>
       )
@@ -200,8 +202,8 @@ const AuthorManage = props => {
                     <div className={styles.roleName}>{selectedRows && selectedRows.roleName}</div>
                     <div className={styles.titleName}>选择功能</div>
                     <div className={styles.opt}>
-                      <div onClick={() => setExpandedRow(allMenuList)}>+</div>
-                      <div onClick={() => setExpandedRow([])}>-</div>
+                      <div className={styles.addOpt} onClick={() => setExpandedRow(allMenuList)} />
+                      <div className={styles.minusOpt} onClick={() => setExpandedRow([])} />
                     </div>
                   </div>
                   <div className={styles.searchForm}>

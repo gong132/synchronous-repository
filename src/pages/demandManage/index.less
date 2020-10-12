@@ -1,0 +1,104 @@
+/* eslint-disable */
+@import '~antd/lib/style/themes/default.less';
+@import '~@/utils/utils.less'; // eslint-disable-line
+
+.main {
+  padding: 16px;
+}
+
+.tableList {
+  background-color: #fff;
+  .tableListOperator {
+    margin-bottom: 16px;
+    button {
+      margin-right: 8px;
+    }
+  }
+}
+
+.tableListForm {
+  padding: 0;
+  :global {
+    .ant-form-item {
+      margin-right: 0;
+      display: flex;
+      > .ant-form-item-label {
+        width: auto;
+        line-height: 32px;
+      }
+      .ant-form-item-control {
+        line-height: 32px;
+      }
+    }
+    .ant-form-item-control-wrapper {
+      flex: 1;
+      padding-right: 12px;
+    }
+  }
+  .submitButtons {
+    display: block;
+    white-space: nowrap;
+    margin-bottom: 12px;
+  }
+}
+
+.orangeForm, .orangeForm:hover, .orangeForm:active, .orangeForm:focus, .orangeForm:visited {
+  width: 80px;
+  background: #fff;
+  opacity:1;
+  border-radius:2px;
+  border: 1px solid #2E5BFF;
+  color: #2E5BFF;
+}
+
+.moreSearch {
+  width: 240px;
+  overflow-y: auto;
+  margin-top: 12px;
+  :global {
+    .ant-form-item {
+      margin-bottom: 12px;
+    }
+    .ant-select {
+      width: 100%;
+    }
+  }
+}
+// 修改滚动条样式
+.moreSearch::-webkit-scrollbar{
+  width:10px;
+  height:10px;
+}
+.moreSearch::-webkit-scrollbar-track{
+  background: rgb(239, 239, 239);
+  border-radius:2px;
+}
+.moreSearch::-webkit-scrollbar-thumb{
+  background: #bfbfbf;
+  border-radius:10px;
+}
+.moreSearch::-webkit-scrollbar-thumb:hover{
+  background: #333;
+}
+.moreSearch::-webkit-scrollbar-corner{
+  background: #bfbfbf;
+}
+.moreSearchButton {
+  width: 100%;
+  padding: 16px;
+  height: 50px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+@media screen and (max-width: @screen-lg) {
+  .tableListForm :global(.ant-form-item) {
+    margin-right: 24px;
+  }
+}
+
+@media screen and (max-width: @screen-md) {
+  .tableListForm :global(.ant-form-item) {
+    margin-right: 8px;
+  }
+}
