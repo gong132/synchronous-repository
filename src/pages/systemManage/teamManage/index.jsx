@@ -201,9 +201,9 @@ class TeamManage extends Component {
   genColumns = () => {
     const { global: { authActions } } = this.props
     const columns = [
-      TableColumnHelper.genPlanColumn('id', '团队ID'),
-      TableColumnHelper.genPlanColumn('name', '团队名称'),
-      TableColumnHelper.genPlanColumn('teamHeaderName', '团队经理'),
+      TableColumnHelper.genPlanColumn('id', '团队ID', {align: 'left'}),
+      TableColumnHelper.genPlanColumn('name', '团队名称', {align: 'left'}),
+      TableColumnHelper.genPlanColumn('teamHeaderName', '团队经理', {align: 'left'}),
       {
         title: '操作',
         render: (text, record) => {
