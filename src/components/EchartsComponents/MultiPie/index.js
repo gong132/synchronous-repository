@@ -1,3 +1,4 @@
+// 嵌套饼图
 import React from 'react';
 import {
   Chart,
@@ -13,9 +14,9 @@ import DataSet from '@antv/data-set';
 class Sunburst extends React.Component {
 
   // 重新计算完成与未完成百分比
-  calcPercent = (data) => {
-    // 用数组
-  }
+  // calcPercent = (data) => {
+  //   // 用数组
+  // }
 
   render() {
     const { DataView } = DataSet;
@@ -65,14 +66,14 @@ class Sunburst extends React.Component {
       dimension: 'team',
       as: 'percent',
     });
-    const cols = {
-      percent: {
-        formatter: (val) => {
-          val = `${(val * 100).toFixed(2)}%`;
-          return val;
-        },
-      },
-    };
+    // const cols = {
+    //   percent: {
+    //     formatter: (val) => {
+    //       val = `${(val * 100).toFixed(2)}%`;
+    //       return val;
+    //     },
+    //   },
+    // };
     const dv1 = new DataView();
     dv1.source(data).transform({
       type: 'percent',
@@ -83,10 +84,10 @@ class Sunburst extends React.Component {
     console.log(dv, dv1)
 
     // 重新计算完成与未完成百分比
-    const { rows } = dv1
-    rows.map(v => {
+    // const { rows } = dv1
+    // rows.map(v => {
 
-    })
+    // })
 
 
     return (
@@ -102,7 +103,8 @@ class Sunburst extends React.Component {
             color: '#646972',
             fontSize: 16,
             fontWeight: 'bold'
-          }}>
+          }}
+          >
             {title}
           </span>
           <Coord type="theta" radius={0.5} />
@@ -110,7 +112,6 @@ class Sunburst extends React.Component {
             // showTitle={false}
             itemTpl="<li><span style=&quot;background-color:{color};&quot; class=&quot;g2-tooltip-marker&quot;></span>{name}: {value}</li>"
           />
-          {/* <Tooltip showTitle={false} /> */}
           <Legend
             name='team'
             position="right-bottom"
@@ -189,9 +190,9 @@ class Sunburst extends React.Component {
                 (type, percent, team) => {
                   percent = `${(percent * 100).toFixed(0)}%`;
                   return {
-                    name: type.substr(-3) === '未完成' ? '未完成': '完成',
+                    name: type.substr(-3) === '未完成' ? '未完成' : '完成',
                     value: percent,
-                    title:team,
+                    title: team,
                   };
                 },
               ]}
@@ -202,11 +203,6 @@ class Sunburst extends React.Component {
               select={false}
             >
               <Label
-                // content={["value*team*type*percent", (value, team, type, percent)=>{
-                //   console.log(team, type, percent)
-                //   percent = `${(percent * 100).toFixed(0)  }%`;
-                //   return type.substr(-3) === '未完成' ? `未完成: ${value}(${percent})` : `完成: ${value}(${percent})`
-                // }]}
                 type='scatter | treemap | map'
                 content='team'
                 htmlTemplate={(text, item, index) => {

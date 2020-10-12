@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import _ from 'lodash';
 import moment from 'moment';
 import Editor from '@/components/TinyEditor';
-// import UploadFile from '@/components/FileUpload'
+import UploadFile from '@/components/FileUpload'
 import CustomBtn from '@/components/commonUseModule/customBtn';
 import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
 import StandardTable from '@/components/StandardTable';
@@ -37,7 +37,7 @@ import {
   message,
   Icon,
   Modal,
-  // Button
+  Button
 } from 'antd';
 import {
   BOARD_TITLE,
@@ -79,7 +79,7 @@ class Detail extends Component {
       turnAssessModalVisible: false,
       selectedStoryRows: [],
       showCreateMilePlan: false,
-      // urls: ''
+      urls: ''
     };
   }
 
@@ -92,6 +92,23 @@ class Detail extends Component {
     this.handleQueryFlowList();
   }
 
+  componentWillReceiveProps(nextProps) {
+    let bool = false
+    const { demand: { demandInfo } } = nextProps
+    const { attachmentFiles } = demandInfo || {}
+    let { urls = '' } = this.state
+    if (urls.length > 0) {
+      urls = JSON.parse(urls)
+    }
+    if (!_.isEqual(attachmentFiles, urls)) {
+      this.setState({
+        urls: JSON.stringify(attachmentFiles)
+      })
+      bool = true
+    }
+    return bool
+  }
+
   // 更改描述
   handleChangeDesc = content => {
     this.setState({
@@ -99,11 +116,11 @@ class Detail extends Component {
     });
   };
 
-  // handleSaveFileUrl = (fileUrl) => {
-  //   this.setState({
-  //     urls: fileUrl
-  //   })
-  // }
+  handleSaveFileUrl = (fileUrl) => {
+    this.setState({
+      urls: fileUrl
+    })
+  }
 
   // 查询
   handleQueryPlanList = params => {
@@ -219,7 +236,6 @@ class Detail extends Component {
   // 通过团队查人员
   handleChangeGroup = (val) => {
     const { form } = this.props
-    console.log(val)
     form.resetFields(['receiver'])
   }
 
@@ -237,8 +253,12 @@ class Detail extends Component {
   handleSubmit = () => {
     const { demand } = this.props
     const { groupMap, userDataMap } = demand
-    const { descriptionState } = this.state;
+    const { descriptionState, urls } = this.state;
     const id = getParam('id');
+    let arr = [] // 保存附件
+    if (urls.length > 0) {
+      arr = JSON.parse(urls)
+    }
     // const { projectMap, systemMap, deptListMap, supplierMap, headerMap, groupMap } = this.props;
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (err) return;
@@ -261,6 +281,7 @@ class Detail extends Component {
       values.acceptTeamId = values.acceptTeam
       values.acceptTeam = groupMap[values.acceptTeam]
       values.id = id;
+      values.attachmentFiles = arr
       this.editDemand(values);
     });
   };
@@ -461,8 +482,19 @@ class Detail extends Component {
     }
   };
 
+  renderFile = (v) => {
+    const { name } = v
+    return (
+      <div
+        className={styles.fileStyle}
+      >
+        <div>{name}</div>
+      </div>
+    )
+  }
+
   render() {
-    const { editBool, descriptionState, showCreateMilePlan } = this.state;
+    const { editBool, descriptionState, showCreateMilePlan, urls } = this.state;
     const {
       userInfo: { roleName, userName },
     } = getUserInfo();
@@ -568,7 +600,7 @@ class Detail extends Component {
         dataIndex: 'description',
         type: 'p',
       },
-      // { span: 3, required: false, name: '附件', value: '', type: 'p' },
+      { span: 3, required: false, name: '附件', value: '', type: 'p', dataIndex: 'file' },
     ];
 
     const columns = [
@@ -699,26 +731,26 @@ class Detail extends Component {
                     />}
                   </Fragment>
                 ) : (
-                  <Fragment>
-                    <OptButton
-                      style={{
+                    <Fragment>
+                      <OptButton
+                        style={{
                           backgroundColor: 'white',
                           color: '#B0BAC9',
                           borderColor: '#B0BAC9',
                         }}
-                      disabled
-                      img={psIcon}
-                      text="已提交OA审批"
-                    />
-                    { receiverName === userName && <OptButton
-                      style={{
+                        disabled
+                        img={psIcon}
+                        text="已提交OA审批"
+                      />
+                      { receiverName === userName && <OptButton
+                        style={{
                           backgroundColor: 'white',
                         }}
-                      img={apsIcon}
-                      text="提交OA审批"
-                      onClick={() => this.handleOAaction('u')}
-                    />}
-                  </Fragment>
+                        img={apsIcon}
+                        text="提交OA审批"
+                        onClick={() => this.handleOAaction('u')}
+                      />}
+                    </Fragment>
                   )}
                 {editBool ? (
                   <Fragment>
@@ -746,18 +778,18 @@ class Detail extends Component {
                     />
                   </Fragment>
                 ) : (
-                  <OptButton
-                    onClick={() =>
+                    <OptButton
+                      onClick={() =>
                         this.setState({
                           editBool: true,
                         })
                       }
-                    style={{
+                      style={{
                         backgroundColor: 'white',
                       }}
-                    img={editIcon}
-                    text="编辑"
-                  />
+                      img={editIcon}
+                      text="编辑"
+                    />
                   )}
               </Fragment>
             }
@@ -1092,23 +1124,23 @@ class Detail extends Component {
                     />
                   </FormItem>
                 </DescriptionItem>
-                {/* <DescriptionItem span={3} label={<>上传附件</>}>
+                <DescriptionItem span={3} label={<>上传附件</>}>
                   <FormItem>
                     <UploadFile
                       uploadType='5'
                       urls={urls}
-                      linkId={demandNumber}
+                      linkId={id}
                       handleSaveFileUrl={this.handleSaveFileUrl}
                     >
                       <Button type='primary' ghost>上传</Button>
                       <span style={{ marginLeft: '16px' }}>限制文件大小为20M以内</span>
                     </UploadFile>
                   </FormItem>
-                </DescriptionItem> */}
+                </DescriptionItem>
               </Descriptions>
             ) : (
-              <Descriptions column={3} bordered className={styles.formatDetailDesc}>
-                {detailList.map(
+                <Descriptions column={3} bordered className={styles.formatDetailDesc}>
+                  {detailList.map(
                     (v, i) =>
                       (v.type === type || v.type === 'p') && (
                         <DescriptionItem
@@ -1121,15 +1153,25 @@ class Detail extends Component {
                             </>
                           }
                         >
-                          {(v.dataIndex === 'description' && (
-                            /* eslint-disable */
-                            <div
-                              className="infoDescription"
-                              style={{ border: 0 }}
-                              dangerouslySetInnerHTML={{ __html: v.value ? v.value : '--' }}
-                            /> /* eslint-disable */
-                          )) ||
-                            (v.arrDict && <div style={v.style}>{v.arrDict[v.value]}</div>) || (
+                          {/* eslint-disable-next-line no-nested-ternary */}
+                          {(v.dataIndex === 'description'
+                            ? (
+                              /* eslint-disable */
+                              <div
+                                className="infoDescription"
+                                style={{ border: 0 }}
+                                dangerouslySetInnerHTML={{ __html: v.value ? v.value : '--' }}
+                              /> /* eslint-disable */
+                            )
+                            : v.dataIndex === 'file'
+                              ? <div className={styles.customFileArea}>
+                                {urls&&urls.length > 0
+                                  ? JSON.parse(urls).map((v, index) => this.renderFile(v, index))
+                                  : null}
+                              </div>
+                              : null) ||
+                            (v.arrDict &&
+                              <div style={v.style}>{v.arrDict[v.value]}</div>) || (
                               <div style={v.style}>{v.value}</div>
                             )}
                         </DescriptionItem>
@@ -1139,7 +1181,6 @@ class Detail extends Component {
               )}
           </GlobalSandBox>
         </Spin>
-        {console.log(this.planRef)}
         {type === 'p' && (
           <MilePlan
             handleQueryLogList={this.handleQueryLogList}

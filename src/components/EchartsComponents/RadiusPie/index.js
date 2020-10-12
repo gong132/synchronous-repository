@@ -1,3 +1,4 @@
+// 环图
 import React, { Component } from 'react'
 import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/pie'
@@ -42,6 +43,7 @@ class Pie extends Component {
       this.handleGenPie(nextProps.data)
     }
     const len = nextProps.data.length
+    // eslint-disable-next-line no-plusplus
     for (let i = 0; i < len; i++) {
       if (nextProps.data[i] !== nextState.data[i]) {
         bool = true
@@ -52,10 +54,10 @@ class Pie extends Component {
   }
 
   getOption = (data = []) => {
-    const { title, barColor, cusConfig } = this.props
+    const { title } = this.props
     const arr = []
     const legendData = []
-    data.map((v, i) => {
+    data.map((v) => {
       if (v.name) {
         legendData.push(v.name)
         arr.push({
@@ -63,6 +65,7 @@ class Pie extends Component {
           value: v.demandList.length
         })
       }
+      return true
     })
     return {
       title: {

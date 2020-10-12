@@ -1,3 +1,4 @@
+// 基础饼图
 import React, { Component } from 'react'
 import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/pie'
@@ -42,6 +43,7 @@ class Pie extends Component {
       this.handleGenPie(nextProps.data)
     }
     const len = nextProps.data.length
+    // eslint-disable-next-line no-plusplus
     for (let i = 0; i < len; i++) {
       if (nextProps.data[i] !== nextState.data[i]) {
         bool = true
@@ -52,7 +54,7 @@ class Pie extends Component {
   }
 
   getOption = (data = []) => {
-    const { title, barColor, cusConfig } = this.props
+    const { title, barColor } = this.props
     const arr = []
     const legendData = []
     data.map((v, i) => {
@@ -63,6 +65,7 @@ class Pie extends Component {
           value: Math.ceil((Math.random() + i) * 10)
         })
       }
+      return true
     })
     return {
       title: {
@@ -126,7 +129,6 @@ class Pie extends Component {
             return str
           },
           // position: 'inside'
-
         },
         labelLine: {
           show: true,

@@ -5,9 +5,9 @@ import CustomBtn from '@/components/commonUseModule/customBtn';
 import Editor from '@/components/TinyEditor';
 import moment from 'moment';
 import _ from 'lodash'
-// import UploadFile from '@/components/FileUpload'
+import UploadFile from '@/components/FileUpload'
 // import styles from '../index.js.less'
-import { Modal, Form, Select, Input, DatePicker, Col, Row, message, Radio } from 'antd';
+import { Modal, Form, Select, Input, DatePicker, Col, Row, message, Radio, Button } from 'antd';
 import { DEMAND_TYPE_ARR, DEMAND_PRIORITY_ARR, DEFAULT_DESC } from '../util/constant';
 
 const FormItem = Form.Item;
@@ -25,7 +25,7 @@ class CreateDemand extends PureComponent {
     super(props)
     this.state = {
       description: '',
-      // urls: ''
+      urls: ''
     }
     this.handleSubmitForm = this.handleSubmitForm.bind(this)
   }
@@ -77,11 +77,13 @@ class CreateDemand extends PureComponent {
     })
   }
 
-  // handleSaveFileUrl = (fileUrl) => {
-  //   this.setState({
-  //     urls: fileUrl
-  //   })
-  // }
+  // 接收附件
+  handleSaveFileUrl = (fileUrl) => {
+    console.log(fileUrl)
+    this.setState({
+      urls: fileUrl
+    })
+  }
 
   // 查预算编号
   handleQueryBudget = number => {
@@ -208,7 +210,14 @@ class CreateDemand extends PureComponent {
 
   handleSubmitForm = (saveType) => {
     const { form, modalTitle, demand: { tempDemandId, userDataMap, groupMap }, recordValue } = this.props
-    const { description } = this.state
+    const { description, urls } = this.state
+    const arr = [] // 保存附件ids
+    if(urls.length > 0) {
+      JSON.parse(urls).map(f => {
+        arr.push(String(f.id))
+        return true
+      })
+    }
     form.validateFieldsAndScroll((err, values) => {
       if (saveType === 'clickBtn') {
         if (err) return;
@@ -223,6 +232,7 @@ class CreateDemand extends PureComponent {
       values.receiverName = values.receiver ? userDataMap[values.receiver] : ''
       values.acceptTeamId = values.acceptTeam
       values.acceptTeam = groupMap[values.acceptTeam]
+      values.attachments = arr
       console.log(values)
       // return
       if (saveType === 'clickBtn') {
@@ -261,7 +271,7 @@ class CreateDemand extends PureComponent {
 
   renderForm = () => {
     const { form, recordValue = {}, demand: { groupList, budgetList, userData } } = this.props
-    const { description } = this.state
+    const { description, urls } = this.state
     const {
       title,
       expectedCompletionDate,
@@ -272,7 +282,7 @@ class CreateDemand extends PureComponent {
       receiver,
       communicate,
       budgetNumbers,
-      // id,
+      id,
     } = recordValue;
     return (
       <Form>
@@ -470,7 +480,7 @@ class CreateDemand extends PureComponent {
               />
             </FormItem>
           </Col>
-          {/* <Col span={24}>
+          <Col span={24}>
             <FormItem
               {...formLayoutItemAddEdit}
               label='上传附件'
@@ -485,7 +495,7 @@ class CreateDemand extends PureComponent {
                 <span style={{marginLeft: '16px'}}>限制文件大小为20M以内</span>
               </UploadFile>
             </FormItem>
-          </Col> */}
+          </Col>
         </Row>
       </Form>
     )
