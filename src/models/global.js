@@ -189,6 +189,7 @@ const GlobalModel = {
       },
       { payload },
     ) {
+      console.log(state, payload, "11111111111")
       return { ...state, collapsed: payload };
     },
 
