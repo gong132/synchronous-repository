@@ -18,7 +18,7 @@ export async function tempAddDemand(params) {
 
 // 编辑需求
 export async function updateDemand(params) {
-  return request('/demand/update', {
+  return request('/demand/updateDemand', {
     method: 'post',
     params,
   });
