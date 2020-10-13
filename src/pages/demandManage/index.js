@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { connect } from "dva"
-import { DatePicker, Col, Form, Row, Button, Select } from "antd";
+import {DatePicker, Col, Form, Row, Button, Select, Spin} from "antd";
 
 import DeptPie from "./chart/deptPie"
 import TeamBar from "./chart/teamBar"
@@ -149,11 +149,12 @@ const Index = props => {
                 <Select
                   allowClear
                   onBlur={handleSearchForm}
+                  onChange={deptId => handleQueryDemandInfo({ deptId })}
                   placeholder="请选择需求所属部门"
                 >
                   {
                     deptList?.list && deptList.list.map(v => (
-                      <Option value={v.id} key={v.id}>{v.name}</Option>
+                      <Option value={v.id.toString()} key={v.id}>{v.name}</Option>
                     ))
                   }
                 </Select>
@@ -195,22 +196,24 @@ const Index = props => {
   return (
     <div className="main">
       <div className={styles.tableListForm}>{renderForm()}</div>
-      <Row style={{ marginTop: 16 }}>
-        <Col span={12} className="padding-right-8">
-          <DeptPie demandDeptInfo={demandDeptInfo} />
-        </Col>
-        <Col span={12} className="padding-left-8">
-          <TeamBar demandTeamList={demandTeamList} />
-        </Col>
-      </Row>
-      <Row>
-        <Col span={12} className="padding-right-8">
-          <StatusBar demandStatusList={demandStatusList} />
-        </Col>
-        <Col span={12} className="padding-left-8">
-          <SystemLine demandSystemList={demandSystemList} />
-        </Col>
-      </Row>
+      <Spin spinning={loading}>
+        <Row style={{ marginTop: 16 }}>
+          <Col span={12} className="padding-right-8">
+            <DeptPie handleSetDeptId={value => form.setFieldsValue({deptId: value})} handleQueryDemandInfo={handleQueryDemandInfo} demandDeptInfo={demandDeptInfo} />
+          </Col>
+          <Col span={12} className="padding-left-8">
+            <TeamBar demandTeamList={demandTeamList} />
+          </Col>
+        </Row>
+        <Row>
+          <Col span={12} className="padding-right-8">
+            <StatusBar demandStatusList={demandStatusList} />
+          </Col>
+          <Col span={12} className="padding-left-8">
+            <SystemLine demandSystemList={demandSystemList} />
+          </Col>
+        </Row>
+      </Spin>
       <Row style={{height: 600 }}>
         <Col span={24}>
           <DetailTable

@@ -101,6 +101,7 @@ const BasicLayout = props => {
    */
 
   const handleMenuCollapse = payload => {
+    console.log(payload, "payload")
     if (dispatch) {
       dispatch({
         type: 'global/changeLayoutCollapsed',
@@ -131,7 +132,7 @@ const BasicLayout = props => {
       siderWidth={188}
       menuHeaderRender={(logoImg, title) => renderHeader(logoImg, title, props.collapsed)}
       onMenuHeaderClick={(e) => console.log(e)} // logo和title的位置
-      onCollapse={handleMenuCollapse}
+      onCollapse={prop => handleMenuCollapse(prop)}
       menuItemRender={(menuItemProps, defaultDom) => {
         if (menuItemProps.isUrl || menuItemProps.children || !menuItemProps.path) {
           return defaultDom;

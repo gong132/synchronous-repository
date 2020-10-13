@@ -173,8 +173,14 @@ const Index = memo(
         },
       },
       TableColumnHelper.genLangColumn('title', '标题', { width: 160 }, 8),
-      TableColumnHelper.genSelectColumn('type', '需求类型', DEMAND_TYPE, { sorter: true, width: 130 }),
-      TableColumnHelper.genSelectColumn('status', '状态', DEMAND_STATUS, { sorter: true, width: 130 }),
+      TableColumnHelper.genSelectColumn('type', '需求类型', DEMAND_TYPE, {
+        sorter: true,
+        width: 130,
+      }),
+      TableColumnHelper.genSelectColumn('status', '状态', DEMAND_STATUS, {
+        sorter: true,
+        width: 130,
+      }),
       TableColumnHelper.genSelectColumn(
         'priority',
         '优先级',
@@ -192,8 +198,12 @@ const Index = memo(
         sorter: true,
         width: 140,
       }),
-      TableColumnHelper.genDateTimeColumn('actualLineDate', '实际上线日期', 'YYYY-MM-DD',{ width: 140 }),
-      TableColumnHelper.genPlanColumn('estimatedDevelopmentEffort', '开发预计工作量', { width: 150 }),
+      TableColumnHelper.genDateTimeColumn('actualLineDate', '实际上线日期', 'YYYY-MM-DD', {
+        width: 140,
+      }),
+      TableColumnHelper.genPlanColumn('estimatedDevelopmentEffort', '开发预计工作量', {
+        width: 150,
+      }),
       TableColumnHelper.genPlanColumn('estimatedTestWorkload', '测试预计工作量', { width: 150 }),
       TableColumnHelper.genPlanColumn('introducer', '需求提出人', { sorter: true, width: 140 }),
       TableColumnHelper.genPlanColumn('creator', '创建人', { sorter: true, width: 120 }),
@@ -411,9 +421,15 @@ const Index = memo(
 
     const handleSearchForm = () => {
       const formValues = form.getFieldsValue();
-      const { requirementDescription, plannedLaunchDate, actualLineDate, createTime } = formValues;
+      const {
+        requirementDescription,
+        plannedLaunchDate,
+        actualLineDate,
+        createTime,
+        ...others
+      } = formValues;
       const params = {
-        ...formValues,
+        ...others,
         minExpectedCompletionDate: requirementDescription
           ? requirementDescription[0].format('YYYY-MM-DD')
           : null,
@@ -532,7 +548,9 @@ const Index = memo(
             </Col>
             <Col span={24}>
               <FormItem {...formLayoutItem2} colon={false} label="需求描述">
-                {getFieldDecorator('requirementDescription')(<Input placeholder="请输入需求描述" />)}
+                {getFieldDecorator('requirementDescription')(
+                  <Input placeholder="请输入需求描述" />,
+                )}
               </FormItem>
             </Col>
             <Col span={24}>
@@ -597,8 +615,12 @@ const Index = memo(
             </Col>
           </Row>
           <div className={styles.moreSearchButton}>
-            <Button ghost type="primary" onClick={() => setSearchMore(false)}>取消</Button>
-            <Button type="primary" className="margin-left-12" onClick={handleSearchForm}>确认</Button>
+            <Button ghost type="primary" onClick={() => setSearchMore(false)}>
+              取消
+            </Button>
+            <Button type="primary" className="margin-left-12" onClick={handleSearchForm}>
+              确认
+            </Button>
           </div>
         </div>
       );
@@ -607,7 +629,7 @@ const Index = memo(
           <Row>
             <Col span={6}>
               <FormItem {...formLayoutItem} colon={false} label="需求标题和描述">
-                {getFieldDecorator('number')(
+                {getFieldDecorator('searchKey')(
                   <Input
                     allowClear
                     onBlur={handleSearchForm}
@@ -678,7 +700,10 @@ const Index = memo(
                 <Button
                   ghost
                   className={classNames('margin-right-6', styles.orangeForm)}
-                  onClick={() => setSearchForm({})}
+                  onClick={() => {
+                    form.resetFields();
+                    setSearchForm({});
+                  }}
                 >
                   重置
                 </Button>

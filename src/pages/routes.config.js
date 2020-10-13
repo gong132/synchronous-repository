@@ -24,18 +24,18 @@ module.exports = {
           icon: 'icon-nav_wdxq',
           // component: './demand',
           routes: [
-            { path: '/demand', redirect: '/demand/myDemand' },
-            {
-              path: '/demand/myDemand',
-              name: 'myDemand',
-              component: './demand/index.js',
-            },
-            {
-              path: '/demand/myDemand/detail',
-              name: 'demandDetail',
-              hideInMenu: true,
-              component: './demand/components/demandDetail',
-            },
+            { path: '/demand', redirect: '/demand/generalDemand' },
+            // {
+            //   path: '/demand/myDemand',
+            //   name: 'myDemand',
+            //   component: './demand/index.js',
+            // },
+            // {
+            //   path: '/demand/myDemand/detail',
+            //   name: 'demandDetail',
+            //   hideInMenu: true,
+            //   component: './demand/components/demandDetail',
+            // },
             {
               path: '/demand/generalDemand',
               name: 'generalDemand',
@@ -144,6 +144,18 @@ module.exports = {
               buttons: [{ name: '编辑', key: 'edit' }],
             },
           ],
+        },
+        {
+          path: '/demandManage',
+          name: 'demandManage',
+          icon: 'home',
+          component: './demandManage/index',
+        },
+        {
+          path: '/demandManage/list',
+          name: 'demandManageList',
+          hideInMenu: true,
+          component: './demandManage/list/list',
         },
         {
           path: '/projectManage',

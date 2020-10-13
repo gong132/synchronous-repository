@@ -5,14 +5,47 @@ import echarts from 'echarts';
 
 const isEqual = (preProps, nextProps) =>
   preProps.demandDeptInfo?.data === nextProps.demandDeptInfo?.data;
+
+function throttle(func, wait, ...args) {
+  let timeout;
+  return function() {
+    const context = this;
+    if (!timeout) {
+      timeout = setTimeout(() => {
+        timeout = null;
+        func.apply(context, args)
+      }, wait)
+    }
+  }
+}
+
 const Index = memo(
   withRouter(props => {
-    const { demandDeptInfo } = props;
+    const { demandDeptInfo, handleQueryDemandInfo, handleSetDeptId } = props;
 
-    console.log(demandDeptInfo, 'demandDeptInfo');
+
+    const handleOk = id => {
+      handleSetDeptId(id)
+      handleQueryDemandInfo({
+        currentNumber: demandDeptInfo.currentNumber,
+        deptId: id,
+      })
+    }
+
     const initChart = () => {
       const element = document.getElementById('deptBar');
       const myChart = echarts.init(element);
+      const legend = {
+        orient: 'vertical',
+        right: 0,
+        bottom: 0,
+        data: demandDeptInfo.data.map(v => v.name),
+        selected: {},
+        formatter: name => {
+          const length = name?.length;
+          return length > 10 ? `${name.substring(0, 9)}...` : name;
+        },
+      }
       const option = {
         color: [
           '#62DAAB',
@@ -33,34 +66,16 @@ const Index = memo(
             // 坐标轴指示器，坐标轴触发有效
             type: 'line', // 默认为直线，可选为：'line' | 'shadow'
           },
-          formatter: rows => `名称: ${rows?.name} <br /> 占比: ${rows?.percent}%`,
+          formatter: '访问来源 <br/>{b} : {c} ({d}%)'
         },
         grid: {
-          top: 30,
-          left: -30,
-          bottom: 20,
           tooltip: {
             trigger: 'item',
             axisPointer: {
               // 坐标轴指示器，坐标轴触发有效
               type: 'line', // 默认为直线，可选为：'line' | 'shadow'
             },
-            formatter: rows => `名称: ${rows?.name} <br /> 占比: ${rows?.percent}%`,
-          },
-        },
-        legend: {
-          orient: 'vertical',
-          right: 0,
-          bottom: 15,
-          data: demandDeptInfo.data.map(v => v.name),
-          formatter: name => {
-            // const txt = []
-            // for (let i = 0; i < Math.ceil(name.length / 6); i += 1) {
-            //   txt.push(name.substring(6 * i, 6 * (i+1)))
-            // }
-            const length = name?.length;
-            return length > 10 ? `${name.substring(0, 9)}...` : name;
-            // return txt.join('\n')
+            formatter: '访问来源 <br/>{b} : {c} ({d}%)'
           },
         },
         series: [
@@ -71,6 +86,7 @@ const Index = memo(
             itemStyle: {
               barBorderRadius: [15, 15, 0, 0],
             },
+            center: ["40%", "50%"],
             label: {
               show: true,
               formatter: rows => {
@@ -83,31 +99,34 @@ const Index = memo(
             data: demandDeptInfo.data.map(v => ({
               value: v.demandCount,
               name: v.name,
+              id: v.id
             })),
           },
         ],
       };
-      myChart.setOption(option);
+      option.legend = legend
+      myChart.setOption(option, true, false, true);
+
       myChart.on('click', params => {
-        console.log(params, 'params');
+        let count = demandDeptInfo.currentNumber
+        console.log(params, "params")
+        if (demandDeptInfo.showOtherFlag && params?.name === "其他") {
+          count += 10;
+          handleQueryDemandInfo({
+            currentNumber: count,
+          })
+        }
+        throttle(handleOk(params.data.id), 2000);
       });
-      myChart.on('legendselectchanged', function(params) {
-        // 获取点击图例的选中状态
-        const isSelected = params.selected[params.name];
-        // 在控制台中打印
-        console.log(isSelected ? '选中了' : '取消选中了', params.name);
-        // 打印所有图例的状态
-        console.log(params.selected);
-      });
-    };
+    }
 
     useEffect(() => {
       initChart();
-    });
+    }, [demandDeptInfo?.data]);
 
     return (
       <GlobalSandBox title="需求所属部门" sandboxStyle={{ height: 400 }}>
-        <div id="deptBar" style={{ width: '100%', height: 350 }} />
+        <div id="deptBar" style={{ width: '100%', height: 320 }} />
       </GlobalSandBox>
     );
   }),

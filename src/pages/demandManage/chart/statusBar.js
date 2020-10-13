@@ -6,7 +6,6 @@ const isEqual = (preProps, nextProps) => preProps.demandStatusList === nextProps
 const Index = memo(props => {
   const { demandStatusList } = props;
 
-  console.log(demandStatusList, 'demandStatusList');
   const initChart = () => {
     const element = document.getElementById('statusBar');
     const myChart = echarts.init(element);
