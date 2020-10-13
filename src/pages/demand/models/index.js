@@ -39,7 +39,7 @@ import {
   queryMilePlanStage,
   // queryMilePlanInfo,
 } from '@/services/milestonePlan/mileStonePlan'
-import {queryTeamBy} from '@/services/systemManage/teamManage'
+import { queryTeamBy } from '@/services/systemManage/teamManage'
 import { queryLogList, queryFile, queryUserList } from '@/services/global';
 import { PagerHelper } from '@/utils/helper';
 import { message } from 'antd';
@@ -73,9 +73,10 @@ const Demand = {
     userLoginIdMap: {},
     ITAssignVisible: false,
     assignorVisible: false,
+    comLangList:[]
   },
   effects: {
-    *queryFile({ payload }, { call}) {
+    *queryFile({ payload }, { call }) {
       const { code, msg } = yield call(queryFile, payload);
       if (!code || code !== 200) {
         message.error(msg);
@@ -102,7 +103,7 @@ const Demand = {
     },
 
     // 关注需求
-    *focusDemand({payload}, {call}) {
+    *focusDemand({ payload }, { call }) {
       const { code, msg } = yield call(focusDemand, payload);
       if (!code || code !== 200) {
         message.error(msg);
@@ -112,7 +113,7 @@ const Demand = {
     },
 
     // 取消关注
-    *unFocusDemand({payload}, {call}) {
+    *unFocusDemand({ payload }, { call }) {
       const { code, msg } = yield call(unFocusDemand, payload);
       if (!code || code !== 200) {
         message.error(msg);
@@ -130,11 +131,11 @@ const Demand = {
       }
       const obj = {}
       const objId = {}
-      const objLoginId={}
+      const objLoginId = {}
       data.map(v => {
         obj[v.loginid] = v.lastname
         objId[v.id] = v.lastname
-        objLoginId[v.loginid]=v.id
+        objLoginId[v.loginid] = v.id
         return true
       })
       yield put({
@@ -149,7 +150,7 @@ const Demand = {
     },
 
     // 受理需求 
-    *receiverDemand({payload}, {call}) {
+    *receiverDemand({ payload }, { call }) {
       const { code, msg } = yield call(receiverDemand, payload);
       if (!code || code !== 200) {
         message.error(msg);
@@ -159,7 +160,7 @@ const Demand = {
     },
 
     // 拖拽需求看板变更状态
-    *dragDemand({payload}, {call}) {
+    *dragDemand({ payload }, { call }) {
       const { code, msg } = yield call(dragDemand, payload);
       if (!code || code !== 200) {
         message.error(msg);
@@ -465,7 +466,7 @@ const Demand = {
         return false;
       }
       return true;
-    // 指派关注人
+      // 指派关注人
     },
     *assignUser({ payload }, { call }) {
       const { code, msg } = yield call(assignUser, payload);
@@ -515,9 +516,9 @@ const Demand = {
     },
 
     // 获取里程碑所有阶段
-    *queryMilePlanStage({payload}, {call, put}) {
-      const {data, msg, code} = yield call(queryMilePlanStage, payload)
-      if(code !== 200) {
+    *queryMilePlanStage({ payload }, { call, put }) {
+      const { data, msg, code } = yield call(queryMilePlanStage, payload)
+      if (code !== 200) {
         message.error(msg)
         return false
       }
@@ -536,9 +537,9 @@ const Demand = {
       return true
     },
     // 查询 评估权限
-    *ITAssignAuth({payload}, {call, put}) {
-      const {data, msg, code} = yield call(estimate, payload)
-      if(code !== 200) {
+    *ITAssignAuth({ payload }, { call, put }) {
+      const { data, msg, code } = yield call(estimate, payload)
+      if (code !== 200) {
         message.error(msg)
         return false
       }
@@ -551,9 +552,9 @@ const Demand = {
       return data
     },
     // 查询 评估权限
-    *assignorAuth({payload}, {call, put}) {
-      const {data, msg, code} = yield call(estimate, payload)
-      if(code !== 200) {
+    *assignorAuth({ payload }, { call, put }) {
+      const { data, msg, code } = yield call(estimate, payload)
+      if (code !== 200) {
         message.error(msg)
         return false
       }
@@ -566,9 +567,9 @@ const Demand = {
       return data
     },
     // 查询所有预算列表
-    *queryBudgetList({payload}, {call, put}) {
-      const {data, msg, code} = yield call(queryBudgetList, payload)
-      if(code !== 200) {
+    *queryBudgetList({ payload }, { call, put }) {
+      const { data, msg, code } = yield call(queryBudgetList, payload)
+      if (code !== 200) {
         message.error(msg)
         return false
       }
@@ -582,10 +583,38 @@ const Demand = {
     },
 
     // 添加常用语
-
+    *addCommonLang({ payload }, { call }) {
+      const res = yield call(addCommonLang, payload)
+      if(!res || !res.code === 200) {
+        message.error(res.msg)
+        return false
+      }
+      message.success('添加成功')
+      return true
+    },
     // 修改常用语
-
+    *updateCommonLang({payload}, {call}) {
+      const res = yield call(updateCommonLang, payload)
+      if(!res || !res.code === 200) {
+        message.error(res.msg)
+        return false
+      }
+      return true
+    },
     // 查询常用语
+    *queryCommonLang({}, {call, put}) {
+      const res = yield call(queryCommonLang)
+      if(!res || !res.code === 200) {
+        message.error(res.msg)
+        return false
+      }
+      yield put({
+        type: 'saveData',
+        payload: {
+          comLangList: res.data || []
+        }
+      })
+    }
   },
   reducers: {
     saveData(state, { payload }) {

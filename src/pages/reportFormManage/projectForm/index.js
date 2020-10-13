@@ -3,6 +3,7 @@ import { connect } from 'dva'
 import moment from 'moment'
 import Pie from '@/components/EchartsComponents/Pie'
 import PieRose from '@/components/EchartsComponents/RosePie'
+import StackBar from '@/components/EchartsComponents/StackBar'
 import { DatePicker, Card, Row, Col } from 'antd'
 import styles from './index.less'
 
@@ -23,6 +24,7 @@ class Project extends PureComponent {
     this.handleQueryCluster()
     this.handleQueryTeam()
     this.handleQueryStage()
+    this.handleQueryProject()
 
     const dateStart = new Date()
     const dateEnd = moment(dateStart)
@@ -51,8 +53,6 @@ class Project extends PureComponent {
     })
   }
 
-  // 
-
   // 查询集群板块
   handleQueryCluster = (params) => {
     this.props.dispatch({
@@ -63,10 +63,17 @@ class Project extends PureComponent {
     })
   }
 
-  // 查需求和状态
+  // 查项目阶段
   handleQueryStage = () => {
     this.props.dispatch({
       type: 'projectForm/queryAllStageStatus',
+    })
+  }
+
+  // 查项目
+  handleQueryProject = () => {
+    this.props.dispatch({
+      type: 'projectForm/fetchAllProject',
     })
   }
 
@@ -77,22 +84,32 @@ class Project extends PureComponent {
     })
   }
 
-  handleFormMenuClick = (formType) => {
-    this.props.dispatch({
-      type: 'projectForm/saveData',
-      payload: {
-        formType
-      }
-    })
+  // 点击柱形事件
+  handleClickBar = (params) => {
+    console.log(params)
+  }
+
+  // 滑动滑块事件
+  handleSlideBar = (params) => {
+    console.log(params)
+  }
+
+  // 点击饼图扇面事件
+  handleClickPie = (params) => {
+    console.log(params)
+  }
+
+  // 点击legend事件
+  handleClickLegend = (params) => {
+    console.log(params)
   }
 
   render() {
     const { rangeDate } = this.state
     const { projectForm } = this.props
-    const { clusterList, stageStatus } = projectForm
-    console.log(clusterList, stageStatus)
+    const { clusterList, stageStatus, projectList } = projectForm
     stageStatus.map(v => {
-      v.name=v.pjStageName
+      v.name = v.pjStageName
       return true
     })
     const pieProps = {
@@ -109,6 +126,20 @@ class Project extends PureComponent {
       handleClickPie: this.handleClickPie,
       handleClickLegend: this.handleClickLegend,
     }
+
+    projectList.map(v => {
+      v.name = v.pjName
+      return true
+    })
+    const StackBarProps = {
+      data: projectList,
+      title: '团队分布',
+      barColor: ['#826AF9', '#D0AEFF'],
+      handleClickBar: this.handleClickBar,
+      handleSlideBar: this.handleSlideBar,
+      cusConfigBool: true,
+    }
+
     return (
       <Fragment>
         <div className={styles.rightTime}>
@@ -130,7 +161,17 @@ class Project extends PureComponent {
             <Card
               style={{ marginTop: '16px' }}
             >
-              {/* <Bar {...barProps} /> */}
+              <div className={styles.rightContent}>
+                <span className={styles.rightContent_title}>项目总数: </span>
+                <span className={styles.rightContent_value}>18</span>
+                <span className={styles.rightContent_title}>立项总金额(元)：</span>
+                <span className={styles.rightContent_value}>18</span>
+                <span className={styles.rightContent_title}>
+                  合同成交总金额(元)：
+                </span>
+                <span className={styles.rightContent_value}>18</span>
+              </div>
+              <StackBar {...StackBarProps} />
             </Card>
           </Col>
         </Row>

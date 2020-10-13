@@ -168,11 +168,18 @@ class TeamManage extends Component {
             })(
               <Select
                 allowClear
+                showSearch
                 placeholder='请输入团队经理'
                 onChange={e => this.saveParams(e, 'headerId')}
                 style={{
                   width: '100%'
                 }}
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  JSON.stringify(option.props.children)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
               >
                 {teamHeader.map(v => (
                   <Option key={v.loginid} value={v.loginid}>{v.lastname}</Option>
@@ -201,9 +208,9 @@ class TeamManage extends Component {
   genColumns = () => {
     const { global: { authActions } } = this.props
     const columns = [
-      TableColumnHelper.genPlanColumn('id', '团队ID', {align: 'left', width: '25vw'}),
-      TableColumnHelper.genPlanColumn('name', '团队名称', {align: 'left', width: '25vw'}),
-      TableColumnHelper.genPlanColumn('teamHeaderName', '团队经理', {align: 'left', width: '25vw'}),
+      TableColumnHelper.genPlanColumn('id', '团队ID', { align: 'left', width: '25vw' }),
+      TableColumnHelper.genPlanColumn('name', '团队名称', { align: 'left', width: '25vw' }),
+      TableColumnHelper.genPlanColumn('teamHeaderName', '团队经理', { align: 'left', width: '25vw' }),
       {
         title: '操作',
         render: (text, record) => {

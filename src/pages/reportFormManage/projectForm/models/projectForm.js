@@ -1,5 +1,5 @@
 
-import { queryDept, fetchSystemList, fetchAllCluster, queryGroup } from '@/services/global'
+import { queryDept, fetchAllProject, fetchAllCluster, queryGroup } from '@/services/global'
 import { queryDemandBoard, } from '@/services/demand/demand'
 import { queryAllStageStatus } from '@/services/project/project'
 import { message } from 'antd'
@@ -15,6 +15,8 @@ const Demand = {
     demandData: [],
     teamData: [],
     stageStatus: [],
+    projectList: [],
+    projectListName:[]
   },
   effects: {
     // 查询部门
@@ -58,6 +60,31 @@ const Demand = {
         },
       });
       return true;
+    },
+
+     // 查项目 fetchAllProject
+     *fetchAllProject({ payload }, { call, put }) {
+      const { code, msg, data } = yield call(fetchAllProject, payload)
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      if(data.length === 0) {
+        return false
+      }
+      const arr = []
+      data.map(v => {
+        arr.push(v.pjName)
+        return true
+      })
+      yield put({
+        type: 'saveData',
+        payload: {
+          projectList:data,
+          projectListName:arr
+        }
+      })
+      return true
     },
 
     // 查询集群板块

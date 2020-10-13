@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import CustomBtn from '@/components/commonUseModule/customBtn';
 import { formLayoutItemAddDouble, formLayoutItemAddEdit } from '@/utils/constant';
 import { connect } from 'dva'
@@ -13,7 +13,7 @@ import {
   Col
 } from 'antd'
 import Editor from '@/components/TinyEditor';
-import { useEffect } from 'react';
+import { DEMAND_PRIORITY_ARR } from '../utils/constant'
 
 const FormItem = Form.Item
 const { Option } = Select
@@ -154,6 +154,7 @@ const EditModal = (props) => {
                       </Option>
                     ))} */}
                   <Option key='1' value='1'>研发管理类</Option>
+                  <Option key='2' value='2'>需求起草类</Option>
                 </Select>,
               )}
             </FormItem>
@@ -180,6 +181,7 @@ const EditModal = (props) => {
                       </Option>
                     ))} */}
                   <Option key='1' value='1'>外包采购</Option>
+                  <Option key='2' value='2'>部门研发</Option>
                 </Select>,
               )}
             </FormItem>
@@ -199,13 +201,12 @@ const EditModal = (props) => {
                   }
                   placeholder="请输入系统级别"
                 >
-                  {/* {!_.isEmpty(stageStatus) &&
-                    stageStatus.map(d => (
-                      <Option key={d.id} value={d.id}>
-                        {d.pjStageName}
-                      </Option>
-                    ))} */}
-                  <Option key='1' value='1'>未定义</Option>
+                  {DEMAND_PRIORITY_ARR.map(d => (
+                    <Option key={d.key} value={d.key}>
+                      {d.val}
+                    </Option>
+                  ))}
+                  {/* <Option key='1' value='1'>未定义</Option> */}
                 </Select>,
               )}
             </FormItem>

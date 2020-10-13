@@ -32,7 +32,7 @@ class Bar extends Component {
 
   handleGenBar = (data) => {
     let res = {}
-    const dom = document.getElementById('bar')
+    const dom = document.getElementById('stackBar')
     const myChart = echarts.init(dom)
     if (data.length > 0) {
       res = this.calc(10, data.length)
@@ -51,7 +51,7 @@ class Bar extends Component {
   }
 
   calc = (count, len) => {
-    const dom = document.getElementById('bar')
+    const dom = document.getElementById('stackBar')
     const iWidth = dom.offsetWidth
     // 两边占用的宽度
     const gridWidth = iWidth * 0.1
@@ -74,29 +74,7 @@ class Bar extends Component {
 
     if (len !== nextState.data.length) {
       bool = true
-      // 计算x轴下滑动条初始设置的大小
-      // count 是展示的条数
-      // total是总条数
-      // eslint-disable-next-line no-new
-      // new Promise((resolve) => {
-      //   const res = this.calc(10, len)
-      //   resolve(res)
-      // }).then((res) => {
-      //   console.log(res)
-      //   const { w, sliderWidth } = res
-      //   this.setState({
-      //     barWidth: w,
-      //     sliderWidth,
-      //     data: nextProps.data
-      //   }, () => {
-      //     console.log('barWidth:', w)
-      //     if (w > 0) {
-      //       this.handleGenBar(nextProps.data, w, sliderWidth)
-      //     }
-      //   })
-      // })
       this.handleGenBar(nextProps.data)
-
     }
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < len; i++) {
@@ -111,14 +89,17 @@ class Bar extends Component {
   getOption = (data = [], barWidthProps, sliderWidthProps) => {
     const { barWidth = barWidthProps, sliderWidth = sliderWidthProps } = this.state
     const { title, barColor, cusConfigBool } = this.props
-    const xAxisName = []
     const arr = []
-    data.map((v, i) => {
+    const actualMoney = []
+    const xAxisName = []
+    // eslint-disable-next-line compat/compat
+    data.map((v,i) => {
       arr.push(Number(Math.ceil((Math.random() + i)) * 20))
-      xAxisName.push(v.name)
+      actualMoney.push(v.estAmount)
+      xAxisName.push(v.pjName)
       return true
     })
-
+    console.log(actualMoney,arr)
     // x,y轴共同配置
     const commonConfig = {
       splitLine: {
@@ -151,8 +132,6 @@ class Bar extends Component {
       }],
     }
 
-    // 
-
     return {
       title: {
         text: title,
@@ -165,6 +144,18 @@ class Bar extends Component {
         color: '#69707F',
       },
       color: barColor,
+      legend: {
+        icon: 'circle',
+        right: 10,
+        bottom: '15%',
+        orient: 'vertical',
+        formatter: (name) => {
+          return echarts.format.truncateText(name, 50, '14px Microsoft Yahei', '…');
+        },
+        tooltip: {
+          show: true
+        }
+      },
 
       grid: {
         left: '5%',
@@ -180,10 +171,25 @@ class Bar extends Component {
         }
       },
 
+      // toolbox: {
+      //   feature: {
+      //     dataZoom: {
+      //       yAxisIndex: 'none'
+      //     },
+      //     restore: {},
+      //     saveAsImage: {}
+      //   }
+      // },
+
       tooltip: {
         renderMode: 'html',
         formatter: params => {
-          const str = `${params.name}  <br />  ${params.marker} 需求（个）  ${params.data}`
+          console.log(params)
+          const {dataIndex} = params
+          const markerOne = `<span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:#826AF9;"></span>`
+          const markerTwo = `<span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:#D0AEFF;"></span>`
+          const name = data[dataIndex].pjName
+          const str = `${name}  <br />  ${markerOne} 立项金额（元）：${actualMoney[dataIndex]} <br />  ${markerTwo} 实际成交金额（元）：${arr[dataIndex]}`
           return str
         }
       },
@@ -197,11 +203,10 @@ class Bar extends Component {
           margin: 12,
           interval: 0,
           formatter: value => {
-            console.log(value)
-            if (data.length < 10) {
-              return echarts.format.truncateText(value, (10 - data.length) * barWidth / data.length + barWidth + 48, '14px Microsoft Yahei', '…');
+            if(data.length < 10) {
+              return echarts.format.truncateText(value, (10-data.length)*barWidth/data.length + barWidth+48, '14px Microsoft Yahei', '…');
             }
-            return echarts.format.truncateText(value, barWidth + 48, '14px Microsoft Yahei', '…');
+            return echarts.format.truncateText(value, barWidth+48, '14px Microsoft Yahei', '…');
             // return value.substr(0, 5) + '\n' + value.substr(5, value.length - 1)
           }
         },
@@ -213,13 +218,20 @@ class Bar extends Component {
       },
 
       series: [{
-        name: '部门',
+        name: '立项金额',
         type: 'bar',
-        data: arr,
-        label: {
-          show: true,
-          position: 'top',
+        stack: '总量',
+        data: actualMoney,
+        itemStyle: {
+          barBorderRadius: [0, 0, 100, 100],
         },
+        barWidth,
+      },
+      {
+        name: '实际成交金额',
+        type: 'bar',
+        stack: '总量',
+        data: arr,
         itemStyle: {
           barBorderRadius: [100, 100, 0, 0],
         },
@@ -232,9 +244,7 @@ class Bar extends Component {
 
   render() {
     return (
-      <div id='bar' style={{ width: '100%', height: 440 }}>
-        {/* <ReactEcharts option={this.getOption(sales)} /> */}
-      </div>
+      <div id='stackBar' style={{ width: '100%', height: 440 }} />
     )
   }
 

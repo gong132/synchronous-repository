@@ -41,9 +41,10 @@ class Receiver extends PureComponent {
 
   render() {
     const { demandForm } = this.props
-    const { systemNameArr, teamData } = demandForm
+    const { systemList, teamData } = demandForm
+    console.log(systemList)
     const barProps = {
-      data: systemNameArr,
+      data: systemList,
       title: '所属系统',
       barColor: ['#6395F9'],
       cusConfigBool: false,

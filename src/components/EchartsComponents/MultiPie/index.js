@@ -205,6 +205,11 @@ class Sunburst extends React.Component {
               <Label
                 type='scatter | treemap | map'
                 content='team'
+                labelLine={{
+                  lineWidth: 1, // 线的粗细
+                  stroke: '#C2C5CC', // 线的颜色
+                  lineDash: [2, 1], // 虚线样式
+                }}
                 htmlTemplate={(text, item, index) => {
                   // text 为每条记录 x 属性的值
                   // item 为映射后的每条数据记录，是一个对象，可以从里面获取你想要的数据信息
@@ -214,7 +219,6 @@ class Sunburst extends React.Component {
                   let { percent } = point
                   const u = '未完成'
                   const f = '完成'
-                  console.log(text, item, index)
                   percent = `${(percent * 100).toFixed(0)}%`;
                   return type.substr(-3) === '未完成'
                     ? `<div style='width: 98px'><span style="font-size: 14px">${team}</span><br/><span style="font-size: 12px">${u}: ${value} (${percent})</span></div>`

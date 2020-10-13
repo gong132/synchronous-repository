@@ -15,13 +15,13 @@ module.exports = {
         {
           path: '/home',
           name: 'home',
-          icon: 'home',
+          icon: 'icon-nav_sy_hover',
           component: './home/home',
         },
         {
           path: '/demand',
           name: 'demand',
-          icon: 'appstore',
+          icon: 'icon-nav_wdxq',
           // component: './demand',
           routes: [
             { path: '/demand', redirect: '/demand/myDemand' },
@@ -69,7 +69,7 @@ module.exports = {
         {
           path: '/demandManage',
           name: 'demandManage',
-          icon: 'home',
+          icon: 'icon-nav_xqgl',
           component: './demandManage/index',
         },
         {
@@ -104,7 +104,7 @@ module.exports = {
         {
           path: '/contract-budget',
           name: 'contract-budget',
-          icon: 'smile',
+          icon: 'icon-nav_htys',
           routes: [
             { path: '/contract-budget', redirect: '/contract-budget/contract' },
             {
@@ -148,7 +148,7 @@ module.exports = {
         {
           path: '/projectManage',
           name: 'projectManage',
-          icon: 'project',
+          icon: 'icon-nav_xmgl',
           component: './projectManage',
         },
         {
@@ -168,7 +168,7 @@ module.exports = {
         {
           path: '/reportFormManage',
           name: 'reportFormManage',
-          icon: 'pie-chart',
+          icon: 'icon-nav_bbgl',
           routes: [
             { path: '/reportFormManage', redirect: '/reportFormManage/demandForm' },
             {
@@ -191,7 +191,7 @@ module.exports = {
         {
           path: '/systemManage',
           name: 'systemManage',
-          icon: 'setting',
+          icon: 'icon-nav_xtgl',
           routes: [
             { path: '/systemManage', redirect: '/systemManage/userManage' },
             {

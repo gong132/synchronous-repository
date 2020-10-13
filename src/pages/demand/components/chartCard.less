@@ -76,3 +76,38 @@
     }
   }
 }
+
+.comLangCard {
+  min-width: 252px;
+  :global {
+    .ant-card-head {
+      padding: 0;
+      border: 0;
+    }
+  }
+  &__list {
+    height: 300px;
+    overflow: auto;
+    padding: 2px;
+  }
+  &__list:hover{
+    cursor: pointer;
+  }
+}
+
+.comLangListItem {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  &__operation {
+    position: absolute;
+    right: 0;
+  }
+  &__content {
+    width: 86%;
+  }
+}
+
+.operateBtn {
+  text-align: end;
+}

@@ -46,7 +46,8 @@ const Demand = {
       }
       const arr = []
       data.map(v => {
-        arr.push(v.name)
+        arr.push(v.sysName)
+        v.name=v.sysName
         return true
       })
 

@@ -1,8 +1,9 @@
-import { Upload, Modal, message } from 'antd'
+import { Upload, Modal, message, Icon } from 'antd'
 import React, { Component } from 'react'
 import Config from '@/utils/config';
 import { isObjEqual, getUserInfo } from '@/utils/utils'
 import axios from 'axios'
+import delIcon from '@/assets/icon/cz_del.svg'
 import styles from './index.less'
 import {
   imgTypes,
@@ -53,11 +54,15 @@ class FileUploadNo extends Component {
     window.location.href = url;
   }
 
-  handlePreview = (url, bool) => {
-    this.setState({
-      preImg: bool,
-      curUrl: url
-    })
+  handlePreview = (url) => {
+    // this.setState({
+    //   preImg: bool,
+    //   curUrl: url
+    // })
+    const a = document.createElement('a')
+    a.href = url
+    a.target='__blank'
+    a.click()
   }
 
   renderFile = (v, index) => {
@@ -84,7 +89,7 @@ class FileUploadNo extends Component {
             <div
               onClick={() => this.handleDeleteFile(v, index)}
               className={styles.fileStyle_btn}>
-              删除
+              <Icon component={delIcon} />
             </div>
           </div>
           : null

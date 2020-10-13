@@ -105,7 +105,7 @@ class RosePie extends Component {
       tooltip: {
         renderMode: 'html',
         formatter: params => {
-          const str = `${params.name}  <br />  ${Math.ceil(params.percent)}%`
+          const str = `${params.name} <br /> 需求：${params.value} ${Math.ceil(params.percent)}%`
           return str
         },
         backgroundColor: 'white',
@@ -126,7 +126,7 @@ class RosePie extends Component {
           color: '#69707F',
           show: true,
           formatter: (params) => {
-            const str = `${params.name}: ${params.value} ${Math.ceil(params.percent)}%`
+            const str = `${params.name} ${params.value} ${Math.ceil(params.percent)}%`
             return str
           },
           // position: 'inside'
