@@ -1,76 +1,96 @@
-import React, {useState, Fragment, useEffect} from "react";
-import { connect } from "dva"
-import {Button, DatePicker, Col, Divider, Form, Input, message, Popconfirm, Row, Select, Tabs, Tooltip} from "antd";
-import styles from "./home.less"
-import StandardTable from "@/components/StandardTable";
-import {isEmpty} from "@/utils/lang";
-import {PagerHelper, TableColumnHelper} from "@/utils/helper";
-import OptButton from "@/components/commonUseModule/optButton";
-import readButton from "@/assets/icon/read.svg";
-import {formLayoutItem} from "@/utils/constant";
+import React, { useState, Fragment, useEffect } from 'react';
+import { connect } from 'dva';
+import {
+  Button,
+  DatePicker,
+  Col,
+  Divider,
+  Form,
+  Input,
+  message,
+  Popconfirm,
+  Row,
+  Select,
+  Tabs,
+  Tooltip,
+} from 'antd';
+import styles from './home.less';
+import StandardTable from '@/components/StandardTable';
+import { isEmpty } from '@/utils/lang';
+import { PagerHelper, TableColumnHelper } from '@/utils/helper';
+import OptButton from '@/components/commonUseModule/optButton';
+import readButton from '@/assets/icon/read.svg';
+import { formLayoutItem } from '@/utils/constant';
 
 const FormItem = Form.Item;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const Index = props => {
-  const { dispatch, form, loading, home: { messageList }, global: { userList: { list = [] } } } = props
+  const {
+    dispatch,
+    form,
+    loading,
+    home: { messageList },
+    global: {
+      userList: { list = [] },
+    },
+  } = props;
 
-  const [msgStatus, setMsgStatus] = useState("0")
+  const [msgStatus, setMsgStatus] = useState('0');
 
-  const [selectedRows, setSelectedRows] = useState([])
+  const [selectedRows, setSelectedRows] = useState([]);
 
   const handleQueryMessageList = params => {
     dispatch({
-      type: "home/queryMessageList",
+      type: 'home/queryMessageList',
       payload: {
         readStatus: msgStatus,
         ...PagerHelper.DefaultPage,
         ...params,
-      }
-    })
-  }
+      },
+    });
+  };
   const handleBatchModifyRead = msgId => {
-    let msgIds = []
+    let msgIds = [];
     if (msgId && selectedRows.length === 0) msgIds = [msgId];
     if (!msgId && selectedRows.length === 0) {
-      message.warning("请选择至少一条消息")
-      return
+      message.warning('请选择至少一条消息');
+      return;
     }
     if (!msgId && selectedRows.length > 0) {
-      console.log(selectedRows, "selectedRows")
-      msgIds = selectedRows.map(v => v.id)
+      console.log(selectedRows, 'selectedRows');
+      msgIds = selectedRows.map(v => v.id);
     }
     dispatch({
-      type: "home/batchModifyRead",
+      type: 'home/batchModifyRead',
       payload: {
         flag: 1,
         notices: msgIds,
-      }
+      },
     }).then(res => {
       if (!res) return;
-      setSelectedRows([])
-      message.success("标记成功")
-      handleQueryMessageList()
-    })
-  }
+      setSelectedRows([]);
+      message.success('标记成功');
+      handleQueryMessageList();
+    });
+  };
   const handleQueryUserList = () => {
     dispatch({
-      type: "global/queryUserList",
-      payload: {
-      }
-    })
-  }
+      type: 'global/queryUserList',
+      payload: {},
+    });
+  };
 
   useEffect(() => {
-    handleQueryMessageList()
-    handleQueryUserList()
-  }, [])
+    handleQueryMessageList();
+    handleQueryUserList();
+  }, []);
 
   const handleTabsChange = key => {
-    setMsgStatus(key)
-    setSelectedRows([])
-    handleQueryMessageList({readStatus: key})
-  }
+    setMsgStatus(key);
+    setSelectedRows([]);
+    handleQueryMessageList({ readStatus: key });
+  };
 
   // 分页操作
   const handleStandardTableChange = (pagination, filters, sorter) => {
@@ -88,34 +108,33 @@ const Index = props => {
       ...formValues, // 添加已查询条件去获取分页
       ...sortParams, // 排序参数
     };
-    handleQueryMessageList(params)
-  }
+    handleQueryMessageList(params);
+  };
 
   const handleSearchForm = () => {
     form.validateFields((err, val) => {
-      if (err) return
-      const params  = {
+      if (err) return;
+      const params = {
         ...val,
-        startTime: !isEmpty(val.RangeDate) ? val.RangeDate[0].format("YYYY-MM-DD") : null,
-        endTime: !isEmpty(val.RangeDate) ? val.RangeDate[1].format("YYYY-MM-DD") : null,
-
-      }
-      delete params.RangeDate
-      handleQueryMessageList(params)
-    })
-  }
+        startTime: !isEmpty(val.RangeDate) ? val.RangeDate[0].format('YYYY-MM-DD') : null,
+        endTime: !isEmpty(val.RangeDate) ? val.RangeDate[1].format('YYYY-MM-DD') : null,
+      };
+      delete params.RangeDate;
+      handleQueryMessageList(params);
+    });
+  };
 
   const handleResetForm = e => {
-    e.stopPropagation()
-    form.resetFields()
-    handleQueryMessageList()
-  }
+    e.stopPropagation();
+    form.resetFields();
+    handleQueryMessageList();
+  };
 
   const columns = [
     {
-      title: "编号",
-      align: "center",
-      key: "linkId",
+      title: '编号',
+      align: 'center',
+      key: 'linkId',
       render: rows => {
         if (isEmpty(rows.linkId, true)) return '';
         return (
@@ -137,24 +156,27 @@ const Index = props => {
             </span>
           </Tooltip>
         );
-      }
+      },
     },
-    TableColumnHelper.genPlanColumn("title", "标题"),
-    TableColumnHelper.genPlanColumn("userId", "发送者"),
+    TableColumnHelper.genPlanColumn('title', '标题'),
+    TableColumnHelper.genPlanColumn('userId', '发送者'),
     {
-      title: "消息内容",
-      align: "center",
-      key: "content",
+      title: '消息内容',
+      align: 'center',
+      key: 'content',
       render: rows => {
         if (isEmpty(rows.content, true)) return '';
         // eslint-disable-next-line
-        return <div dangerouslySetInnerHTML={{ __html: rows.content }} />
-      }
+        return <div dangerouslySetInnerHTML={{ __html: rows.content }} />;
+      },
     },
-    TableColumnHelper.genDateTimeColumn("createTime", "创建时间", "YYYY-MM-DD HH:mm:ss", { sorter: true }),
+    TableColumnHelper.genDateTimeColumn('createTime', '创建时间', 'YYYY-MM-DD HH:mm:ss', {
+      sorter: true,
+    }),
     {
-      title: "操作",
-      align: "center",
+      title: '操作',
+      width: 100,
+      align: 'center',
       render: rows => (
         <Fragment>
           <OptButton
@@ -170,31 +192,25 @@ const Index = props => {
               });
             }}
           />
-          {
-            msgStatus === "0" && (
-              <>
-                <Divider type="vertical" />
-                <Popconfirm
-                  title={`确定要标记（${rows.title}）为已读吗?`}
-                  onConfirm={() => handleBatchModifyRead(rows.id)}
-                  okText="确定"
-                  cancelText="取消"
-                >
-                  <OptButton
-                    img={readButton}
-                    text="标为已读"
-                    showText={false}
-                  />
-                </Popconfirm>
-              </>
-            )
-          }
+          {msgStatus === '0' && (
+            <>
+              <Divider type="vertical" />
+              <Popconfirm
+                title={`确定要标记（${rows.title}）为已读吗?`}
+                onConfirm={() => handleBatchModifyRead(rows.id)}
+                okText="确定"
+                cancelText="取消"
+              >
+                <OptButton img={readButton} text="标为已读" showText={false} />
+              </Popconfirm>
+            </>
+          )}
         </Fragment>
-      )
-    }
-  ]
+      ),
+    },
+  ];
   const renderForm = () => {
-    const {getFieldDecorator} = form;
+    const { getFieldDecorator } = form;
     return (
       <Row>
         <Col span={5}>
@@ -207,49 +223,45 @@ const Index = props => {
         </Col>
         <Col span={5}>
           <FormItem {...formLayoutItem} label="发送者">
-            {getFieldDecorator(
-              'userId',
-            )(
-              <Select onBlur={handleSearchForm} style={{ width: "100%" }} placeholder="请选择发送者" allowClear>
-                {list && list.map(v => (
-                  <Option value={v.loginid} key={v.loginid}>
-                    {v.lastname}
-                  </Option>
-                ))}
+            {getFieldDecorator('userId')(
+              <Select
+                onBlur={handleSearchForm}
+                style={{ width: '100%' }}
+                placeholder="请选择发送者"
+                allowClear
+              >
+                {list &&
+                  list.map(v => (
+                    <Option value={v.loginid} key={v.loginid}>
+                      {v.lastname}
+                    </Option>
+                  ))}
               </Select>,
             )}
           </FormItem>
         </Col>
         <Col span={5}>
           <FormItem {...formLayoutItem} label="消息内容">
-            {getFieldDecorator(
-              'content',
-            )(
-              <Input onBlur={handleSearchForm} placeholder="请输入消息内容" />
+            {getFieldDecorator('content')(
+              <Input onBlur={handleSearchForm} placeholder="请输入消息内容" />,
             )}
           </FormItem>
         </Col>
         <Col span={5}>
           <FormItem {...formLayoutItem} label="创建时间">
-            {getFieldDecorator(
-              'RangeDate',
-            )(
-              <RangePicker onBlur={handleSearchForm} format="YYYY-MM-DD" />
+            {getFieldDecorator('RangeDate')(
+              <RangePicker onBlur={handleSearchForm} format="YYYY-MM-DD" />,
             )}
           </FormItem>
         </Col>
         <Col span={4}>
-          <Button
-            ghost
-            type="primary"
-            onClick={handleResetForm}
-          >
+          <Button ghost type="primary" onClick={handleResetForm}>
             重置
           </Button>
         </Col>
       </Row>
-    )
-  }
+    );
+  };
 
   return (
     <div className="main">
@@ -266,18 +278,16 @@ const Index = props => {
               data={messageList}
               onChange={handleStandardTableChange}
             />
-            {
-              messageList?.list && messageList?.list.length > 0 && (
-                <Button
-                  ghost
-                  type="primary"
-                  style={{ position: "absolute", bottom: 16 }}
-                  onClick={() => handleBatchModifyRead()}
-                >
-                  标为已读
-                </Button>
-              )
-            }
+            {messageList?.list && messageList?.list.length > 0 && (
+              <Button
+                ghost
+                type="primary"
+                style={{ position: 'absolute', bottom: 16 }}
+                onClick={() => handleBatchModifyRead()}
+              >
+                标为已读
+              </Button>
+            )}
           </Tabs.TabPane>
           <Tabs.TabPane key="1" tab="已读消息">
             <StandardTable
@@ -291,16 +301,11 @@ const Index = props => {
         </Tabs>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default connect(
-  ({
-    global,
-    home,
-    loading,
-  }) => ({
-    global,
-    home,
-    loading: loading.models.home,
-  }))(Form.create()(Index))
+export default connect(({ global, home, loading }) => ({
+  global,
+  home,
+  loading: loading.models.home,
+}))(Form.create()(Index));

@@ -100,19 +100,27 @@ const Index = memo(
 
     // 根据路由查询不同接口
     const handleQueryDemandList = params => {
+      const { myGroup, active, ...others } = commonSearchValue;
+      const searchParams = {
+        ...searchForm,
+        ...others,
+        myGroup: Number(myGroup),
+        active: Number(active),
+        ...params,
+      };
       if (demandRoutes[props.location.pathname] === '我的需求') {
-        handleQueryList({ ...searchForm, ...commonSearchValue, ...params });
+        handleQueryList(searchParams);
         return;
       }
-      handleQueryDemandProject({ ...searchForm, ...commonSearchValue, ...params });
+      handleQueryDemandProject(searchParams);
     };
 
     // 查询看板
     const handleQueryBoard = (params = {}) => {
-      console.log(props.location.pathname)
-      let type = 'u'
+      console.log(props.location.pathname);
+      let type = 'u';
       if (demandRoutes[props.location.pathname] === '项目') {
-        type='p'
+        type = 'p';
       }
       dispatch({
         type: 'demand/queryDemandBoard',
@@ -126,7 +134,7 @@ const Index = memo(
       });
     };
 
-    const handleQueryUser = (params) => {
+    const handleQueryUser = params => {
       dispatch({
         type: 'demand/fetchUserData',
         payload: {

@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'dva';
 import classNames from 'classnames';
-import {DefaultPage, PagerHelper, TableColumnHelper} from '@/utils/helper';
+import { DefaultPage, PagerHelper, TableColumnHelper } from '@/utils/helper';
 import StandardTable from '@/components/StandardTable';
 import {
   Button,
@@ -14,21 +14,21 @@ import {
   Tooltip,
   DatePicker,
   Icon,
-  Card, Divider,
+  Card,
 } from 'antd';
 import { isEmpty } from '@/utils/lang';
 import { formLayoutItem, formLayoutItem2, MENU_ACTIONS } from '@/utils/constant';
 import { BUDGET_TYPE, PROJECT_TYPE } from '@/pages/contractBudget/util/constant';
 import OptButton from '@/components/commonUseModule/optButton';
 import YearPicker from '@/components/YearPicker';
-import edit from '@/assets/icon/Button_bj.svg';
+// import edit from '@/assets/icon/Button_bj.svg';
 import upIcon from '@/assets/icon/Pull_up.svg';
 import bottomIcon from '@/assets/icon/drop_down.svg';
 
 import AddForm from './addForm';
 import styles from '../index.less';
 import { exportExcel } from '@/utils/utils';
-import moment from "moment";
+import moment from 'moment';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -102,19 +102,39 @@ const Index = props => {
       },
     },
     TableColumnHelper.genLangColumn('name', '预算名称', { sorter: true }, 8),
-    TableColumnHelper.genLangColumn('clusterName', '所属集群/板块', { sorter: true, width: 150 }, 6),
+    TableColumnHelper.genLangColumn(
+      'clusterName',
+      '所属集群/板块',
+      { sorter: true, width: 150 },
+      6,
+    ),
     TableColumnHelper.genLangColumn('deptName', '需求部门', { sorter: true }, 8),
     TableColumnHelper.genSelectColumn('type', '项目类型', PROJECT_TYPE, { sorter: true }),
-    TableColumnHelper.genMoneyColumn('expectTotalAmount', '预算总金额(万)', { sorter: true, width: 150 }, ""),
-    TableColumnHelper.genMoneyColumn('hardwareExpectAmount', '硬件预算金额(万)', { sorter: true, width: 170 }, ""),
-    TableColumnHelper.genMoneyColumn('otherExpectAmount', '其他预计金额(万)', { sorter: true, width: 170 }, ""),
+    TableColumnHelper.genMoneyColumn(
+      'expectTotalAmount',
+      '预算总金额(万)',
+      { sorter: true, width: 150 },
+      '',
+    ),
+    TableColumnHelper.genMoneyColumn(
+      'hardwareExpectAmount',
+      '硬件预算金额(万)',
+      { sorter: true, width: 170 },
+      '',
+    ),
+    TableColumnHelper.genMoneyColumn(
+      'otherExpectAmount',
+      '其他预计金额(万)',
+      { sorter: true, width: 170 },
+      '',
+    ),
     {
       title: '操作',
       width: 100,
       align: 'center',
       render: rows => (
         <Fragment>
-          {authActions.includes(MENU_ACTIONS.EDIT) && (
+          {/* {authActions.includes(MENU_ACTIONS.EDIT) && (
             <OptButton
               img={edit}
               showText={false}
@@ -125,7 +145,7 @@ const Index = props => {
               }}
             />
           )}
-          <Divider type="vertical" />
+          <Divider type="vertical" /> */}
           {authActions.includes(MENU_ACTIONS.CHECK) && (
             <OptButton
               icon="eye"
@@ -170,13 +190,13 @@ const Index = props => {
   };
 
   const handleSearchForm = (params = {}) => {
-    const {expectSetTime, ...others} = form.getFieldsValue();
-    const { year = yearTime && moment.isMoment(yearTime) && yearTime.format("YYYY") } = params
+    const { expectSetTime, ...others } = form.getFieldsValue();
+    const { year = yearTime && moment.isMoment(yearTime) && yearTime.format('YYYY') } = params;
     const formValues = {
       ...others,
-      expectSetTime: expectSetTime && expectSetTime.format("YYYY-MM-DD"),
+      expectSetTime: expectSetTime && expectSetTime.format('YYYY-MM-DD'),
       year,
-    }
+    };
     handleQueryBudgetData(formValues);
   };
 
@@ -318,10 +338,7 @@ const Index = props => {
           </Col>
           <Col span={24}>
             <FormItem {...formLayoutItem2} label="项目描述">
-              {getFieldDecorator(
-                'description',
-                {},
-              )(<Input placeholder="请输入项目描述" />)}
+              {getFieldDecorator('description', {})(<Input placeholder="请输入项目描述" />)}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -330,10 +347,7 @@ const Index = props => {
                 'budgetType',
                 {},
               )(
-                <Select
-                  placeholder="请选择预算类型"
-                  allowClear
-                >
+                <Select placeholder="请选择预算类型" allowClear>
                   {BUDGET_TYPE.map(v => (
                     <Option value={v.key} key={v.key.toString()}>
                       {v.value}
@@ -356,19 +370,23 @@ const Index = props => {
                   onSearch={val => handleSearch(handleQueryAllTeam({ deptName: val }))}
                 >
                   {teamList &&
-                  teamList.map(v => (
-                    <Option value={v.id} key={v.id.toString()}>
-                      {v.name}
-                    </Option>
-                  ))}
+                    teamList.map(v => (
+                      <Option value={v.id} key={v.id.toString()}>
+                        {v.name}
+                      </Option>
+                    ))}
                 </Select>,
               )}
             </FormItem>
           </Col>
         </Row>
         <div className={styles.moreSearchButton}>
-          <Button ghost type="primary" onClick={() => setSearchMore(false)}>取消</Button>
-          <Button type="primary" className="margin-left-12" onClick={handleSearchForm}>确认</Button>
+          <Button ghost type="primary" onClick={() => setSearchMore(false)}>
+            取消
+          </Button>
+          <Button type="primary" className="margin-left-12" onClick={handleSearchForm}>
+            确认
+          </Button>
         </div>
       </div>
     );
@@ -397,11 +415,11 @@ const Index = props => {
                   placeholder="请输入需求部门"
                 >
                   {allDeptList &&
-                  allDeptList.map(v => (
-                    <Option value={v.id} key={v.id.toString()}>
-                      {v.name}
-                    </Option>
-                  ))}
+                    allDeptList.map(v => (
+                      <Option value={v.id} key={v.id.toString()}>
+                        {v.name}
+                      </Option>
+                    ))}
                 </Select>,
               )}
             </FormItem>
@@ -423,7 +441,7 @@ const Index = props => {
                       <Option value={v.id} key={v.id.toString()}>
                         {v.name}
                       </Option>
-                  ))}
+                    ))}
                 </Select>,
               )}
             </FormItem>
@@ -433,8 +451,8 @@ const Index = props => {
               <YearPicker
                 value={yearTime}
                 onChange={val => {
-                  setYearTime(val)
-                  handleSearchForm({year: moment.isMoment(val) && val.format("YYYY") || null})
+                  setYearTime(val);
+                  handleSearchForm({ year: (moment.isMoment(val) && val.format('YYYY')) || null });
                 }}
               />
             </FormItem>
@@ -484,11 +502,12 @@ const Index = props => {
   return (
     <div className="main">
       <div style={{ marginBottom: 12 }} className="yCenter-between">
-        {authActions.includes(MENU_ACTIONS.ADD) && (
+        {/* {authActions.includes(MENU_ACTIONS.ADD) && (
           <Button className={styles.addForm} icon="plus" onClick={() => setAddModalVisible(true)}>
             新建
           </Button>
-        )}
+        )} */}
+        <div />
         {authActions.includes(MENU_ACTIONS.EXPORT) && (
           <Button type="default" onClick={handleDownLoad}>
             导出
