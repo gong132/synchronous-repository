@@ -677,7 +677,7 @@ class ContractManage extends Component {
         render: (text, record) => {
           return (
             <div>
-              {authActions.includes(MENU_ACTIONS.EDIT) && (
+              {/* {authActions.includes(MENU_ACTIONS.EDIT) && (
                 <ListOptBtn
                   title="编辑"
                   style={{
@@ -689,7 +689,7 @@ class ContractManage extends Component {
                   onClick={() => this.handleViewModal(true, '编辑', record)}
                   icon={editIcon}
                 />
-              )}
+              )} */}
 
               {authActions.includes(MENU_ACTIONS.CHECK) && (
                 <ListOptBtn

@@ -15,9 +15,14 @@ import Config from '@/utils/config'
 import styles from './chartCard.less';
 
 const { envIP } = Config.config
-@connect(({ demand }) => ({
+const { Option } = Mentions
+@connect(({ demand, loading }) => ({
   demand,
-  comLangList: demand.comLangList
+  comLangList: demand.comLangList,
+  userData: demand.userData,
+  loadingQueryLang: loading.effects['demand/queryCommonLang'],
+  loadingAddLang: loading.effects['demand/addCommonLang'],
+  loadingEditLang: loading.effects['demand/updateCommonLang'],
 }))
 class ChartCard extends PureComponent {
   constructor(props) {
@@ -28,7 +33,9 @@ class ChartCard extends PureComponent {
       textContent: '',
       receiveMsg: [],
       isAdd: false,
-      visibleComLangModal: false,
+      comLang: '',
+      operateType: '',
+      curComLangInfo: {},
     };
   }
 
@@ -99,6 +106,16 @@ class ChartCard extends PureComponent {
     });
   };
 
+  // 查用户
+  handleQueryUser = lastname => {
+    this.props.dispatch({
+      type: 'demand/fetchUserData',
+      payload: {
+        lastname,
+      },
+    });
+  };
+
   // 查询常用语
   handleQueryComLang = () => {
     this.props.dispatch({
@@ -106,26 +123,84 @@ class ChartCard extends PureComponent {
     })
   }
 
+  // 编辑常用语
+  handleComLangEdit = curComLangInfo => {
+    this.setState({
+      curComLangInfo,
+      operateType: 'edit',
+      isAdd: true,
+    });
+  }
+
+  // 编辑常用语
+  handleComLangchange = comLang => {
+    const { operateType, curComLangInfo } = this.state;
+    const newInfo = { ...curComLangInfo };
+    if (operateType === 'edit') {
+      newInfo.content = comLang;
+      this.setState({
+        curComLangInfo: newInfo,
+      });
+    }
+    this.setState({
+      comLang,
+    });
+  }
+
+  // 新增/编辑常用语
+  onSubmitComLang = async comLang => {
+    const { curComLangInfo, operateType } = this.state;
+    if (operateType === 'edit') {
+      if (!curComLangInfo.content) {
+        message.error('常用语不能为空！')
+        return;
+      }
+      const res = await this.handleUpdateComLang(curComLangInfo);
+      if(res) {
+        this.setState({ comLang: '', isAdd: false });
+      }
+      return;
+    }
+    if (!comLang) {
+      message.error('常用语不能为空！')
+      return;
+    }
+    const res = await this.handleAddToComLang(comLang);
+    if(res) {
+      this.setState({ comLang: '', isAdd: false });
+    }
+  }
+
   // 添加至常用语
-  handleAddtoComLang = comLang => {
+  handleAddToComLang = comLang => {
     if (!comLang) {
       message.error('您未选中任何文字');
       return true;
     }
-    console.log(comLang)
-    this.props.dispatch({
+    return this.props.dispatch({
       type: 'demand/addCommonLang',
       payload: { content: comLang }
     }).then(res => {
       if (res) {
         this.handleQueryComLang()
+        return res
       }
     })
   };
 
+  // 删除常用于
+  handleDeleteComLang = (item) => {
+    const params = {
+      id: item.id,
+      content:item.content,
+      isDelete: '1'
+    }
+    this.handleUpdateComLang(params)
+  }
+
   // 修改常用语
   handleUpdateComLang = (params) => {
-    this.props.dispatch({
+    return this.props.dispatch({
       type: 'demand/updateCommonLang',
       payload: {
         ...params
@@ -133,6 +208,7 @@ class ChartCard extends PureComponent {
     }).then(res => {
       if (res) {
         this.handleQueryComLang()
+        return res
       }
     })
   }
@@ -174,8 +250,25 @@ class ChartCard extends PureComponent {
   }
 
   render() {
-    const { sendData, contextMenuVisible, textContent, receiveMsg, isAdd, comLangVisible } = this.state;
-    const { handleModalVisible, assignorVisible, ITAssignVisible, comLangList } = this.props;
+    const { sendData,
+      contextMenuVisible,
+      textContent,
+      receiveMsg,
+      isAdd,
+      comLangVisible,
+      operateType,
+      curComLangInfo,
+      comLang
+    } = this.state;
+    const { handleModalVisible,
+       assignorVisible, 
+       ITAssignVisible, 
+       comLangList, 
+       userData, 
+       loadingQueryLang,
+       loadingAddLang,
+       loadingEditLang
+      } = this.props;
     const styleObj = {
       backgroundColor: 'white',
       borderColor: '#2E5BFF',
@@ -201,7 +294,7 @@ class ChartCard extends PureComponent {
           !_.isEmpty(comLangList)
             ? <List
               size="small"
-              // loading={loadingQueryComLangList}
+              loading={loadingQueryLang}
               dataSource={comLangList}
               className={styles.comLangCard__list}
               renderItem={item => <List.Item
@@ -235,7 +328,7 @@ class ChartCard extends PureComponent {
             >
               <div className={styles.contextMenu_separator} />
               <div
-                onClick={() => this.handleAddtoComLang(textContent)}
+                onClick={() => this.handleAddToComLang(textContent)}
                 className={styles.contextMenu_option}
               >
                 添加至常用语
@@ -260,9 +353,14 @@ class ChartCard extends PureComponent {
                 value={sendData}
                 placeholder="您可以输入并@所需要提及的相关人员"
                 onChange={this.handleSendDatachange}
+                onSearch={this.handleQueryUser}
                 rows="6"
               >
-                <Mentions.Option value="sample">Sample</Mentions.Option>
+                {userData.map(item => (
+                  <Option key={item.loginid} value={`${item.lastname}-${item.loginid}`}>
+                    {item.lastname}-{item.loginid}
+                  </Option>
+                ))}
               </Mentions>
               <div className={styles.sendContext_btn}>
                 <Popover
@@ -352,6 +450,7 @@ class ChartCard extends PureComponent {
           {!isAdd
             ? <List
               size="small"
+              loading={loadingQueryLang}
               footer={
                 <Row type="flex" justify="center">
                   <Col>
@@ -360,7 +459,7 @@ class ChartCard extends PureComponent {
                       size="small"
                       type="primary"
                       ghost
-                      onClick={() => this.setState({ isAdd: true, opreateType: 'add' })}
+                      onClick={() => this.setState({ isAdd: true, operateType: 'add' })}
                     >
                       添加常用语
                     </Button>
@@ -368,8 +467,7 @@ class ChartCard extends PureComponent {
                 </Row>
               }
               dataSource={comLangList}
-              renderItem={item => <List.Item
-              >
+              renderItem={item => <List.Item>
                 <div className={styles.comLangListItem}>
                   <div className={styles.comLangListItem__content}>{item.content}</div>
                   <div className={styles.comLangListItem__operation}>
@@ -388,20 +486,20 @@ class ChartCard extends PureComponent {
             />
             : <div>
               <div>
-                {/* <Mentions
-                  value={opreateType === 'add' ? comLang : curComLangInfo.news}
+                <Mentions
+                  value={operateType === 'add' ? comLang : curComLangInfo.content}
                   onChange={this.handleComLangchange}
                   rows="8"
-                  loading={loadingQueryUsers}
-                  onSearch={handleUserSearchChange}
+                  // loading={loadingQueryUsers}
+                  // onSearch={handleUserSearchChange}
                   placeholder="请输入需添加的常用语"
                 >
-                  {allUsersList.map(item => (
-                    <Option key={item.userId} value={`${item.userName}-${item.userId}`}>
-                      {item.userName}-{item.userId}-{item.deptName}
+                  {userData.map(item => (
+                    <Option key={item.loginid} value={`${item.lastname}-${item.loginid}`}>
+                      {item.lastname}-{item.loginid}
                     </Option>
                   ))}
-                </Mentions> */}
+                </Mentions>
               </div>
               <Row type="flex" justify="end" style={{ marginTop: 10 }}>
                 <Col>
@@ -413,16 +511,17 @@ class ChartCard extends PureComponent {
                     onClick={() => this.setState({ isAdd: false })}
                   >
                     取消
-              </Button>
+                  </Button>
                   <Divider type="vertical" />
                   <Button
-                    // icon={opreateType === 'add' ? 'plus' : 'edit'}
+                    icon={operateType === 'add' ? 'plus' : 'edit'}
                     size="small"
                     type="primary"
+                    loading={operateType === 'add'? loadingAddLang : loadingEditLang}
                     ghost
                     onClick={() => this.onSubmitComLang(comLang)}
                   >
-                    {/* {opreateType === 'add' ? '添加常用语' : '编辑常用语'} */}
+                    {operateType === 'add' ? '添加常用语' : '编辑常用语'}
                   </Button>
                 </Col>
               </Row>

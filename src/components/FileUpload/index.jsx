@@ -54,15 +54,15 @@ class FileUploadNo extends Component {
     window.location.href = url;
   }
 
-  handlePreview = (url) => {
-    // this.setState({
-    //   preImg: bool,
-    //   curUrl: url
-    // })
-    const a = document.createElement('a')
-    a.href = url
-    a.target='__blank'
-    a.click()
+  handlePreview = (url, bool) => {
+    this.setState({
+      preImg: bool,
+      curUrl: url
+    })
+    // const a = document.createElement('a')
+    // a.href = url
+    // a.target='__blank'
+    // a.click()
   }
 
   renderFile = (v, index) => {
