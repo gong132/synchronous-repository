@@ -488,7 +488,7 @@ class Detail extends Component {
       <div
         className={styles.fileStyle}
       >
-        <div>{name}</div>
+        <a href={v.path} target='__blank'>{name}</a>
       </div>
     )
   }

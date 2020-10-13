@@ -32,9 +32,39 @@ const PROJECT_STATUS_OBJ = {
   '7': '验收结项',
 }
 
+// 评审阶段
+const REVIEW_STAGE_ARR = [
+  { key: '1', val: '未发起' },
+  { key: '2', val: '审批中' },
+  { key: '3', val: '已通过' },
+]
+
+const REVIEW_STAGE_OBJ = {
+  '1': '未发起',
+  '2': '审批中',
+  '3': '已通过',
+}
+
+// 商务状态
+const BUSINESS_STATUS_ARR = [
+  { key: '1', val: '未商务' },
+  { key: '2', val: '待商务' },
+  { key: '3', val: '已商务' },
+]
+
+const BUSINESS_STATUS_OBJ = {
+  '1': '未商务',
+  '2': '待商务',
+  '3': '已商务',
+}
+
 export {
   DEMAND_PRIORITY_ARR,
   DEMAND_PRIORITY_OBJ,
   PROJECT_STATUS_ARR,
   PROJECT_STATUS_OBJ,
+  REVIEW_STAGE_ARR,
+  REVIEW_STAGE_OBJ,
+  BUSINESS_STATUS_ARR,
+  BUSINESS_STATUS_OBJ
 }

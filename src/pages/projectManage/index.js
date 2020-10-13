@@ -26,7 +26,7 @@ import {
   DatePicker
 } from 'antd'
 import * as _ from 'lodash'
-import { PROJECT_STATUS_OBJ, DEMAND_PRIORITY_ARR } from './utils/constant'
+import { PROJECT_STATUS_OBJ, DEMAND_PRIORITY_ARR, BUSINESS_STATUS_ARR } from './utils/constant'
 import styles from './index.less'
 
 const { Option } = Select
@@ -587,7 +587,12 @@ class ProjectManage extends Component {
                 placeholder="请输入商务状态"
               >
                 <Option key='all' value={1}>全部</Option>
-                {/* <Option key='p' value={1}>未定义</Option> */}
+                {
+                  BUSINESS_STATUS_ARR.map(d => (
+                    <Option key={d.key} value={d.key}>
+                      {d.val}
+                    </Option>
+                  ))}
               </Select>,
             )}
           </FormItem>

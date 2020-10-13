@@ -895,7 +895,7 @@ class Detail extends PureComponent {
             <Table columns={payColumns} dataSource={payRecords} pagination={false} />
           </GlobalSandBox>
         </Spin>
-        <GlobalSandBox img={budget_log} title="操作日志">
+        {/* <GlobalSandBox img={budget_log} title="操作日志">
           <StandardTable
             rowKey={(record, index) => index}
             columns={columns}
@@ -903,7 +903,7 @@ class Detail extends PureComponent {
             loading={loadingQueryLogData}
             onChange={this.handleStandardTableChange}
           />
-        </GlobalSandBox>
+        </GlobalSandBox> */}
         {modalVisible && (
           <Modal
             title="项目完结确认"

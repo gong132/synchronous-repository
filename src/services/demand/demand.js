@@ -236,8 +236,8 @@ export async function updateCommonLang(params) {
 
 // 查询常用语
 export async function queryCommonLang(params) {
-  return request('/message/commonLanguage/update', {
-    method: 'post',
+  return request('/message/commonLanguage/list', {
+    method: 'get',
     params,
   });
 }

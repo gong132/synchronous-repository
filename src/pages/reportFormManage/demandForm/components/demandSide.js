@@ -40,9 +40,10 @@ class DemandSide extends PureComponent {
 
   render() {
     const { demandForm } = this.props
-    const { deptNameArr, clusterList, demandData } = demandForm
+    const { clusterList, demandData, deptList } = demandForm
+    console.log(deptList)
     const barProps = {
-      data: deptNameArr,
+      data: deptList,
       title: '需求发起部门',
       barColor: ['#FE9D4E'],
       handleClickBar: this.handleClickBar,
