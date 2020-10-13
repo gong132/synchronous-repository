@@ -1,6 +1,7 @@
 import React, { Fragment, memo, useEffect, useState } from 'react';
 import { connect } from 'dva';
 import { router, withRouter } from 'umi/index';
+import moment from "moment";
 import { isEmpty } from '@/utils/lang';
 import {
   Button,
@@ -440,8 +441,8 @@ const Index = memo(
         maxPlannedLaunchDate: plannedLaunchDate ? plannedLaunchDate[1].format('YYYY-MM-DD') : null,
         minActualLineDate: actualLineDate ? actualLineDate[1].format('YYYY-MM-DD') : null,
         maxActualLineDate: actualLineDate ? actualLineDate[1].format('YYYY-MM-DD') : null,
-        minCreateDate: createTime ? createTime[1].format('YYYY-MM-DD') : null,
-        maxCreateDate: createTime ? createTime[1].format('YYYY-MM-DD') : null,
+        minCreateDate: createTime && moment.isMoment(createTime) ? createTime[1].format('YYYY-MM-DD') : null,
+        maxCreateDate: createTime && moment.isMoment(createTime) ? createTime[1].format('YYYY-MM-DD') : null,
       };
       setSearchForm(obj => ({ ...obj, ...params }));
     };
@@ -683,12 +684,12 @@ const Index = memo(
                 )}
               </FormItem>
             </Col>
-            <Col span={5}>
+            <Col span={6}>
               <FormItem {...formLayoutItem} colon={false} label="创建日期">
                 {getFieldDecorator('createTime', {})(<RangePicker format="YYYY-MM-DD" />)}
               </FormItem>
             </Col>
-            <Col span={5}>
+            <Col span={4}>
               <div
                 style={{
                   width: '100%',

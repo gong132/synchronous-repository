@@ -176,7 +176,7 @@ class ChartCard extends PureComponent {
                 onChange={this.handleSendDatachange}
                 rows="6"
               >
-                <Mentions.Option value="sample">Sample</Mentions.Option>
+                <Mentions.Option value="中国移动-10086">中国移动-10086</Mentions.Option>
               </Mentions>
               <div className={styles.sendContext_btn}>
                 <CustomBtn

@@ -110,7 +110,7 @@ const AuthorManage = props => {
   }, [selectedMenu]);
 
   const columns = [
-    TableColumnHelper.genPlanColumn("roleName", "角色名"),
+    TableColumnHelper.genPlanColumn("roleName", "角色名", { align: 'left'}),
     {
       title: "操作",
       align: "center",

@@ -148,7 +148,7 @@ const Demand = {
       })
     },
 
-    // 受理需求 
+    // 受理需求
     *receiverDemand({payload}, {call}) {
       const { code, msg } = yield call(receiverDemand, payload);
       if (!code || code !== 200) {
@@ -440,12 +440,13 @@ const Demand = {
       const { code, msg, data } = yield call(fetchStoryDetails, payload);
       if (!code || code !== 200) {
         message.error(msg);
-        return;
+        return false;
       }
       yield put({
         type: "saveData",
         payload: { storyDetails: data }
       })
+      return data
     },
     // 同步story
     *syncStory({ payload }, { call }) {

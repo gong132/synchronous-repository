@@ -17,7 +17,6 @@ const Appoint = (props) => {
   } = props
 
   const { userData, userDataMap, userDataMapId } = demand
-  console.log(userData)
 
   // 关注
   const handleFocusDemand = (params) => {
@@ -54,7 +53,6 @@ const Appoint = (props) => {
   const handleSubmit = () => {
     form.validateFieldsAndScroll((err, values) => {
       if (err) return true
-      console.log(values)
       if (title === '指派受理人') {
         values.receiverId = values.user
         values.receiverName = userDataMap[values.user]
@@ -63,7 +61,6 @@ const Appoint = (props) => {
         handleReceiverDemand(values)
         return true
       }
-      console.log(userDataMapId)
       values.userName = userDataMapId[values.user]
       values.userId = values.user
       delete values.user
@@ -122,4 +119,4 @@ const Appoint = (props) => {
 
 export default connect(({ demand }) => ({
   demand
-}))(Form.create()(Appoint)) 
+}))(Form.create()(Appoint))

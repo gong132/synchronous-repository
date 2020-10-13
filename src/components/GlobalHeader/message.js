@@ -18,7 +18,7 @@ const Index = memo(props => {
         {
           messageList?.data && messageList?.data.length > 0 ? messageList.data.map(v => (
             <div className={styles.msgItem} key={v.id}>
-              <span>{v.toUserName}</span>
+              <span>{v.userName || "系统"}</span>
               <a>{v.content}</a>
               <Popconfirm
                 title={`确定要标记（${v.title}）为已读吗?`}

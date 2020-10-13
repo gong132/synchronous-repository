@@ -412,7 +412,7 @@ const CreateContract = props => {
                   {!_.isEmpty(systemList) &&
                     systemList.map(d => (
                       <Option key={d.id} value={d.id}>
-                        {d.name}
+                        {d.sysName}
                       </Option>
                     ))}
                 </Select>,
@@ -537,7 +537,6 @@ const CreateContract = props => {
                   }
                   placeholder="请输入合同负责人团队"
                 >
-                  {console.log(groupList)}
                   {!_.isEmpty(groupList) &&
                     groupList.map(d => (
                       <Option key={d.id} value={d.id}>

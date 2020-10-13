@@ -106,7 +106,7 @@ class DemandBoard extends Component {
     const { attention, creator, receiverName } = record
     const { userInfo={} } = getUserInfo()
     const { userName, roleName } = userInfo
-    
+
     return (
       <Menu onClick={({ item, key, keyPath, domEvent }) => this.quickResolveStory(item, key, keyPath, domEvent, record)}>
         {((boardId === 2 && roleName === '团队经理')
@@ -233,7 +233,6 @@ class DemandBoard extends Component {
         break;
       case 'cancelFocus':
         this.handleUnFocusDemand(editValue.id)
-        console.log('cancelFocus');
         break;
       case 'edit':
         this.handleViewModal(true, editValue)
@@ -250,7 +249,6 @@ class DemandBoard extends Component {
         break;
       case 'appointAccept':
         this.handleViewAppointModal(true, editValue, '指派受理人')
-        console.log('appointAccept')
         break;
       case 'accept':
         this.handleDragDemand({ status: '4', demandId: editValue.id })
@@ -262,7 +260,6 @@ class DemandBoard extends Component {
 
   // 拖拽处理
   onDragEnd = result => {
-    console.log(result)
     const { userInfo: { roleName } } = getUserInfo()
     const { source, destination, draggableId } = result
     if (destination === null) {

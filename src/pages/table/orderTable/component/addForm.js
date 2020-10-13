@@ -5,7 +5,6 @@ import {isEmpty} from "@/utils/lang";
 const Index = props => {
   const { handleModalVisible, values, modalVisible } = props;
 
-  console.log(values, 'values')
   return (
     <Modal
       width={640}

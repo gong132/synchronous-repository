@@ -14,7 +14,7 @@ import {
   Tooltip,
   DatePicker,
   Icon,
-  Card,
+  Card, message,
 } from 'antd';
 import { isEmpty } from '@/utils/lang';
 import { formLayoutItem, formLayoutItem2, MENU_ACTIONS } from '@/utils/constant';
@@ -77,6 +77,7 @@ const Index = props => {
     {
       title: '预算编号',
       key: 'number',
+      width: 120,
       sorter: true,
       render: rows => {
         if (isEmpty(rows.number, true)) return '';
@@ -101,15 +102,15 @@ const Index = props => {
         );
       },
     },
-    TableColumnHelper.genLangColumn('name', '预算名称', { sorter: true }, 8),
+    TableColumnHelper.genLangColumn('name', '预算名称', { sorter: true, width: 120 }, 8),
     TableColumnHelper.genLangColumn(
       'clusterName',
       '所属集群/板块',
       { sorter: true, width: 150 },
       6,
     ),
-    TableColumnHelper.genLangColumn('deptName', '需求部门', { sorter: true }, 8),
-    TableColumnHelper.genSelectColumn('type', '项目类型', PROJECT_TYPE, { sorter: true }),
+    TableColumnHelper.genLangColumn('deptName', '需求部门', { sorter: true, width: 120 }, 8),
+    TableColumnHelper.genSelectColumn('type', '项目类型', PROJECT_TYPE, { sorter: true, width: 120 }),
     TableColumnHelper.genMoneyColumn(
       'expectTotalAmount',
       '预算总金额(万)',
@@ -119,6 +120,12 @@ const Index = props => {
     TableColumnHelper.genMoneyColumn(
       'hardwareExpectAmount',
       '硬件预算金额(万)',
+      { sorter: true, width: 170 },
+      '',
+    ),
+    TableColumnHelper.genMoneyColumn(
+      'softwareExpectAmount',
+      '软件预算金额(万)',
       { sorter: true, width: 170 },
       '',
     ),
@@ -183,14 +190,50 @@ const Index = props => {
   };
 
   const handleResetForm = () => {
-    setSearchMore(true);
     form.resetFields();
-    setSearchMore(false);
+    setYearTime(null)
     handleQueryBudgetData();
   };
 
   const handleSearchForm = (params = {}) => {
     const { expectSetTime, ...others } = form.getFieldsValue();
+    const { expectTotalAmountLow, expectTotalAmountMax, hardwareExpectAmountLow,
+      hardwareExpectAmountMax, softwareExpectAmountLow, softwareExpectAmountMax,
+      otherExpectAmountLow, otherExpectAmountMax } = others;
+
+    // 除此之外还可以利用函数arguments类数组对象来生成数组,判断是否违规后再返回状态.
+    const judgeIsNumber = a => b => c => d => e => g => f => h => {
+      const isNaNCount = val => {
+        if (!val) return true
+        if (val && Number.isNaN(Number(val))) return false
+        if (val && Number(val) < 0) return false
+        return true
+      }
+      return isNaNCount(a) && isNaNCount(b) && isNaNCount(c) && isNaNCount(d) && isNaNCount(e) && isNaNCount(f) && isNaNCount(g) && isNaNCount(h)
+    }
+    if (!judgeIsNumber(expectTotalAmountLow)(expectTotalAmountMax)(hardwareExpectAmountLow)(
+      hardwareExpectAmountMax)(softwareExpectAmountLow)(softwareExpectAmountMax)(
+      otherExpectAmountLow)(otherExpectAmountMax)) {
+      message.error("金额必须为正数")
+      return
+    }
+    if (expectTotalAmountLow && expectTotalAmountMax && (Number(expectTotalAmountLow) - Number(expectTotalAmountMax) > 0)) {
+      message.error("最小预算总金额不能大于最大预算金额")
+      return
+    }
+    if (hardwareExpectAmountLow && hardwareExpectAmountMax && (Number(hardwareExpectAmountLow) - Number(hardwareExpectAmountMax) > 0)) {
+      message.error("最小硬件金额不能大于最大硬件金额")
+      return
+    }
+    if (hardwareExpectAmountLow && softwareExpectAmountMax && (Number(softwareExpectAmountLow) - Number(softwareExpectAmountMax) > 0)) {
+      message.error("最小软件金额不能大于最大软件金额")
+      return
+    }
+    if (otherExpectAmountLow && otherExpectAmountMax && (Number(otherExpectAmountLow) - Number(otherExpectAmountMax) > 0)) {
+      message.error("最小其他金额不能大于最大其他金额")
+      return
+    }
+
     const { year = yearTime && moment.isMoment(yearTime) && yearTime.format('YYYY') } = params;
     const formValues = {
       ...others,
@@ -523,6 +566,7 @@ const Index = props => {
             data={budgetList}
             columns={columns}
             onChange={handleStandardTableChange}
+            scroll={{ x: 1390 }}
           />
         </Card>
         {addModalVisible && (

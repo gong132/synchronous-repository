@@ -12,7 +12,7 @@ import {
   Row,
   Select,
   Tabs,
-  Tooltip,
+  Tooltip, Popover,
 } from 'antd';
 import styles from './home.less';
 import StandardTable from '@/components/StandardTable';
@@ -50,15 +50,14 @@ const Index = props => {
       },
     });
   };
-  const handleBatchModifyRead = msgId => {
+  const handleBatchModifyRead = (msgId, eventType) => {
     let msgIds = [];
-    if (msgId && selectedRows.length === 0) msgIds = [msgId];
-    if (!msgId && selectedRows.length === 0) {
+    if (eventType === "rowClick" && msgId) msgIds = [msgId];
+    if (eventType !== "rowClick" && selectedRows.length === 0) {
       message.warning('请选择至少一条消息');
       return;
     }
-    if (!msgId && selectedRows.length > 0) {
-      console.log(selectedRows, 'selectedRows');
+    if (eventType !== "rowClick" && selectedRows.length > 0) {
       msgIds = selectedRows.map(v => v.id);
     }
     dispatch({
@@ -88,6 +87,7 @@ const Index = props => {
 
   const handleTabsChange = key => {
     setMsgStatus(key);
+    form.resetFields()
     setSelectedRows([]);
     handleQueryMessageList({ readStatus: key });
   };
@@ -130,9 +130,37 @@ const Index = props => {
     handleQueryMessageList();
   };
 
+  const handleGotoTargetByType = rows => {
+    //   { key: 'p', value: '项目需求' },
+    //   { key: 'u', value: '一般需求' },
+    const { demandId, demandType, linkUrlType, linkId } = rows;
+    if (linkUrlType === 1 && demandType === "u") {
+      props.history.push({
+        pathname: '/demand/generalDemand/detail',
+        query: {
+          id: demandId,
+          no: linkId,
+        },
+      });
+      return
+    }
+    if (linkUrlType === 1 && demandType === "p") {
+      props.history.push({
+        pathname: '/demand/projectDemand/detail',
+        query: {
+          id: demandId,
+          no: linkId,
+        },
+      });
+      return
+    }
+    message.warning("该消息类型暂不支持跳转")
+  }
+
   const columns = [
     {
       title: '编号',
+      width: 120,
       align: 'center',
       key: 'linkId',
       render: rows => {
@@ -141,14 +169,7 @@ const Index = props => {
           <Tooltip placement="top" title={rows.linkId}>
             <span
               style={{ color: '#2E5BFF' }}
-              onClick={() => {
-                props.history.push({
-                  pathname: '/contract-budget/budget/detail',
-                  query: {
-                    id: rows.id,
-                  },
-                });
-              }}
+              onClick={() => handleGotoTargetByType(rows)}
             >
               {rows.linkId.length > 10
                 ? `${rows.linkId.substring(0, 10)}...`
@@ -158,24 +179,32 @@ const Index = props => {
         );
       },
     },
-    TableColumnHelper.genPlanColumn('title', '标题'),
-    TableColumnHelper.genPlanColumn('userId', '发送者'),
+    TableColumnHelper.genLangColumn('title', '标题', { width: 200 }, 12, 'left'),
+    TableColumnHelper.genPlanColumn('userName', '发送者', { width: 120 }),
     {
       title: '消息内容',
       align: 'center',
+      width: 550,
       key: 'content',
       render: rows => {
         if (isEmpty(rows.content, true)) return '';
         // eslint-disable-next-line
-        return <div dangerouslySetInnerHTML={{ __html: rows.content }} />;
+        // return <div dangerouslySetInnerHTML={{ __html: rows.content }} />;
+        const text = <div dangerouslySetInnerHTML={{ __html: rows.content }} />
+        return (
+          <Popover content={text} trigger="hover" title={rows?.title}>
+            <div style={{ width: 550, textAlign: 'left' }} className="overHide" dangerouslySetInnerHTML={{ __html: rows.content }} />
+          </Popover>
+        );
       },
     },
     TableColumnHelper.genDateTimeColumn('createTime', '创建时间', 'YYYY-MM-DD HH:mm:ss', {
+      width: 200,
       sorter: true,
     }),
     {
       title: '操作',
-      width: 100,
+      width: 80,
       align: 'center',
       render: rows => (
         <Fragment>
@@ -197,7 +226,7 @@ const Index = props => {
               <Divider type="vertical" />
               <Popconfirm
                 title={`确定要标记（${rows.title}）为已读吗?`}
-                onConfirm={() => handleBatchModifyRead(rows.id)}
+                onConfirm={() => handleBatchModifyRead(rows.id, 'rowClick')}
                 okText="确定"
                 cancelText="取消"
               >
@@ -214,7 +243,7 @@ const Index = props => {
     return (
       <Row>
         <Col span={5}>
-          <FormItem {...formLayoutItem} label="标题/编号">
+          <FormItem {...formLayoutItem} label="标题/编号" colon={false}>
             {getFieldDecorator(
               'titleAndNumber',
               {},
@@ -222,7 +251,7 @@ const Index = props => {
           </FormItem>
         </Col>
         <Col span={5}>
-          <FormItem {...formLayoutItem} label="发送者">
+          <FormItem {...formLayoutItem} label="发送者" colon={false}>
             {getFieldDecorator('userId')(
               <Select
                 onBlur={handleSearchForm}
@@ -241,20 +270,20 @@ const Index = props => {
           </FormItem>
         </Col>
         <Col span={5}>
-          <FormItem {...formLayoutItem} label="消息内容">
+          <FormItem {...formLayoutItem} label="消息内容" colon={false}>
             {getFieldDecorator('content')(
               <Input onBlur={handleSearchForm} placeholder="请输入消息内容" />,
             )}
           </FormItem>
         </Col>
-        <Col span={5}>
-          <FormItem {...formLayoutItem} label="创建时间">
+        <Col span={7}>
+          <FormItem {...formLayoutItem} label="创建时间" colon={false}>
             {getFieldDecorator('RangeDate')(
               <RangePicker onBlur={handleSearchForm} format="YYYY-MM-DD" />,
             )}
           </FormItem>
         </Col>
-        <Col span={4}>
+        <Col span={2}>
           <Button ghost type="primary" onClick={handleResetForm}>
             重置
           </Button>
@@ -277,6 +306,7 @@ const Index = props => {
               columns={columns}
               data={messageList}
               onChange={handleStandardTableChange}
+              scroll={{ x: 1290 }}
             />
             {messageList?.list && messageList?.list.length > 0 && (
               <Button

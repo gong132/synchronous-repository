@@ -162,7 +162,7 @@ const Index = props => {
     TableColumnHelper.genPlanColumn('priority', '优先级', { sorter: true }),
     TableColumnHelper.genPlanColumn('type', 'story类型', { sorter: true }),
     TableColumnHelper.genLangColumn('systemName', '所属系统', {}, 10),
-    TableColumnHelper.genDateTimeColumn('evaluateTime', 'IT预计上线时间', 'YYYY-MM-DD', { width: 150, sorter: true }),
+    TableColumnHelper.genDateTimeColumn('evaluateTime', 'IT预计上线日期', 'YYYY-MM-DD', { width: 150, sorter: true }),
     TableColumnHelper.genPlanColumn('developWorkload', '开发预计测试工作量', { width: 180, sorter: true }),
     TableColumnHelper.genPlanColumn('testWorkload', '测试预计测试工作量', { width: 180, sorter: true }),
     TableColumnHelper.genPlanColumn('assessor', '评估人'),
@@ -341,7 +341,7 @@ const Index = props => {
                   {systemList &&
                     systemList.map(v => (
                       <Option value={v.id} key={v.id}>
-                        {v.name}
+                        {v.sysName}
                       </Option>
                     ))}
                 </Select>,
