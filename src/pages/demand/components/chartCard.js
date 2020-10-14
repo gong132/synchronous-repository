@@ -156,7 +156,7 @@ class ChartCard extends PureComponent {
         return;
       }
       const res = await this.handleUpdateComLang(curComLangInfo);
-      if(res) {
+      if (res) {
         this.setState({ comLang: '', isAdd: false });
       }
       return;
@@ -166,7 +166,7 @@ class ChartCard extends PureComponent {
       return;
     }
     const res = await this.handleAddToComLang(comLang);
-    if(res) {
+    if (res) {
       this.setState({ comLang: '', isAdd: false });
     }
   }
@@ -192,7 +192,7 @@ class ChartCard extends PureComponent {
   handleDeleteComLang = (item) => {
     const params = {
       id: item.id,
-      content:item.content,
+      content: item.content,
       isDelete: '1'
     }
     this.handleUpdateComLang(params)
@@ -261,14 +261,14 @@ class ChartCard extends PureComponent {
       comLang
     } = this.state;
     const { handleModalVisible,
-       assignorVisible, 
-       ITAssignVisible, 
-       comLangList, 
-       userData, 
-       loadingQueryLang,
-       loadingAddLang,
-       loadingEditLang
-      } = this.props;
+      assignorVisible,
+      ITAssignVisible,
+      comLangList,
+      userData,
+      loadingQueryLang,
+      loadingAddLang,
+      loadingEditLang
+    } = this.props;
     const styleObj = {
       backgroundColor: 'white',
       borderColor: '#2E5BFF',
@@ -289,7 +289,6 @@ class ChartCard extends PureComponent {
         bodyStyle={{ padding: 0 }}
         className={styles.comLangCard}
       >
-        {console.log(comLangList)}
         {
           !_.isEmpty(comLangList)
             ? <List
@@ -297,15 +296,17 @@ class ChartCard extends PureComponent {
               loading={loadingQueryLang}
               dataSource={comLangList}
               className={styles.comLangCard__list}
-              renderItem={item => <List.Item
-                className={styles.comLangItem}
-              >
-                <div
-                  className={styles.comLangItem_content}
-                  onClick={() => this.handleAddComLangToMessage(item.content)}
-                >{item.content}
-                </div>
-              </List.Item>}
+              renderItem={item =>
+                <List.Item
+                  className={styles.comLangItem}
+                >
+                  <div
+                    className={styles.comLangItem_content}
+                    onClick={() => this.handleAddComLangToMessage(item.content)}
+                  >{item.content}
+                  </div>
+                </List.Item>
+              }
             />
             : <Empty
               style={{ width: 252, height: 100, left: 100, textAlign: 'center' }}
@@ -467,24 +468,27 @@ class ChartCard extends PureComponent {
                 </Row>
               }
               dataSource={comLangList}
-              renderItem={item => <List.Item>
-                <div className={styles.comLangListItem}>
-                  <div className={styles.comLangListItem__content}>{item.content}</div>
-                  <div className={styles.comLangListItem__operation}>
-                    <Popconfirm
-                      key="list-edit-confirm"
-                      title="是否删除此常用语"
-                      onConfirm={() => this.handleDeleteComLang(item)}
-                    >
-                      <a style={{ color: 'red' }} key="list-edit">删除</a>
-                    </Popconfirm>
-                    <Divider type="vertical" />
-                    <a onClick={() => this.handleComLangEdit(item)} key="list-edit">编辑</a>
+              renderItem={item =>
+                <List.Item>
+                  <div className={styles.comLangListItem}>
+                    <div className={styles.comLangListItem__content}>{item.content}</div>
+                    <div className={styles.comLangListItem__operation}>
+                      <Popconfirm
+                        key="list-edit-confirm"
+                        title="是否删除此常用语"
+                        onConfirm={() => this.handleDeleteComLang(item)}
+                      >
+                        <a style={{ color: 'red' }} key="list-edit">删除</a>
+                      </Popconfirm>
+                      <Divider type="vertical" />
+                      <a onClick={() => this.handleComLangEdit(item)} key="list-edit">编辑</a>
+                    </div>
                   </div>
-                </div>
-              </List.Item>}
+                </List.Item>
+              }
             />
-            : <div>
+            : 
+            <div>
               <div>
                 <Mentions
                   value={operateType === 'add' ? comLang : curComLangInfo.content}
@@ -517,7 +521,7 @@ class ChartCard extends PureComponent {
                     icon={operateType === 'add' ? 'plus' : 'edit'}
                     size="small"
                     type="primary"
-                    loading={operateType === 'add'? loadingAddLang : loadingEditLang}
+                    loading={operateType === 'add' ? loadingAddLang : loadingEditLang}
                     ghost
                     onClick={() => this.onSubmitComLang(comLang)}
                   >
@@ -525,7 +529,8 @@ class ChartCard extends PureComponent {
                   </Button>
                 </Col>
               </Row>
-            </div>}
+            </div>
+          }
         </Modal>
       </GlobalSandBox>
     );

@@ -166,7 +166,7 @@ class SectorDetail extends PureComponent {
     }
 
     const detailList = [
-      { span: 1, required: true, name: '集群/板块名称', value: name, dataIndex: 'name' },
+      { span: 1, required: false, name: '集群/板块名称', value: name, dataIndex: 'name' },
       { span: 1, required: false, name: '所属部门', value: str, dataIndex: 'deptName' },
       {
         span: 1,
@@ -217,30 +217,30 @@ class SectorDetail extends PureComponent {
                 text="编辑"
               />
             ) : (
-                <div>
-                  <OptButton
-                    style={{
+              <div>
+                <OptButton
+                  style={{
                       ...btnStyle,
                       backgroundColor: 'white',
                     }}
                     // icon="close"
-                    onClick={() =>
+                  onClick={() =>
                       this.setState({
                         editBool: false,
                       })
                     }
-                    text="取消"
-                  />
-                  <OptButton
-                    style={{
+                  text="取消"
+                />
+                <OptButton
+                  style={{
                       backgroundColor: 'white',
                       marginLeft: '16px',
                     }}
-                    onClick={() => this.handleSubmit()}
-                    loading={loadingUpdate}
-                    text="保存"
-                  />
-                </div>
+                  onClick={() => this.handleSubmit()}
+                  loading={loadingUpdate}
+                  text="保存"
+                />
+              </div>
               )
           }
         >

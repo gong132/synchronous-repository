@@ -10,6 +10,7 @@ import {
   fileTypes,
   judgeFileType,
 } from '@/utils/constant';
+
 const { uploadUrl } = Config.config
 class FileUploadNo extends Component {
   constructor(props) {
@@ -20,10 +21,6 @@ class FileUploadNo extends Component {
       curUrl: '',
       imgName: '',
     }
-  }
-
-  componentDidMount() {
-    // this.handleQueryFile()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -66,10 +63,11 @@ class FileUploadNo extends Component {
   }
 
   renderFile = (v, index) => {
-    const { name, path, type, uploadType, id, bool } = v
+    const { name, path, type, id, bool } = v
     return (
       <div
         key={id}
+        onFocus={() => console.log('focus')}
         onMouseLeave={() => this.cOnMouseLeave(index)}
         className={styles.fileStyle}
         onMouseOver={() => this.cOnMouseOver(index)}
@@ -79,16 +77,24 @@ class FileUploadNo extends Component {
           <div>
             {
               type === 2
-                ? <div className={styles.fileStyle_btn}
-                  onClick={() => this.handleDownLoad(path)}
-                >下载</div>
-                : <div className={styles.fileStyle_btn}
-                onClick={() => this.handlePreview(path, true)}
-                >查看</div>
+                ?
+                  <div
+                    className={styles.fileStyle_btn}
+                    onClick={() => this.handleDownLoad(path)}
+                  >
+                  下载
+                  </div>
+                : 
+                  <div
+                    className={styles.fileStyle_btn}
+                    onClick={() => this.handlePreview(path, true)}
+                  >查看
+                  </div>
             }
             <div
               onClick={() => this.handleDeleteFile(v, index)}
-              className={styles.fileStyle_btn}>
+              className={styles.fileStyle_btn}
+            >
               <Icon component={delIcon} />
             </div>
           </div>
@@ -96,26 +102,6 @@ class FileUploadNo extends Component {
         }
       </div>
     )
-  }
-
-  // 查询附件
-  handleQueryFile = () => {
-    const { linkId, uploadType } = this.props
-    const { token } = getUserInfo()
-    const params = { linkId: String(linkId), uploadType }
-    if (!linkId) return
-    axios({
-      url: '/server/attachment/query',
-      type: 'json',
-      method: 'post',
-      contentType: 'application/json',
-      headers: { Authorization: token },
-      data: params,
-    }).then((res) => {
-      if (res.data.data && !_.isEmpty(res.data.data)) {
-        this.props.handleSaveFileUrl(JSON.stringify(res.data.data))
-      }
-    });
   }
 
   // 删除附件
@@ -167,7 +153,7 @@ class FileUploadNo extends Component {
 
 
   render() {
-    const { children, urls, uploadType, linkId } = this.props
+    const { children, uploadType, linkId } = this.props
     const { arrUrl, curUrl, imgName, preImg } = this.state
     const { token } = getUserInfo()
     const uploadProps = {
@@ -182,7 +168,6 @@ class FileUploadNo extends Component {
           return false
         }
       },
-      // onRemove: this.onRemove,
       onChange: this.handleSubmitFile,
     }
     return (

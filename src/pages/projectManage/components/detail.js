@@ -131,7 +131,7 @@ class Detail extends PureComponent {
   render() {
     const { editBool, descriptionState } = this.state
     const { form, project } = this.props
-    const { budgetList, projectInfo, stageStatus } = project
+    const { projectInfo, stageStatus } = project
     const {
       pjName,
       pjSn,
@@ -579,25 +579,28 @@ class Detail extends PureComponent {
                   <FormItem>
                     {form.getFieldDecorator('pjMgType', {
                       initialValue: pjMgType,
-                    })(<Select
-                      allowClear
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        JSON.stringify(option.props.children)
-                          .toLowerCase()
-                          .indexOf(input.toLowerCase()) >= 0
-                      }
-                      style={w}
-                      placeholder="请输入项目管理类型"
-                    >
-                      {/* {!_.isEmpty(stageStatus) &&
+                    })(
+                      <Select
+                        allowClear
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                          JSON.stringify(option.props.children)
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        }
+                        style={w}
+                        placeholder="请输入项目管理类型"
+                      >
+                        {/* {!_.isEmpty(stageStatus) &&
                         stageStatus.map(d => (
                           <Option key={d.id} value={d.id}>
                             {d.pjStageName}
                           </Option>
                         ))} */}
-                      <Option key='1' value='1'>研发管理类</Option>
-                    </Select>)}
+                        <Option key='1' value='1'>研发管理类</Option>
+                        <Option key='2' value='2'>需求起草类</Option>
+                      </Select>
+                    )}
                   </FormItem>
                 </DescriptionItem>
                 <DescriptionItem
@@ -626,6 +629,7 @@ class Detail extends PureComponent {
                       </Option>
                     ))} */}
                         <Option key='1' value='1'>外包采购</Option>
+                        <Option key='2' value='2'>部门研发</Option>
                       </Select>,
                     )}
                   </FormItem>
@@ -691,7 +695,7 @@ class Detail extends PureComponent {
                   </FormItem>
                 </DescriptionItem>
               </Fragment>
-            </Descriptions>
+              </Descriptions>
             : <Descriptions column={3} bordered className={styles.formatDetailDesc}>
               {
                 detailList.map(
