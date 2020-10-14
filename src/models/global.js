@@ -60,15 +60,33 @@ const GlobalModel = {
         message.error(msg);
         return false
       }
-      const newData = isArray(data) ? data.flat(1).reduce((cur, next, i) =>{
-        const findCurIndex = cur.find(v => v?.id === next?.id)
-        if (isEmpty(findCurIndex)) cur.push(next)
-        return cur
-      }, []) : []
-      storage.add('gd-user', { currentUserMenuList: newData });
+      // const newData = isArray(data) ? data.flat(1).reduce((cur, next, i) =>{
+      //   const findCurIndex = cur.find(v => v?.id === next?.id)
+      //   if (isEmpty(findCurIndex)) cur.push(next)
+      //   return cur
+      // }, []) : []
+      const newData = () => {
+        const newArr =[]
+        if (isArray(data)) {
+            data.forEach(v => {
+              if (isArray(v)) {
+                v.forEach(o => {
+                  newArr.push(o)
+                })
+              }
+          })
+        }
+        return newArr
+      }
+      const newMenu = newData().reduce((cur, next, i) =>{
+            const findCurIndex = cur.find(v => v?.id === next?.id)
+            if (isEmpty(findCurIndex)) cur.push(next)
+            return cur
+          }, [])
+      storage.add('gd-user', { currentUserMenuList: newMenu });
       yield put({
         type: 'saveData',
-        payload: { currentUserMenuList: newData },
+        payload: { currentUserMenuList: newMenu },
       });
 
       yield put({
@@ -78,8 +96,8 @@ const GlobalModel = {
         },
       });
 
-      callback && callback(newData);
-      return newData
+      callback && callback(newMenu);
+      return newMenu
     },
 
     *fetchLogList({payload}, {call, put}) {
