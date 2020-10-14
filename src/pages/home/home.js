@@ -271,15 +271,15 @@ const Index = props => {
           <FormItem {...formLayoutItem} label="发送者" colon={false}>
             {getFieldDecorator('userId')(
               <Select
-                onBlur={handleSearchForm}
+                onChange={handleSearchForm}
                 style={{ width: '100%' }}
                 placeholder="请选择发送者"
                 allowClear
               >
                 {list &&
                   list.map(v => (
-                    <Option value={v.loginid} key={v.loginid}>
-                      {v.lastname}
+                    <Option value={v.userId} key={v.userId}>
+                      {v.userName}
                     </Option>
                   ))}
               </Select>,

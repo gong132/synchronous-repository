@@ -19,7 +19,7 @@ const Model = {
         message.error(msg);
         return false
       }
-      storage.set('gd-user',{...data, loginTime: new Date() })
+      storage.set('gd-user',{token: data, loginTime: new Date() })
 
       yield put({
         type: 'changeLoginStatus',

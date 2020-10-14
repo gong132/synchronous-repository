@@ -50,16 +50,16 @@ export async function saveFile(params) {
 
 // 查询人员列表
 export async function fetchUserList(params) {
-  return request('/personnel/search', {
-    method: 'get',
+  return request('/user/search', {
+    method: 'post',
     params,
   });
 }
 
 // 查询人员
 export async function queryUserList(params) {
-  return request('/personnel/search', {
-    method: 'get',
+  return request('/user/search', {
+    method: 'post',
     params,
   });
 }

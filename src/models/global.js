@@ -65,28 +65,28 @@ const GlobalModel = {
       //   if (isEmpty(findCurIndex)) cur.push(next)
       //   return cur
       // }, []) : []
-      const newData = () => {
-        const newArr =[]
-        if (isArray(data)) {
-            data.forEach(v => {
-              if (isArray(v)) {
-                v.forEach(o => {
-                  newArr.push(o)
-                })
-              }
-          })
-        }
-        return newArr
-      }
-      const newMenu = newData().reduce((cur, next, i) =>{
-            const findCurIndex = cur.find(v => v?.id === next?.id)
-            if (isEmpty(findCurIndex)) cur.push(next)
-            return cur
-          }, [])
-      storage.add('gd-user', { currentUserMenuList: newMenu });
+      // const newData = () => {
+      //   const newArr =[]
+      //   if (isArray(data)) {
+      //       data.forEach(v => {
+      //         if (isArray(v)) {
+      //           v.forEach(o => {
+      //             newArr.push(o)
+      //           })
+      //         }
+      //     })
+      //   }
+      //   return newArr
+      // }
+      // const newMenu = newData().reduce((cur, next, i) =>{
+      //       const findCurIndex = cur.find(v => v?.id === next?.id)
+      //       if (isEmpty(findCurIndex)) cur.push(next)
+      //       return cur
+      //     }, [])
+      storage.add('gd-user', { currentUserMenuList: data });
       yield put({
         type: 'saveData',
-        payload: { currentUserMenuList: newMenu },
+        payload: { currentUserMenuList: data },
       });
 
       yield put({
@@ -96,8 +96,8 @@ const GlobalModel = {
         },
       });
 
-      callback && callback(newMenu);
-      return newMenu
+      callback && callback(data);
+      return data
     },
 
     *fetchLogList({payload}, {call, put}) {
@@ -145,7 +145,7 @@ const GlobalModel = {
     *querySystemList({payload}, {call, put}) {
       const res = yield call(fetchSystemList, payload);
       if (!res || res.code !== 200) {
-        message.error(msg);
+        message.error(res?.msg);
         return false
       }
       yield put({
@@ -161,7 +161,7 @@ const GlobalModel = {
     *queryDeptList({payload}, {call, put}) {
       const res = yield call(fetchDeptList, payload);
       if (!res || res.code !== 200) {
-        message.error(msg);
+        message.error(res?.msg);
         return false
       }
       yield put({
@@ -207,7 +207,6 @@ const GlobalModel = {
       },
       { payload },
     ) {
-      console.log(state, payload, "11111111111")
       return { ...state, collapsed: payload };
     },
 
@@ -311,9 +310,9 @@ const GlobalModel = {
     setup({ history, dispatch }) {
       // 订阅, 监听当前页面路由改变,
       history.listen(({ pathname, search }) => {
-        const { currentUserMenuList } = storage.get('gd-user', []);
+        // const { currentUserMenuList } = storage.get('gd-user', []);
         // console.log(currentUserMenuList, 'currentUserMenuList')
-        const findCurrentPage = currentUserMenuList && currentUserMenuList.filter(v => !!v ).find(v => v.url === pathname );
+        // const findCurrentPage = currentUserMenuList && currentUserMenuList.filter(v => !!v ).find(v => v.url === pathname );
         // console.log(currentUserMenuList, pathname, findCurrentPage, 'findCurrentPage')
 
         // 监听当前页面路由是否在菜单池, 如果不在, 并且不是异常页面和登陆页时, 跳转到403页面
@@ -333,7 +332,10 @@ const GlobalModel = {
       // 通过订阅history，监听路由变化后，对当前路由更新authActions
       return history.listen(({ pathname }) => {
         dispatch({ type: 'updateAuthData', payload: { pathname } });
-        dispatch({ type: 'queryMessageList', payload: { readStatus: 0, type: 1 } });
+        const { token } = storage.get("gd-user", {})
+        if (!isEmpty(token)) {
+          dispatch({ type: 'queryMessageList', payload: { readStatus: 0, type: 1 } });
+        }
       });
     },
   },

@@ -78,7 +78,7 @@ const Index = memo(props => {
         >
           {
             userList?.list && userList.list.map(v => (
-              <Select.Option value={v.loginid} key={v.loginid}>{v.lastname}</Select.Option>
+              <Select.Option value={v.userId} key={v.userId}>{v.userName}</Select.Option>
             ))
           }
         </Select>

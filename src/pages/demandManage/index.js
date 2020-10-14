@@ -110,7 +110,7 @@ const Index = props => {
               )(
                 <Select
                   allowClear
-                  onBlur={handleSearchForm}
+                  onChange={handleSearchForm}
                   placeholder="请选择所属系统"
                 >
                   {
@@ -129,12 +129,14 @@ const Index = props => {
               )(
                 <Select
                   allowClear
-                  onBlur={handleSearchForm}
+                  onChange={handleSearchForm}
                   placeholder="请选择团队成员"
                 >
                   {
                     userList?.list && userList.list.map(v => (
-                      <Option value={v.loginid} key={v.loginid}>{v.lastname}</Option>
+                      <Option value={v.userId} key={v.userId.toString()}>
+                        {v.userName}
+                      </Option>
                     ))
                   }
                 </Select>
@@ -148,8 +150,10 @@ const Index = props => {
               )(
                 <Select
                   allowClear
-                  onBlur={handleSearchForm}
-                  onChange={deptId => handleQueryDemandInfo({ deptId })}
+                  onChange={deptId => {
+                    handleQueryDemandInfo({deptId})
+                    handleSearchForm()
+                  }}
                   placeholder="请选择需求所属部门"
                 >
                   {
@@ -157,6 +161,7 @@ const Index = props => {
                       <Option value={v.id.toString()} key={v.id}>{v.name}</Option>
                     ))
                   }
+                  <Option value="0">其他</Option>
                 </Select>
               )}
             </FormItem>
@@ -168,7 +173,7 @@ const Index = props => {
               )(
                 <Select
                   allowClear
-                  onBlur={handleSearchForm}
+                  onChange={handleSearchForm}
                   placeholder="请选择需求状态"
                 >
                   {DEMAND_STATUS.map(v => (
