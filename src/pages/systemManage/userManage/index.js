@@ -99,7 +99,7 @@ class UserManage extends Component {
       this.props.dispatch({
         type: 'userManage/queryRoleById',
         payload: {
-          id: record.id
+          userId: record.userId
         }
       })
     }
@@ -149,7 +149,7 @@ class UserManage extends Component {
       <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
         <Col span={6}>
           <FormItem {...formLayoutItem} colon={false} label="搜索人员">
-            {getFieldDecorator('searchKey', {})(<Input onChange={_.debounce(this.moreQuery, 500)} allowClear placeholder="请输入姓名或工号" />)}
+            {getFieldDecorator('idOrName', {})(<Input onChange={_.debounce(this.moreQuery, 500)} allowClear placeholder="请输入姓名或工号" />)}
           </FormItem>
         </Col>
         <Col span={6}>
@@ -235,19 +235,19 @@ class UserManage extends Component {
   genColumns = () => {
     const { groupMap, roleDataMap } = this.props
     const columns = [
-      TableColumnHelper.genPlanColumn('lastname', '姓名', {align: 'left'}),
-      TableColumnHelper.genPlanColumn('loginid', '工号', {align: 'left'}),
+      TableColumnHelper.genPlanColumn('userName', '姓名', {align: 'left'}),
+      TableColumnHelper.genPlanColumn('userId', '工号', {align: 'left'}),
       {
         title: '用户角色',
-        dataIndex: 'roleList',
-        key: 'roleList',
+        dataIndex: 'roles',
+        key: 'roles',
         render: (text) => {
           if (_.isEmpty(text)) {
             return false
           }
           let str = ''
           text.map(v => {
-            str += `${roleDataMap[v.id]} `
+            str += `${v.roleName} `
             return true
           })
           return str
@@ -285,7 +285,7 @@ class UserManage extends Component {
   renderEditModal = () => {
     const { modalVisible, record } = this.state;
     const { form, userManage } = this.props;
-    const { lastname, loginid } = record;
+    const { userName, userId } = record;
     const { roleData, checkRole } = userManage
     console.log(checkRole)
     return (
@@ -309,17 +309,17 @@ class UserManage extends Component {
         <Row>
           <Col span={24}>
             <FormItem label="姓名" labelCol={{ span: 2 }} wrapperCol={{ span: 8 }}>
-              {form.getFieldDecorator('lastname', {
+              {form.getFieldDecorator('userName', {
                 rules: [{ required: true, message: '请输入姓名!' }],
-                initialValue: lastname,
+                initialValue: userName,
               })(<Input disabled placeholder="请输入姓名" />)}
             </FormItem>
           </Col>
           <Col span={24}>
             <FormItem label="工号" labelCol={{ span: 2 }} wrapperCol={{ span: 8 }}>
-              {form.getFieldDecorator('loginid', {
+              {form.getFieldDecorator('userId', {
                 rules: [{ required: true, message: '请输入工号!' }],
-                initialValue: loginid,
+                initialValue: userId,
               })(<Input disabled placeholder="请输入工号" />)}
             </FormItem>
           </Col>
@@ -357,7 +357,7 @@ class UserManage extends Component {
   };
 
   render() {
-    const { userManage } = this.props
+    const { userManage, loadingQueryUserData } = this.props
     const { userList } = userManage
     const { modalVisible } = this.state
     return (
@@ -371,7 +371,7 @@ class UserManage extends Component {
             columns={this.genColumns()}
             data={userList}
             // dataSource={[{ name: 'gong', account: '0001', role: '普通员工', team: '零售集群' }]}
-            // loading={loadingQueryData}
+            loading={loadingQueryUserData}
             onChange={this.handleStandardTableChange}
           />
         </Card>

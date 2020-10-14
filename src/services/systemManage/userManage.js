@@ -1,7 +1,7 @@
 import request from '@/utils/request';
 
 export async function updateUser(params) {
-  return request('/personnel/update', {
+  return request('/user/updateUser', {
     method: 'post',
     params,
   });
@@ -9,7 +9,7 @@ export async function updateUser(params) {
 
 // 查询
 export async function queryUserList(params) {
-  return request('/user/search', {
+  return request('/user/list', {
     method: 'post',
     params,
   });
@@ -33,7 +33,7 @@ export async function queryHeaderGroup(params) {
 
 // 根据人员id查角色，编辑用
 export async function queryRoleById(params) {
-  return request('/personnel/queryListByPersonnelId', {
+  return request('/user//queryRoleById', {
     method: 'get',
     params,
   });

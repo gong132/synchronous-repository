@@ -224,7 +224,6 @@ class DemandBoard extends Component {
   }
 
   // 取消关注
-
   quickResolveStory = async (item, key, keyPath, domEvent, editValue) => {
     if (domEvent.stopPropagation) {
       domEvent.stopPropagation()

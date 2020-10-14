@@ -61,8 +61,8 @@ const Appoint = (props) => {
         handleReceiverDemand(values)
         return true
       }
-      values.userName = userDataMapId[values.user]
-      values.userId = values.user
+      values.userName = userDataMap[values.user]
+      values.userLoginName = values.user
       delete values.user
       handleFocusDemand(values)
     })
@@ -101,13 +101,9 @@ const Appoint = (props) => {
               placeholder="请输入姓名或工号"
             >
               {userData.map(d => {
-                return title === '指派受理人'
-                  ? <Option key={d.loginid} value={d.loginid}>
-                    {d.lastname}
-                  </Option>
-                  : <Option key={d.id} value={d.id}>
-                    {d.lastname}
-                  </Option>
+                return <Option key={d.loginid} value={d.loginid}>
+                  {d.lastname}
+                </Option>
               })}
             </Select>,
           )}

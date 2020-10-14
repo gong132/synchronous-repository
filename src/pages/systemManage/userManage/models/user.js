@@ -112,9 +112,10 @@ const UserModel = {
         return false
       }
       data.map(v => {
-        arr.push(v.id)
+        arr.push(v.roleId)
         return true
       })
+      console.log(data)
       yield put({
         type: 'saveData',
         payload: {
