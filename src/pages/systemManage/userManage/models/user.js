@@ -55,9 +55,10 @@ const UserModel = {
         message.error(msg);
         return
       }
-      let obj = {}
+      const obj = {}
       data.data.map(v => {
         obj[v.id] = v.roleName
+        return true
       })
       yield put({
         type: 'saveData',

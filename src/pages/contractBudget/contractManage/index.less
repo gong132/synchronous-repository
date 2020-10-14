@@ -21,12 +21,14 @@
 }
 
 .moreSearchButton {
-  width: 200px;
-  /* margin: 0 auto; */
   display: flex;
   margin: 12px 0;
   float: right;
-  justify-content: space-between;
+  :global {
+    .ant-btn-primary {
+      margin-left: 12px;
+    }
+  }
 }
 
 .moreSearch {
@@ -46,6 +48,26 @@
       margin-top: 12px;
     }
   }
+}
+
+// 修改滚动条样式
+.moreSearch::-webkit-scrollbar{
+  width:10px;
+  height:10px;
+}
+.moreSearch::-webkit-scrollbar-track{
+  background: rgb(239, 239, 239);
+  border-radius:2px;
+}
+.moreSearch::-webkit-scrollbar-thumb{
+  background: #bfbfbf;
+  border-radius:10px;
+}
+.moreSearch::-webkit-scrollbar-thumb:hover{
+  background: #333;
+}
+.moreSearch::-webkit-scrollbar-corner{
+  background: #bfbfbf;
 }
 
 .clearFormMargin {

@@ -168,7 +168,7 @@ class ContractManage extends Component {
   // 查询团队
   handleQueryGroup = (val, type) => {
     const params = {}
-    if(type) {
+    if (type) {
       params[type] = val
     } else {
       params.teamName = val
@@ -201,7 +201,7 @@ class ContractManage extends Component {
   // 通过人员id查团队
   handleQueryGroupBy = async (type, val) => {
     if (type === 'user') {
-      const res = await this.handleQueryGroup( String(val), 'userId' )
+      const res = await this.handleQueryGroup(String(val), 'userId')
       const { contract: { groupList }, form } = this.props
       if (res && !_.isEmpty(groupList)) {
         form.setFieldsValue({ 'headerTeamId': groupList[0].id })
@@ -469,7 +469,17 @@ class ContractManage extends Component {
           {/* <Button onClick={() => this.moreQuery()} loading={loadingQueryData} type="primary" ghost>
             查询
           </Button> */}
-          <CustomBtn
+          <Button
+            type='primary'
+            ghost
+            onClick={() => this.setSearchMore(false)}
+          >取消</Button>
+          <Button
+            type='primary'
+            onClick={() => this.moreQuery(false)}
+            loading={loadingQueryData}
+          >确认</Button>
+          {/* <CustomBtn
             onClick={() => this.setSearchMore(false)}
             type='cancel'
           />
@@ -478,7 +488,7 @@ class ContractManage extends Component {
             type='save'
             title='确认'
             loading={loadingQueryData}
-          />
+          /> */}
           {/* <Button onClick={() => this.setSearchMore(false)}>取消</Button> */}
         </div>
       </div>
@@ -581,8 +591,8 @@ class ContractManage extends Component {
                   }}
                 >
                   <div className={styles.moreBtn}>
-                    <Icon component={searchMore ? downIcon : upIcon} />
-                    <span>更多</span>
+                    <Icon component={searchMore ?  upIcon: downIcon} />
+                    <span>{searchMore ?  '隐藏' : '更多'}</span>
                   </div>
                 </div>
               }

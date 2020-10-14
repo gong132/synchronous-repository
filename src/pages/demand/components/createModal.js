@@ -18,7 +18,8 @@ const RadioGroup = Radio.Group;
   global,
   demand,
   loadingAdd: loading.effects['demand/addDemand'],
-  loadingTempAdd: loading.effects['demand/tempAddDemand']
+  loadingTempAdd: loading.effects['demand/tempAddDemand'],
+  loadingUpdate: loading.effects['demand/updateDemand']
 }))
 class CreateDemand extends PureComponent {
   constructor(props) {
@@ -98,7 +99,7 @@ class CreateDemand extends PureComponent {
   // 查询团队
   handleQueryGroup = (val, type) => {
     const params = {}
-    if(type) {
+    if (type) {
       params[type] = val
     } else {
       params.teamName = val
@@ -128,16 +129,16 @@ class CreateDemand extends PureComponent {
     const { form } = this.props
     console.log(val)
     form.resetFields(['receiver'])
-    this.handleQueryUser({teamId: val})
+    this.handleQueryUser({ teamId: val })
   }
 
   // 通过人员id查团队
   handleQueryGroupBy = async (type, val) => {
     if (type === 'user') {
-      const res = await this.handleQueryGroup( String(val),'userId')
+      const res = await this.handleQueryGroup(String(val), 'userId')
       const { demand: { groupList }, form } = this.props
       if (res && !_.isEmpty(groupList)) {
-        form.setFieldsValue({'acceptTeam': groupList[0].id })
+        form.setFieldsValue({ 'acceptTeam': groupList[0].id })
       }
     }
   }
@@ -212,7 +213,7 @@ class CreateDemand extends PureComponent {
     const { form, modalTitle, demand: { tempDemandId, userDataMap, groupMap }, recordValue } = this.props
     const { description, urls } = this.state
     const arr = [] // 保存附件ids
-    if(urls.length > 0) {
+    if (urls.length > 0) {
       JSON.parse(urls).map(f => {
         arr.push(String(f.id))
         return true
@@ -492,7 +493,7 @@ class CreateDemand extends PureComponent {
                 handleSaveFileUrl={this.handleSaveFileUrl}
               >
                 <Button type='primary' ghost>上传</Button>
-                <span style={{marginLeft: '16px'}}>限制文件大小为20M以内</span>
+                <span style={{ marginLeft: '16px' }}>限制文件大小为20M以内</span>
               </UploadFile>
             </FormItem>
           </Col>
@@ -509,6 +510,7 @@ class CreateDemand extends PureComponent {
       handleViewModal,
       loadingAdd,
       loadingTempAdd,
+      loadingUpdate
     } = this.props;
     return (
       <Modal
@@ -525,7 +527,6 @@ class CreateDemand extends PureComponent {
               style={{ marginRight: '18px' }}
             />
             <CustomBtn
-              // loading={modalTitle === '编辑' ? loadingUpdate : loadingAdd}
               loading={loadingTempAdd}
               onClick={() => this.handleSubmitForm('tempSave')}
               style={{
@@ -536,8 +537,8 @@ class CreateDemand extends PureComponent {
               title='暂存'
             />
             <CustomBtn
-              // loading={modalTitle === '编辑' ? loadingUpdate : loadingAdd}
-              loading={loadingAdd}
+              loading={modalTitle === '编辑' ? loadingUpdate : loadingAdd}
+              // loading={loadingAdd}
               onClick={() => this.handleSubmitForm('clickBtn')}
               type="save"
             />

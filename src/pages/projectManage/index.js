@@ -23,7 +23,8 @@ import {
   Icon,
   Row,
   Col,
-  DatePicker
+  DatePicker,
+  Button
 } from 'antd'
 import * as _ from 'lodash'
 import { PROJECT_STATUS_OBJ, DEMAND_PRIORITY_ARR, BUSINESS_STATUS_ARR } from './utils/constant'
@@ -136,8 +137,8 @@ class ProjectManage extends Component {
       formValues.estTimeStart = moment(formValues.estTime[0]).format('YYYY-MM-DD')
       formValues.estTimeEnd = moment(formValues.estTime[1]).format('YYYY-MM-DD')
     }
-    if(formValues.clusterName) {
-      formValues.clusterName=String(formValues.clusterName)
+    if (formValues.clusterName) {
+      formValues.clusterName = String(formValues.clusterName)
     }
     this.handleDebounceQueryData(formValues);
   };
@@ -196,8 +197,8 @@ class ProjectManage extends Component {
       formValues.estTimeStart = moment(formValues.estTime[0]).format('YYYY-MM-DD')
       formValues.estTimeEnd = moment(formValues.estTime[1]).format('YYYY-MM-DD')
     }
-    if(formValues.clusterName) {
-      formValues.clusterName=String(formValues.clusterName)
+    if (formValues.clusterName) {
+      formValues.clusterName = String(formValues.clusterName)
     }
     const params = {
       currentPage: pagination.current,
@@ -484,7 +485,19 @@ class ProjectManage extends Component {
           </Col>
         </Row>
         <div className={styles.moreSearchButton}>
-          <CustomBtn
+          <Button
+            type='primary'
+            ghost
+            onClick={() => this.setSearchMore(false)}
+          >取消
+          </Button>
+          <Button
+            type='primary'
+            onClick={() => this.moreQuery(false)}
+            loading={loadingQueryData}
+          >确认
+          </Button>
+          {/* <CustomBtn
             onClick={() => this.setSearchMore(false)}
             type='cancel'
           />
@@ -493,7 +506,7 @@ class ProjectManage extends Component {
             type='save'
             title='确认'
             loading={loadingQueryData}
-          />
+          /> */}
         </div>
       </div>
     );
@@ -616,8 +629,8 @@ class ProjectManage extends Component {
                   }}
                 >
                   <div className={styles.moreBtn}>
-                    <Icon component={searchMore ? downIcon : upIcon} />
-                    <span>更多</span>
+                    <Icon component={searchMore ? upIcon : downIcon} />
+                    <span>{searchMore ? '隐藏' : '更多'}</span>
                   </div>
                 </div>
               }

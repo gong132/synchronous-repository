@@ -69,6 +69,7 @@ class TeamManage extends Component {
   };
 
   handleResetSearch = () => {
+    this.props.form.resetFields()
     this.setState(
       {
         searchParams: {},

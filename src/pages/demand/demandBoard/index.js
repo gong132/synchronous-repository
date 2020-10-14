@@ -62,7 +62,7 @@ class DemandBoard extends Component {
   }
 
   handleViewDetail = (item) => {
-    const { id, demandNumber } = item
+    const { id, demandNumber, type } = item
     // router.push({
     //   pathname: '/survey',
     //   query: {
@@ -70,8 +70,12 @@ class DemandBoard extends Component {
     //     no: demandNumber
     //   }
     // });
+    let pathname = '/demand/generalDemand/detail'
+    if(type === 'p') {
+      pathname='/demand/projectDemand/detail'
+    }
     router.push({
-      pathname: '/demand/myDemand/detail',
+      pathname,
       query: {
         id,
         no: demandNumber
@@ -267,7 +271,7 @@ class DemandBoard extends Component {
     const { source, destination, draggableId } = result
     if (destination === null) {
       console.log('不允许******************')
-      message.warning('这不是一次有效的操作！')
+      // message.warning('这不是一次有效的操作！')
       return true
     }
     const params = {
@@ -288,7 +292,7 @@ class DemandBoard extends Component {
       this.handleDragDemand(params)
       return true
     }
-    message.warning('这不是一次有效的操作！')
+    // message.warning('这不是一次有效的操作！')
     console.log('不允许******************')
     return true
   }
@@ -386,7 +390,7 @@ class DemandBoard extends Component {
                                             >
                                               <Dropdown
                                                 overlay={this.renderBoardMenu(item, droppableItem.boardId)}
-                                                trigger='click'
+                                                trigger={['click']}
                                                 onClick={(e) => this.stopPropogation(e)}
                                               >
                                                 <Icon
@@ -441,7 +445,7 @@ class DemandBoard extends Component {
                                 >
                                   <Dropdown
                                     overlay={this.renderBoardMenu(item, droppableItem.boardId)}
-                                    trigger='click'
+                                    trigger={['click']}
                                     onClick={(e) => this.stopPropogation(e)}
                                   >
                                     <Icon

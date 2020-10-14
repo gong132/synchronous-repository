@@ -235,8 +235,8 @@ class UserManage extends Component {
   genColumns = () => {
     const { groupMap, roleDataMap } = this.props
     const columns = [
-      TableColumnHelper.genPlanColumn('lastname', '姓名'),
-      TableColumnHelper.genPlanColumn('loginid', '工号'),
+      TableColumnHelper.genPlanColumn('lastname', '姓名', {align: 'left'}),
+      TableColumnHelper.genPlanColumn('loginid', '工号', {align: 'left'}),
       {
         title: '用户角色',
         dataIndex: 'roleList',

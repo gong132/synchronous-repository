@@ -234,7 +234,7 @@ class Detail extends Component {
   };
 
   // 通过团队查人员
-  handleChangeGroup = (val) => {
+  handleChangeGroup = () => {
     const { form } = this.props
     form.resetFields(['receiver'])
   }
@@ -731,26 +731,26 @@ class Detail extends Component {
                     />}
                   </Fragment>
                 ) : (
-                    <Fragment>
-                      <OptButton
-                        style={{
+                  <Fragment>
+                    <OptButton
+                      style={{
                           backgroundColor: 'white',
                           color: '#B0BAC9',
                           borderColor: '#B0BAC9',
                         }}
-                        disabled
-                        img={psIcon}
-                        text="已提交OA审批"
-                      />
-                      { receiverName === userName && <OptButton
-                        style={{
+                      disabled
+                      img={psIcon}
+                      text="已提交OA审批"
+                    />
+                    { receiverName === userName && <OptButton
+                      style={{
                           backgroundColor: 'white',
                         }}
-                        img={apsIcon}
-                        text="提交OA审批"
-                        onClick={() => this.handleOAaction('u')}
-                      />}
-                    </Fragment>
+                      img={apsIcon}
+                      text="提交OA审批"
+                      onClick={() => this.handleOAaction('u')}
+                    />}
+                  </Fragment>
                   )}
                 {editBool ? (
                   <Fragment>
@@ -778,18 +778,18 @@ class Detail extends Component {
                     />
                   </Fragment>
                 ) : (
-                    <OptButton
-                      onClick={() =>
+                  <OptButton
+                    onClick={() =>
                         this.setState({
                           editBool: true,
                         })
                       }
-                      style={{
+                    style={{
                         backgroundColor: 'white',
                       }}
-                      img={editIcon}
-                      text="编辑"
-                    />
+                    img={editIcon}
+                    text="编辑"
+                  />
                   )}
               </Fragment>
             }
@@ -1139,8 +1139,8 @@ class Detail extends Component {
                 </DescriptionItem>
               </Descriptions>
             ) : (
-                <Descriptions column={3} bordered className={styles.formatDetailDesc}>
-                  {detailList.map(
+              <Descriptions column={3} bordered className={styles.formatDetailDesc}>
+                {detailList.map(
                     (v, i) =>
                       (v.type === type || v.type === 'p') && (
                         <DescriptionItem
@@ -1165,7 +1165,7 @@ class Detail extends Component {
                             )
                             : v.dataIndex === 'file'
                               ? <div className={styles.customFileArea}>
-                                {urls&&urls.length > 0
+                                {urls && urls.length > 0
                                   ? JSON.parse(urls).map((v, index) => this.renderFile(v, index))
                                   : null}
                               </div>
@@ -1236,7 +1236,7 @@ class Detail extends Component {
             title={title}
           />
         )}
-        <GlobalSandBox title="系统需求" img={sdIcon}></GlobalSandBox>
+        {/* <GlobalSandBox title="系统需求" img={sdIcon}></GlobalSandBox> */}
         <GlobalSandBox img={budgetLogIcon} title="操作日志">
           <StandardTable
             rowKey={(record, index) => index}
