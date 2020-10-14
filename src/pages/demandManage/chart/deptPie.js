@@ -13,24 +13,23 @@ function throttle(func, wait, ...args) {
     if (!timeout) {
       timeout = setTimeout(() => {
         timeout = null;
-        func.apply(context, args)
-      }, wait)
+        func.apply(context, args);
+      }, wait);
     }
-  }
+  };
 }
 
 const Index = memo(
   withRouter(props => {
     const { demandDeptInfo, handleQueryDemandInfo, handleSetDeptId } = props;
 
-
     const handleOk = id => {
-      handleSetDeptId(id)
+      handleSetDeptId(id);
       handleQueryDemandInfo({
         currentNumber: demandDeptInfo.currentNumber,
         deptId: id,
-      })
-    }
+      });
+    };
 
     const initChart = () => {
       const element = document.getElementById('deptBar');
@@ -39,13 +38,14 @@ const Index = memo(
         orient: 'vertical',
         right: 0,
         bottom: 0,
+        icon: 'circle',
         data: demandDeptInfo.data.map(v => v.name),
         selected: {},
         formatter: name => {
           const length = name?.length;
           return length > 10 ? `${name.substring(0, 9)}...` : name;
         },
-      }
+      };
       const option = {
         color: [
           '#62DAAB',
@@ -66,7 +66,7 @@ const Index = memo(
             // 坐标轴指示器，坐标轴触发有效
             type: 'line', // 默认为直线，可选为：'line' | 'shadow'
           },
-          formatter: '访问来源 <br/>{b} : {c} ({d}%)'
+          formatter: '访问来源 <br/>{b} : {c} ({d}%)',
         },
         grid: {
           tooltip: {
@@ -75,7 +75,7 @@ const Index = memo(
               // 坐标轴指示器，坐标轴触发有效
               type: 'line', // 默认为直线，可选为：'line' | 'shadow'
             },
-            formatter: '访问来源 <br/>{b} : {c} ({d}%)'
+            formatter: '访问来源 <br/>{b} : {c} ({d}%)',
           },
         },
         series: [
@@ -86,12 +86,19 @@ const Index = memo(
             itemStyle: {
               barBorderRadius: [15, 15, 0, 0],
             },
-            center: ["40%", "50%"],
+            center: ['35%', '50%'],
             label: {
               show: true,
+              align: 'left',
+              width: 100,
               formatter: rows => {
                 if (String(rows?.data?.value) !== '0') {
-                  return `${rows?.data?.name} : ${rows?.data?.value}`;
+                  const title = `${rows?.data?.name} : ${rows?.data?.value}`;
+                  const newTitle = [];
+                  for (let i = 0; i < Math.ceil(title.length / 9); i += 1) {
+                    newTitle.push(title.substring(i * 9, (i + 1) * 9));
+                  }
+                  return newTitle.join('\n');
                 }
                 return null;
               },
@@ -99,26 +106,26 @@ const Index = memo(
             data: demandDeptInfo.data.map(v => ({
               value: v.demandCount,
               name: v.name,
-              id: v.id
+              id: v.id,
             })),
           },
         ],
       };
-      option.legend = legend
+      option.legend = legend;
       myChart.setOption(option, true, false, true);
 
       myChart.on('click', params => {
-        let count = demandDeptInfo.currentNumber
-        console.log(params, "params")
-        if (demandDeptInfo.showOtherFlag && params?.name === "其他") {
+        let count = demandDeptInfo.currentNumber;
+        console.log(params, 'params');
+        if (demandDeptInfo.showOtherFlag && params?.name === '其他') {
           count += 10;
           handleQueryDemandInfo({
             currentNumber: count,
-          })
+          });
         }
         throttle(handleOk(params.data.id), 2000);
       });
-    }
+    };
 
     useEffect(() => {
       initChart();

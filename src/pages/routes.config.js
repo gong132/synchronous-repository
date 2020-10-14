@@ -67,12 +67,6 @@ module.exports = {
           ],
         },
         {
-          path: '/demandManage',
-          name: 'demandManage',
-          icon: 'icon-nav_xqgl',
-          component: './demandManage/index',
-        },
-        {
           path: '/demandManage/list',
           name: 'demandManageList',
           hideInMenu: true,
@@ -148,7 +142,7 @@ module.exports = {
         {
           path: '/demandManage',
           name: 'demandManage',
-          icon: 'home',
+          icon: 'icon-nav_xqgl',
           component: './demandManage/index',
         },
         {

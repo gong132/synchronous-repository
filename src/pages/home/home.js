@@ -12,7 +12,8 @@ import {
   Row,
   Select,
   Tabs,
-  Tooltip, Popover,
+  Tooltip,
+  Popover,
 } from 'antd';
 import styles from './home.less';
 import StandardTable from '@/components/StandardTable';
@@ -50,14 +51,14 @@ const Index = props => {
       },
     });
   };
-  const handleBatchModifyRead = (msgId, eventType) => {
+  const handleBatchModifyRead = (msgId, eventType, callback) => {
     let msgIds = [];
-    if (eventType === "rowClick" && msgId) msgIds = [msgId];
-    if (eventType !== "rowClick" && selectedRows.length === 0) {
+    if (eventType === 'rowClick' && msgId) msgIds = [msgId];
+    if (eventType !== 'rowClick' && selectedRows.length === 0) {
       message.warning('请选择至少一条消息');
       return;
     }
-    if (eventType !== "rowClick" && selectedRows.length > 0) {
+    if (eventType !== 'rowClick' && selectedRows.length > 0) {
       msgIds = selectedRows.map(v => v.id);
     }
     dispatch({
@@ -69,8 +70,8 @@ const Index = props => {
     }).then(res => {
       if (!res) return;
       setSelectedRows([]);
-      message.success('标记成功');
       handleQueryMessageList();
+      callback && callback();
     });
   };
   const handleQueryUserList = () => {
@@ -87,7 +88,7 @@ const Index = props => {
 
   const handleTabsChange = key => {
     setMsgStatus(key);
-    form.resetFields()
+    form.resetFields();
     setSelectedRows([]);
     handleQueryMessageList({ readStatus: key });
   };
@@ -133,8 +134,8 @@ const Index = props => {
   const handleGotoTargetByType = rows => {
     //   { key: 'p', value: '项目需求' },
     //   { key: 'u', value: '一般需求' },
-    const { demandId, demandType, linkUrlType, linkId } = rows;
-    if (linkUrlType === 1 && demandType === "u") {
+    const { demandId, demandType, linkUrlType, linkId, title } = rows;
+    if (linkUrlType === 1 && demandType === 'u') {
       props.history.push({
         pathname: '/demand/generalDemand/detail',
         query: {
@@ -142,9 +143,10 @@ const Index = props => {
           no: linkId,
         },
       });
-      return
+      msgStatus === '0' && handleBatchModifyRead(rows.id, 'rowClick');
+      return;
     }
-    if (linkUrlType === 1 && demandType === "p") {
+    if (linkUrlType === 1 && demandType === 'p') {
       props.history.push({
         pathname: '/demand/projectDemand/detail',
         query: {
@@ -152,10 +154,22 @@ const Index = props => {
           no: linkId,
         },
       });
-      return
+      msgStatus === '0' && handleBatchModifyRead(rows.id, 'rowClick');
+      return;
     }
-    message.warning("该消息类型暂不支持跳转")
-  }
+    if (linkUrlType === 3) {
+      props.history.push({
+        pathname: '/survey',
+        query: {
+          no: linkId,
+          t: title,
+        },
+      });
+      msgStatus === '0' && handleBatchModifyRead(rows.id, 'rowClick');
+      return;
+    }
+    message.warning('该消息类型暂不支持跳转');
+  };
 
   const columns = [
     {
@@ -167,10 +181,7 @@ const Index = props => {
         if (isEmpty(rows.linkId, true)) return '';
         return (
           <Tooltip placement="top" title={rows.linkId}>
-            <span
-              style={{ color: '#2E5BFF' }}
-              onClick={() => handleGotoTargetByType(rows)}
-            >
+            <span style={{ color: '#2E5BFF' }} onClick={() => handleGotoTargetByType(rows)}>
               {rows.linkId.length > 10
                 ? `${rows.linkId.substring(0, 10)}...`
                 : rows.linkId.substring(0, 10)}
@@ -190,10 +201,14 @@ const Index = props => {
         if (isEmpty(rows.content, true)) return '';
         // eslint-disable-next-line
         // return <div dangerouslySetInnerHTML={{ __html: rows.content }} />;
-        const text = <div dangerouslySetInnerHTML={{ __html: rows.content }} />
+        const text = <div dangerouslySetInnerHTML={{ __html: rows.content }} />;
         return (
           <Popover content={text} trigger="hover" title={rows?.title}>
-            <div style={{ width: 550, textAlign: 'left' }} className="overHide" dangerouslySetInnerHTML={{ __html: rows.content }} />
+            <div
+              style={{ width: 550, textAlign: 'left' }}
+              className="overHide"
+              dangerouslySetInnerHTML={{ __html: rows.content }}
+            />
           </Popover>
         );
       },
@@ -226,7 +241,9 @@ const Index = props => {
               <Divider type="vertical" />
               <Popconfirm
                 title={`确定要标记（${rows.title}）为已读吗?`}
-                onConfirm={() => handleBatchModifyRead(rows.id, 'rowClick')}
+                onConfirm={() =>
+                  handleBatchModifyRead(rows.id, 'rowClick', () => message.success('标记成功'))
+                }
                 okText="确定"
                 cancelText="取消"
               >
@@ -313,7 +330,7 @@ const Index = props => {
                 ghost
                 type="primary"
                 style={{ position: 'absolute', bottom: 16 }}
-                onClick={() => handleBatchModifyRead()}
+                onClick={() => handleBatchModifyRead('', null, () => message.success('标记成功'))}
               >
                 标为已读
               </Button>
