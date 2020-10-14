@@ -14,6 +14,7 @@ import downIcon from '@/assets/icon/drop_down.svg'
 import upIcon from '@/assets/icon/Pull_up.svg'
 import CustomBtn from '@/components/commonUseModule/customBtn'
 import EditModal from './components/editModal'
+import MilePlan from './components/mileStonePlan'
 import {
   Form,
   Input,
@@ -24,7 +25,8 @@ import {
   Row,
   Col,
   DatePicker,
-  Button
+  Button,
+  Modal
 } from 'antd'
 import * as _ from 'lodash'
 import { PROJECT_STATUS_OBJ, DEMAND_PRIORITY_ARR, BUSINESS_STATUS_ARR } from './utils/constant'
@@ -44,8 +46,10 @@ class ProjectManage extends Component {
     this.state = {
       searchMore: false,
       viewModal: false,
+      visiblePlanModal: false,
     }
     this.handleDebounceQueryData = _.debounce(this.handleDebounceQueryData, 500);
+    this.handleStandardTableChangePro = this.handleStandardTableChangePro.bind(this)
   }
 
   componentDidMount() {
@@ -126,6 +130,11 @@ class ProjectManage extends Component {
     });
   };
 
+  handleResetSearch = () => {
+    this.props.form.resetFields()
+    this.moreQuery()
+  }
+
   // 更多查询
   moreQuery = () => {
     const formValues = this.props.form.getFieldsValue();
@@ -158,8 +167,52 @@ class ProjectManage extends Component {
     });
   };
 
-  handlePlan = () => {
+  handlePlan = (bool, record) => {
+    this.setState({
+      visiblePlanModal: bool,
+      planRecord: record
+    })
+    if (bool) {
+      this.handleQueryList({ demandNo: record.demandNo })
+    }
+  }
+  
+  // 查询项目里程碑
+  handleQueryList = (params) => {
+    this.props.dispatch({
+      type: 'project/queryMilePlan',
+      payload: {
+        ...DefaultPage,
+        ...params
+      },
+    });
+  }
 
+  // 项目里程碑分页
+  handleStandardTableChangePro = pagination => {
+    const { planRecord } = this.state
+    const { demandNo } = planRecord
+    const params = {
+      demandNo,
+      currentPage: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+    this.handleQueryList(params);
+  };
+
+  genPlanModal = () => {
+    const { visiblePlanModal } = this.state
+    return (
+      <Modal
+        title='里程碑计划'
+        width='794'
+        visible={visiblePlanModal}
+        footer={null}
+        onCancel={() => this.handlePlan(false, {})}
+      >
+        <MilePlan handleStandardTableChangePro={this.handleStandardTableChangePro} />
+      </Modal>
+    )
   }
 
   handleViewModal = (bool, record) => {
@@ -828,7 +881,7 @@ class ProjectManage extends Component {
               {
                 <ListOptBtn
                   title='里程碑计划'
-                  onClick={() => this.handlePlan()}
+                  onClick={() => this.handlePlan(true, record)}
                   style={{
                     fontSize: '20px',
                     position: 'relative',
@@ -846,7 +899,7 @@ class ProjectManage extends Component {
   }
 
   render() {
-    const { viewModal } = this.state
+    const { viewModal, visiblePlanModal } = this.state
     const editModalProps = {
       visible: viewModal,
       handleViewModal: this.handleViewModal,
@@ -855,6 +908,7 @@ class ProjectManage extends Component {
     const { project: { projectList }, loadingQueryData } = this.props
     return (
       <Card>
+        {visiblePlanModal && this.genPlanModal()}
         {viewModal && <EditModal {...editModalProps} />}
         <div className={styles.customSearchForm}>{this.renderSearchForm()}</div>
         <div className='cusOverflow'>

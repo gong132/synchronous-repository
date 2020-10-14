@@ -13,5 +13,5 @@ export default {
   },
   title: '光大证券',
   pwa: false,
-  iconfontUrl: '//at.alicdn.com/t/font_2029631_9kunh4bptld.js',
+  iconfontUrl: '/iconfont/iconfont.js',
 };

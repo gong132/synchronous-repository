@@ -3,6 +3,7 @@ import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
 import StandardTable from '@/components/StandardTable';
 import Editor from '@/components/TinyEditor';
 import OptButton from '@/components/commonUseModule/optButton';
+import MilePlan from './mileStonePlan'
 import { TableColumnHelper, DefaultPage } from '@/utils/helper';
 import { getParam } from '@/utils/utils'
 import flowIcon from '@/assets/icon/modular_lcjd.svg';
@@ -40,6 +41,7 @@ class Detail extends PureComponent {
       editBool: false,
       descriptionState: ''
     }
+    this.handleStandardTableChangePro=this.handleStandardTableChangePro.bind(this)
   }
 
   componentDidMount() {
@@ -60,6 +62,11 @@ class Detail extends PureComponent {
       type: 'project/queryProjectInfo',
       payload: {
         id,
+      }
+    }).then(res => {
+      if (res) {
+        const { demandNo } = res
+        this.handleQueryList({ demandNo })
       }
     })
   }
@@ -98,6 +105,30 @@ class Detail extends PureComponent {
       pageSize: pagination.pageSize,
     };
     this.handleQueryLogList(params);
+  };
+
+  // 查询项目里程碑
+  handleQueryList = (params) => {
+    this.props.dispatch({
+      type: 'project/queryMilePlan',
+      payload: {
+        ...DefaultPage,
+        ...params
+      },
+    });
+  }
+
+  // 项目里程碑分页
+  handleStandardTableChangePro = pagination => {
+    const { project } = this.props
+    const { projectInfo = {} } = project
+    const { demandNo } = projectInfo
+    const params = {
+      demandNo,
+      currentPage: pagination.current,
+      pageSize: pagination.pageSize,
+    };
+    this.handleQueryList(params);
   };
 
   handleSubmit = () => {
@@ -264,6 +295,10 @@ class Detail extends PureComponent {
           {index + 1}
         </div>
       );
+    }
+
+    const milePlanProps = {
+      handleStandardTableChangePro: this.handleStandardTableChangePro,
     }
 
     return (
@@ -695,7 +730,7 @@ class Detail extends PureComponent {
                   </FormItem>
                 </DescriptionItem>
               </Fragment>
-              </Descriptions>
+            </Descriptions>
             : <Descriptions column={3} bordered className={styles.formatDetailDesc}>
               {
                 detailList.map(
@@ -727,13 +762,7 @@ class Detail extends PureComponent {
           }
         </GlobalSandBox>
         <GlobalSandBox title="项目里程碑计划" img={budgetXqIcon}>
-          <StandardTable
-            rowKey={(record, index) => index}
-            columns={proColumns}
-          // data={logList}
-          // loading={loadingQueryLogData}
-          // onChange={this.handleStandardTableChange}
-          />
+          <MilePlan {...milePlanProps} />
         </GlobalSandBox>
         <GlobalSandBox title="项目日志" img={budgetLogIcon}>
           <StandardTable
