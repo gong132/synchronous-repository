@@ -1,12 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { DatePicker, Descriptions, Form, Input, message, Radio, Select } from 'antd';
+import {
+  DatePicker,
+  Descriptions,
+  Form,
+  Input,
+  // message,
+  Radio,
+  Select,
+} from 'antd';
 import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
 import budgetXq from '@/assets/icon/modular_xq.svg';
-import budgetLog from '@/assets/icon/modular_czrz.svg';
+// import budgetLog from '@/assets/icon/modular_czrz.svg';
 import { connect } from 'dva';
-import { DefaultPage, findValueByArray, TableColumnHelper, toInteger } from '@/utils/helper';
+import {
+  DefaultPage,
+  findValueByArray,
+  // TableColumnHelper,
+  toInteger,
+} from '@/utils/helper';
 import { BUDGET_TYPE, PROJECT_TYPE } from '@/pages/contractBudget/util/constant';
-import StandardTable from '@/components/StandardTable';
+// import StandardTable from '@/components/StandardTable';
 import RadioGroup from 'antd/es/radio/group';
 import moment from 'moment';
 import Editor from '@/components/TinyEditor';
@@ -19,23 +32,30 @@ const Index = props => {
   const {
     form,
     dispatch,
-    budgetManage: { budgetDetails, budgetLogList, clusterList, allDeptList, teamList },
-    loading,
+    budgetManage: {
+      budgetDetails,
+      // budgetLogList,
+      clusterList,
+      allDeptList,
+      teamList,
+    },
+    // loading,
   } = props;
 
-  const columns = [
-    TableColumnHelper.genPlanColumn('operateUserName', '修改人', { width: 200 }),
-    TableColumnHelper.genPlanColumn('content', '修改人'),
-    TableColumnHelper.genDateTimeColumn('createTime', '修改时间', 'YYYY-MM-DD HH:mm:ss', {
-      width: 200,
-    }),
-  ];
+  // const columns = [
+  //   TableColumnHelper.genPlanColumn('operateUserName', '修改人', { width: 200 }),
+  //   TableColumnHelper.genPlanColumn('content', '修改人'),
+  //   TableColumnHelper.genDateTimeColumn('createTime', '修改时间', 'YYYY-MM-DD HH:mm:ss', {
+  //     width: 200,
+  //   }),
+  // ];
 
   // 描述
   const [description, setDescription] = useState(budgetDetails?.description || '');
 
   // edit
-  const [editModalVisible, setEditModalVisible] = useState(false);
+  // const [editModalVisible, setEditModalVisible] = useState(false);
+  const editModalVisible = false;
 
   const handleQueryGroupByDept = id => {
     dispatch({
@@ -88,45 +108,45 @@ const Index = props => {
     });
   };
 
-  const handleSubmitForm = () => {
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-
-      if (Number(fieldsValue.expectTotalAmount) <= 0) {
-        message.error('总金额必须大于0');
-        return;
-      }
-      dispatch({
-        type: 'budgetManage/updateBudget',
-        payload: {
-          id: budgetDetails.id,
-          ...fieldsValue,
-          description,
-          expectSetTime: fieldsValue.expectSetTime
-            ? fieldsValue.expectSetTime.format('YYYY-MM-DD')
-            : null,
-          clusterName: fieldsValue.clusterId
-            ? clusterList.find(v => String(v.id) === String(fieldsValue.clusterId)).name
-            : null,
-          deptName: fieldsValue.deptId
-            ? allDeptList.find(v => String(v.id) === String(fieldsValue.deptId)).name
-            : null,
-          receiveTeamName: fieldsValue.receiveTeamId
-            ? teamList.find(v => String(v.id) === String(fieldsValue.receiveTeamId)).name
-            : null,
-          hardwareExpectAmount: Number(fieldsValue.hardwareExpectAmount),
-          softwareExpectAmount: Number(fieldsValue.softwareExpectAmount),
-          otherExpectAmount: Number(fieldsValue.otherExpectAmount),
-          expectTotalAmount: Number(fieldsValue.expectTotalAmount),
-        },
-      }).then(sure => {
-        if (!sure) return;
-        message.success('修改成功');
-        setEditModalVisible(false);
-        handleQueryBudgetDetails();
-      });
-    });
-  };
+  // const handleSubmitForm = () => {
+  //   form.validateFields((err, fieldsValue) => {
+  //     if (err) return;
+  //
+  //     if (Number(fieldsValue.expectTotalAmount) <= 0) {
+  //       message.error('总金额必须大于0');
+  //       return;
+  //     }
+  //     dispatch({
+  //       type: 'budgetManage/updateBudget',
+  //       payload: {
+  //         id: budgetDetails.id,
+  //         ...fieldsValue,
+  //         description,
+  //         expectSetTime: fieldsValue.expectSetTime
+  //           ? fieldsValue.expectSetTime.format('YYYY-MM-DD')
+  //           : null,
+  //         clusterName: fieldsValue.clusterId
+  //           ? clusterList.find(v => String(v.id) === String(fieldsValue.clusterId)).name
+  //           : null,
+  //         deptName: fieldsValue.deptId
+  //           ? allDeptList.find(v => String(v.id) === String(fieldsValue.deptId)).name
+  //           : null,
+  //         receiveTeamName: fieldsValue.receiveTeamId
+  //           ? teamList.find(v => String(v.id) === String(fieldsValue.receiveTeamId)).name
+  //           : null,
+  //         hardwareExpectAmount: Number(fieldsValue.hardwareExpectAmount),
+  //         softwareExpectAmount: Number(fieldsValue.softwareExpectAmount),
+  //         otherExpectAmount: Number(fieldsValue.otherExpectAmount),
+  //         expectTotalAmount: Number(fieldsValue.expectTotalAmount),
+  //       },
+  //     }).then(sure => {
+  //       if (!sure) return;
+  //       message.success('修改成功');
+  //       setEditModalVisible(false);
+  //       handleQueryBudgetDetails();
+  //     });
+  //   });
+  // };
 
   const handleQueryAllTeam = params => {
     dispatch({
@@ -137,13 +157,14 @@ const Index = props => {
     });
   };
   // 分页操作
-  const handleStandardTableChange = pagination => {
-    const params = {
-      currentPage: pagination.current,
-      pageSize: pagination.pageSize,
-    };
-    handleQueryBudgetLog(params);
-  };
+
+  // const handleStandardTableChange = pagination => {
+  //   const params = {
+  //     currentPage: pagination.current,
+  //     pageSize: pagination.pageSize,
+  //   };
+  //   handleQueryBudgetLog(params);
+  // };
 
   useEffect(() => {
     handleQueryBudgetDetails();
@@ -481,6 +502,7 @@ const Index = props => {
           </div>
         </Form>
       </GlobalSandBox>
+      {/*
       <GlobalSandBox img={budgetLog} title="操作日志" sandboxStyle={{ marginTop: 16 }}>
         <StandardTable
           rowKey="id"
@@ -490,6 +512,7 @@ const Index = props => {
           onChange={handleStandardTableChange}
         />
       </GlobalSandBox>
+      */}
     </div>
   );
 };
