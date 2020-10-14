@@ -24,7 +24,7 @@ class FileUploadNo extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!isObjEqual(this.props.urls, nextProps.urls)) {
+    if (!isObjEqual(this.state.urls, nextProps.urls)) {
       this.setState({
         arrUrl: nextProps.urls ? JSON.parse(nextProps.urls) : [],
       })

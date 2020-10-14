@@ -317,10 +317,10 @@ class Detail extends Component {
       return (
         <div
           style={{
+            display: 'flex',
             width: 24,
             height: 24,
             borderRadius: '50%',
-            display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             color: '#606265',
@@ -606,7 +606,7 @@ class Detail extends Component {
     const columns = [
       TableColumnHelper.genPlanColumn('operateUserName', '操作人', { width: '100px' }),
       TableColumnHelper.genPlanColumn('content', '操作内容'),
-      TableColumnHelper.genPlanColumn('updateTime', '操作时间', { width: '100px' }),
+      TableColumnHelper.genPlanColumn('createTime', '操作时间', { width: '100px' }),
     ];
 
     const resolveFlowData = (arr, index, typeFlow) => {

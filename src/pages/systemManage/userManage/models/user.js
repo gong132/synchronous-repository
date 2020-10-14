@@ -57,6 +57,7 @@ const UserModel = {
       }
       const obj = {}
       data.data.map(v => {
+        if(!v) return false
         obj[v.id] = v.roleName
         return true
       })
@@ -80,6 +81,7 @@ const UserModel = {
       const gObj = {}
       if (data && data.length < 1) return ''
       data.map(v => {
+        if(!v) return false
         v.id = String(v.id)
         obj[String(v.id)] = v.name
         return true

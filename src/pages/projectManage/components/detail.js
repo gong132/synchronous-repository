@@ -196,17 +196,7 @@ class Detail extends PureComponent {
     const columns = [
       TableColumnHelper.genPlanColumn('operateUserName', '操作人', { width: '100px' }),
       TableColumnHelper.genPlanColumn('content', '操作内容'),
-      TableColumnHelper.genPlanColumn('updateTime', '操作时间', { width: '100px' }),
-    ];
-
-    const proColumns = [
-      TableColumnHelper.genPlanColumn('operateUserName', '里程碑阶段'),
-      TableColumnHelper.genPlanColumn('content1', '负责人'),
-      TableColumnHelper.genPlanColumn('updateTime', '计划完成日期'),
-      TableColumnHelper.genPlanColumn('content2', '创建人'),
-      TableColumnHelper.genPlanColumn('content3', '创建时间'),
-      TableColumnHelper.genPlanColumn('content4', '修改人'),
-      TableColumnHelper.genPlanColumn('content5', '修改时间'),
+      TableColumnHelper.genPlanColumn('createTime', '操作时间', { width: '100px' }),
     ];
 
     const detailList = [
