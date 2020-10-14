@@ -219,7 +219,6 @@ class ContractManage extends Component {
 
   // 分页操作
   handleStandardTableChange = (pagination, filters, sorter) => {
-    console.log(pagination, filters, sorter)
     const formValues = this.props.form.getFieldsValue();
     if (formValues.signTime && !_.isEmpty(formValues.signTime)) {
       formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYY-MM-DD');

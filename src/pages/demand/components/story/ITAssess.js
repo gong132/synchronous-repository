@@ -29,7 +29,6 @@ const Index = memo(props => {
   }, []);
 
   const handleChangeRows = (tag, val, rows) => {
-    console.log(tag, val, rows, '11111111')
 
     // 如果不存在, 新增
     if (isEmpty(changeRows.find(v => v.id === rows.id))) {

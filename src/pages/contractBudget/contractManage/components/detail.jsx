@@ -674,7 +674,6 @@ class Detail extends PureComponent {
                         placeholder="请输入合同负责人"
                         style={{ width: w }}
                       >
-                        {console.log(headerList, headerId)}
                         {!_.isEmpty(headerList) &&
                           headerList.map(d => (
                             <Option key={d.id} value={d.id}>
@@ -815,7 +814,6 @@ class Detail extends PureComponent {
                   label={<>{<span style={{ color: 'red' }}>*</span>}涉及系统</>}
                 >
                   <FormItem>
-                    {console.log(systemId, systemList)}
                     {form.getFieldDecorator('systemId', {
                       rules: [{ required: true, message: '请输入所属系统' }],
                       initialValue: systemId ? String(systemId) : '',
@@ -837,7 +835,7 @@ class Detail extends PureComponent {
                         {!_.isEmpty(systemList) &&
                           systemList.map(d => (
                             <Option key={d.id} value={d.id}>
-                              {d.name}
+                              {d.sysName}
                             </Option>
                           ))}
                       </Select>,

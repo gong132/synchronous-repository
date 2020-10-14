@@ -76,7 +76,6 @@ const Index = props => {
   }, []);
 
   const handleDeleteMenu = node => {
-    console.log(node, 'ndoe')
     if (node.url === "/systemManage/authorManage" || node.url === "/systemManage"){
       message.error("不允許刪除角色權限菜單")
       return

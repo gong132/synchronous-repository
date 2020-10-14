@@ -149,7 +149,7 @@ const Demand = {
       })
     },
 
-    // 受理需求 
+    // 受理需求
     *receiverDemand({ payload }, { call }) {
       const { code, msg } = yield call(receiverDemand, payload);
       if (!code || code !== 200) {
@@ -441,12 +441,13 @@ const Demand = {
       const { code, msg, data } = yield call(fetchStoryDetails, payload);
       if (!code || code !== 200) {
         message.error(msg);
-        return;
+        return false;
       }
       yield put({
         type: "saveData",
         payload: { storyDetails: data }
       })
+      return data
     },
     // 同步story
     *syncStory({ payload }, { call }) {
@@ -602,8 +603,8 @@ const Demand = {
       return true
     },
     // 查询常用语
-    *queryCommonLang({}, {call, put}) {
-      const res = yield call(queryCommonLang)
+    *queryCommonLang({payload}, {call, put}) {
+      const res = yield call(queryCommonLang,payload)
       if(!res || !res.code === 200) {
         message.error(res.msg)
         return false

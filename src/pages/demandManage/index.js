@@ -115,7 +115,7 @@ const Index = props => {
                 >
                   {
                     systemList?.list && systemList.list.map(v => (
-                      <Option value={v.id} key={v.id}>{v.name}</Option>
+                      <Option value={v.id} key={v.id}>{v.sysName}</Option>
                     ))
                   }
                 </Select>

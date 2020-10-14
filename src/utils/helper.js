@@ -135,7 +135,7 @@ function getAvatarColumn(key, title, extend, props) {
   };
 }
 
-function genLangColumn(key, title, extend, len = 20) {
+function genLangColumn(key, title, extend, len = 20, contentAlign) {
   return {
     key,
     title,
@@ -144,11 +144,11 @@ function genLangColumn(key, title, extend, len = 20) {
     ...extend,
     render: text => {
       if (text.length <= len) {
-        return <span>{text}</span>;
+        return <div style={contentAlign ? { width: '100%', textAlign: contentAlign } : {}}>{text}</div>;
       }
       return (
         <Tooltip placement="top" title={text}>
-          {`${text.substring(0, len)}...`}
+          <div style={contentAlign ? { width: '100%', textAlign: contentAlign } : {}}>{`${text.substring(0, len)}...`}</div>
         </Tooltip>
       );
     },

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, DatePicker, Descriptions, Form, Input, message, Radio, Select } from 'antd';
+import { DatePicker, Descriptions, Form, Input, message, Radio, Select } from 'antd';
 import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
 import budgetXq from '@/assets/icon/modular_xq.svg';
 import budgetLog from '@/assets/icon/modular_czrz.svg';
@@ -11,7 +11,7 @@ import RadioGroup from 'antd/es/radio/group';
 import moment from 'moment';
 import Editor from '@/components/TinyEditor';
 import styles from '../index.less';
-import { MENU_ACTIONS } from '@/utils/constant';
+// import { MENU_ACTIONS } from '@/utils/constant';
 
 const FormItem = Form;
 const { Option } = Select;
@@ -20,9 +20,7 @@ const Index = props => {
     form,
     dispatch,
     budgetManage: { budgetDetails, budgetLogList, clusterList, allDeptList, teamList },
-    editLoading,
     loading,
-    global: { authActions },
   } = props;
 
   const columns = [
@@ -157,7 +155,8 @@ const Index = props => {
 
   // 详情描述列表
   const detailsList = [
-    { span: 2, required: false, name: '预算名称', value: budgetDetails?.name },
+    { span: 1, required: false, name: '预算名称', value: budgetDetails?.name },
+    { span: 1, required: false, name: '预算年度', value: budgetDetails?.year },
     { span: 1, required: false, name: '预算编号', value: budgetDetails?.number },
     { span: 1, required: false, name: '需求部门', value: budgetDetails?.deptName },
     { span: 1, required: false, name: '预计立项时间', value: budgetDetails?.expectSetTime },
@@ -433,27 +432,27 @@ const Index = props => {
       <GlobalSandBox
         img={budgetXq}
         title="预算详情"
-        optNode={
-          authActions.includes(MENU_ACTIONS.EDIT) && !editModalVisible ? (
-            <Button onClick={() => setEditModalVisible(true)} type="primary">
-              编辑
-            </Button>
-          ) : (
-            <>
-              <Button onClick={() => setEditModalVisible(false)} type="default">
-                取消
-              </Button>
-              <Button
-                loading={editLoading}
-                className="margin-left-12"
-                onClick={() => handleSubmitForm()}
-                type="primary"
-              >
-                保存
-              </Button>
-            </>
-          )
-        }
+        // optNode={
+        //   authActions.includes(MENU_ACTIONS.EDIT) && !editModalVisible ? (
+        //     <Button onClick={() => setEditModalVisible(true)} type="primary">
+        //       编辑
+        //     </Button>
+        //   ) : (
+        //     <>
+        //       <Button onClick={() => setEditModalVisible(false)} type="default">
+        //         取消
+        //       </Button>
+        //       <Button
+        //         loading={editLoading}
+        //         className="margin-left-12"
+        //         onClick={() => handleSubmitForm()}
+        //         type="primary"
+        //       >
+        //         保存
+        //       </Button>
+        //     </>
+        //   )
+        // }
       >
         <Form>
           <div className={styles.detailPanel}>
