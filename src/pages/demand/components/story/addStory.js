@@ -70,10 +70,10 @@ const Index = props => {
         demandNumber: values.demandNumber,
         assigneeName: isEmpty(val.assignee)
           ? null
-          : userList.find(v => v.loginid === val.assignee).lastname,
+            : userList.find(v => v.userId === val.assignee).userName,
         assessorName: isEmpty(val.assessor)
           ? null
-          : userList.find(v => v.loginid === val.assessor).lastname,
+          : userList.find(v => v.userId === val.assessor).userName,
         description,
         evaluateTime: isEmpty(val.evaluateTime) ? null : val.evaluateTime.format('YYYY-MM-DD'),
         systemName: isEmpty(val.systemId)
@@ -173,8 +173,8 @@ const Index = props => {
                 >
                   {userList &&
                     userList.map(v => (
-                      <Option value={v.loginid} key={v.loginid.toString()}>
-                        {v.lastname}
+                      <Option value={v.userId} key={v.userId.toString()}>
+                        {v.userName}
                       </Option>
                     ))}
                 </Select>,

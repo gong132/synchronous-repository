@@ -16,7 +16,7 @@ const Index = props => {
     const params = {
       userId,
       demandId: rows.id,
-      userName: userList?.list ? userList?.list.find(v => v.loginid === userId)?.lastname : null,
+      userName: userList?.list ? userList?.list.find(v => v.userId === userId)?.userName : null,
     }
     onOk(params, () => handleVisible(false))
   }
@@ -31,8 +31,8 @@ const Index = props => {
           >
             {
               userList?.list && userList?.list.map(v => (
-                <Option value={v.loginid} key={v.loginid.toString()}>
-                  {v.lastname}
+                <Option value={v.userId} key={v.userId.toString()}>
+                  {v.userName}
                 </Option>
               ))
             }

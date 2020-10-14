@@ -1,20 +1,25 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'dva';
-import { Alert, message, Checkbox } from 'antd';
+import {Alert, message, Checkbox, Form, Input, Button} from 'antd';
 import Login from '@/components/Login';
 import styles from './login.less';
-
-const { UserName, Password, Submit } = Login;
+import storage from "@/utils/storage";
+import {isEmpty} from "@/utils/lang";
 
 @connect(({ login, global, loading }) => ({
   login,
   global,
   submitting: loading.effects['login/login'],
 }))
-class LoginPage extends Component {
-  state = {
-    autoLogin: false,
-  };
+class LoginPage extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      autoLogin: false,
+      username: undefined,
+      password: undefined,
+    };
+  }
 
   changeAutoLogin = (e) => {
     this.setState({
@@ -22,8 +27,11 @@ class LoginPage extends Component {
     })
   }
 
-  handleSubmit = (err, values) => {
-    if (!err) {
+  handleSubmit = () => {
+    const { form, dispatch } = this.props
+    form.validateFields((err, values) => {
+      console.log(values, "values")
+      if (err) return
       if (!values.username) {
         message.error('请输入用户名');
         return;
@@ -33,59 +41,68 @@ class LoginPage extends Component {
         message.error('请输入密码');
         return;
       }
-      const { dispatch } = this.props;
       dispatch({
         type: 'login/login',
         payload: {
-          loginName: values.username,
-          passWord: values.password,
+          userId: values.username,
+          password: values.password,
         },
       }).then(result => {
         if (!result) return
-        dispatch({
-          type: 'global/queryCurrentUserInfo',
-          payload: {
-          },
-        });
+        storage.remove("user")
+        if (this.state.autoLogin) {
+          storage.set("user", {
+            username: values.username,
+            password: values.password,
+          })
+        }
       });
-    }
+    })
   };
+
+  componentDidMount() {
+    const user = storage.get("user", {})
+    if (!isEmpty(user)) {
+      this.setState({
+        username: user?.username,
+        password: user?.password,
+        autoLogin: true,
+      })
+    }
+  }
 
   renderMessage = content => (
     <Alert style={{ marginBottom: 24 }} message={content} type="error" showIcon />
   );
 
   render() {
-    const { login, submitting } = this.props;
-    const { autoLogin } = this.state;
+    const { submitting, form } = this.props;
+    const { autoLogin, username, password } = this.state;
     return (
       <div className={styles.bossMain}>
         <div className={styles.main}>
-          <Login
-            onSubmit={this.handleSubmit}
-            ref={form => {
-              this.loginForm = form;
-            }}
-          >
+          <Login>
             <div className={styles.cusTabTitle}>欢迎登录需求管理平台</div>
-            {login.status === 'error' &&
-            !submitting &&
-            this.renderMessage('请输入账号')}
-            <div className={styles.labelStyle}>账号</div>
-            <UserName name="username" placeholder="登录账号" />
-            <div className={styles.labelStyle}>密码</div>
-            <Password
-              name="password"
-              placeholder="登录密码"
-              onPressEnter={() => this.loginForm.validateFields(this.handleSubmit)}
-            />
-
-            <Submit loading={submitting} className={styles.submitBtn}>
+            <Form>
+              <div className={styles.labelStyle}>账号</div>
+              <Form.Item>
+                {form.getFieldDecorator("username", {
+                  initialValue: username
+                })(<Input placeholder="登录账号" />)}
+              </Form.Item>
+              <div className={styles.labelStyle}>密码</div>
+              <Form.Item>
+                {form.getFieldDecorator("password", {
+                  initialValue: password
+                })(<Input.Password placeholder="登录密码" />)}
+              </Form.Item>
+            </Form>
+            <Button type="primary" loading={submitting} onClick={this.handleSubmit} className={styles.submitBtn}>
               登录
-            </Submit>
+            </Button>
             <div className={styles.cusAutoLogin}>
               <Checkbox checked={autoLogin} onChange={this.changeAutoLogin}>
-                自动登录
+                保存密码
               </Checkbox>
             </div>
           </Login>
@@ -95,4 +112,4 @@ class LoginPage extends Component {
   }
 }
 
-export default LoginPage;
+export default Form.create()(LoginPage);

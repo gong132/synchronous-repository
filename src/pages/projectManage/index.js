@@ -432,8 +432,8 @@ class ProjectManage extends Component {
                 >
                   {!_.isEmpty(userList) &&
                     userList.map(d => (
-                      <Option key={d.loginid} value={d.loginid}>
-                        {d.lastname}
+                      <Option value={v.userId} key={v.userId.toString()}>
+                        {v.userName}
                       </Option>
                     ))}
                 </Select>,

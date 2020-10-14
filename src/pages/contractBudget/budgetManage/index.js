@@ -453,7 +453,7 @@ const Index = props => {
                 <Select
                   allowClear
                   showSearch
-                  onBlur={handleSearchForm}
+                  onChange={handleSearchForm}
                   onSearch={val => handleSearch(handleQueryAllTeam({ groupName: val }))}
                   placeholder="请输入需求部门"
                 >
@@ -476,7 +476,7 @@ const Index = props => {
                 <Select
                   allowClear
                   showSearch
-                  onBlur={handleSearchForm}
+                  onChange={handleSearchForm}
                   placeholder="请输入所属集群或板块"
                 >
                   {clusterList &&

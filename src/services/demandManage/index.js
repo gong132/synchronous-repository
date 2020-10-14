@@ -25,7 +25,7 @@ export async function fetchSystemList(params) {
 }
 // 人员列表
 export async function fetchUserList(params) {
-  return request('/personnel/queryPage', {
+  return request('/user/search', {
     method: 'post',
     params,
   });

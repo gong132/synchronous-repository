@@ -335,8 +335,8 @@ const Index = withRouter(props => {
                 >
                   {
                     userList?.list && userList.list.map(v => (
-                      <Option value={v.loginid} key={v.loginid.toString()}>
-                        {v.lastname}
+                      <Option value={v.userId} key={v.userId.toString()}>
+                        {v.userName}
                       </Option>
                   ))}
                 </Select>,

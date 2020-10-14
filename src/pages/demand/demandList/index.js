@@ -74,6 +74,8 @@ const Index = memo(
 
     const [assignVisible, setAssignVisible] = useState(false);
 
+    const [expandedRowId, setExpandedRowId] = useState([])
+
     const handleQueryUserList = () => {
       dispatch({
         type: 'global/queryUserList',
@@ -447,6 +449,9 @@ const Index = memo(
       setSearchForm(obj => ({ ...obj, ...params }));
     };
 
+    const handleExpandedRow = rows => {
+      console.log(rows, "rows")
+    }
     const renderForm = () => {
       const { getFieldDecorator } = form;
       const content = (
@@ -511,8 +516,8 @@ const Index = memo(
                   <Select placeholder="请选择需求提出人" allowClear>
                     {userList?.list &&
                       userList?.list.map(v => (
-                        <Option value={v.loginid} key={v.loginid.toString()}>
-                          {v.lastname}
+                        <Option value={v.userId} key={v.userId.toString()}>
+                          {v.userName}
                         </Option>
                       ))}
                   </Select>,
@@ -539,8 +544,8 @@ const Index = memo(
                   <Select placeholder="请选择受理人" allowClear>
                     {userList?.list &&
                       userList?.list.map(v => (
-                        <Option value={v.loginid} key={v.loginid.toString()}>
-                          {v.lastname}
+                        <Option value={v.userId} key={v.userId.toString()}>
+                          {v.userName}
                         </Option>
                       ))}
                   </Select>,
@@ -648,14 +653,14 @@ const Index = memo(
                   <Select
                     allowClear
                     showSearch
-                    onBlur={handleSearchForm}
+                    onChange={handleSearchForm}
                     // onSearch={val => handleSearch(handleQueryAllTeam({ groupName: val }))}
                     placeholder="请输入创建人"
                   >
                     {userList?.list &&
                       userList?.list.map(v => (
-                        <Option value={v.loginid} key={v.loginid.toString()}>
-                          {v.lastname}
+                        <Option value={v.userId} key={v.userId.toString()}>
+                          {v.userName}
                         </Option>
                       ))}
                   </Select>,
@@ -671,7 +676,7 @@ const Index = memo(
                   <Select
                     allowClear
                     showSearch
-                    onBlur={handleSearchForm}
+                    onChange={handleSearchForm}
                     // onSearch={val => handleSearch(handleQueryAllTeam({ groupName: val }))}
                     placeholder="请选择状态"
                   >
@@ -755,16 +760,16 @@ const Index = memo(
               if (prop?.record?.storyList?.length < 1) return '';
               return !prop?.expanded ? (
                 <span style={{ cursor: 'pointer' }}>
-                  <Icon component={arrowRight} />
+                  <Icon onClick={() => handleExpandedRow(props)} component={arrowRight} />
                 </span>
               ) : (
                 <span style={{ cursor: 'pointer' }}>
-                  <Icon component={arrowBottom} />
+                  <Icon onClick={() => handleExpandedRow(props)} component={arrowBottom} />
                 </span>
               );
             }}
             onChange={handleDemandTableChange}
-            expandRowByClick
+            expandedRowKeys={expandedRowId}
             scroll={{ x: demandRoutes[pathname] !== '项目需求' ? 2740 : 2100 }}
           />
         </div>

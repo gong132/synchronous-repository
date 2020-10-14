@@ -9,7 +9,7 @@ export async function updateUser(params) {
 
 // 查询
 export async function queryUserList(params) {
-  return request('/personnel/queryPage', {
+  return request('/user/search', {
     method: 'post',
     params,
   });

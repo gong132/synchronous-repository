@@ -40,21 +40,6 @@ const BasicLayout = props => {
       pathname: '/',
     },
   } = props;
-  /**
-   * constructor
-   */
-
-  const  getAllMenu = () => {
-    dispatch({
-      type: 'global/queryCurrentUserMenuList',
-      payload: {},
-    }).then(data => {
-      if (!data) return;
-      dispatch({
-        type: 'global/queryCurrentUserInfo',
-      });
-    })
-  };
 
   /**
    * use Authorized check all menu item
@@ -76,7 +61,15 @@ const BasicLayout = props => {
     // 判断是否登录了，未登录直接跳转登录
     const gdUser = storage.get('gd-user');
     if (gdUser) {
-      getAllMenu()
+      dispatch({
+        type: 'global/queryCurrentUserMenuList',
+        payload: {},
+      }).then(data => {
+        if (!data) return;
+        dispatch({
+          type: 'global/queryCurrentUserInfo',
+        });
+      })
     } else {
       window.g_app._store.dispatch({
         type: 'login/logout',

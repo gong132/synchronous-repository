@@ -91,7 +91,7 @@ const Index = withRouter(props => {
         ...val,
         assessorName: isEmpty(val.assessor)
           ? null
-          : userList.list.find(v => v.loginid === val.assessor).lastname,
+          : userList.list.find(v => v.userId === val.assessor).userName,
         description,
         attachments: isEmpty(fileList) ? null : JSON.parse(fileList).map(v => v.id),
       };
@@ -171,8 +171,8 @@ const Index = withRouter(props => {
               })(
                 <Select placeholder="请选择评估人">
                   {userList?.list && userList?.list.map(v => (
-                    <Option value={v.loginid} key={v.loginid.toString()}>
-                      {v.lastname}
+                    <Option value={v.userId} key={v.userId.toString()}>
+                      {v.userName}
                     </Option>
                   ))}
                 </Select>,
