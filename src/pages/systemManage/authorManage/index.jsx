@@ -41,7 +41,7 @@ const AuthorManage = props => {
     dispatch({
       type: "authorManage/queryAuthorByRoleId",
       payload: {
-        id: roleId
+        roleId
       },
     }).then(data => {
       if (!data) return;
@@ -234,7 +234,7 @@ const AuthorManage = props => {
                       handleSaveMenu({
                         id: selectedRows.id,
                         roleName: selectedRows.roleName,
-                        resourceIds: selectedMenu.map(v => v.id).join(','),
+                        resourceIds: selectedMenu.map(v => v.id),
                       })
                     }}
                   >
