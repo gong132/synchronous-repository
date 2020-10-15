@@ -66,6 +66,10 @@ const Index = memo(
             // 坐标轴指示器，坐标轴触发有效
             type: 'line', // 默认为直线，可选为：'line' | 'shadow'
           },
+          backgroundColor: "#fff",
+          textStyle: {
+            color: "#000"
+          },
           formatter: '访问来源 <br/>{b} : {c} ({d}%)',
         },
         grid: {

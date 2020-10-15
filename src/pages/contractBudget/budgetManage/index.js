@@ -19,7 +19,6 @@ import {
 import { isEmpty } from '@/utils/lang';
 import { formLayoutItem, formLayoutItem2, MENU_ACTIONS } from '@/utils/constant';
 import { BUDGET_TYPE, PROJECT_TYPE } from '@/pages/contractBudget/util/constant';
-import OptButton from '@/components/commonUseModule/optButton';
 import YearPicker from '@/components/YearPicker';
 // import edit from '@/assets/icon/Button_bj.svg';
 import upIcon from '@/assets/icon/Pull_up.svg';
@@ -29,6 +28,9 @@ import AddForm from './addForm';
 import styles from '../index.less';
 import { exportExcel } from '@/utils/utils';
 import moment from 'moment';
+import _ from "lodash";
+import ListOptBtn from "@/components/commonUseModule/listOptBtn";
+import eyeIcon from "@/assets/icon/cz_ck.svg";
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -154,10 +156,14 @@ const Index = props => {
           )}
           <Divider type="vertical" /> */}
           {authActions.includes(MENU_ACTIONS.CHECK) && (
-            <OptButton
-              icon="eye"
-              text="查看"
-              showText={false}
+            <ListOptBtn
+              title="查看"
+              icon={eyeIcon}
+              style={{
+                fontSize: '24px',
+                position: 'relative',
+                top: '5px'
+              }}
               onClick={() => {
                 props.history.push({
                   pathname: '/contract-budget/budget/detail',
@@ -237,8 +243,9 @@ const Index = props => {
     const { year = yearTime && moment.isMoment(yearTime) && yearTime.format('YYYY') } = params;
     const formValues = {
       ...others,
-      expectSetTime: expectSetTime && expectSetTime.format('YYYY-MM-DD'),
-      year,
+      expectSetStartTime: expectSetTime && expectSetTime[0].format('YYYY-MM-DD'),
+      expectSetEndTime: expectSetTime && expectSetTime[1].format('YYYY-MM-DD'),
+      year: year  || null,
     };
     handleQueryBudgetData(formValues);
   };
@@ -301,7 +308,18 @@ const Index = props => {
                 'type',
                 {},
               )(
-                <Select placeholder="请选择项目类型" allowClear>
+                <Select
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  onChange={_.debounce(handleSearchForm, 500)}
+                  placeholder="请选择项目类型"
+                  allowClear
+                >
                   {PROJECT_TYPE.map(v => (
                     <Option value={v.key} key={v.key.toString()}>
                       {v.value}
@@ -316,7 +334,7 @@ const Index = props => {
               {getFieldDecorator(
                 'expectSetTime',
                 {},
-              )(<DatePicker allowClear format="YYYY-MM-DD" />)}
+              )(<DatePicker.RangePicker onChange={_.debounce(handleSearchForm, 500)} allowClear format="YYYY-MM-DD" />)}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -325,12 +343,12 @@ const Index = props => {
                 {getFieldDecorator(
                   'expectTotalAmountLow',
                   {},
-                )(<Input allowClear addonAfter="万" />)}
+                )(<Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />)}
                 <span style={{ padding: '0 3px' }}>—</span>
                 {getFieldDecorator(
                   'expectTotalAmountMax',
                   {},
-                )(<Input allowClear addonAfter="万" />)}
+                )(<Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />)}
               </div>
             </FormItem>
           </Col>
@@ -340,12 +358,12 @@ const Index = props => {
                 {getFieldDecorator(
                   'hardwareExpectAmountLow',
                   {},
-                )(<Input allowClear addonAfter="万" />)}
+                )(<Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />)}
                 <span style={{ padding: '0 3px' }}>—</span>
                 {getFieldDecorator(
                   'hardwareExpectAmountMax',
                   {},
-                )(<Input allowClear addonAfter="万" />)}
+                )(<Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />)}
               </div>
             </FormItem>
           </Col>
@@ -355,12 +373,12 @@ const Index = props => {
                 {getFieldDecorator(
                   'softwareExpectAmountLow',
                   {},
-                )(<Input allowClear addonAfter="万" />)}
+                )(<Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />)}
                 <span style={{ padding: '0 3px' }}>—</span>
                 {getFieldDecorator(
                   'softwareExpectAmountMax',
                   {},
-                )(<Input allowClear addonAfter="万" />)}
+                )(<Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />)}
               </div>
             </FormItem>
           </Col>
@@ -370,18 +388,18 @@ const Index = props => {
                 {getFieldDecorator(
                   'otherExpectAmountLow',
                   {},
-                )(<Input allowClear addonAfter="万" />)}
+                )(<Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />)}
                 <span style={{ padding: '0 3px' }}>—</span>
                 {getFieldDecorator(
                   'otherExpectAmountMax',
                   {},
-                )(<Input allowClear addonAfter="万" />)}
+                )(<Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />)}
               </div>
             </FormItem>
           </Col>
           <Col span={24}>
             <FormItem {...formLayoutItem2} label="项目描述">
-              {getFieldDecorator('description', {})(<Input placeholder="请输入项目描述" />)}
+              {getFieldDecorator('description', {})(<Input onChange={_.debounce(handleSearchForm, 500)} placeholder="请输入项目描述" />)}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -390,7 +408,18 @@ const Index = props => {
                 'budgetType',
                 {},
               )(
-                <Select placeholder="请选择预算类型" allowClear>
+                <Select
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                  onChange={_.debounce(handleSearchForm, 500)}
+                  placeholder="请选择预算类型"
+                  allowClear
+                >
                   {BUDGET_TYPE.map(v => (
                     <Option value={v.key} key={v.key.toString()}>
                       {v.value}
@@ -410,7 +439,14 @@ const Index = props => {
                   allowClear
                   showSearch
                   placeholder="请选择承建团队"
+                  onChange={_.debounce(handleSearchForm, 500)}
                   onSearch={val => handleSearch(handleQueryAllTeam({ deptName: val }))}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
                 >
                   {teamList &&
                     teamList.map(v => (
@@ -441,7 +477,7 @@ const Index = props => {
               {getFieldDecorator(
                 'name',
                 {},
-              )(<Input allowClear onBlur={handleSearchForm} placeholder="请输入预算名称" />)}
+              )(<Input allowClear onChange={_.debounce(handleSearchForm, 500)} placeholder="请输入预算名称" />)}
             </FormItem>
           </Col>
           <Col span={5}>
@@ -453,9 +489,15 @@ const Index = props => {
                 <Select
                   allowClear
                   showSearch
-                  onChange={handleSearchForm}
+                  onChange={_.debounce(handleSearchForm, 500)}
                   onSearch={val => handleSearch(handleQueryAllTeam({ groupName: val }))}
                   placeholder="请输入需求部门"
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
                 >
                   {allDeptList &&
                     allDeptList.map(v => (
@@ -476,7 +518,13 @@ const Index = props => {
                 <Select
                   allowClear
                   showSearch
-                  onChange={handleSearchForm}
+                  onChange={_.debounce(handleSearchForm, 500)}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
                   placeholder="请输入所属集群或板块"
                 >
                   {clusterList &&
@@ -495,7 +543,7 @@ const Index = props => {
                 value={yearTime}
                 onChange={val => {
                   setYearTime(val);
-                  handleSearchForm({ year: (moment.isMoment(val) && val.format('YYYY')) || null });
+                  handleSearchForm({ year: (moment.isMoment(val) && val.format('YYYY')) || null })
                 }}
               />
             </FormItem>

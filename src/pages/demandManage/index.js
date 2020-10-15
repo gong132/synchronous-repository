@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { connect } from "dva"
+import _ from "lodash"
 import {DatePicker, Col, Form, Row, Button, Select, Spin} from "antd";
 
 import DeptPie from "./chart/deptPie"
@@ -97,10 +98,10 @@ const Index = props => {
       <Form layout="inline">
         <Row>
           <Col span={5}>
-            <FormItem {...formLayoutItemLabel7} label="需求创建时间" colon={false}>
+            <FormItem {...formLayoutItemLabel7} label="创建时间" colon={false}>
               {getFieldDecorator(
                 'rangeDate',
-              )(<RangePicker allowClear onBlur={handleSearchForm} format="YYYY-MM-DD" />)}
+              )(<RangePicker allowClear onChange={_.debounce(handleSearchForm, 500)} format="YYYY-MM-DD" />)}
             </FormItem>
           </Col>
           <Col span={4}>
@@ -109,9 +110,16 @@ const Index = props => {
                 'systemId',
               )(
                 <Select
-                  allowClear
-                  onChange={handleSearchForm}
                   placeholder="请选择所属系统"
+                  allowClear
+                  showSearch
+                  onChange={_.debounce(handleSearchForm, 500)}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
                 >
                   {
                     systemList?.list && systemList.list.map(v => (
@@ -128,9 +136,16 @@ const Index = props => {
                 'userId',
               )(
                 <Select
-                  allowClear
-                  onChange={handleSearchForm}
                   placeholder="请选择团队成员"
+                  allowClear
+                  showSearch
+                  onChange={_.debounce(handleSearchForm, 500)}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
                 >
                   {
                     userList?.list && userList.list.map(v => (
@@ -152,9 +167,16 @@ const Index = props => {
                   allowClear
                   onChange={deptId => {
                     handleQueryDemandInfo({deptId})
-                    handleSearchForm()
+                    _.debounce(handleSearchForm, 500)
                   }}
                   placeholder="请选择需求所属部门"
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
                 >
                   {
                     deptList?.list && deptList.list.map(v => (
@@ -173,8 +195,15 @@ const Index = props => {
               )(
                 <Select
                   allowClear
-                  onChange={handleSearchForm}
                   placeholder="请选择需求状态"
+                  showSearch
+                  onChange={_.debounce(handleSearchForm, 500)}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
                 >
                   {DEMAND_STATUS.map(v => (
                     <Option value={v.key} key={v.key.toString()}>

@@ -176,7 +176,7 @@ class ProjectManage extends Component {
       this.handleQueryList({ demandNo: record.demandNo })
     }
   }
-  
+
   // 查询项目里程碑
   handleQueryList = (params) => {
     this.props.dispatch({
@@ -484,7 +484,7 @@ class ProjectManage extends Component {
                   }}
                 >
                   {!_.isEmpty(userList) &&
-                    userList.map(d => (
+                    userList.map(v => (
                       <Option value={v.userId} key={v.userId.toString()}>
                         {v.userName}
                       </Option>

@@ -22,6 +22,9 @@ import { PagerHelper, TableColumnHelper } from '@/utils/helper';
 import OptButton from '@/components/commonUseModule/optButton';
 import readButton from '@/assets/icon/read.svg';
 import { formLayoutItem } from '@/utils/constant';
+import _ from "lodash";
+import ListOptBtn from "@/components/commonUseModule/listOptBtn";
+import eyeIcon from "@/assets/icon/cz_ck.svg";
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -113,16 +116,14 @@ const Index = props => {
   };
 
   const handleSearchForm = () => {
-    form.validateFields((err, val) => {
-      if (err) return;
-      const params = {
-        ...val,
-        startTime: !isEmpty(val.RangeDate) ? val.RangeDate[0].format('YYYY-MM-DD') : null,
-        endTime: !isEmpty(val.RangeDate) ? val.RangeDate[1].format('YYYY-MM-DD') : null,
-      };
-      delete params.RangeDate;
-      handleQueryMessageList(params);
-    });
+    const formValues = form.getFieldsValue();
+    const params = {
+      ...formValues,
+      startTime: !isEmpty(formValues.RangeDate) ? formValues.RangeDate[0].format('YYYY-MM-DD') : null,
+      endTime: !isEmpty(formValues.RangeDate) ? formValues.RangeDate[1].format('YYYY-MM-DD') : null,
+    };
+    delete params.RangeDate;
+    handleQueryMessageList(params);
   };
 
   const handleResetForm = e => {
@@ -190,12 +191,12 @@ const Index = props => {
         );
       },
     },
-    TableColumnHelper.genLangColumn('title', '标题', { width: 200 }, 12, 'left'),
+    TableColumnHelper.genLangColumn('title', '标题', { width: 180 }, 12, 'left'),
     TableColumnHelper.genPlanColumn('userName', '发送者', { width: 120 }),
     {
       title: '消息内容',
       align: 'center',
-      width: 550,
+      width: 540,
       key: 'content',
       render: rows => {
         if (isEmpty(rows.content, true)) return '';
@@ -214,27 +215,24 @@ const Index = props => {
       },
     },
     TableColumnHelper.genDateTimeColumn('createTime', '创建时间', 'YYYY-MM-DD HH:mm:ss', {
-      width: 200,
+      width: 180,
       sorter: true,
     }),
     {
       title: '操作',
-      width: 80,
+      width: 120,
       align: 'center',
       render: rows => (
         <Fragment>
-          <OptButton
-            icon="eye"
-            text="查看"
-            showText={false}
-            onClick={() => {
-              props.history.push({
-                pathname: '/contract-budget/budget/detail',
-                query: {
-                  id: rows.id,
-                },
-              });
+          <ListOptBtn
+            title="查看"
+            icon={eyeIcon}
+            style={{
+              fontSize: '24px',
+              position: 'relative',
+              top: '5px'
             }}
+            onClick={() => handleGotoTargetByType(rows)}
           />
           {msgStatus === '0' && (
             <>
@@ -247,7 +245,15 @@ const Index = props => {
                 okText="确定"
                 cancelText="取消"
               >
-                <OptButton img={readButton} text="标为已读" showText={false} />
+                <ListOptBtn
+                  title="标为已读"
+                  icon={readButton}
+                  style={{
+                    fontSize: '24px',
+                    position: 'relative',
+                    top: '5px'
+                  }}
+                />
               </Popconfirm>
             </>
           )}
@@ -264,17 +270,24 @@ const Index = props => {
             {getFieldDecorator(
               'titleAndNumber',
               {},
-            )(<Input onBlur={handleSearchForm} placeholder="请输入标题/编号关键字" />)}
+            )(<Input onChange={_.debounce(handleSearchForm, 500)} placeholder="请输入标题/编号关键字" />)}
           </FormItem>
         </Col>
         <Col span={5}>
           <FormItem {...formLayoutItem} label="发送者" colon={false}>
             {getFieldDecorator('userId')(
               <Select
-                onChange={handleSearchForm}
                 style={{ width: '100%' }}
                 placeholder="请选择发送者"
                 allowClear
+                showSearch
+                onChange={_.debounce(handleSearchForm, 500)}
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  JSON.stringify(option.props.children)
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
               >
                 {list &&
                   list.map(v => (
@@ -289,14 +302,14 @@ const Index = props => {
         <Col span={5}>
           <FormItem {...formLayoutItem} label="消息内容" colon={false}>
             {getFieldDecorator('content')(
-              <Input onBlur={handleSearchForm} placeholder="请输入消息内容" />,
+              <Input onChange={_.debounce(handleSearchForm, 500)} placeholder="请输入消息内容" />,
             )}
           </FormItem>
         </Col>
         <Col span={7}>
           <FormItem {...formLayoutItem} label="创建时间" colon={false}>
             {getFieldDecorator('RangeDate')(
-              <RangePicker onBlur={handleSearchForm} format="YYYY-MM-DD" />,
+              <RangePicker onChange={_.debounce(handleSearchForm, 500)} format="YYYY-MM-DD" />,
             )}
           </FormItem>
         </Col>
