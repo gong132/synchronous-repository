@@ -2,7 +2,7 @@ import React, { Fragment, memo, useEffect, useState } from 'react';
 import { connect } from 'dva';
 import { router, withRouter } from 'umi/index';
 import moment from "moment";
-import { isEmpty } from '@/utils/lang';
+import {isArray, isEmpty} from '@/utils/lang';
 import {
   Button,
   Col,
@@ -449,8 +449,18 @@ const Index = memo(
       setSearchForm(obj => ({ ...obj, ...params }));
     };
 
-    const handleExpandedRow = rows => {
-      console.log(rows, "rows")
+    const handleExpandedRow = (rows, type) => {
+      const { record: { storyList, id } } = rows;
+      if (isEmpty(storyList)) return
+      if (!isArray(storyList)) return
+      if (storyList.length < 1) return
+      if (type === "add") {
+        setExpandedRowId(arr => [...arr,id])
+        return
+      }
+      if (type === "remove") {
+        setExpandedRowId(arr => arr.filter(v => v !== id))
+      }
     }
     const renderForm = () => {
       const { getFieldDecorator } = form;
@@ -760,11 +770,11 @@ const Index = memo(
               if (prop?.record?.storyList?.length < 1) return '';
               return !prop?.expanded ? (
                 <span style={{ cursor: 'pointer' }}>
-                  <Icon onClick={() => handleExpandedRow(props)} component={arrowRight} />
+                  <Icon onClick={() => handleExpandedRow(prop, "add")} component={arrowRight} />
                 </span>
               ) : (
                 <span style={{ cursor: 'pointer' }}>
-                  <Icon onClick={() => handleExpandedRow(props)} component={arrowBottom} />
+                  <Icon onClick={() => handleExpandedRow(prop, "remove")} component={arrowBottom} />
                 </span>
               );
             }}

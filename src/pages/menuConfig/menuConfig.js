@@ -85,11 +85,11 @@ const Index = props => {
     if (!isEmpty(childrenMenuList)) {
       idGather = [...idGather, ...childrenMenuList]
     }
-    idGather = idGather.map(c => c.id).join(',')
+    idGather = idGather.map(c => c.id)
     dispatch({
       type: 'menuConfig/deleteMenu',
       payload: {
-        ids: idGather,
+        resourceIds: idGather,
       },
     }).then(sure => {
       if (!sure) return;
