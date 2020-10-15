@@ -251,7 +251,7 @@ const Index = props => {
                   style={{
                     fontSize: '24px',
                     position: 'relative',
-                    top: '5px'
+                    top: '2px'
                   }}
                 />
               </Popconfirm>
