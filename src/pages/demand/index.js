@@ -134,11 +134,11 @@ const Index = memo(
       });
     };
 
-    const handleQueryUser = params => {
+    const handleQueryUser = userName => {
       dispatch({
         type: 'demand/fetchUserData',
         payload: {
-          ...params,
+          userName,
         },
       });
     };
@@ -185,6 +185,7 @@ const Index = memo(
       handleQueryDemandList,
       handleQueryBoard,
       handleQueryList,
+      handleQueryUser,
     };
     return (
       <Fragment>
@@ -247,7 +248,7 @@ const Index = memo(
         {formType === 'list' && (
           <DemandList handleQueryDemandList={handleQueryDemandList} setSearchForm={setSearchForm} />
         )}
-        {formType === 'board' && <DemandBoard handleQueryBoard={handleQueryBoard} />}
+        {formType === 'board' && <DemandBoard handleQueryBoard={handleQueryBoard}  />}
       </Fragment>
     );
   }),

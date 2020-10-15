@@ -295,12 +295,8 @@ const Contract = {
         return
       }
       const obj = {}
-      const objId = {}
-      const objLoginId = {}
       data.map(v => {
-        obj[v.loginid] = v.lastname
-        objId[v.id] = v.lastname
-        objLoginId[v.loginid] = v.id
+        obj[v.userId] = v.userName
         return true
       })
       yield put({
@@ -308,8 +304,6 @@ const Contract = {
         payload: {
           userData: data,
           userDataMap: obj,
-          userDataMapId: objId,
-          userLoginIdMap: objLoginId
         },
       })
     },

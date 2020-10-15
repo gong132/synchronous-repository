@@ -30,6 +30,17 @@ const GlobalHeaderRight = props => {
     const arr = pathname.split('/');
     const breadPath = breadcrumb[pathname] || {};
     // console.log(breadcrumb, pathname, arr);
+    // 单独给storydetail写一个面包屑
+    if (arr[2] === "storyDetail") {
+      return (<Breadcrumb separator="|">
+        <Breadcrumb.Item>
+          我的需求
+          </Breadcrumb.Item>
+        <Breadcrumb.Item onClick={() => window.history.back('/projectManage')}>需求详情</Breadcrumb.Item>
+        <Breadcrumb.Item>story详情</Breadcrumb.Item>
+      </Breadcrumb>)
+    }
+
     if (breadPath.path === '/projectDetail') {
       return (
         <Breadcrumb separator="|">

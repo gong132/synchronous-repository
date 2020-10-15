@@ -10,6 +10,7 @@ import {
   querySupplier,
 } from '@/services/project/project'
 import { queryLogList, queryUserList, queryGroup } from '@/services/global';
+import { queryMilePlan } from '@/services/milestonePlan/mileStonePlan'
 import { message } from 'antd'
 
 const Project = {
@@ -17,6 +18,7 @@ const Project = {
   state: {
     projectList: PagerHelper.genListState(),
     logList: PagerHelper.genListState(),
+    milePlanList: PagerHelper.genListState(),
     clusterList: [],
     budgetList: [],
     budgetMap: {},
@@ -214,6 +216,24 @@ const Project = {
       });
       return true;
     },
+
+    // 查询里程碑计划
+    *queryMilePlan({ payload }, { call, put }) {
+      const res = yield call(queryMilePlan, payload);
+      if (!res.code || res.code !== 200) {
+        message.error(res.msg);
+        return;
+      }
+      const { data, ...others } = res.data;
+      yield put({
+        type: 'setMilePlanData',
+        payload: {
+          filter: payload,
+          data,
+          ...others,
+        },
+      });
+    },
   },
   reducers: {
     saveData(state, { payload }) {
@@ -232,6 +252,12 @@ const Project = {
       return {
         ...state,
         logList: PagerHelper.resolveListState(action.payload),
+      };
+    },
+    setMilePlanData(state, action) {
+      return {
+        ...state,
+        milePlanList: PagerHelper.resolveListState(action.payload),
       };
     },
   },

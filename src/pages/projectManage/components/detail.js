@@ -296,7 +296,7 @@ class Detail extends PureComponent {
         <GlobalSandBox title="项目进度" img={flowIcon}>
           <div className={styles.arrowBox}>
             {PROJECT_STATUS_ARR.map((v, index) => {
-              const count = 3
+              const count = pjProgress || 3
               return (
                 <div className={styles.arrowBox_arr} style={{ width: index === 6 ? '4vw' : '15vw' }}>
                   <div className={styles.arrowBox_arr_left}>

@@ -50,6 +50,15 @@ const Appoint = (props) => {
     });
   }
 
+  const handleQueryUser = userName => {
+    props.dispatch({
+      type: 'demand/fetchUserData',
+      payload: {
+        userName,
+      },
+    });
+  };
+
   const handleSubmit = () => {
     form.validateFieldsAndScroll((err, values) => {
       if (err) return true
@@ -67,8 +76,6 @@ const Appoint = (props) => {
       handleFocusDemand(values)
     })
   }
-
-
 
   return (
     <Modal
@@ -97,12 +104,19 @@ const Appoint = (props) => {
           })(
             <Select
               allowClear
-              // showSearch
+              showSearch
+              optionFilterProp="children"
+              onSearch={_.debounce(handleQueryUser, 500)}
+              filterOption={(input, option) =>
+                JSON.stringify(option.props.children)
+                  .toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0
+              }
               placeholder="请输入姓名或工号"
             >
               {userData.map(d => {
-                return <Option key={d.loginid} value={d.loginid}>
-                  {d.lastname}
+                return <Option key={d.userId} value={d.userId}>
+                  {d.userName}
                 </Option>
               })}
             </Select>,
