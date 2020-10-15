@@ -271,7 +271,7 @@ class CreateDemand extends PureComponent {
   };
 
   renderForm = () => {
-    const { form, recordValue = {}, demand: { groupList, budgetList, userData } } = this.props
+    const { form, recordValue = {}, demand: { groupList, budgetList, userData }, handleQueryUser } = this.props
     const { description, urls } = this.state
     const {
       title,
@@ -343,6 +343,7 @@ class CreateDemand extends PureComponent {
                   allowClear
                   showSearch
                   optionFilterProp="children"
+                  onSearch={_.debounce(handleQueryUser, 500)}
                   filterOption={(input, option) =>
                     JSON.stringify(option.props.children)
                       .toLowerCase()
@@ -351,8 +352,8 @@ class CreateDemand extends PureComponent {
                   placeholder="请输入提出人"
                 >
                   {!_.isEmpty(userData) && userData.map(d => (
-                    <Option key={d.loginid} value={d.loginid}>
-                      {d.lastname}
+                    <Option key={d.userId} value={d.userId}>
+                      {d.userName}
                     </Option>
                   ))}
                 </Select>,
@@ -437,6 +438,7 @@ class CreateDemand extends PureComponent {
                   showSearch
                   placeholder="请输入受理人"
                   onChange={(val) => this.handleQueryGroupBy('user', val)}
+                  onSearch={_.debounce(handleQueryUser, 500)}
                   optionFilterProp="children"
                   filterOption={(input, option) =>
                     JSON.stringify(option.props.children)
@@ -445,8 +447,8 @@ class CreateDemand extends PureComponent {
                   }
                 >
                   {!_.isEmpty(userData) && userData.map(d => (
-                    <Option key={d.loginid} value={d.loginid}>
-                      {d.lastname}
+                    <Option key={d.userId} value={d.userId}>
+                      {d.userName}
                     </Option>
                   ))}
                 </Select>,

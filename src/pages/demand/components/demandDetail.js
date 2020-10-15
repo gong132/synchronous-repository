@@ -93,20 +93,21 @@ class Detail extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    let bool = false
-    const { demand: { demandInfo } } = nextProps
-    const { attachmentFiles } = demandInfo || {}
-    let { urls = '' } = this.state
-    if (urls.length > 0) {
-      urls = JSON.parse(urls)
-    }
-    if (!_.isEqual(attachmentFiles, urls)) {
-      this.setState({
-        urls: JSON.stringify(attachmentFiles)
-      })
-      bool = true
-    }
-    return bool
+    // console.log(nextProps)
+    // let bool = false
+    // const { demand: { demandInfo } } = nextProps
+    // const { attachmentFiles } = demandInfo || {}
+    // let { urls = '' } = this.state
+    // if (urls.length > 0) {
+    //   urls = JSON.parse(urls)
+    // }
+    // if (!_.isEqual(attachmentFiles, urls)) {
+    //   this.setState({
+    //     urls: JSON.stringify(attachmentFiles)
+    //   })
+    //   bool = true
+    // }
+    // return bool
   }
 
   // 更改描述
@@ -117,6 +118,7 @@ class Detail extends Component {
   };
 
   handleSaveFileUrl = (fileUrl) => {
+    console.log('fileUrl:', fileUrl)
     this.setState({
       urls: fileUrl
     })
@@ -200,9 +202,10 @@ class Detail extends Component {
       })
       .then(res => {
         if (!res) return;
-        const { requirementDescription } = res || {};
+        const { requirementDescription, attachmentFiles } = res || {};
         this.setState({
           descriptionState: requirementDescription,
+          urls: attachmentFiles.length>0? JSON.stringify(attachmentFiles) : ''
         });
         this.handleQueryStoryList();
         this.handSearchITAssignAuth();
@@ -317,10 +320,10 @@ class Detail extends Component {
       return (
         <div
           style={{
+            display: 'flex',
             width: 24,
             height: 24,
             borderRadius: '50%',
-            display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             color: '#606265',
@@ -495,6 +498,7 @@ class Detail extends Component {
 
   render() {
     const { editBool, descriptionState, showCreateMilePlan, urls } = this.state;
+    console.log(urls)
     const {
       userInfo: { roleName, userName },
     } = getUserInfo();
@@ -606,7 +610,7 @@ class Detail extends Component {
     const columns = [
       TableColumnHelper.genPlanColumn('operateUserName', '操作人', { width: '100px' }),
       TableColumnHelper.genPlanColumn('content', '操作内容'),
-      TableColumnHelper.genPlanColumn('updateTime', '操作时间', { width: '100px' }),
+      TableColumnHelper.genPlanColumn('createTime', '操作时间', { width: '100px' }),
     ];
 
     const resolveFlowData = (arr, index, typeFlow) => {

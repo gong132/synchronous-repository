@@ -181,6 +181,11 @@ class ContractManage extends Component {
     });
   };
 
+  // 模糊查询人员
+  handleQueryUserBy = (userName) => {
+    this.handleQueryUser({userName})
+  }
+
   // 查人员
   handleQueryUser = (params) => {
     this.props.dispatch({
@@ -405,6 +410,7 @@ class ContractManage extends Component {
                   allowClear
                   showSearch
                   onChange={(val) => this.handleQueryGroupBy('user', val)}
+                  onSearch={_.debounce(this.handleQueryUserBy, 500)}
                   optionFilterProp="children"
                   filterOption={(input, option) =>
                     JSON.stringify(option.props.children)
@@ -417,8 +423,8 @@ class ContractManage extends Component {
                   placeholder="请输入合同负责人"
                 >
                   {!_.isEmpty(userData) && userData.map(d => (
-                    <Option key={d.loginid} value={d.loginid}>
-                      {d.lastname}
+                    <Option key={d.userId} value={d.userId}>
+                      {d.userName}
                     </Option>
                   ))}
                 </Select>,

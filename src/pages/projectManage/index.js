@@ -63,11 +63,11 @@ class ProjectManage extends Component {
   }
 
   // 查人员
-  handleQueryUser = (params) => {
+  handleQueryUser = (userName) => {
     this.props.dispatch({
       type: 'project/queryUser',
       payload: {
-        ...params
+        userName
       }
     })
   }
@@ -173,6 +173,7 @@ class ProjectManage extends Component {
       planRecord: record
     })
     if (bool) {
+      console.log('chax')
       this.handleQueryList({ demandNo: record.demandNo })
     }
   }
@@ -205,7 +206,7 @@ class ProjectManage extends Component {
     return (
       <Modal
         title='里程碑计划'
-        width='794'
+        width='80%'
         visible={visiblePlanModal}
         footer={null}
         onCancel={() => this.handlePlan(false, {})}
@@ -472,7 +473,7 @@ class ProjectManage extends Component {
                   allowClear
                   showSearch
                   optionFilterProp="children"
-                  onSearch={val => this.handleQueryUser({ lastname: val })}
+                  onSearch={_.debounce(this.handleQueryUser, 500)}
                   filterOption={(input, option) =>
                     JSON.stringify(option.props.children)
                       .toLowerCase()
@@ -484,9 +485,9 @@ class ProjectManage extends Component {
                   }}
                 >
                   {!_.isEmpty(userList) &&
-                    userList.map(v => (
-                      <Option value={v.userId} key={v.userId.toString()}>
-                        {v.userName}
+                    userList.map(d => (
+                      <Option value={d.userId} key={d.userId.toString()}>
+                        {d.userName}
                       </Option>
                     ))}
                 </Select>,
@@ -652,7 +653,7 @@ class ProjectManage extends Component {
                 }}
                 placeholder="请输入商务状态"
               >
-                <Option key='all' value={1}>全部</Option>
+                <Option key='all' value={100}>全部</Option>
                 {
                   BUSINESS_STATUS_ARR.map(d => (
                     <Option key={d.key} value={d.key}>
@@ -770,6 +771,7 @@ class ProjectManage extends Component {
         title: <Ellipse text='项目优先级' style={{ width: '3vw' }} />,
         dataIndex: 'name',
         key: 'name',
+        sorter: true,
         align: 'center',
         render: (text) => {
           return (
@@ -851,8 +853,43 @@ class ProjectManage extends Component {
         },
       },
       {
+        title: <Ellipse text='项目负责人' style={{ width: 57 }} />,
+        dataIndex: 'pm',
+        key: 'pm',
+        sorter: true,
+        align: 'center',
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '6vw'
+              }}
+            />
+          );
+        },
+      },
+      {
+        title: <Ellipse text='预算编号' style={{ width: 57 }} />,
+        dataIndex: 'budgetNo',
+        key: 'budgetNo',
+        sorter: true,
+        align: 'center',
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '6vw'
+              }}
+            />
+          );
+        },
+      },
+      {
         title: '操作',
         align: 'left',
+        width: 120,
         render: (text, record) => {
           return (
             <div style={{ whiteSpace: 'nowrap' }}>
@@ -911,21 +948,21 @@ class ProjectManage extends Component {
         {visiblePlanModal && this.genPlanModal()}
         {viewModal && <EditModal {...editModalProps} />}
         <div className={styles.customSearchForm}>{this.renderSearchForm()}</div>
-        <div className='cusOverflow'>
-          <StandardTable
-            rowKey={(record, index) => index}
-            columns={this.genColumns()}
-            data={projectList}
-            loading={loadingQueryData}
-            // dataSource={[
-            //   { number: 'gong', systemName: 'gg', name: '国庆放假不调休，哈哈哈' },
-            //   { number: 'gong2', systemName: 'gg' },
-            //   { number: 'gong3', systemName: 'gg' }
-            // ]}
-            onChange={this.handleStandardTableChange}
-          // scroll={{ x: 1800 }}
-          />
-        </div>
+        {/* <div className='cusOverflow'> */}
+        <StandardTable
+          rowKey={(record, index) => index}
+          columns={this.genColumns()}
+          data={projectList}
+          loading={loadingQueryData}
+          // dataSource={[
+          //   { number: 'gong', systemName: 'gg', name: '国庆放假不调休，哈哈哈' },
+          //   { number: 'gong2', systemName: 'gg' },
+          //   { number: 'gong3', systemName: 'gg' }
+          // ]}
+          onChange={this.handleStandardTableChange}
+          scroll={{ x: '66vw' }}
+        />
+        {/* </div> */}
       </Card>
     );
   }
