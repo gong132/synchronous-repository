@@ -17,9 +17,7 @@ const RadioGroup = Radio.Group;
 @connect(({ demand, loading, global }) => ({
   global,
   demand,
-  loadingAdd: loading.effects['demand/addDemand'],
-  loadingTempAdd: loading.effects['demand/tempAddDemand'],
-  loadingUpdate: loading.effects['demand/updateDemand']
+  loadingUpdateAddAdd: loading.effects['demand/addUpdateDemand'],
 }))
 class CreateDemand extends PureComponent {
   constructor(props) {
@@ -147,56 +145,11 @@ class CreateDemand extends PureComponent {
     const { demand: { formType }, handleViewModal, handleQueryList, handleQueryBoard } = this.props
     this.props
       .dispatch({
-        type: 'demand/addDemand',
+        type: 'demand/addUpdateDemand',
         payload: {
           ...values,
         },
       })
-      .then(res => {
-        if (res) {
-          handleViewModal(false);
-          if (formType === 'list') {
-            handleQueryList();
-          } else if (formType === 'board') {
-            handleQueryBoard();
-          }
-        }
-      });
-  };
-
-  // 暂存需求（自动保存）
-  tempCreateDemand = values => {
-    const { handleViewModal, handleQueryList, handleQueryBoard, demand: { formType } } = this.props
-    if (values.id) {
-      this.editDemand(values)
-      return true
-    }
-    this.props
-      .dispatch({
-        type: 'demand/tempAddDemand',
-        payload: {
-          ...values,
-        },
-      }).then((res) => {
-        if (res && !values.autoSave) {
-          handleViewModal(false);
-          if (formType === 'list') {
-            handleQueryList();
-          } else if (formType === 'board') {
-            handleQueryBoard();
-          }
-        }
-      })
-  };
-
-  editDemand = params => {
-    const { handleViewModal, handleQueryList, handleQueryBoard, demand: { formType } } = this.props
-    this.props.dispatch({
-      type: 'demand/updateDemand',
-      payload: {
-        ...params,
-      },
-    })
       .then(res => {
         if (res) {
           handleViewModal(false);
@@ -227,6 +180,10 @@ class CreateDemand extends PureComponent {
           return;
         }
       }
+      values.createType = 2
+      if (saveType === 'tempSave') {
+        values.createType = 1
+      }
       values.expectedCompletionDate = values.expectedCompletionDate ? moment(values.expectedCompletionDate).format('YYYY-MM-DD') : '';
       values.requirementDescription = description;
       values.receiverId = values.receiver
@@ -236,37 +193,17 @@ class CreateDemand extends PureComponent {
       values.attachments = arr
       console.log(values)
       // return
-      if (saveType === 'clickBtn') {
-        // 如果是编辑页面走编辑接口
-        if (modalTitle === '编辑') {
-          values.id = recordValue.id
-          this.editDemand(values)
-          return true
-        }
-        // 点击保存时暂存id已经获取到了
-        if (tempDemandId) {
-          values.id = tempDemandId
-          this.editDemand(values)
-          return true
-        }
-        // 保存
-        this.createDemand(values);
+      // 如果是编辑页面走编辑接口
+      if (modalTitle === '编辑') {
+        const copyValue = {}
+        Object.assign(copyValue, recordValue, values)
+        copyValue.id = recordValue.id
+        this.createDemand(copyValue)
         return true
       }
-      // 如果需求标题没输入就不能往下走
-      if (!values.title) {
-        message.warning('请填写需求标题')
-        return true
-      }
-
-      if (saveType !== 'tempSave') {
-        // 自动保存
-        values.id = tempDemandId
-        values.autoSave = true
-      }
-
-      console.log('tempDemandId:', tempDemandId)
-      this.tempCreateDemand(values)
+      // 保存
+      this.createDemand(values);
+      return true
     });
   };
 
@@ -343,7 +280,7 @@ class CreateDemand extends PureComponent {
                   allowClear
                   showSearch
                   optionFilterProp="children"
-                  onSearch={_.debounce(handleQueryUser, 500)}
+                  onSearch={typeof handleQueryUser === 'function' && _.debounce(handleQueryUser, 500)}
                   filterOption={(input, option) =>
                     JSON.stringify(option.props.children)
                       .toLowerCase()
@@ -438,7 +375,7 @@ class CreateDemand extends PureComponent {
                   showSearch
                   placeholder="请输入受理人"
                   onChange={(val) => this.handleQueryGroupBy('user', val)}
-                  onSearch={_.debounce(handleQueryUser, 500)}
+                  onSearch={typeof handleQueryUser === 'function' && _.debounce(handleQueryUser, 500)}
                   optionFilterProp="children"
                   filterOption={(input, option) =>
                     JSON.stringify(option.props.children)
@@ -510,9 +447,7 @@ class CreateDemand extends PureComponent {
       visibleModal,
       modalTitle,
       handleViewModal,
-      loadingAdd,
-      loadingTempAdd,
-      loadingUpdate
+      loadingUpdateAddAdd,
     } = this.props;
     return (
       <Modal
@@ -529,7 +464,7 @@ class CreateDemand extends PureComponent {
               style={{ marginRight: '18px' }}
             />
             <CustomBtn
-              loading={loadingTempAdd}
+              loading={loadingUpdateAddAdd}
               onClick={() => this.handleSubmitForm('tempSave')}
               style={{
                 background: 'rgba(46, 91, 255, 0.1)',
@@ -539,8 +474,7 @@ class CreateDemand extends PureComponent {
               title='暂存'
             />
             <CustomBtn
-              loading={modalTitle === '编辑' ? loadingUpdate : loadingAdd}
-              // loading={loadingAdd}
+              loading={loadingUpdateAddAdd}
               onClick={() => this.handleSubmitForm('clickBtn')}
               type="save"
             />

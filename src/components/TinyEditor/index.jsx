@@ -13,7 +13,12 @@
 import React, { Component } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import { plugins, toolbar } from './plugins';
-class App extends Component {
+import Config from '@/utils/config';
+import {getUserInfo} from '@/utils/utils'
+
+const { uploadUrl } = Config.config
+
+class TextEditor extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,14 +34,13 @@ class App extends Component {
   }
 
   handleUploadImg = (blobInfo, success, failure, progress) => {
-    console.log(blobInfo, success, failure, progress)
-    const {
-      uploadUrl,
-    } = this.props;
+    success("data:" + blobInfo.blob().type + ";base64," + blobInfo.base64());
+    return false
     let xhr, formData;
     xhr = new XMLHttpRequest();
     xhr.withCredentials = false;
     xhr.open('POST', uploadUrl);
+    xhr.setRequestHeader('Authorization', getUserInfo().token)
     xhr.upload.onprogress = function (e) {
       progress(e.loaded / e.total * 100);
     };
@@ -57,6 +61,7 @@ class App extends Component {
       failure('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
     };
     formData = new FormData();
+    formData.append('uploadType', '5');
     formData.append('file', blobInfo.blob(), blobInfo.filename());
 
     xhr.send(formData);
@@ -102,4 +107,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default TextEditor;

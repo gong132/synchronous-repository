@@ -94,7 +94,6 @@ const BasicLayout = props => {
    */
 
   const handleMenuCollapse = payload => {
-    console.log(payload, "payload")
     if (dispatch) {
       dispatch({
         type: 'global/changeLayoutCollapsed',

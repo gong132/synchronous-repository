@@ -23,7 +23,7 @@ import {
 } from 'antd'
 import { connect } from 'dva'
 import _ from 'lodash'
-import { DEMAND_PRIORITY_ARR, PROJECT_STATUS_ARR, PROJECT_STATUS_OBJ } from '../utils/constant'
+import { DEMAND_PRIORITY_ARR, PROJECT_STATUS_ARR, PROJECT_STATUS_OBJ, EST_WAY_OBJ, DEMAND_PRIORITY_OBJ, PRO_MANAGE_TYPE } from '../utils/constant'
 import styles from '../index.less'
 
 const DescriptionItem = Descriptions.Item
@@ -41,7 +41,7 @@ class Detail extends PureComponent {
       editBool: false,
       descriptionState: ''
     }
-    this.handleStandardTableChangePro=this.handleStandardTableChangePro.bind(this)
+    this.handleStandardTableChangePro = this.handleStandardTableChangePro.bind(this)
   }
 
   componentDidMount() {
@@ -243,9 +243,9 @@ class Detail extends PureComponent {
       { span: 1, required: false, name: '技术评审状态', value: techStage },
       { span: 1, required: false, name: '立项评审状态', value: estStage },
       { span: 1, required: false, name: '商务状态', value: bnStatus },
-      { span: 1, required: false, name: '项目管理类型', value: pjMgType },
-      { span: 1, required: false, name: '建设方式', value: buildType },
-      { span: 1, required: false, name: '系统级别', value: systemLevel },
+      { span: 1, required: false, name: '项目管理类型', value: pjMgType, arrDict: PRO_MANAGE_TYPE },
+      { span: 1, required: false, name: '建设方式', value: buildType, arrDict: EST_WAY_OBJ },
+      { span: 1, required: false, name: '系统级别', value: systemLevel, arrDict: DEMAND_PRIORITY_OBJ },
       { span: 1, required: false, name: '项目负责人', value: pm },
       { span: 2, required: false, name: '项目创建时间', value: createTime },
       { span: 1, required: false, name: '项目描述', value: pjDesc, dataIndex: 'description' },
@@ -296,7 +296,7 @@ class Detail extends PureComponent {
         <GlobalSandBox title="项目进度" img={flowIcon}>
           <div className={styles.arrowBox}>
             {PROJECT_STATUS_ARR.map((v, index) => {
-              const count = pjProgress || 3
+              const count = pjStage || 0
               return (
                 <div className={styles.arrowBox_arr} style={{ width: index === 6 ? '4vw' : '15vw' }}>
                   <div className={styles.arrowBox_arr_left}>
@@ -678,13 +678,12 @@ class Detail extends PureComponent {
                         style={w}
                         placeholder="请输入系统级别"
                       >
-                        {/* {!_.isEmpty(stageStatus) &&
-                    stageStatus.map(d => (
-                      <Option key={d.id} value={d.id}>
-                        {d.pjStageName}
-                      </Option>
-                    ))} */}
-                        <Option key='1' value='1'>未定义</Option>
+                        {DEMAND_PRIORITY_ARR.map(d => (
+                          <Option key={d.key} value={d.key}>
+                            {d.val}
+                          </Option>
+                        ))}
+                        {/* <Option key='1' value='1'>未定义</Option> */}
                       </Select>,
                     )}
                   </FormItem>

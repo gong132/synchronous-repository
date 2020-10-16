@@ -7,6 +7,8 @@ import Websocket from '@/components/Websocket';
 import itIcon from '@/assets/icon/Button_itpg.svg';
 import turnIcon from '@/assets/icon/Button_zpg.svg';
 // import backIcon from '@/assets/icon/Button_xqth.svg';
+import delIcon from '@/assets/icon/cz_del.svg'
+import editIcon from '@/assets/icon/cz_bj_s.svg';
 import msgIcon from '@/assets/icon/modular_xx.svg';
 import _ from 'lodash';
 import { getUserInfo, getParam } from '@/utils/utils';
@@ -354,12 +356,12 @@ class ChartCard extends PureComponent {
                 value={sendData}
                 placeholder="您可以输入并@所需要提及的相关人员"
                 onChange={this.handleSendDatachange}
-                onSearch={this.handleQueryUser}
+                onSearch={_.debounce(this.handleQueryUser, 500)}
                 rows="6"
               >
                 {userData.map(item => (
-                  <Option key={item.loginid} value={`${item.lastname}-${item.loginid}`}>
-                    {item.lastname}-{item.loginid}
+                  <Option key={item.userId} value={`${item.userName}-${item.userId}`}>
+                    {item.userName}-{item.userId}
                   </Option>
                 ))}
               </Mentions>
@@ -478,10 +480,12 @@ class ChartCard extends PureComponent {
                         title="是否删除此常用语"
                         onConfirm={() => this.handleDeleteComLang(item)}
                       >
-                        <a style={{ color: 'red' }} key="list-edit">删除</a>
+                        {/* <a style={{ color: 'red' }} key="list-edit">删除</a> */}
+                        <Icon component={delIcon} />
                       </Popconfirm>
                       <Divider type="vertical" />
-                      <a onClick={() => this.handleComLangEdit(item)} key="list-edit">编辑</a>
+                      {/* <a onClick={() => this.handleComLangEdit(item)} key="list-edit">编辑</a> */}
+                      <Icon onClick={() => this.handleComLangEdit(item)} component={editIcon} />
                     </div>
                   </div>
                 </List.Item>
@@ -495,12 +499,12 @@ class ChartCard extends PureComponent {
                   onChange={this.handleComLangchange}
                   rows="8"
                   // loading={loadingQueryUsers}
-                  // onSearch={handleUserSearchChange}
+                  onSearch={_.debounce(this.handleQueryUser, 500)}
                   placeholder="请输入需添加的常用语"
                 >
                   {userData.map(item => (
-                    <Option key={item.loginid} value={`${item.lastname}-${item.loginid}`}>
-                      {item.lastname}-{item.loginid}
+                    <Option key={item.userId} value={`${item.userName}-${item.userId}`}>
+                      {item.userName}-{item.userId}
                     </Option>
                   ))}
                 </Mentions>
