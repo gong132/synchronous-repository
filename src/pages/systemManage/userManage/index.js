@@ -163,6 +163,7 @@ class UserManage extends Component {
                 showSearch
                 onSearch={_.debounce(this.handleSearchTeam, 500)}
                 onChange={_.debounce(this.moreQuery, 500)}
+                // onInputKeyDown={_.debounce(this.moreQuery)}
                 optionFilterProp="children"
                 filterOption={(input, option) =>
                   JSON.stringify(option.props.children)

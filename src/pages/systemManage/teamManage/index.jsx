@@ -183,7 +183,7 @@ class TeamManage extends Component {
                 }
               >
                 {teamHeader.map(v => (
-                  <Option key={v.loginid} value={v.loginid}>{v.lastname}</Option>
+                  <Option key={v.userId} value={v.userId}>{v.userName}</Option>
                 ))}
               </Select>)}
           </FormItem>

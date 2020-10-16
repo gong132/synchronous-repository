@@ -1,12 +1,9 @@
 import {
-  updateDemand,
-  addDemand,
   fetchSystemList,
   fetchUserList,
   addStory,
   updateStory,
   fetchStoryList,
-  tempAddDemand,
   copyStory,
   searchStory,
   queryBudgetList,
@@ -30,6 +27,7 @@ import {
   addCommonLang,
   updateCommonLang,
   queryCommonLang,
+  addUpdateDemand,
 } from '@/services/demand/demand';
 import {
   addMilePlan,
@@ -180,36 +178,10 @@ const Demand = {
       });
     },
 
-    *addDemand({ payload }, { call }) {
-      const { code, msg, data } = yield call(addDemand, payload);
-      if (!code || code !== 200) {
-        message.error(msg);
-        return false;
-      }
-      return data;
-    },
-
-    // 暂存需求
-    *tempAddDemand({ payload }, { call, put }) {
-      const { code, msg, data } = yield call(tempAddDemand, payload);
-      if (!code || code !== 200) {
-        message.error(msg);
-        return false;
-      }
-      console.log(payload, 'payload');
-      if (payload.autoSave) {
-        yield put({
-          type: 'saveData',
-          payload: {
-            tempDemandId: data,
-          },
-        });
-      }
-      return data;
-    },
-
-    *updateDemand({ payload }, { call }) {
-      const { code, msg } = yield call(updateDemand, payload);
+    // 新增/编辑需求
+    *addUpdateDemand({ payload }, { call }) {
+      console.log(payload)
+      const { code, msg, data } = yield call(addUpdateDemand, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;

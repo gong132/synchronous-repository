@@ -71,8 +71,8 @@ class DemandBoard extends Component {
     //   }
     // });
     let pathname = '/demand/generalDemand/detail'
-    if(type === 'p') {
-      pathname='/demand/projectDemand/detail'
+    if (type === 'p') {
+      pathname = '/demand/projectDemand/detail'
     }
     router.push({
       pathname,
@@ -91,10 +91,30 @@ class DemandBoard extends Component {
     }
   }
 
+  // 查询详情
+  handleQueryDetail = (id) => {
+    this.props
+      .dispatch({
+        type: 'demand/queryDemandInfo',
+        payload: {
+          id,
+        },
+      })
+      .then(res => {
+        if (!res) return;
+        this.setState({
+          propValue: res
+        })
+      });
+  };
+
   handleViewModal = (bool, val) => {
     this.setState({
       showEditModal: bool,
-      propValue: val,
+    }, () => {
+      if(bool) {
+        this.handleQueryDetail(val.id)
+      }
     })
   }
 
@@ -108,7 +128,7 @@ class DemandBoard extends Component {
 
   renderBoardMenu = (record, boardId) => {
     const { attention, creator, receiverName } = record
-    const { userInfo={} } = getUserInfo()
+    const { userInfo = {} } = getUserInfo()
     const { userName, roleName } = userInfo
 
     return (

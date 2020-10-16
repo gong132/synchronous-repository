@@ -83,13 +83,13 @@ const FLOW_STATUS = [
 
 // 需求类型
 const DEMAND_TYPE_ARR = [
-  { key: 'p', val: '项目需求（需要OA技术评审）' },
-  { key: 'u', val: '一般需求（需要通过OA审批）' },
+  { key: 1, val: '项目需求（需要OA技术评审）' },
+  { key: 2, val: '一般需求（需要通过OA审批）' },
 ];
 
 const DEMAND_TYPE_OBJ = {
-  p: '项目需求（需要OA技术评审）',
-  u: '一般需求（需要通过OA审批）',
+  1: '项目需求（需要OA技术评审）',
+  2: '一般需求（需要通过OA审批）',
 };
 
 // 优先级

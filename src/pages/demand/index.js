@@ -36,7 +36,7 @@ const Index = memo(
     const [modalTitle, setModalTitle] = useState('创建需求');
 
     const [searchForm, setSearchForm] = useState({});
-    const [commonSearchValue, setCommonSearchValue] = useState({ active: '0', myGroup: '1' });
+    const [commonSearchValue, setCommonSearchValue] = useState({ active: 0, myGroup: 1 });
 
     const handleViewModal = (bool, title) => {
       setVisibleModal(bool);
@@ -118,15 +118,14 @@ const Index = memo(
     // 查询看板
     const handleQueryBoard = (params = {}) => {
       console.log(props.location.pathname);
-      let type = 'u';
+      let type = 2;
       if (demandRoutes[props.location.pathname] === '项目') {
-        type = 'p';
+        type = 1;
       }
       dispatch({
         type: 'demand/queryDemandBoard',
         payload: {
-          ...DefaultPage,
-          ids: '1,2,3,4,5,6,7,8,9,10',
+          // ...DefaultPage,
           ...commonSearchValue,
           ...params,
           type,

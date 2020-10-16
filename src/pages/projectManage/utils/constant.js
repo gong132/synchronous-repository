@@ -58,6 +58,18 @@ const BUSINESS_STATUS_OBJ = {
   '3': '已商务',
 }
 
+// 建设方式
+const EST_WAY_OBJ = {
+  '1': '外包采购',
+  '2': '部门研发',
+}
+
+// 项目管理类型
+const PRO_MANAGE_TYPE = {
+  '1': '研发管理类',
+  '2': '需求起草类',
+}
+
 export {
   DEMAND_PRIORITY_ARR,
   DEMAND_PRIORITY_OBJ,
@@ -66,5 +78,8 @@ export {
   REVIEW_STAGE_ARR,
   REVIEW_STAGE_OBJ,
   BUSINESS_STATUS_ARR,
-  BUSINESS_STATUS_OBJ
+  BUSINESS_STATUS_OBJ,
+
+  EST_WAY_OBJ,
+  PRO_MANAGE_TYPE
 }

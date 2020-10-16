@@ -1,24 +1,8 @@
 import request from '@/utils/request';
 
-// 新增
-export async function addDemand(params) {
-  return request('/demand/add', {
-    method: 'post',
-    params,
-  });
-}
-
-// 暂存需求
-export async function tempAddDemand(params) {
-  return request('/demand/ts', {
-    method: 'post',
-    params,
-  });
-}
-
-// 编辑需求
-export async function updateDemand(params) {
-  return request('/demand/updateDemand', {
+// 新增/编辑需求
+export async function addUpdateDemand(params) {
+  return request('/demand/save', {
     method: 'post',
     params,
   });
@@ -58,7 +42,7 @@ export async function queryDemandProject(params) {
 
 // 查看需求看板
 export async function queryDemandBoard(params) {
-  return request('/demand/queryBoard', {
+  return request('/demand/board', {
     method: 'post',
     params,
   });
@@ -66,7 +50,7 @@ export async function queryDemandBoard(params) {
 
 // 查看详情
 export async function queryDemandInfo(params) {
-  return request('/demand/selectOne', {
+  return request('/demand/info', {
     method: 'get',
     params,
   });

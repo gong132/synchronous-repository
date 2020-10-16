@@ -49,8 +49,10 @@ class ContractManage extends Component {
       visibleModal: false,
       searchMore: false,
       modalTitle: '新建',
+      clientWidth: 0
     };
-    this.handleDebounceQueryData = _.debounce(this.handleDebounceQueryData, 500);
+    // this.handleDebounceQueryData = _.debounce(this.handleDebounceQueryData, 500);
+    this.saveParams = _.debounce(this.saveParams, 500)
   }
 
   componentDidMount() {
@@ -63,6 +65,11 @@ class ContractManage extends Component {
     this.handleQueryBudget()
     this.handleQueryCluster()
     this.handleQueryUser()
+
+    const w = document.body.clientWidth
+    this.setState({
+      clientWidth: w
+    })
   }
 
   // 导出
@@ -100,6 +107,7 @@ class ContractManage extends Component {
   // 更多查询
   moreQuery = () => {
     const formValues = this.props.form.getFieldsValue();
+    console.log(formValues)
     if (formValues.signTime && !_.isEmpty(formValues.signTime)) {
       formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYY-MM-DD')
       formValues.signingEndTime = moment(formValues.signTime[1]).format('YYYY-MM-DD')
@@ -183,7 +191,7 @@ class ContractManage extends Component {
 
   // 模糊查询人员
   handleQueryUserBy = (userName) => {
-    this.handleQueryUser({userName})
+    this.handleQueryUser({ userName })
   }
 
   // 查人员
@@ -201,10 +209,12 @@ class ContractManage extends Component {
     const { form } = this.props
     form.resetFields(['headerId'])
     this.handleQueryUser({ teamId: val })
+    this.saveParams()
   }
 
   // 通过人员id查团队
   handleQueryGroupBy = async (type, val) => {
+    this.saveParams()
     if (type === 'user') {
       const res = await this.handleQueryGroup(String(val), 'userId')
       const { contract: { groupList }, form } = this.props
@@ -280,19 +290,6 @@ class ContractManage extends Component {
     });
   };
 
-  // 添加菜单
-  handleAddMenu = () => {
-    this.props.dispatch({
-      type: 'contract/addMenu',
-      payload: {
-        name: '我的需求',
-        pid: '17',
-        url: '/demand',
-        type: 0,
-      },
-    });
-  };
-
   renderSearchForm = () => {
     const { searchMore } = this.state
     const {
@@ -311,6 +308,7 @@ class ContractManage extends Component {
                   allowClear
                   showSearch
                   onSearch={_.debounce(this.handleQueryBudget, 500)}
+                  onChange={this.saveParams}
                   optionFilterProp="children"
                   filterOption={(input, option) =>
                     JSON.stringify(option.props.children)
@@ -337,7 +335,7 @@ class ContractManage extends Component {
               {getFieldDecorator(
                 'description',
                 {},
-              )(<Input allowClear placeholder="请输入合同描述" />)}
+              )(<Input allowClear onChange={this.saveParams} placeholder="请输入合同描述" />)}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -350,6 +348,7 @@ class ContractManage extends Component {
                   allowClear
                   showSearch
                   onSearch={_.debounce(this.handleQueryDept, 500)}
+                  onChange={this.saveParams}
                   optionFilterProp="children"
                   filterOption={(input, option) =>
                     JSON.stringify(option.props.children)
@@ -378,6 +377,7 @@ class ContractManage extends Component {
                   allowClear
                   showSearch
                   onSearch={_.debounce(this.handleQuerySupplier, 500)}
+                  onChange={this.saveParams}
                   onFocus={this.handleQuerySupplier}
                   optionFilterProp="children"
                   filterOption={(input, option) =>
@@ -434,7 +434,7 @@ class ContractManage extends Component {
           <Col span={24}>
             <FormItem colon={false} label="合同负责人团队">
               {getFieldDecorator(
-                'headerTeamId ',
+                'headerTeamId',
                 {},
               )(
                 <Select
@@ -465,7 +465,7 @@ class ContractManage extends Component {
             <FormItem colon={false} label="维保支付提醒日期">
               {getFieldDecorator('defendPayTime', {
               })(
-                <DatePicker />
+                <DatePicker onChange={this.saveParams} />
               )}
             </FormItem>
           </Col>
@@ -505,7 +505,7 @@ class ContractManage extends Component {
             {getFieldDecorator('name', {
             })(<Input
               allowClear
-              onChange={_.debounce(this.saveParams, 500)}
+              onChange={this.saveParams}
               placeholder='请输入合同名称'
             />)}
           </FormItem>
@@ -517,7 +517,7 @@ class ContractManage extends Component {
               <Select
                 allowClear
                 // showSearch
-                onChange={_.debounce(this.saveParams, 500)}
+                onChange={this.saveParams}
                 optionFilterProp="children"
                 filterOption={(input, option) =>
                   JSON.stringify(option.props.children)
@@ -546,7 +546,7 @@ class ContractManage extends Component {
               <Select
                 allowClear
                 showSearch
-                onChange={_.debounce(this.saveParams, 500)}
+                onChange={this.saveParams}
                 onSearch={_.debounce(this.handleQueryCluster, 500)}
                 optionFilterProp="children"
                 filterOption={(input, option) =>
@@ -573,7 +573,7 @@ class ContractManage extends Component {
           <FormItem colon={false} labelCol={{ span: 7 }} wrapperCol={{ span: 17 }} label="合同签订日期">
             {getFieldDecorator('signTime', {
             })(
-              <RangePicker onChange={_.debounce(this.saveParams, 500)} />
+              <RangePicker onChange={this.saveParams} />
             )}
           </FormItem>
         </Col>
@@ -596,8 +596,8 @@ class ContractManage extends Component {
                   }}
                 >
                   <div className={styles.moreBtn}>
-                    <Icon component={searchMore ?  upIcon: downIcon} />
-                    <span>{searchMore ?  '隐藏' : '更多'}</span>
+                    <Icon component={searchMore ? upIcon : downIcon} />
+                    <span>{searchMore ? '隐藏' : '更多'}</span>
                   </div>
                 </div>
               }
@@ -617,6 +617,7 @@ class ContractManage extends Component {
         title: '合同编号',
         dataIndex: 'number',
         key: 'number',
+        width: 140,
         sorter: true,
         render: (text, record) => {
           return (
@@ -636,7 +637,8 @@ class ContractManage extends Component {
             <Ellipse
               text={text}
               style={{
-                width: '8vw'
+                width: '8vw',
+                paddingRight: '16px'
               }}
             />
           );
@@ -652,21 +654,124 @@ class ContractManage extends Component {
             <Ellipse
               text={text}
               style={{
-                width: '8vw'
+                width: '8vw',
+                paddingRight: '16px'
               }}
             />
           );
         },
       },
-      TableColumnHelper.genPlanColumn('clusterName', '所属集群/板块', { sorter: true }),
-      TableColumnHelper.genPlanColumn('transactionAmount', '合同成交金额（元）', { sorter: true, width: 180 }),
-      TableColumnHelper.genPlanColumn('payAmount', '合同已支付金额（元）', { sorter: true, width: 200 }, ''),
-      TableColumnHelper.genPlanColumn('notPayAmount', '合同待支付金额（元）', { sorter: true, width: 200 }, ''),
-      TableColumnHelper.genPlanColumn('projectCheckTime', '项目验收日期', { sorter: true }, ''),
-      TableColumnHelper.genPlanColumn('budgetNumber', '预算编号', { sorter: true }),
-      TableColumnHelper.genPlanColumn('headerName', '合同负责人', { sorter: true }),
       {
-        title: '合同负责团队',
+        title: <Ellipse text='所属集群/板块' style={{ width: 67 }} />,
+        dataIndex: 'clusterName',
+        key: 'clusterName',
+        align: 'left',
+        sorter: true,
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '6vw',
+                paddingRight: '16px'
+              }}
+            />
+          );
+        },
+      },
+      // TableColumnHelper.genPlanColumn('clusterName', '所属集群/板块', { sorter: true }),
+      {
+        title: <Ellipse text='合同成交金额（元）' style={{ width: 67 }} />,
+        dataIndex: 'transactionAmount',
+        key: 'transactionAmount',
+        align: 'left',
+        sorter: true,
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '6vw',
+                paddingRight: '16px'
+              }}
+            />
+          );
+        },
+      },
+      {
+        title: <Ellipse text='合同已支付金额（元）' style={{ width: 67 }} />,
+        dataIndex: 'payAmount',
+        key: 'payAmount',
+        align: 'left',
+        sorter: true,
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '6vw',
+                paddingRight: '16px'
+              }}
+            />
+          );
+        },
+      },
+      {
+        title: <Ellipse text='合同待支付金额（元）' style={{ width: 67 }}/>,
+        dataIndex: 'notPayAmount',
+        key: 'notPayAmount',
+        align: 'left',
+        sorter: true,
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '6vw',
+                paddingRight: '16px'
+              }}
+            />
+          );
+        },
+      },
+      {
+        title: <Ellipse text='项目验收日期' style={{ width: 67 }}/>,
+        dataIndex: 'projectCheckTime',
+        key: 'projectCheckTime',
+        align: 'left',
+        sorter: true,
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '6vw',
+                paddingRight: '16px'
+              }}
+            />
+          );
+        },
+      },
+      TableColumnHelper.genPlanColumn('budgetNumber', '预算编号', { sorter: true, align: 'left' }),
+      {
+        title: <Ellipse text='合同负责人' style={{ width: 67 }}/>,
+        dataIndex: 'headerName',
+        key: 'headerName',
+        sorter: true,
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '8vw',
+                paddingRight: '16px'
+              }}
+            />
+          );
+        },
+      },
+      {
+        title: <Ellipse text='合同负责团队' style={{ width: 67 }}/>,
         dataIndex: 'headerTeamName',
         key: 'headerTeamName',
         sorter: true,
@@ -675,20 +780,68 @@ class ContractManage extends Component {
             <Ellipse
               text={text}
               style={{
-                width: '6vw'
+                width: '8vw',
+                paddingRight: '16px'
               }}
             />
           );
         },
       },
-      TableColumnHelper.genPlanColumn('signingTime', '合同签订日期', { sorter: true }),
-      TableColumnHelper.genPlanColumn('userName', '录入人', { sorter: true }),
-      TableColumnHelper.genDateTimeColumn('createTime', '录入时间', 'YYYY-MM-DD', { sorter: true }),
+      {
+        title: <Ellipse text='合同签订日期' style={{ width: 67 }}/>,
+        dataIndex: 'signingTime',
+        key: 'signingTime',
+        sorter: true,
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '8vw',
+                paddingRight: '16px'
+              }}
+            />
+          );
+        },
+      },
+      {
+        title: <Ellipse text='录入人' style={{ width: 67 }}/>,
+        dataIndex: 'userName',
+        key: 'userName',
+        sorter: true,
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '8vw',
+                paddingRight: '16px'
+              }}
+            />
+          );
+        },
+      },
+      {
+        title: <Ellipse text='录入时间' style={{ width: 67 }}/>,
+        dataIndex: 'createTime',
+        key: 'createTime',
+        sorter: true,
+        render: (text) => {
+          return (
+            <Ellipse
+              text={text}
+              style={{
+                width: '8vw',
+                paddingRight: '16px'
+              }}
+            />
+          );
+        },
+      },
       {
         title: '操作',
         align: 'left',
-        // fixed: 'right',
-        width: 190,
+        width: 90,
         render: (text, record) => {
           return (
             <div>
@@ -728,7 +881,7 @@ class ContractManage extends Component {
 
   render() {
     const { contract: { contractList, contractInfo }, loadingQueryData } = this.props;
-    const { visibleModal, modalTitle } = this.state;
+    const { visibleModal, modalTitle, clientWidth } = this.state;
     const createProps = {
       visibleModal,
       modalTitle,
@@ -750,9 +903,6 @@ class ContractManage extends Component {
             type='export'
           />
         </div>
-        {/* <Button
-          onClick={() => this.handleAddMenu()}
-        >添加菜单</Button> */}
         {visibleModal && <CreateContract {...createProps} />}
         <Card>
           <div className={styles.customSearchForm}>{this.renderSearchForm()}</div>
@@ -761,13 +911,8 @@ class ContractManage extends Component {
             columns={this.genColumns()}
             data={contractList}
             loading={loadingQueryData}
-            // dataSource={[
-            //   { number: 'gong', systemName: 'gg' },
-            //   { number: 'gong2', systemName: 'gg' },
-            //   { number: 'gong3', systemName: 'gg' }
-            // ]}
             onChange={this.handleStandardTableChange}
-            scroll={{ x: 2400 }}
+            scroll={{ x: clientWidth*0.44 + 1061 }}
           />
         </Card>
       </Fragment>

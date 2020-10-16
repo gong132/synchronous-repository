@@ -17,8 +17,8 @@ export async function queryTeamBy(params) {
 
 // 查团队经理
 export async function queryTeamHeader(params) {
-  return request('/personnel/queryTeamHead', {
-    method: 'get',
+  return request('/user/teamHead', {
+    method: 'post',
     params,
   });
 }

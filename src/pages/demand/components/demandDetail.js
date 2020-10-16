@@ -205,7 +205,7 @@ class Detail extends Component {
         const { requirementDescription, attachmentFiles } = res || {};
         this.setState({
           descriptionState: requirementDescription,
-          urls: attachmentFiles.length>0? JSON.stringify(attachmentFiles) : ''
+          urls: attachmentFiles && attachmentFiles.length>0? JSON.stringify(attachmentFiles) : ''
         });
         this.handleQueryStoryList();
         this.handSearchITAssignAuth();
@@ -507,7 +507,7 @@ class Detail extends Component {
       loadingQueryInfo,
       loadingQueryLogData,
       loadingEditDemand,
-      demand: { budgetList, demandInfo, groupList, logList, flowList, ITAssignVisible, assignorVisible, userData },
+      demand: { budgetList, userDataMap, demandInfo, groupList, logList, flowList, ITAssignVisible, assignorVisible, userData },
     } = this.props;
     const w = '100%';
     const {
@@ -562,7 +562,7 @@ class Detail extends Component {
         type: 'p',
         arrDict: DEMAND_PRIORITY_OBJ,
       },
-      { span: 1, required: false, name: '提出人', value: introducer, type: 'p' },
+      { span: 1, required: false, name: '提出人', value: introducer, type: 'p', arrDict: userDataMap },
       { span: 1, required: false, name: '受理团队', value: acceptTeam, type: 'p' },
       { span: 1, required: false, name: '受理人', value: receiverName, type: 'p' },
       {
@@ -960,8 +960,8 @@ class Detail extends Component {
                         }
                       >
                         {!_.isEmpty(userData) && userData.map(d => (
-                          <Option key={d.loginid} value={d.loginid}>
-                            {d.lastname}
+                          <Option key={d.userId} value={d.userId}>
+                            {d.userName}
                           </Option>
                         ))}
                       </Select>,

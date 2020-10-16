@@ -47,6 +47,7 @@ class ProjectManage extends Component {
       searchMore: false,
       viewModal: false,
       visiblePlanModal: false,
+      clientWidth: 0
     }
     this.handleDebounceQueryData = _.debounce(this.handleDebounceQueryData, 500);
     this.handleStandardTableChangePro = this.handleStandardTableChangePro.bind(this)
@@ -60,6 +61,11 @@ class ProjectManage extends Component {
     this.handleQuerySupplier()
     this.handleQueryUser()
     this.handleQueryGroup()
+
+    const w = document.body.clientWidth
+    this.setState({
+      clientWidth: w
+    })
   }
 
   // 查人员
@@ -132,7 +138,7 @@ class ProjectManage extends Component {
 
   handleResetSearch = () => {
     this.props.form.resetFields()
-    this.moreQuery()
+    this.saveParams()
   }
 
   // 更多查询
@@ -460,7 +466,8 @@ class ProjectManage extends Component {
                         {d.name}
                       </Option>
                     ))} */}
-                  <Option key='p' value='p'>未定义</Option>
+                  <Option key='1' value='1'>外包采购</Option>
+                  <Option key='2' value='2'>部门研发</Option>
                 </Select>,
               )}
             </FormItem>
@@ -702,7 +709,7 @@ class ProjectManage extends Component {
         dataIndex: 'pjCode',
         key: 'pjCode',
         sorter: true,
-        align: 'center',
+        align: 'left',
         render: (text, record) => {
           return (
             <Ellipse
@@ -710,7 +717,8 @@ class ProjectManage extends Component {
               onClick={() => this.handleViewDetail(record)}
               className="globalStyle"
               style={{
-                width: '6vw'
+                width: '8vw',
+                paddingRight: '16px'
               }}
             />
           );
@@ -720,13 +728,14 @@ class ProjectManage extends Component {
         title: <Ellipse text='项目名称' style={{ width: 57 }} />,
         dataIndex: 'pjName',
         key: 'pjName',
-        align: 'center',
+        align: 'left',
         render: (text) => {
           return (
             <Ellipse
               text={text}
               style={{
-                width: '6vw'
+                width: '8vw',
+                paddingRight: '16px'
               }}
             />
           );
@@ -737,14 +746,14 @@ class ProjectManage extends Component {
         dataIndex: 'pjStage',
         key: 'pjStage',
         sorter: true,
-        align: 'center',
+        align: 'left',
         render: (text) => {
           text = PROJECT_STATUS_OBJ[text]
           return (
             <Ellipse
               text={text}
               style={{
-                width: '6vw'
+                maxWidth: '6vw'
               }}
             />
           );
@@ -755,24 +764,25 @@ class ProjectManage extends Component {
         dataIndex: 'pjProgress',
         key: 'pjProgress',
         sorter: true,
-        align: 'center',
+        align: 'left',
         render: (text) => {
           return (
             <Ellipse
               text={text}
               style={{
-                width: '6vw'
+                width: '6vw',
+                paddingRight: '16px'
               }}
             />
           );
         },
       },
       {
-        title: <Ellipse text='项目优先级' style={{ width: '3vw' }} />,
+        title: <Ellipse text='项目优先级' style={{ width: 57 }} />,
         dataIndex: 'name',
         key: 'name',
         sorter: true,
-        align: 'center',
+        align: 'left',
         render: (text) => {
           return (
             <Ellipse
@@ -789,13 +799,14 @@ class ProjectManage extends Component {
         dataIndex: 'estAmount',
         key: 'estAmount',
         sorter: true,
-        align: 'center',
+        align: 'left',
         render: (text) => {
           return (
             <Ellipse
               text={text}
               style={{
-                width: '6vw'
+                width: '6vw',
+                paddingRight: '16px'
               }}
             />
           );
@@ -806,13 +817,14 @@ class ProjectManage extends Component {
         dataIndex: 'number',
         key: 'number',
         sorter: true,
-        align: 'center',
+        align: 'left',
         render: (text) => {
           return (
             <Ellipse
               text={text}
               style={{
-                width: '6vw'
+                width: '6vw',
+                paddingRight: '16px'
               }}
             />
           );
@@ -823,7 +835,7 @@ class ProjectManage extends Component {
         dataIndex: 'bnStatus',
         key: 'bnStatus',
         sorter: true,
-        align: 'center',
+        align: 'left',
         render: (text) => {
           return (
             <Ellipse
@@ -840,13 +852,14 @@ class ProjectManage extends Component {
         dataIndex: 'estTeam',
         key: 'estTeam',
         sorter: true,
-        align: 'center',
+        align: 'left',
         render: (text) => {
           return (
             <Ellipse
               text={text}
               style={{
-                width: '6vw'
+                width: '6vw',
+                paddingRight: '16px'
               }}
             />
           );
@@ -857,13 +870,14 @@ class ProjectManage extends Component {
         dataIndex: 'pm',
         key: 'pm',
         sorter: true,
-        align: 'center',
+        align: 'left',
         render: (text) => {
           return (
             <Ellipse
               text={text}
               style={{
-                width: '6vw'
+                width: '6vw',
+                paddingRight: '16px'
               }}
             />
           );
@@ -874,13 +888,14 @@ class ProjectManage extends Component {
         dataIndex: 'budgetNo',
         key: 'budgetNo',
         sorter: true,
-        align: 'center',
+        align: 'left',
         render: (text) => {
           return (
             <Ellipse
               text={text}
               style={{
-                width: '6vw'
+                width: '6vw',
+                paddingRight: '16px'
               }}
             />
           );
@@ -936,7 +951,8 @@ class ProjectManage extends Component {
   }
 
   render() {
-    const { viewModal, visiblePlanModal } = this.state
+    const { viewModal, visiblePlanModal, clientWidth } = this.state
+    console.log(clientWidth)
     const editModalProps = {
       visible: viewModal,
       handleViewModal: this.handleViewModal,
@@ -960,7 +976,7 @@ class ProjectManage extends Component {
           //   { number: 'gong3', systemName: 'gg' }
           // ]}
           onChange={this.handleStandardTableChange}
-          scroll={{ x: '66vw' }}
+          scroll={{ x: clientWidth * 0.66 + 340 }}
         />
         {/* </div> */}
       </Card>
