@@ -498,7 +498,6 @@ class Detail extends Component {
 
   render() {
     const { editBool, descriptionState, showCreateMilePlan, urls } = this.state;
-    console.log(urls)
     const {
       userInfo: { roleName, userName },
     } = getUserInfo();

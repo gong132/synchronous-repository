@@ -203,7 +203,7 @@ const Demand = {
       const gObj = {};
       if (data && data.length < 1) return '';
       data.map(v => {
-        v.id = String(v.id);
+        // v.id = String(v.id);
         gObj[v.id] = v.name;
         return true;
       });
