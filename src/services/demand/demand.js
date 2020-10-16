@@ -26,8 +26,15 @@ export async function updateDemand(params) {
 
 // 查看列表
 export async function queryDemand(params) {
-  return request('/demand/query', {
+  return request('/demand/list', {
     method: 'post',
+    params,
+  });
+}
+// 查看列表
+export async function fetchSearchList(params) {
+  return request('/demand/quick/search/type', {
+    method: 'get',
     params,
   });
 }

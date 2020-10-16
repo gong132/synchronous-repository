@@ -30,6 +30,7 @@ import {
   addCommonLang,
   updateCommonLang,
   queryCommonLang,
+  fetchSearchList,
 } from '@/services/demand/demand';
 import {
   addMilePlan,
@@ -73,7 +74,8 @@ const Demand = {
     userLoginIdMap: {},
     ITAssignVisible: false,
     assignorVisible: false,
-    comLangList:[]
+    comLangList:[],
+    searchList: [],
   },
   effects: {
     *queryFile({ payload }, { call }) {
@@ -609,7 +611,21 @@ const Demand = {
           comLangList: res.data || []
         }
       })
-    }
+    },
+    // 查询下拉搜索列表
+    *querySearchList({payload}, {call, put}) {
+      const res = yield call(fetchSearchList,payload)
+      if(!res || !res.code === 200) {
+        message.error(res.msg)
+        return false
+      }
+      yield put({
+        type: 'saveData',
+        payload: {
+          searchList: res.data || []
+        }
+      })
+    },
   },
   reducers: {
     saveData(state, { payload }) {

@@ -30,7 +30,7 @@ const Index = memo(
   withRouter(props => {
     const {
       dispatch,
-      demand: { formType },
+      demand: { formType, searchList },
     } = props;
     const [visibleModal, setVisibleModal] = useState(false);
     const [modalTitle, setModalTitle] = useState('创建需求');
@@ -72,12 +72,22 @@ const Index = memo(
       dispatch({
         type: 'demand/queryDemandProject',
         payload: {
+          type: demandRoutes[props.location.pathname] === '项目'  && 1 ||
+            demandRoutes[props.location.pathname] === '一般需求'  && 2,
           ...DefaultPage,
           ...params,
         },
       });
     };
 
+    // 查询下拉搜索列表
+    const handleQuerySearchList = () => {
+      dispatch({
+        type: 'demand/querySearchList',
+        payload: {
+        },
+      });
+    };
     // 查询团队
     const handleQueryGroup = params => {
       dispatch({
@@ -167,6 +177,7 @@ const Index = memo(
       handleQueryGroup();
       handleQueryBudget();
       handleQueryUser();
+      handleQuerySearchList()
     }, []);
 
     // 查看详情
@@ -236,9 +247,9 @@ const Index = memo(
                 value={commonSearchValue.myGroup}
                 onChange={val => setCommonSearchValue(obj => ({ ...obj, myGroup: val }))}
               >
-                {DEMAND_GROUP.map(v => (
-                  <Select.Option value={v.key} key={v.key}>
-                    {v.value}
+                {searchList && searchList.map(v => (
+                  <Select.Option value={v.id.toString()} key={v.id}>
+                    {v.desc}
                   </Select.Option>
                 ))}
               </Select>
