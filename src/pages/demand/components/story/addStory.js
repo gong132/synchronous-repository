@@ -17,6 +17,7 @@ const Index = props => {
     dispatch,
     form,
     values,
+    demandInfo,
     type,
     modalVisible,
     handleModalVisible,
@@ -43,11 +44,11 @@ const Index = props => {
     });
   };
 
-  const handleQueryStoryDetails = () => {
+  const handleQueryStoryDetails = id => {
     dispatch({
       type: "demand/queryStoryDetails",
       payload: {
-        storyId: values?.id,
+        storyId: id,
       },
     }).then(data => {
       if (data) {
@@ -56,7 +57,6 @@ const Index = props => {
       }
     })
   }
-
   const handleOk = () => {
     form.validateFields((err, val) => {
       if (err) return;
@@ -67,10 +67,10 @@ const Index = props => {
       const params = {
         id: values?.id,
         ...val,
-        demandNumber: values.demandNumber,
-        assigneeName: isEmpty(val.assignee)
-          ? null
-            : userList.find(v => v.userId === val.assignee).userName,
+        demandNumber: demandInfo.demandNumber,
+        // assigneeName: isEmpty(val.assignee)
+        //   ? null
+        //     : userList.find(v => v.userId === val.assignee).userName,
         assessorName: isEmpty(val.assessor)
           ? null
           : userList.find(v => v.userId === val.assessor).userName,
@@ -90,7 +90,7 @@ const Index = props => {
         },
       }).then(sure => {
         if (!sure) return;
-        message.success(values.id && type !== 'add' ? '修改成功' : '新增成功');
+        message.success(values.id ? '修改成功' : '新增成功');
         handleModalVisible();
         handleQueryStoryList && handleQueryStoryList();
       });
@@ -100,15 +100,16 @@ const Index = props => {
   useEffect(() => {
     handleQuerySystemList();
     handleQueryUserList();
-    if (!isEmpty(values?.id)) {
-      handleQueryStoryDetails();
+    if (!isEmpty(values)) handleQueryStoryDetails(values?.id);
+    return () => {
+      handleQueryStoryDetails(null)
     }
   }, []);
 
   return (
     <Modal
       width={800}
-      title={isEmpty(values) || type === 'add' ? '新建story' : '编辑story'}
+      title={isEmpty(values) ? '新建story' : '编辑story'}
       visible={modalVisible}
       onCancel={handleModalVisible}
       footer={
@@ -281,6 +282,7 @@ const Index = props => {
     </Modal>
   );
 };
-export default connect(({ demand }) => ({
+export default
+connect(({ demand }) => ({
   demand,
 }))(Form.create()(Index));

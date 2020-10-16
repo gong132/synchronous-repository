@@ -114,7 +114,7 @@ const Index = memo(
       }).then(result => {
         if (!result) return;
         message.success('指派成功');
-        callback && callback();
+        setAssignVisible(false)
         handleQueryUserList();
       });
     };
@@ -152,7 +152,7 @@ const Index = memo(
         title: '需求编号',
         key: 'demandNumber',
         sorter: true,
-        width: 120,
+        width: 160,
         render: rows => {
           if (isEmpty(rows.demandNumber, true)) return '';
           return (
@@ -178,14 +178,14 @@ const Index = memo(
           );
         },
       },
-      TableColumnHelper.genLangColumn('title', '标题', { width: 160 }, 8),
+      TableColumnHelper.genLangColumn('title', '标题', { width: 120 }, 8),
       TableColumnHelper.genSelectColumn('type', '需求类型', DEMAND_TYPE, {
         sorter: true,
-        width: 130,
+        width: 120,
       }),
       TableColumnHelper.genSelectColumn('status', '状态', DEMAND_STATUS, {
         sorter: true,
-        width: 130,
+        width: 120,
       }),
       TableColumnHelper.genSelectColumn(
         'priority',
@@ -247,13 +247,12 @@ const Index = memo(
               trigger="click"
               placement="left"
               visible={rows.id === assignVisible}
-              onClick={e => e.stopPropagation()}
-              onVisibleChange={visible => {
-                setAssignVisible(visible && rows.id);
-              }}
             >
               <OptButton
-                onClick={e => e.stopPropagation()}
+                onClick={e => {
+                  e.stopPropagation()
+                  setAssignVisible(rows.id)
+                }}
                 img={assignIcon}
                 showText={false}
                 text="指派"

@@ -78,6 +78,7 @@ class Detail extends Component {
       itAssessModalVisible: false,
       turnAssessModalVisible: false,
       selectedStoryRows: [],
+      selectedStoryDetailRows: {},
       showCreateMilePlan: false,
       urls: ''
     };
@@ -498,7 +499,6 @@ class Detail extends Component {
 
   render() {
     const { editBool, descriptionState, showCreateMilePlan, urls } = this.state;
-    console.log(urls)
     const {
       userInfo: { roleName, userName },
     } = getUserInfo();
@@ -1204,6 +1204,7 @@ class Detail extends Component {
                 onClick={() => {
                   this.setState({
                     addStoryModalVisible: true,
+                    selectedStoryDetailRows: {}
                   });
                 }}
                 text="新建Story"
@@ -1221,9 +1222,15 @@ class Detail extends Component {
             handleQueryStoryList={this.handleQueryStoryList}
             demandInfo={demandInfo}
             selectedStoryRows={this.state.selectedStoryRows}
+            selectedStoryDetailRows={this.state.selectedStoryDetailRows}
             setSelectedStoryRows={rows =>
               this.setState({
                 selectedStoryRows: rows,
+              })
+            }
+            setSelectedStoryDetailRows={rows =>
+              this.setState({
+                selectedStoryDetailRows: rows,
               })
             }
             handleModalVisible={this.handleModalVisible}

@@ -8,12 +8,12 @@ import {isEmpty} from "@/utils/lang";
 
 const Index = memo(props => {
   const { dispatch, values, modalVisible, handleModalVisible, loading,
-    demand: { storyList }, global: { userList }  } = props;
+    demand: { storyAssignList }, global: { userList }, handleQueryStoryList  } = props;
 
   const [changeRows, setChangeRows] = useState([])
-  const handleQueryStoryList = params => {
+  const handleQueryStoryAssignList = params => {
     dispatch({
-      type: "demand/queryStoryList",
+      type: "demand/queryStoryAssignList",
       payload: {
         operateType: 1,
         demandNumber: values?.demandNumber,
@@ -32,7 +32,7 @@ const Index = memo(props => {
   }
 
   useEffect(() => {
-    handleQueryStoryList()
+    handleQueryStoryAssignList()
     handleQueryUserList()
   }, []);
 
@@ -92,7 +92,7 @@ const Index = memo(props => {
       pageSize: pagination.pageSize,
     };
     setChangeRows([])
-    handleQueryStoryList(params);
+    handleQueryStoryAssignList(params);
   };
 
   const handleOk = () => {
@@ -113,12 +113,19 @@ const Index = memo(props => {
     dispatch({
       type: "demand/batchAssessStory",
       payload: {
-        stories: changeRows,
+        stories: changeRows.map(v => {
+          const obj = {...v}
+          obj.assessorName = userList.list.find(o => o.userId === v.assessor)?.userName
+          return obj
+        }),
         operateType: 1,
       }
     }).then(res => {
       if (!res) return;
       message.success("转评估成功")
+      handleQueryStoryAssignList()
+      handleQueryStoryList()
+      handleModalVisible(false, "turnAssessModalVisible")
     })
   }
 
@@ -135,8 +142,8 @@ const Index = memo(props => {
         rowKey="id"
         columns={columns}
         data={{
-          ...storyList,
-          list: storyList.list.map(v => ({ ...v, expectedCompletionDate: values?.expectedCompletionDate}))
+          ...storyAssignList,
+          list: storyAssignList.list.map(v => ({ ...v, expectedCompletionDate: values?.expectedCompletionDate}))
         }}
         loading={loading}
         onChange={handleStandardTableChange}

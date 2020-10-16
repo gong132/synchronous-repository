@@ -51,6 +51,7 @@ const Demand = {
     milePlanList: PagerHelper.genListState(),
     logList: PagerHelper.genListState(),
     storyList: PagerHelper.genListState(),
+    storyAssignList: PagerHelper.genListState(),
     assessStoryList: PagerHelper.genListState(),
     planStageList: [],
     planStageListMap: {},
@@ -179,6 +180,22 @@ const Demand = {
         },
       });
     },
+    *queryStoryAssignList({ payload }, { call, put }) {
+      const res = yield call(fetchStoryList, payload);
+      if (!res || res.code !== 200) {
+        message.error(res.msg);
+        return;
+      }
+      const { data, ...others } = res.data;
+      yield put({
+        type: 'setStoryAssignData',
+        payload: {
+          filter: payload,
+          data,
+          ...others,
+        },
+      });
+    },
 
     // 新增/编辑需求
     *addUpdateDemand({ payload }, { call }) {
@@ -205,7 +222,7 @@ const Demand = {
       const gObj = {};
       if (data && data.length < 1) return '';
       data.map(v => {
-        v.id = String(v.id);
+        // v.id = String(v.id);
         gObj[v.id] = v.name;
         return true;
       });
@@ -634,6 +651,12 @@ const Demand = {
       return {
         ...state,
         storyList: PagerHelper.resolveListState(action.payload),
+      };
+    },
+    setStoryAssignData(state, action) {
+      return {
+        ...state,
+        storyAssignList: PagerHelper.resolveListState(action.payload),
       };
     },
   },

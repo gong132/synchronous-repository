@@ -45,9 +45,6 @@ class CreateDemand extends PureComponent {
         description: DEFAULT_DESC
       })
     }
-    if (modalTitle === '创建') {
-      startTimer(this.handleSubmitForm);
-    }
   }
 
   componentWillUnmount() {
@@ -163,7 +160,7 @@ class CreateDemand extends PureComponent {
   };
 
   handleSubmitForm = (saveType) => {
-    const { form, modalTitle, demand: { tempDemandId, userDataMap, groupMap }, recordValue } = this.props
+    const { form, modalTitle, demand: { userDataMap, groupMap }, recordValue } = this.props
     const { description, urls } = this.state
     const arr = [] // 保存附件ids
     if (urls.length > 0) {
@@ -186,10 +183,8 @@ class CreateDemand extends PureComponent {
       }
       values.expectedCompletionDate = values.expectedCompletionDate ? moment(values.expectedCompletionDate).format('YYYY-MM-DD') : '';
       values.requirementDescription = description;
-      values.receiverId = values.receiver
-      values.receiverName = values.receiver ? userDataMap[values.receiver] : ''
-      values.acceptTeamId = values.acceptTeam
-      values.acceptTeam = groupMap[values.acceptTeam]
+      values.receiverName = values.receiverId ? userDataMap[values.receiverId] : ''
+      values.acceptTeam = groupMap[values.acceptTeamId]
       values.attachments = arr
       console.log(values)
       // return
@@ -216,8 +211,8 @@ class CreateDemand extends PureComponent {
       introducer,
       type,
       priority,
-      acceptTeam,
-      receiver,
+      acceptTeamId,
+      receiverId,
       communicate,
       budgetNumbers,
       id,
@@ -339,9 +334,9 @@ class CreateDemand extends PureComponent {
           </Col>
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="受理团队">
-              {form.getFieldDecorator('acceptTeam', {
+              {form.getFieldDecorator('acceptTeamId', {
                 rules: [{ required: false, message: '请输入受理团队' }],
-                initialValue: acceptTeam,
+                initialValue: acceptTeamId,
               })(
                 <Select
                   allowClear
@@ -366,9 +361,9 @@ class CreateDemand extends PureComponent {
           </Col>
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="受理人">
-              {form.getFieldDecorator('receiver', {
+              {form.getFieldDecorator('receiverId', {
                 rules: [{ required: false, message: '请输入受理人' }],
-                initialValue: receiver,
+                initialValue: receiverId,
               })(
                 <Select
                   allowClear

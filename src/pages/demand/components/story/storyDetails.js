@@ -93,6 +93,9 @@ const Index = withRouter(props => {
         assessorName: isEmpty(val.assessor)
           ? null
           : userList.list.find(v => v.userId === val.assessor).userName,
+        evaluateTime: isEmpty(val.evaluateTime)
+          ? null
+          : val.evaluateTime.format("YYYY-MM-DD"),
         description,
         attachments: isEmpty(fileList) ? null : JSON.parse(fileList).map(v => v.id),
       };

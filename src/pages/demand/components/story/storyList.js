@@ -32,6 +32,7 @@ import OptButton from '@/components/commonUseModule/optButton';
 import edit from '@/assets/icon/Button_bj.svg';
 import { router } from 'umi/index';
 import deleteIcon from '@/assets/icon/Button_del.svg';
+import _ from "lodash";
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -45,6 +46,8 @@ const Index = props => {
     turnAssessModalVisible,
     selectedStoryRows,
     setSelectedStoryRows,
+    selectedStoryDetailRows,
+    setSelectedStoryDetailRows,
     handleModalVisible,
     handleQueryStoryList,
     loadingQueryStoryData,
@@ -54,8 +57,6 @@ const Index = props => {
   } = props;
 
   const [searchMore, setSearchMore] = useState(false);
-  const [addModalVisible, setAddModalVisible] = useState(false);
-  const [selectedRows, setSelectedRows] = useState({});
 
   const handleStoryTableChange = (pagination, filters, sorter)  => {
     const { RangeDate, ...others } = form.getFieldsValue();
@@ -133,7 +134,7 @@ const Index = props => {
       title: 'story编号',
       key: 'number',
       sorter: true,
-      width: 120,
+      width: 150,
       render: rows => {
         if (isEmpty(rows.number, true)) return '';
         return (
@@ -149,25 +150,25 @@ const Index = props => {
                 });
               }}
             >
-              {rows.number.length > 8
-                ? `${rows.number.substring(0, 8)}...`
-                : rows.number.substring(0, 8)}
+              {rows.number.length > 15
+                ? `${rows.number.substring(0, 15)}...`
+                : rows.number.substring(0, 15)}
             </span>
           </Tooltip>
         );
       },
     },
-    TableColumnHelper.genPlanColumn('title', '标题'),
-    TableColumnHelper.genPlanColumn('status', '状态', { sorter: true }),
-    TableColumnHelper.genPlanColumn('priority', '优先级', { sorter: true }),
-    TableColumnHelper.genPlanColumn('type', 'story类型', { sorter: true }),
-    TableColumnHelper.genLangColumn('systemName', '所属系统', {}, 10),
+    TableColumnHelper.genLangColumn('title', '标题', { width: 120 }, 8),
+    TableColumnHelper.genPlanColumn('status', '状态', { sorter: true, width: 90 }),
+    TableColumnHelper.genPlanColumn('priority', '优先级', { sorter: true, width: 110 }),
+    TableColumnHelper.genSelectColumn('type', 'story类型',  STORY_TYPE,{ sorter: true, width: 120 }),
+    TableColumnHelper.genLangColumn('systemName', '所属系统', { width: 140 }, 10),
     TableColumnHelper.genDateTimeColumn('evaluateTime', 'IT预计上线日期', 'YYYY-MM-DD', { width: 150, sorter: true }),
     TableColumnHelper.genPlanColumn('developWorkload', '开发预计测试工作量', { width: 180, sorter: true }),
     TableColumnHelper.genPlanColumn('testWorkload', '测试预计测试工作量', { width: 180, sorter: true }),
-    TableColumnHelper.genPlanColumn('assessor', '评估人'),
-    TableColumnHelper.genPlanColumn('userName', '创建人'),
-    TableColumnHelper.genDateTimeColumn('createTime', '创建时间',  'YYYY-MM-DD', { sorter: true }),
+    TableColumnHelper.genPlanColumn('assessor', '评估人', { width: 100 }),
+    TableColumnHelper.genPlanColumn('userName', '创建人', { width: 100 }),
+    TableColumnHelper.genDateTimeColumn('createTime', '创建时间',  'YYYY-MM-DD HH:mm:ss', { sorter: true, width: 180 }),
     {
       title: '操作',
       width: 170,
@@ -182,8 +183,8 @@ const Index = props => {
               showText={false}
               text="编辑"
               onClick={() => {
-                setAddModalVisible(true);
-                setSelectedRows(rows);
+                handleModalVisible(true, "addStoryModalVisible");
+                setSelectedStoryDetailRows(rows);
               }}
             />
             <Divider type="vertical" />
@@ -255,17 +256,21 @@ const Index = props => {
   const renderStoryForm = () => {
     const { getFieldDecorator } = form;
     const content = (
-      <div className={styles.moreSearch} style={{ width: 230, height: 280 }}>
+      <div className={styles.moreSearch} style={{ width: 230, height: 300 }}>
         <Row>
           <Col span={24}>
             <FormItem {...formLayoutItem2} label="创建时间">
-              {getFieldDecorator('RangeDate')(<RangePicker format="YYYY-MM-DD" />)}
+              {getFieldDecorator('RangeDate')(<RangePicker onChange={_.debounce(handleSearchForm, 500)} format="YYYY-MM-DD" />)}
             </FormItem>
           </Col>
           <Col span={24}>
             <FormItem {...formLayoutItem2} label="类型">
               {getFieldDecorator('type')(
-                <Select placeholder="请选择类型" allowClear>
+                <Select
+                  placeholder="请选择类型"
+                  allowClear
+                  onChange={_.debounce(handleSearchForm, 500)}
+                >
                   {STORY_TYPE.map(v => (
                     <Option value={v.key} key={v.key.toString()}>
                       {v.value}
@@ -278,7 +283,18 @@ const Index = props => {
           <Col span={24}>
             <FormItem {...formLayoutItem2} label="评估人">
               {getFieldDecorator('assessor')(
-                <Select placeholder="请选择评估人" allowClear>
+                <Select
+                  placeholder="请选择评估人"
+                  allowClear
+                  showSearch
+                  onChange={_.debounce(handleSearchForm, 500)}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
                   {userList?.list &&
                     userList.list.map(v => (
                       <Option value={v.userId} key={v.userId.toString()}>
@@ -292,8 +308,8 @@ const Index = props => {
         </Row>
         <div className={styles.moreSearchButton}>
           <Button onClick={() => setSearchMore(false)}>取消</Button>
-          <Button type="primary" onClick={handleSearchForm}>
-            查询
+          <Button className="margin-left-12" type="primary" onClick={handleSearchForm}>
+            确定
           </Button>
         </div>
       </div>
@@ -304,14 +320,18 @@ const Index = props => {
           <Col span={5}>
             <FormItem {...formLayoutItem} label="story编号/标题" colon={false}>
               {getFieldDecorator('titleAndNumber')(
-                <Input allowClear onBlur={handleSearchForm} placeholder="请输入story编号标题" />,
+                <Input allowClear onChange={_.debounce(handleSearchForm, 500)} placeholder="请输入story编号标题" />,
               )}
             </FormItem>
           </Col>
           <Col span={5}>
             <FormItem {...formLayoutItem} label="状态" colon={false}>
               {getFieldDecorator('status')(
-                <Select placeholder="请选择story状态">
+                <Select
+                  placeholder="请选择story状态"
+                  allowClear
+                  onChange={_.debounce(handleSearchForm, 500)}
+                >
                   {STORY_STATUS.map(v => (
                     <Option value={v.value} key={v.value}>
                       {v.value}
@@ -324,7 +344,11 @@ const Index = props => {
           <Col span={5}>
             <FormItem {...formLayoutItem} label="优先级" colon={false}>
               {getFieldDecorator('priority')(
-                <Select placeholder="请选择优先级">
+                <Select
+                  placeholder="请选择优先级"
+                  allowClear
+                  onChange={_.debounce(handleSearchForm, 500)}
+                >
                   {STORY_PRIORITY.map(v => (
                     <Option value={v.key} key={v.key}>
                       {v.value}
@@ -337,7 +361,18 @@ const Index = props => {
           <Col span={5}>
             <FormItem {...formLayoutItem} label="所属系统" colon={false}>
               {getFieldDecorator('systemId')(
-                <Select placeholder="请选择所属系统">
+                <Select
+                  placeholder="请选择所属系统"
+                  allowClear
+                  showSearch
+                  onChange={_.debounce(handleSearchForm, 500)}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    JSON.stringify(option.props.children)
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
                   {systemList &&
                     systemList.map(v => (
                       <Option value={v.id} key={v.id}>
@@ -401,15 +436,15 @@ const Index = props => {
         data={storyList}
         loading={loadingQueryStoryData}
         onChange={handleStoryTableChange}
-        scroll={{ x: 1880 }}
+        scroll={{ x: 1790 }}
       />
 
       {addStoryModalVisible && (
         <AddStory
-          type="add"
           modalVisible={addStoryModalVisible}
+          values={selectedStoryDetailRows}
+          demandInfo={demandInfo}
           handleModalVisible={() => handleModalVisible(false, 'addStoryModalVisible')}
-          values={{ demandName: demandInfo?.title, demandNumber: demandInfo?.demandNumber }}
           handleQueryStoryList={handleQueryStoryList}
         />
       )}
@@ -418,6 +453,7 @@ const Index = props => {
           modalVisible={itAssessModalVisible}
           handleModalVisible={() => handleModalVisible(false, 'itAssessModalVisible')}
           values={demandInfo}
+          handleQueryStoryList={handleQueryStoryList}
         />
       )}
       {turnAssessModalVisible && (
@@ -425,16 +461,7 @@ const Index = props => {
           modalVisible={turnAssessModalVisible}
           handleModalVisible={() => handleModalVisible(false, 'turnAssessModalVisible')}
           values={demandInfo}
-        />
-      )}
-      {addModalVisible && (
-        <AddStory
-          values={selectedRows}
-          modalVisible={addModalVisible}
-          handleModalVisible={() => {
-            setAddModalVisible(false);
-            setSelectedRows({});
-          }}
+          handleQueryStoryList={handleQueryStoryList}
         />
       )}
     </div>
