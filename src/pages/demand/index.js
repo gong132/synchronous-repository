@@ -247,7 +247,7 @@ const Index = memo(
                 onChange={val => setCommonSearchValue(obj => ({ ...obj, myGroup: val }))}
               >
                 {searchList && searchList.map(v => (
-                  <Select.Option value={v.id.toString()} key={v.id}>
+                  <Select.Option value={v.id} key={v.id}>
                     {v.desc}
                   </Select.Option>
                 ))}

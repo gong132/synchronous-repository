@@ -170,9 +170,9 @@ const Index = memo(
                   });
                 }}
               >
-                {rows.demandNumber.length > 10
-                  ? `${rows.demandNumber.substring(0, 10)}...`
-                  : rows.demandNumber.substring(0, 10)}
+                {rows.demandNumber.length > 14
+                  ? `${rows.demandNumber.substring(0, 14)}...`
+                  : rows.demandNumber.substring(0, 14)}
               </span>
             </Tooltip>
           );
@@ -190,7 +190,6 @@ const Index = memo(
       TableColumnHelper.genSelectColumn(
         'priority',
         '优先级',
-
         DEMAND_PRIORITY_ARR.map(v => ({ ...v, value: v.val })),
         { sorter: true, width: 100 },
       ),
@@ -213,7 +212,7 @@ const Index = memo(
       TableColumnHelper.genPlanColumn('estimatedTestWorkload', '测试预计工作量', { width: 150 }),
       TableColumnHelper.genPlanColumn('introducer', '需求提出人', { sorter: true, width: 140 }),
       TableColumnHelper.genPlanColumn('creator', '创建人', { sorter: true, width: 120 }),
-      TableColumnHelper.genPlanColumn('createTime', '创建时间', { sorter: true, width: 140 }),
+      TableColumnHelper.genDateTimeColumn('createTime', '创建时间', 'YYYY-MM-DD HH:mm:ss',{ sorter: true, width: 140 }),
       {
         title: '操作',
         width: 120,
@@ -324,12 +323,12 @@ const Index = memo(
         TableColumnHelper.genPlanColumn('status', '状态'),
         TableColumnHelper.genPlanColumn('priority', '优先级'),
         TableColumnHelper.genPlanColumn('type', 'story类型'),
-        TableColumnHelper.genPlanColumn('evaluateTime', 'IT评估上线时间', { width: 170 }),
+        TableColumnHelper.genDateTimeColumn('evaluateTime', 'IT评估上线时间', 'YYYY-MM-DD',{ width: 170 }),
         TableColumnHelper.genPlanColumn('developWorkload', '开发预计工作量', { width: 130 }),
         TableColumnHelper.genPlanColumn('testWorkload', '测试预计工作量', { width: 130 }),
         TableColumnHelper.genPlanColumn('assigneeName', '经办人'),
         TableColumnHelper.genPlanColumn('userName', '创建人'),
-        TableColumnHelper.genPlanColumn('createTime', '创建时间', { width: 170 }),
+        TableColumnHelper.genDateTimeColumn('createTime', '创建时间', 'YYYY-MM-DD HH:mm:ss',{ width: 170 }),
         {
           title: '操作',
           width: 170,
