@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { DatePicker } from 'antd';
+import _ from "lodash";
 
 export default class extends Component {
   constructor(props) {
@@ -11,12 +12,11 @@ export default class extends Component {
 
   handlePanelChange = (value) => {
     const { onChange } = this.props;
-    onChange && onChange(value)
+    onChange && onChange(value);
     this.setState({visible: false})
   }
 
   handleOpenChange = (status) => {
-    console.log(status, 'status')
     if(status){
       this.setState({visible: true})
     } else {
@@ -42,7 +42,7 @@ export default class extends Component {
           placeholder='请选择年份'
           format="YYYY"
           onOpenChange={this.handleOpenChange}
-          onPanelChange={this.handlePanelChange}
+          onPanelChange={_.debounce(this.handlePanelChange, 200)}
           onChange={this.clearValue}
         />
       </div>

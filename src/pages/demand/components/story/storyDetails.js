@@ -7,6 +7,7 @@ import OptButton from "@/components/commonUseModule/optButton";
 
 import sdIcon from '@/assets/icon/modular_xtxq.svg';
 import editButton from "@/assets/icon/Button_bj.svg";
+import budgetLog from '@/assets/icon/modular_czrz.svg';
 import syncJIRAButton from "@/assets/icon/Button_tbjira.svg";
 
 import styles from "./index.less"
@@ -361,7 +362,7 @@ const Index = withRouter(props => {
           </div>
         </Form>
       </GlobalSandBox>
-      <GlobalSandBox>
+      <GlobalSandBox img={budgetLog} title="操作日志">
         <StandardTable
           rowKey="id"
           columns={[

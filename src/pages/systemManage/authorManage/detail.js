@@ -86,7 +86,7 @@ const Index = props => {
             <FormItem {...formLayoutItemAddEdit} label="角色描述">
               {values && values.description || ''}
             </FormItem>
-            <FormItem {...formLayoutItemAddEdit} label="角色描述">
+            <FormItem {...formLayoutItemAddEdit} label="角色功能">
               {
                 menuList && !isEmpty(menuList) && <div className={styles.treeShow}>
                   {

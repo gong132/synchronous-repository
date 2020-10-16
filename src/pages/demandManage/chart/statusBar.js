@@ -17,6 +17,10 @@ const Index = memo(props => {
           // 坐标轴指示器，坐标轴触发有效
           type: 'line', // 默认为直线，可选为：'line' | 'shadow'
         },
+        backgroundColor: "#fff",
+        textStyle: {
+          color: "#000"
+        },
       },
       xAxis: {
         type: 'value',

@@ -1,8 +1,8 @@
 import React, {useState} from "react";
-import {Col, Form, Input, message, Modal, Row} from "antd";
-import {formLayoutItem, formLayoutItemAddEdit} from "@/utils/constant";
+import {Col, Form, Input, Modal, Row} from "antd";
+import { formLayoutItemAddEdit } from "@/utils/constant";
 import Editor from "@/components/TinyEditor";
-import {isEmpty} from "@/utils/lang";
+// import {isEmpty} from "@/utils/lang";
 
 const FormItem = Form.Item;
 const Index = props => {
@@ -14,10 +14,10 @@ const Index = props => {
   const handleSubmit = () => {
     form.validateFields((err, val) => {
       if (err) return;
-      if (isEmpty(description, true)) {
-        message.error("请输入描述");
-        return;
-      }
+      // if (isEmpty(description, true)) {
+      //   message.error("请输入描述");
+      //   return;
+      // }
       onOk({...val, description, resourceIds: ""}, handleModalVisible(false))
     })
   };
