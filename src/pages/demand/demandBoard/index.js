@@ -71,7 +71,7 @@ class DemandBoard extends Component {
     //   }
     // });
     let pathname = '/demand/generalDemand/detail'
-    if (type === 'p') {
+    if (type === 1) {
       pathname = '/demand/projectDemand/detail'
     }
     router.push({
@@ -129,16 +129,15 @@ class DemandBoard extends Component {
   renderBoardMenu = (record, boardId) => {
     const { attention, creator, receiverName } = record
     const { userInfo = {} } = getUserInfo()
-    const { userName, roleName } = userInfo
+    const { userName, isTeamHead } = userInfo
 
     return (
       <Menu onClick={({ item, key, keyPath, domEvent }) => this.quickResolveStory(item, key, keyPath, domEvent, record)}>
-        {((boardId === 2 && roleName === '团队经理')
-          || (boardId === 3 || boardId === 5 || boardId === 6 || boardId === 7 || boardId === 10))
+        {(
+          (boardId === 2 || boardId === 3 || boardId === 4 || boardId === 5 || boardId === 6 || boardId === 7 || boardId === 10))
           && <Menu.Item key='appointFocus'>指派关注人</Menu.Item>
         }
-        {(boardId === 2 || boardId === 3)
-          && roleName === '团队经理'
+        {(boardId === 2 || (boardId === 3 && isTeamHead === 1))
           && <Menu.Item key='appointAccept'>指派受理人</Menu.Item>
         }
         {(((boardId === 1 || boardId === 3 || boardId === 2)
@@ -154,7 +153,7 @@ class DemandBoard extends Component {
           && <Menu.Item key='del'>删除</Menu.Item>
         }
         {((boardId === 1 && creator === userName)
-          || (boardId === 3 || boardId === 2 || boardId === 5 || boardId === 6 || boardId === 7 || boardId === 10))
+          || (boardId === 3 || boardId === 4 || boardId === 2 || boardId === 5 || boardId === 6 || boardId === 7 || boardId === 10))
           && (
             attention === 1 ?
               <Menu.Item key='cancelFocus'>取消关注</Menu.Item>
@@ -283,7 +282,7 @@ class DemandBoard extends Component {
 
   // 拖拽处理
   onDragEnd = result => {
-    const { userInfo: { roleName } } = getUserInfo()
+    const { userInfo: { isTeamHead } } = getUserInfo()
     const { source, destination, draggableId } = result
     if (destination === null) {
       console.log('不允许******************')
@@ -296,7 +295,7 @@ class DemandBoard extends Component {
     if (source.droppableId === '2' && destination.droppableId === '3') {
       // 受理
       params.status = '3'
-      if (roleName !== '团队经理') {
+      if (isTeamHead !== 1) {
         message.warning('只有团队经理可执行该操作！')
         return false
       }

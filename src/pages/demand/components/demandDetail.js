@@ -203,10 +203,10 @@ class Detail extends Component {
       })
       .then(res => {
         if (!res) return;
-        const { requirementDescription, attachmentFiles } = res || {};
+        const { requirementDescription, attachmentList } = res || {};
         this.setState({
           descriptionState: requirementDescription,
-          urls: attachmentFiles && attachmentFiles.length>0? JSON.stringify(attachmentFiles) : ''
+          urls: attachmentList && attachmentList.length>0? JSON.stringify(attachmentList) : ''
         });
         this.handleQueryStoryList();
         this.handSearchITAssignAuth();
@@ -249,7 +249,7 @@ class Detail extends Component {
       const res = await this.handleQueryGroup({ userId: String(val) })
       const { demand: { groupList }, form } = this.props
       if (res && !_.isEmpty(groupList)) {
-        form.setFieldsValue({ 'acceptTeam': groupList[0].id })
+        form.setFieldsValue({ 'acceptTeamId': groupList[0].id })
       }
     }
   }
@@ -280,9 +280,7 @@ class Detail extends Component {
         ? moment(values.actualLineDate).format('YYYY-MM-DD')
         : null;
       values.requirementDescription = descriptionState;
-      values.receiverId = values.receiver
       values.receiverName = values.receiver ? userDataMap[values.receiver] : ''
-      values.acceptTeamId = values.acceptTeam
       values.acceptTeam = groupMap[values.acceptTeam]
       values.id = id;
       values.attachmentFiles = arr
@@ -293,7 +291,7 @@ class Detail extends Component {
   editDemand = params => {
     this.props
       .dispatch({
-        type: 'demand/updateDemand',
+        type: 'demand/addUpdateDemand',
         payload: {
           ...params,
         },
@@ -500,7 +498,7 @@ class Detail extends Component {
   render() {
     const { editBool, descriptionState, showCreateMilePlan, urls } = this.state;
     const {
-      userInfo: { roleName, userName },
+      userInfo: { isTeamHead, userName },
     } = getUserInfo();
     const {
       form,
@@ -634,7 +632,7 @@ class Detail extends Component {
     return (
       <Fragment>
         <div>
-          {roleName === '团队经理' || status === '3' ? (
+          {isTeamHead === 1 || status === 3 ? (
             <CustomBtn
               style={{ float: 'left' }}
               onClick={() => this.handleChangeStatusByManage(status, id)}
@@ -643,7 +641,7 @@ class Detail extends Component {
             />
           ) : null}
           <div className="yCenter" style={{ float: 'right' }}>
-            {(status === '4' || status === '6' || status === '7' || status === '10')
+            {(status === 4 || status === 6 || status === 7 || status === 10)
               && receiverName === userName
               && <CustomBtn
                 onClick={() => {
@@ -657,7 +655,7 @@ class Detail extends Component {
                 style={{ ...btnStyle, marginRight: '16px' }}
               />
             }
-            {(status === '4' || status === '5')
+            {(status === 4 || status === 5)
               && receiverName === userName
               && <CustomBtn
                 onClick={() => {
@@ -713,7 +711,7 @@ class Detail extends Component {
             img={budgetXqIcon}
             optNode={
               <Fragment>
-                {type === 'p' ? (
+                {type === 1 ? (
                   <Fragment>
                     <OptButton
                       style={{
@@ -911,9 +909,9 @@ class Detail extends Component {
                 </DescriptionItem>
                 <DescriptionItem span={1} label={<>受理团队</>}>
                   <FormItem>
-                    {form.getFieldDecorator('acceptTeam', {
+                    {form.getFieldDecorator('acceptTeamId', {
                       rules: [{ required: false, message: '请输入受理团队' }],
-                      initialValue: acceptTeamId ? String(acceptTeamId) : '',
+                      initialValue: acceptTeamId,
                     })(
                       <Select
                         allowClear
@@ -942,7 +940,7 @@ class Detail extends Component {
                 </DescriptionItem>
                 <DescriptionItem span={1} label={<>受理人</>}>
                   <FormItem>
-                    {form.getFieldDecorator('receiver', {
+                    {form.getFieldDecorator('receiverId', {
                       rules: [{ required: false, message: '请输入受理人' }],
                       initialValue: receiverId,
                     })(
@@ -1185,7 +1183,7 @@ class Detail extends Component {
               )}
           </GlobalSandBox>
         </Spin>
-        {type === 'p' && (
+        {type === 1 && (
           <MilePlan
             handleQueryLogList={this.handleQueryLogList}
             handleViewCreatePlan={this.handleViewCreatePlan}
