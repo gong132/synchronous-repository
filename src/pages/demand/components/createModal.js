@@ -30,12 +30,17 @@ class CreateDemand extends PureComponent {
   }
 
   componentDidMount() {
-    const { recordValue = {}, modalTitle, startTimer } = this.props
-    const { requirementDescription } = recordValue
+    const { recordValue = {} } = this.props
+    const { requirementDescription, attachmentList } = recordValue
     this.props.dispatch({
       type: 'demand/saveData',
       payload: { tempDemandId: '' }
     })
+    if(typeof attachmentList !== 'undefined') {
+      this.setState({
+        urls: JSON.stringify(attachmentList)
+      })
+    }
     if (requirementDescription) {
       this.setState({
         description: requirementDescription
@@ -133,7 +138,7 @@ class CreateDemand extends PureComponent {
       const res = await this.handleQueryGroup(String(val), 'userId')
       const { demand: { groupList }, form } = this.props
       if (res && !_.isEmpty(groupList)) {
-        form.setFieldsValue({ 'acceptTeam': groupList[0].id })
+        form.setFieldsValue({ 'acceptTeamId': groupList[0].id })
       }
     }
   }
