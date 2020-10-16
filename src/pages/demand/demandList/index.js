@@ -875,6 +875,7 @@ const Index = memo(
       handleQueryHeaderGroupList();
     }, []);
 
+    console.log(demandList, "DemandList")
     return (
       <div className={styles.childrenTable}>
         <div className={styles.tableList}>
