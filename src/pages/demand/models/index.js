@@ -29,6 +29,7 @@ import {
   addUpdateDemand,
   fetchSearchList,
   deleteDemand,
+  toDivider,
 } from '@/services/demand/demand';
 import {
   addMilePlan,
@@ -77,6 +78,16 @@ const Demand = {
     searchList: [],
   },
   effects: {
+    // 直接点击按钮到带拆分
+    *toDivider({ payload }, { call }) {
+      const { code, msg } = yield call(toDivider, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    },
+
     *queryFile({ payload }, { call }) {
       const { code, msg } = yield call(queryFile, payload);
       if (!code || code !== 200) {

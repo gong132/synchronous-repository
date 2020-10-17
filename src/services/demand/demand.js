@@ -231,3 +231,11 @@ export async function queryCommonLang(params) {
     params,
   });
 }
+
+// 需求到待拆分
+export async function toDivider(params) {
+  return request('/demand/update/status', {
+    method: 'get',
+    params,
+  });
+}

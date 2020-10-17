@@ -8,12 +8,10 @@ const CustomBtn = props => {
   return (
     <Fragment>
       {type === 'create' && (
-        <div className='lFlex'>
-          <div className={styles.createBtn} style={style} onClick={onClick}>
-            <div className={styles.createBtn_text}>
-              <Icon type={icon} className={styles.createBtn_text_icon} />
-              <span style={{marginLeft: !icon && 'unset'}}>{title || '新建'}</span>
-            </div>
+        <div className={styles.createBtn} style={style} onClick={onClick}>
+          <div className={styles.createBtn_text}>
+            <Icon type={icon} className={styles.createBtn_text_icon} />
+            <span style={{ marginLeft: !icon && 'unset' }}>{title || '新建'}</span>
           </div>
         </div>
       )}
@@ -59,7 +57,7 @@ const CustomBtn = props => {
         type === 'others' && (
           <div className={styles.otherBtn} style={style} onClick={onClick}>
             <Icon type={icon} component={icon} />
-            <span style={{marginLeft: !icon && 'unset'}}>{title || '按钮名未定义'}</span>
+            <span style={{ marginLeft: !icon && 'unset' }}>{title || '按钮名未定义'}</span>
           </div>
         )
       }

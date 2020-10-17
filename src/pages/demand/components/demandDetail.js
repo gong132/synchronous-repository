@@ -480,6 +480,22 @@ class Detail extends Component {
       });
   };
 
+  // 手动到带拆分
+  handleToDivider = (id) => {
+    this.props.dispatch({
+      type: 'demand/toDivider',
+      payload: {
+        demandId: id
+      }
+    }).then(res => {
+      if (res) {
+        this.handleQueryDetail();
+        this.handleQueryLogList();
+        this.handleQueryFlowList();
+      }
+    })
+  }
+
   // 控制打开填写里程碑计划框
   handleViewCreatePlan = bool => {
     this.setState({
@@ -651,11 +667,7 @@ class Detail extends Component {
         }
       }
       if (arr[index] && typeFlow === 'time') {
-        if (String(arr[index].status) === '2') {
-          str = arr[index].handleTime;
-        } else {
-          str = arr[index].createTime;
-        }
+        str = arr[index].handleTime;
       }
       return str;
     };
@@ -670,6 +682,12 @@ class Detail extends Component {
               title="下一节点"
             />
           ) : null}
+          <CustomBtn
+              style={{ float: 'left' }}
+              onClick={() => this.handleToDivider(id)}
+              type="create"
+              title="待拆分"
+            />
           <div className="yCenter" style={{ float: 'right' }}>
             {(((status === 4 || status === 5 || status === 7 || status === 10)
               && receiverName === userName)

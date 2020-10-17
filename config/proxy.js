@@ -9,9 +9,9 @@
 // const apiUrl = 'http://172.20.10.8:80'
 // const apiUrl = 'http://172.20.10.7:80';
 
-const apiUrl = 'http://10.90.48.22:80'; // yw
-// const apiUrl = 'http://10.90.48.26:80'; // lqq
-// 
+// const apiUrl = 'http://10.90.48.22:80'; // yw
+const apiUrl = 'http://10.90.48.26:80'; // lqq
+
 export default {
   dev: {
     '/server/': {
