@@ -369,14 +369,14 @@ const Index = withRouter(props => {
         <StandardTable
           rowKey="id"
           columns={[
-            TableColumnHelper.genPlanColumn("operateUserName", "操作人"),
+            TableColumnHelper.genPlanColumn("operateUserName", "操作人", { width: 120, align: "left" }),
             {
               title: "操作内容",
+              align: "center",
               key: "content",
-              width: 250,
-              render: rows => <div dangerouslySetInnerHTML={{ __html: rows.content}} />
+              render: rows => <div className="lFlex" dangerouslySetInnerHTML={{ __html: rows.content}} />
             },
-            TableColumnHelper.genDateTimeColumn("createTime", "操作时间")
+            TableColumnHelper.genDateTimeColumn("createTime", "操作时间", "YYYY-MM-DD HH:mm:ss",{ width: 160, align: "left" })
           ]}
           data={logList}
           loading={loading}

@@ -170,6 +170,26 @@ const Demand = {
         },
       });
     },
+    *queryStoryListByDemandNumber({ payload }, { call, put }) {
+      const res = yield call(fetchStoryList, payload);
+      if (!res || res.code !== 200) {
+        message.error(res.msg);
+        return false;
+      }
+      const { data, ...others } = res.data;
+      yield put({
+        type: 'setStoryOfDemandData',
+        payload: {
+          data : {
+            filter: payload,
+            data,
+            ...others,
+          },
+          type: "add"
+        },
+      });
+      return true
+    },
     *queryStoryAssignList({ payload }, { call, put }) {
       const res = yield call(fetchStoryList, payload);
       if (!res || res.code !== 200) {
@@ -657,6 +677,30 @@ const Demand = {
       return {
         ...state,
         storyAssignList: PagerHelper.resolveListState(action.payload),
+      };
+    },
+    setStoryOfDemandData(state, { payload: { data, type}}) {
+      let demandList = state?.demandList
+      if (type === "add") {
+        demandList = {
+          ...demandList,
+          list : demandList?.list.map(v => {
+            if (data?.filter?.demandNumber === v.demandNumber) {
+              return {
+                ...v,
+                storyList: PagerHelper.resolveListState(data)
+              }
+            }
+            return v
+          })
+        }
+      }
+      if (type === "remove") {
+        console.log(demandList, data, type, "12345678")
+      }
+      return {
+        ...state,
+        demandList,
       };
     },
   },

@@ -8,9 +8,6 @@ const FormItem = Form.Item;
 const Index = props => {
   const { form, modalVisible, handleModalVisible, onOk } = props;
 
-  // 描述
-  const [description, setDescription] = useState( '');
-
   const handleSubmit = () => {
     form.validateFields((err, val) => {
       if (err) return;
@@ -29,6 +26,7 @@ const Index = props => {
       visible={modalVisible}
       onCancel={handleModalVisible}
       onOk={handleSubmit}
+      okText="保存"
     >
       <Form>
         <Row>
@@ -41,11 +39,10 @@ const Index = props => {
               }
             </FormItem>
             <FormItem {...formLayoutItemAddEdit} label="角色描述">
-              <Editor
-                height={300}
-                content={description}
-                onContentChange={content => setDescription(content)}
-              />
+              {
+                form.getFieldDecorator('description', {
+                })(<Input.TextArea placeholder="请输入角色描述" rows={5} cols={6}/>)
+              }
             </FormItem>
           </Col>
         </Row>

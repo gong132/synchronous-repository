@@ -22,6 +22,7 @@ import { PagerHelper, TableColumnHelper } from '@/utils/helper';
 // import {MENU_ACTIONS} from "@/utils/constant";
 import OptButton from '@/components/commonUseModule/optButton';
 import edit from '@/assets/icon/Button_bj.svg';
+import sync from '@/assets/icon/Button_tbjira.svg';
 import StandardTable from '@/components/StandardTable';
 
 import AddStory from '../components/story/addStory';
@@ -104,12 +105,14 @@ const Index = memo(
         },
       });
     };
-    const handleAssign = (params, rows, callback) => {
+    const handleAssign = ({demandId, userId, userName}, rows, callback) => {
       dispatch({
         type: 'demand/assignUser',
         payload: {
-          ...params,
-          type: 1,
+          demandId,
+          receiverId: userId,
+          receiverName: userName,
+          attentionType: 1,
         },
       }).then(result => {
         if (!result) return;
@@ -212,17 +215,21 @@ const Index = memo(
       TableColumnHelper.genPlanColumn('estimatedTestWorkload', '测试预计工作量', { width: 150 }),
       TableColumnHelper.genPlanColumn('introducer', '需求提出人', { sorter: true, width: 140 }),
       TableColumnHelper.genPlanColumn('creator', '创建人', { sorter: true, width: 120 }),
-      TableColumnHelper.genDateTimeColumn('createTime', '创建时间', 'YYYY-MM-DD HH:mm:ss',{ sorter: true, width: 140 }),
+      TableColumnHelper.genDateTimeColumn('createTime', '创建时间', 'YYYY-MM-DD HH:mm:ss',{ sorter: true, width: 180 }),
       {
         title: '操作',
         width: 120,
         align: 'center',
         render: rows => (
           <Fragment>
-            <OptButton
-              icon="eye"
-              showText={false}
-              text="查看"
+            <ListOptBtn
+              title="查看"
+              icon={eyeIcon}
+              style={{
+                fontSize: '24px',
+                position: 'relative',
+                top: '7px'
+              }}
               onClick={() => {
                 router.push({
                   pathname: `${props.location.pathname}/detail`,
@@ -248,14 +255,18 @@ const Index = memo(
               placement="left"
               visible={rows.id === assignVisible}
             >
-              <OptButton
+              <ListOptBtn
+                title="指派"
+                icon={assignIcon}
+                style={{
+                  fontSize: '24px',
+                  position: 'relative',
+                  top: '3px'
+                }}
                 onClick={e => {
                   e.stopPropagation()
                   setAssignVisible(rows.id)
                 }}
-                img={assignIcon}
-                showText={false}
-                text="指派"
               />
             </Popover>
           </Fragment>
@@ -294,7 +305,7 @@ const Index = memo(
           title: 'story编号',
           key: 'number',
           sorter: true,
-          width: 120,
+          width: 200,
           render: rows => {
             if (isEmpty(rows.number, true)) return '';
             return (
@@ -310,27 +321,27 @@ const Index = memo(
                     });
                   }}
                 >
-                  {rows.number.length > 8
-                    ? `${rows.number.substring(0, 8)}...`
-                    : rows.number.substring(0, 8)}
+                  {rows.number.length > 15
+                    ? `${rows.number.substring(0, 15)}...`
+                    : rows.number.substring(0, 15)}
                 </span>
               </Tooltip>
             );
           },
         },
-        TableColumnHelper.genLangColumn('title', '标题', { width: 150 }, 10),
+        TableColumnHelper.genPlanColumn('title', '标题'),
         TableColumnHelper.genPlanColumn('status', '状态'),
         TableColumnHelper.genPlanColumn('priority', '优先级'),
         TableColumnHelper.genPlanColumn('type', 'story类型'),
         TableColumnHelper.genDateTimeColumn('evaluateTime', 'IT评估上线时间', 'YYYY-MM-DD',{ width: 170 }),
-        TableColumnHelper.genPlanColumn('developWorkload', '开发预计工作量', { width: 130 }),
-        TableColumnHelper.genPlanColumn('testWorkload', '测试预计工作量', { width: 130 }),
+        TableColumnHelper.genPlanColumn('developWorkload', '开发预计工作量'),
+        TableColumnHelper.genPlanColumn('testWorkload', '测试预计工作量'),
         TableColumnHelper.genPlanColumn('assigneeName', '经办人'),
         TableColumnHelper.genPlanColumn('userName', '创建人'),
-        TableColumnHelper.genDateTimeColumn('createTime', '创建时间', 'YYYY-MM-DD HH:mm:ss',{ width: 170 }),
+        TableColumnHelper.genDateTimeColumn('createTime', '创建时间', 'YYYY-MM-DD HH:mm:ss',{ width: 210 }),
         {
           title: '操作',
-          width: 170,
+          width: 230,
           align: 'center',
           render: rows => {
             const { userInfo } = storage.get('gd-user', {});
@@ -341,9 +352,7 @@ const Index = memo(
                   title="编辑"
                   icon={edit}
                   style={{
-                    fontSize: '24px',
-                    position: 'relative',
-                    top: '5px'
+                    color: "#2E5BFF"
                   }}
                   onClick={() => {
                     setAddModalVisible(true);
@@ -352,14 +361,10 @@ const Index = memo(
                 />
                 <Divider type="vertical" />
 
-                <ListOptBtn
-                  title="查看"
-                  icon={eyeIcon}
-                  style={{
-                    fontSize: '24px',
-                    position: 'relative',
-                    top: '5px'
-                  }}
+                <OptButton
+                  icon="eye"
+                  showText={false}
+                  text="查看"
                   onClick={() => {
                     router.push({
                       pathname: '/demand/storyDetail',
@@ -383,9 +388,11 @@ const Index = memo(
                     title="同步"
                     icon={sync}
                     style={{
-                      fontSize: '24px',
+                      color: "#2E5BFF",
+                      width: 16,
+                      fontSize: 16,
                       position: 'relative',
-                      top: '5px'
+                      top: 3
                     }}
                     disabled={userInfo.userId !== rows.assessor || rows?.issueId}
                     onClick={() => {
@@ -402,18 +409,10 @@ const Index = memo(
                   okText="确定"
                   cancelText="取消"
                 >
-                  <OptButton
-                    img={deleteIcon}
-                    showText={false}
-                    text="删除"
-                    disabled={!isDelete}
-                  />
-
                   <ListOptBtn
-                    title="同步"
+                    title="删除"
                     icon={deleteIcon}
-                    style={isDelete ? { color: '#d63649', fontSize: '24px', position: 'relative', top: '5px' }
-                    : { color: '#b0bac9', fontSize: '24px', position: 'relative', top: '5px' }}
+                    style={{ color: isDelete ? '#d63649' : '#b0bac9' }}
                     disabled={userInfo.userId !== rows.assessor || rows?.issueId}
                   />
                 </Popconfirm>
@@ -426,9 +425,9 @@ const Index = memo(
         <StandardTable
           rowKey="id"
           columns={subColumns}
-          data={{ list: row.storyList }}
+          data={row.storyList}
           pagination={false}
-          scroll={{ x: 2550, y: 550 }}
+          scroll={{ y: 550 }}
         />
       );
     };
@@ -475,12 +474,17 @@ const Index = memo(
     };
 
     const handleExpandedRow = (rows, type) => {
-      const { record: { storyList, id } } = rows;
-      if (isEmpty(storyList)) return
-      if (!isArray(storyList)) return
-      if (storyList.length < 1) return
+      const { record: { id, demandNumber } } = rows;
       if (type === "add") {
-        setExpandedRowId(arr => [...arr,id])
+        dispatch({
+          type: "demand/queryStoryListByDemandNumber",
+          payload: {
+            demandNumber,
+          }
+        }).then(sure => {
+          if (!sure) return
+          setExpandedRowId(arr => [...arr,id])
+        })
         return
       }
       if (type === "remove") {
@@ -496,7 +500,7 @@ const Index = memo(
               <FormItem {...formLayoutItem2} colon={false} label="所属预算">
                 {getFieldDecorator('budgetNumbers')(
                   <Select
-                    placeholder="请选择项目类型"
+                    placeholder="请选择所属预算"
                     allowClear
                     showSearch
                     onChange={_.debounce(handleSearchForm, 500)}
@@ -521,7 +525,7 @@ const Index = memo(
               <FormItem {...formLayoutItem2} colon={false} label="需求类型">
                 {getFieldDecorator('type')(
                   <Select
-                    placeholder="请选择项目类型"
+                    placeholder="请选择需求类型"
                     allowClear
                     showSearch
                     onChange={_.debounce(handleSearchForm, 500)}
@@ -569,7 +573,7 @@ const Index = memo(
               <FormItem {...formLayoutItem2} colon={false} label="优先级">
                 {getFieldDecorator('priority')(
                   <Select
-                    placeholder="请选择项目类型"
+                    placeholder="请选择优先级"
                     allowClear
                     showSearch
                     onChange={_.debounce(handleSearchForm, 500)}
@@ -618,7 +622,7 @@ const Index = memo(
               <FormItem {...formLayoutItem2} colon={false} label="受理团队">
                 {getFieldDecorator('acceptTeam')(
                   <Select
-                    placeholder="请选择项目类型"
+                    placeholder="请选择受理团队"
                     allowClear
                     showSearch
                     onChange={_.debounce(handleSearchForm, 500)}
@@ -690,7 +694,7 @@ const Index = memo(
               <FormItem {...formLayoutItem2} colon={false} label="需求紧迫性">
                 {getFieldDecorator('demandUrgency')(
                   <Select
-                    placeholder="请选择项目类型"
+                    placeholder="请选择需求紧迫性"
                     allowClear
                     onChange={_.debounce(handleSearchForm, 500)}
                   >
@@ -707,7 +711,7 @@ const Index = memo(
               <FormItem {...formLayoutItem2} colon={false} label="是否涉及业务风控功能">
                 {getFieldDecorator('riskControlFunction')(
                   <Select
-                    placeholder="请选择项目类型"
+                    placeholder="请选择是否涉及业务风控"
                     allowClear
                     onChange={_.debounce(handleSearchForm, 500)}
                   >
@@ -727,7 +731,7 @@ const Index = memo(
               <FormItem {...formLayoutItem2} colon={false} label="是否涉及业务合规性">
                 {getFieldDecorator('businessCompliance')(
                   <Select
-                    placeholder="请选择项目类型"
+                    placeholder="请选择是否涉及业务合规性"
                     allowClear
                     onChange={_.debounce(handleSearchForm, 500)}
                   >
@@ -885,7 +889,7 @@ const Index = memo(
             data={demandList}
             loading={props.loading}
             expandIcon={prop => {
-              if (prop?.record?.storyList?.length < 1) return '';
+              if (Number(prop?.record?.isHaveStory) === 0) return '';
               return !prop?.expanded ? (
                 <span style={{ cursor: 'pointer' }}>
                   <Icon onClick={() => handleExpandedRow(prop, "add")} component={arrowRight} />
