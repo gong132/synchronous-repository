@@ -163,10 +163,10 @@ const Index = props => {
     TableColumnHelper.genPlanColumn('priority', '优先级', { sorter: true, width: 110 }),
     TableColumnHelper.genSelectColumn('type', 'story类型',  STORY_TYPE,{ sorter: true, width: 120 }),
     TableColumnHelper.genLangColumn('systemName', '所属系统', { width: 140 }, 10),
-    TableColumnHelper.genDateTimeColumn('evaluateTime', 'IT预计上线日期', 'YYYY-MM-DD', { width: 150, sorter: true }),
+    TableColumnHelper.genDateTimeColumn('evaluateTime', 'IT评估上线日期', 'YYYY-MM-DD', { width: 150, sorter: true }),
     TableColumnHelper.genPlanColumn('developWorkload', '开发预计测试工作量', { width: 180, sorter: true }),
     TableColumnHelper.genPlanColumn('testWorkload', '测试预计测试工作量', { width: 180, sorter: true }),
-    TableColumnHelper.genPlanColumn('assessor', '评估人', { width: 100 }),
+    TableColumnHelper.genPlanColumn('assessorName', '评估人', { width: 100 }),
     TableColumnHelper.genPlanColumn('userName', '创建人', { width: 100 }),
     TableColumnHelper.genDateTimeColumn('createTime', '创建时间',  'YYYY-MM-DD HH:mm:ss', { sorter: true, width: 180 }),
     {

@@ -59,12 +59,12 @@ const Index = memo(props => {
   }
 
   const columns = [
-    TableColumnHelper.genPopoverColumn("number", "story编号", 8),
-    TableColumnHelper.genPopoverColumn("title", "story名称", 6),
-    TableColumnHelper.genPlanColumn("systemName", "所属系统"),
-    TableColumnHelper.genDateTimeColumn("evaluateTime", "IT预计上线日期", "YYYY-MM-DD"),
-    TableColumnHelper.genPlanColumn("developWorkload", "开发预计工作量"),
-    TableColumnHelper.genPlanColumn("testWorkload", "测试预计工作量"),
+    TableColumnHelper.genPopoverColumn("number", "story编号", 8, { width: 120 }),
+    TableColumnHelper.genPopoverColumn("title", "story名称", 6, { width: 140 }),
+    TableColumnHelper.genLangColumn("systemName", "所属系统", { width: 180 }, 12 ),
+    TableColumnHelper.genDateTimeColumn("evaluateTime", "IT预计上线日期", "YYYY-MM-DD", { width: 160 }),
+    TableColumnHelper.genPlanColumn("developWorkload", "开发预计工作量", { width: 160 }),
+    TableColumnHelper.genPlanColumn("testWorkload", "测试预计工作量", { width: 160 }),
     {
       title: "转评估人",
       align: "center",
@@ -131,8 +131,8 @@ const Index = memo(props => {
 
   return (
     <Modal
-      width={980}
-      title="IT评估"
+      width={1100}
+      title="转评估人"
       visible={modalVisible}
       onCancel={handleModalVisible}
       onOk={handleOk}

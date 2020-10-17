@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Col, Form, Tree, Empty, Modal, Row} from "antd";
+import {Col, Form, Tree, Empty, Modal, Row, Icon, Button} from "antd";
 import { connect } from 'dva'
 import {formLayoutItem, formLayoutItemAddEdit} from "@/utils/constant";
 import {isArray, isEmpty} from "@/utils/lang";
@@ -18,7 +18,7 @@ const Index = props => {
     dispatch({
       type: 'authorManage/queryAuthorByRoleId',
       payload: {
-        id: roleId
+        roleId
       },
     })
   };
@@ -59,12 +59,12 @@ const Index = props => {
       return data.map(item => {
         if (item.children) {
           return (
-            <TreeNode icon={<span className={styles.treeShowIcon}>√</span>} title={item.title} key={item.key} dataRef={item}>
+            <TreeNode title={item.title} key={item.key} dataRef={item}>
               {renderTreeNodes(item.children)}
             </TreeNode>
           );
         }
-        return <TreeNode icon={<span className={styles.treeShowIcon}>√</span>} {...item} />;
+        return <TreeNode {...item}/>;
       });
     }
     return [];
@@ -75,7 +75,11 @@ const Index = props => {
       title={<>查看 <span className={styles.modalSubTitle}>{values && values.roleName || ''}</span></>}
       visible={modalVisible}
       onCancel={handleModalVisible}
-      onOk={handleModalVisible}
+      footer={(
+        <div className="rFlex">
+          <Button type="primary" onClick={handleModalVisible}>确定</Button>
+        </div>
+      )}
     >
       <Form>
         <Row>
@@ -94,7 +98,11 @@ const Index = props => {
                       return (
                         <Tree
                           key={v.key}
-                          showLine
+                          switcherIcon={<Icon type="down" />}
+                          checkable
+                          multiple
+                          disabled
+                          defaultCheckedKeys={menuList.map(v=>v.id)}
                           selectedKeys={menuList.map(v=>v.id)}
                           defaultExpandAll
                         >

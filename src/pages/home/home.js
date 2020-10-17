@@ -136,7 +136,7 @@ const Index = props => {
     //   { key: 'p', value: '项目需求' },
     //   { key: 'u', value: '一般需求' },
     const { demandId, demandType, linkUrlType, linkId, title } = rows;
-    if (linkUrlType === 1 && demandType === 'u') {
+    if (linkUrlType === 1 && String(demandType) === '2') {
       props.history.push({
         pathname: '/demand/generalDemand/detail',
         query: {
@@ -147,7 +147,7 @@ const Index = props => {
       msgStatus === '0' && handleBatchModifyRead(rows.id, 'rowClick');
       return;
     }
-    if (linkUrlType === 1 && demandType === 'p') {
+    if (linkUrlType === 1 && String(demandType) === '1') {
       props.history.push({
         pathname: '/demand/projectDemand/detail',
         query: {

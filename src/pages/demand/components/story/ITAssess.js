@@ -29,7 +29,6 @@ const Index = memo(props => {
   }, []);
 
   const handleChangeRows = (tag, val, rows) => {
-
     // 如果不存在, 新增
     if (isEmpty(changeRows.find(v => v.id === rows.id))) {
       const newRows = {
@@ -52,10 +51,10 @@ const Index = memo(props => {
   }
 
   const columns = [
-    TableColumnHelper.genPopoverColumn("number", "story编号", 8),
-    TableColumnHelper.genPopoverColumn("title", "story名称", 6),
-    TableColumnHelper.genPlanColumn("systemName", "所属系统"),
-    TableColumnHelper.genDateTimeColumn("expectedCompletionDate", "需求期望上线日期", "YYYY-MM-DD"),
+    TableColumnHelper.genPopoverColumn("number", "story编号", 8, { width: 120 }),
+    TableColumnHelper.genPopoverColumn("title", "story名称", 6, { width: 140 }),
+    TableColumnHelper.genLangColumn("systemName", "所属系统", { width: 180 }, 12 ),
+    TableColumnHelper.genDateTimeColumn("expectedCompletionDate", "需求期望上线日期", "YYYY-MM-DD", { width: 180 }),
     {
       title: "IT预计上线日期",
       align: "center",
@@ -152,7 +151,7 @@ const Index = memo(props => {
 
   return (
     <Modal
-      width={980}
+      width={1100}
       title="IT评估"
       visible={modalVisible}
       onCancel={handleModalVisible}

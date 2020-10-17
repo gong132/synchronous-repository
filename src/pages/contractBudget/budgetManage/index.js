@@ -243,8 +243,8 @@ const Index = props => {
     const { year = yearTime && moment.isMoment(yearTime) && yearTime.format('YYYY') } = params;
     const formValues = {
       ...others,
-      expectSetStartTime: expectSetTime && expectSetTime[0].format('YYYY-MM-DD'),
-      expectSetEndTime: expectSetTime && expectSetTime[1].format('YYYY-MM-DD'),
+      expectSetStartTime: !isEmpty(expectSetTime) ? expectSetTime[0].format('YYYY-MM-DD') : null,
+      expectSetEndTime: !isEmpty(expectSetTime) ? expectSetTime[1].format('YYYY-MM-DD') : null,
       year: year  || null,
     };
     handleQueryBudgetData(formValues);
