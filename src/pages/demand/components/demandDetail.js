@@ -172,14 +172,26 @@ class Detail extends Component {
     });
   };
 
-  handleQueryUser = () => {
+  // 查询人员
+  handleQueryUser = (params) => {
+    if(typeof params === 'string') {
+      params = {userName: params}
+    }
     this.props.dispatch({
       type: 'demand/fetchUserData',
       payload: {
-        ...DefaultPage,
+        ...params,
       },
     });
   };
+
+  // 通过团队查人员
+  handleChangeGroup = (val) => {
+    const { form } = this.props
+    console.log(val)
+    form.setFieldsValue({['receiverId']: ''})
+    this.handleQueryUser({ teamId: val })
+  }
 
   // 日志分页操作
   handleStandardTableChange = pagination => {
@@ -205,7 +217,7 @@ class Detail extends Component {
         const { requirementDescription, attachmentList } = res || {};
         this.setState({
           descriptionState: requirementDescription,
-          urls: attachmentList && attachmentList.length>0? JSON.stringify(attachmentList) : ''
+          urls: attachmentList && attachmentList.length > 0 ? JSON.stringify(attachmentList) : ''
         });
         this.handleQueryStoryList();
         this.handSearchITAssignAuth();
@@ -236,11 +248,6 @@ class Detail extends Component {
     });
   };
 
-  // 通过团队查人员
-  handleChangeGroup = () => {
-    const { form } = this.props
-    form.resetFields(['receiver'])
-  }
 
   // 通过人员id查团队
   handleQueryGroupBy = async (type, val) => {
@@ -255,9 +262,9 @@ class Detail extends Component {
 
   handleSubmit = () => {
     const { demand } = this.props
-    const { groupMap, userDataMap } = demand
+    const { groupMap, demandInfo } = demand
     const { descriptionState, urls } = this.state;
-    const id = getParam('id');
+    // const id = getParam('id');
     let arr = [] // 保存附件
     if (urls.length > 0) {
       arr = JSON.parse(urls)
@@ -279,11 +286,15 @@ class Detail extends Component {
         ? moment(values.actualLineDate).format('YYYY-MM-DD')
         : null;
       values.requirementDescription = descriptionState;
-      values.receiverName = values.receiver ? userDataMap[values.receiver] : ''
-      values.acceptTeam = groupMap[values.acceptTeam]
-      values.id = id;
+      const receiverArr = values.receiverId ? values.receiverId.split('-') : ['', '']
+      values.receiverId = receiverArr[0]
+      values.receiverName = receiverArr[1]
+      values.acceptTeam = groupMap[values.acceptTeamId]
+      // values.id = id;
       values.attachmentFiles = arr
-      this.editDemand(values);
+
+      Object.assign(demandInfo, values)
+      this.editDemand(demandInfo);
     });
   };
 
@@ -559,7 +570,7 @@ class Detail extends Component {
         type: 'p',
         arrDict: DEMAND_PRIORITY_OBJ,
       },
-      { span: 1, required: false, name: '提出人', value: introducer, type: 'p', arrDict: userDataMap },
+      { span: 1, required: false, name: '提出人', value: introducer, type: 'p', },
       { span: 1, required: false, name: '受理团队', value: acceptTeam, type: 'p' },
       { span: 1, required: false, name: '受理人', value: receiverName, type: 'p' },
       {
@@ -732,26 +743,26 @@ class Detail extends Component {
                     />}
                   </Fragment>
                 ) : (
-                  <Fragment>
-                    <OptButton
-                      style={{
+                    <Fragment>
+                      <OptButton
+                        style={{
                           backgroundColor: 'white',
                           color: '#B0BAC9',
                           borderColor: '#B0BAC9',
                         }}
-                      disabled
-                      img={psIcon}
-                      text="已提交OA审批"
-                    />
-                    { receiverName === userName && <OptButton
-                      style={{
+                        disabled
+                        img={psIcon}
+                        text="已提交OA审批"
+                      />
+                      { receiverName === userName && <OptButton
+                        style={{
                           backgroundColor: 'white',
                         }}
-                      img={apsIcon}
-                      text="提交OA审批"
-                      onClick={() => this.handleOAaction('u')}
-                    />}
-                  </Fragment>
+                        img={apsIcon}
+                        text="提交OA审批"
+                        onClick={() => this.handleOAaction('u')}
+                      />}
+                    </Fragment>
                   )}
                 {editBool ? (
                   <Fragment>
@@ -779,18 +790,20 @@ class Detail extends Component {
                     />
                   </Fragment>
                 ) : (
-                  <OptButton
-                    onClick={() =>
+                    <OptButton
+                      onClick={() => {
                         this.setState({
                           editBool: true,
                         })
+                        this.handleQueryUser({})
                       }
-                    style={{
+                      }
+                      style={{
                         backgroundColor: 'white',
                       }}
-                    img={editIcon}
-                    text="编辑"
-                  />
+                      img={editIcon}
+                      text="编辑"
+                    />
                   )}
               </Fragment>
             }
@@ -941,7 +954,7 @@ class Detail extends Component {
                   <FormItem>
                     {form.getFieldDecorator('receiverId', {
                       rules: [{ required: false, message: '请输入受理人' }],
-                      initialValue: receiverId,
+                      initialValue: receiverId ? `${receiverId}-${receiverName}` : '',
                     })(
                       <Select
                         allowClear
@@ -949,6 +962,7 @@ class Detail extends Component {
                         style={{ width: w }}
                         placeholder="请输入受理人"
                         onChange={(val) => this.handleQueryGroupBy('user', val)}
+                        onSearch={_.debounce(this.handleQueryUser, 500)}
                         optionFilterProp="children"
                         filterOption={(input, option) =>
                           JSON.stringify(option.props.children)
@@ -957,7 +971,7 @@ class Detail extends Component {
                         }
                       >
                         {!_.isEmpty(userData) && userData.map(d => (
-                          <Option key={d.userId} value={d.userId}>
+                          <Option key={d.userId} value={`${d.userId}-${d.userName}`}>
                             {d.userName}
                           </Option>
                         ))}
@@ -1140,8 +1154,8 @@ class Detail extends Component {
                 </DescriptionItem>
               </Descriptions>
             ) : (
-              <Descriptions column={3} bordered className={styles.formatDetailDesc}>
-                {detailList.map(
+                <Descriptions column={3} bordered className={styles.formatDetailDesc}>
+                  {detailList.map(
                     (v, i) =>
                       (v.type === type || v.type === 'p') && (
                         <DescriptionItem
