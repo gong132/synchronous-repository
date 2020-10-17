@@ -50,6 +50,8 @@ class CreateDemand extends PureComponent {
         description: DEFAULT_DESC
       })
     }
+
+    this.handleQueryUser()
   }
 
   componentWillUnmount() {
@@ -115,7 +117,7 @@ class CreateDemand extends PureComponent {
   };
 
   // 查询人员
-  handleQueryUser = (params) => {
+  handleQueryUser = (params={}) => {
     this.props.dispatch({
       type: 'demand/fetchUserData',
       payload: {
@@ -127,8 +129,7 @@ class CreateDemand extends PureComponent {
   // 通过团队查人员
   handleChangeGroup = (val) => {
     const { form } = this.props
-    console.log(val)
-    form.resetFields(['receiver'])
+    form.setFieldsValue({['receiverId']: ''})
     this.handleQueryUser({ teamId: val })
   }
 
@@ -165,7 +166,7 @@ class CreateDemand extends PureComponent {
   };
 
   handleSubmitForm = (saveType) => {
-    const { form, modalTitle, demand: { userDataMap, groupMap }, recordValue } = this.props
+    const { form, modalTitle, demand: { groupMap }, recordValue } = this.props
     const { description, urls } = this.state
     const arr = [] // 保存附件ids
     if (urls.length > 0) {
@@ -188,7 +189,12 @@ class CreateDemand extends PureComponent {
       }
       values.expectedCompletionDate = values.expectedCompletionDate ? moment(values.expectedCompletionDate).format('YYYY-MM-DD') : '';
       values.requirementDescription = description;
-      values.receiverName = values.receiverId ? userDataMap[values.receiverId] : ''
+      const receiverArr = values.receiverId ? values.receiverId.split('-') : ['', '']
+      const introducerArr = values.introducerId ? values.introducerId.split('-') : ['', '']
+      values.introducerId = introducerArr[0]
+      values.introducer = introducerArr[1]
+      values.receiverId = receiverArr[0]
+      values.receiverName = receiverArr[1]
       values.acceptTeam = groupMap[values.acceptTeamId]
       values.attachments = arr
       console.log(values)
@@ -213,11 +219,13 @@ class CreateDemand extends PureComponent {
     const {
       title,
       expectedCompletionDate,
+      introducerId,
       introducer,
       type,
       priority,
       acceptTeamId,
       receiverId,
+      receiverName,
       communicate,
       budgetNumbers,
       id,
@@ -272,15 +280,15 @@ class CreateDemand extends PureComponent {
           </Col>
           <Col span={12}>
             <FormItem {...formLayoutItemAddDouble} label="提出人">
-              {form.getFieldDecorator('introducer', {
+              {form.getFieldDecorator('introducerId', {
                 rules: [{ required: true, message: '请输入提出人' }],
-                initialValue: introducer,
+                initialValue: introducerId ? `${introducerId}-${introducer}` : '',
               })(
                 <Select
                   allowClear
                   showSearch
                   optionFilterProp="children"
-                  onSearch={typeof handleQueryUser === 'function' && _.debounce(handleQueryUser, 500)}
+                  onSearch={typeof handleQueryUser === 'function' && _.debounce(handleQueryUser, 200)}
                   filterOption={(input, option) =>
                     JSON.stringify(option.props.children)
                       .toLowerCase()
@@ -289,7 +297,7 @@ class CreateDemand extends PureComponent {
                   placeholder="请输入提出人"
                 >
                   {!_.isEmpty(userData) && userData.map(d => (
-                    <Option key={d.userId} value={d.userId}>
+                    <Option key={d.userId} value={`${d.userId}-${d.userName}`}>
                       {d.userName}
                     </Option>
                   ))}
@@ -368,7 +376,7 @@ class CreateDemand extends PureComponent {
             <FormItem {...formLayoutItemAddDouble} label="受理人">
               {form.getFieldDecorator('receiverId', {
                 rules: [{ required: false, message: '请输入受理人' }],
-                initialValue: receiverId,
+                initialValue: receiverId ? `${receiverId}-${receiverName}` : '',
               })(
                 <Select
                   allowClear
@@ -384,7 +392,7 @@ class CreateDemand extends PureComponent {
                   }
                 >
                   {!_.isEmpty(userData) && userData.map(d => (
-                    <Option key={d.userId} value={d.userId}>
+                    <Option key={d.userId} value={`${d.userId}-${d.userName}`}>
                       {d.userName}
                     </Option>
                   ))}

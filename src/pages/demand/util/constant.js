@@ -71,7 +71,7 @@ const BOARD_TITLE_OBJ = {
 
 // 详情页流程
 const FLOW_STATUS = [
-  { label: '暂存中', value: '0', userName: '胖胖hhhhhhhhhh', time: '2020-09-17' },
+  { label: '暂存中', value: '0', userName: '胖胖', time: '2020-09-17' },
   { label: '待指派', value: '1' },
   { label: '待受理', value: '2' },
   { label: '讨论中', value: '3' },
