@@ -263,7 +263,8 @@ class Detail extends Component {
 
   handleSubmit = () => {
     const { demand } = this.props
-    const { groupMap, demandInfo } = demand
+    const { groupMap, demandInfo={} } = demand
+    const { status } = demandInfo
     const { descriptionState, urls } = this.state;
     // const id = getParam('id');
     let arr = [] // 保存附件
@@ -293,6 +294,10 @@ class Detail extends Component {
       values.acceptTeam = groupMap[values.acceptTeamId]
       // values.id = id;
       values.attachmentFiles = arr
+      values.createType = 2
+      if(status === 1) {
+        values.createType = 1
+      }
 
       Object.assign(demandInfo, values)
       this.editDemand(demandInfo);
@@ -449,16 +454,19 @@ class Detail extends Component {
     const params = {
       demandId,
     };
-    if (status === '2') {
-      params.status = '3';
+    // 待指派 2 团队经理将需求受理到自己团队
+    if(status === 2) {
+      params.acceptType = 1
     }
-    if (status === '3') {
-      params.status = '4';
+
+    // 待受理 3 受理人将需求受理人指派为自己
+    if(status === 3) {
+      params.acceptType = 2
     }
 
     this.props
       .dispatch({
-        type: 'demand/dragDemand',
+        type: 'demand/receiverAppointDemand',
         payload: {
           ...params,
         },
@@ -509,8 +517,9 @@ class Detail extends Component {
   render() {
     const { editBool, descriptionState, showCreateMilePlan, urls } = this.state;
     const {
-      userInfo: { isTeamHead, userName },
+      userInfo={}
     } = getUserInfo();
+    const { isTeamHead, userName } = userInfo
     const {
       form,
       loadingQueryInfo,
@@ -618,8 +627,18 @@ class Detail extends Component {
 
     const columns = [
       TableColumnHelper.genPlanColumn('operateUserName', '操作人', { width: '100px' }),
-      TableColumnHelper.genPlanColumn('content', '操作内容'),
-      TableColumnHelper.genPlanColumn('createTime', '操作时间', { width: '100px' }),
+      {
+        title: '操作内容',
+        dataIndex: 'content',
+        key: 'content',
+        align: 'center',
+        render: (text) => {
+          return (
+            <div style={{ textAlign: 'left' }}>{text}</div>
+          )
+        }
+      },
+      TableColumnHelper.genPlanColumn('createTime', '操作时间', { width: '200px' }),
     ];
 
     const resolveFlowData = (arr, index, typeFlow) => {
@@ -643,7 +662,7 @@ class Detail extends Component {
     return (
       <Fragment>
         <div>
-          {isTeamHead === 1 || status === 3 ? (
+          {((isTeamHead === 1 && status === 2) || (status === 3 && receiverName === userName)) ? (
             <CustomBtn
               style={{ float: 'left' }}
               onClick={() => this.handleChangeStatusByManage(status, id)}
@@ -652,8 +671,9 @@ class Detail extends Component {
             />
           ) : null}
           <div className="yCenter" style={{ float: 'right' }}>
-            {(status === 4 || status === 6 || status === 7 || status === 10)
-              && receiverName === userName
+            {(((status === 4 || status === 5 || status === 7 || status === 10)
+              && receiverName === userName)
+              || (isTeamHead === 1 && status === 3))
               && <CustomBtn
                 onClick={() => {
                   Modal.confirm({

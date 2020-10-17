@@ -276,7 +276,8 @@ class ChartCard extends PureComponent {
       borderColor: '#2E5BFF',
       color: '#2E5BFF',
     };
-    const { userInfo: { userId, userName } } = getUserInfo();
+    const { userInfo={} } = getUserInfo();
+    const { userId, userName } = userInfo
     const no = getParam('no')
     const comLangMenu = (
       <Card

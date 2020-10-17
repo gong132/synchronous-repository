@@ -57,12 +57,13 @@ class Pie extends Component {
     const { title, barColor } = this.props
     const arr = []
     const legendData = []
+    console.log(data)
     data.map((v, i) => {
       if (v.name) {
         legendData.push(v.name)
         arr.push({
           name: v.name,
-          value: Math.ceil((Math.random() + i) * 10)
+          value: v.count || null
         })
       }
       return true

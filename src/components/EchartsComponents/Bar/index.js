@@ -114,7 +114,7 @@ class Bar extends Component {
     const xAxisName = []
     const arr = []
     data.map((v, i) => {
-      arr.push(Number(Math.ceil((Math.random() + i)) * 20))
+      arr.push(v.value)
       xAxisName.push(v.name)
       return true
     })
@@ -197,7 +197,6 @@ class Bar extends Component {
           margin: 12,
           interval: 0,
           formatter: value => {
-            console.log(value)
             if (data.length < 10) {
               return echarts.format.truncateText(value, (10 - data.length) * barWidth / data.length + barWidth + 48, '14px Microsoft Yahei', '…');
             }

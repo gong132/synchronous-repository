@@ -174,7 +174,7 @@ const Index = props => {
       width: 170,
       align: 'center',
       render: rows => {
-        const { userInfo } = storage.get('gd-user', {});
+        const { userInfo={} } = storage.get('gd-user', {});
         const isDelete = userInfo?.userId === rows?.userId && !rows?.issueId;
         return (
           <Fragment>

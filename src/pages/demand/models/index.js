@@ -21,14 +21,14 @@ import {
   queryBudgetNumber,
   queryFlow,
   focusDemand,
-  receiverDemand,
-  dragDemand,
+  receiverAppointDemand,
   unFocusDemand,
   addCommonLang,
   updateCommonLang,
   queryCommonLang,
   addUpdateDemand,
   fetchSearchList,
+  deleteDemand,
 } from '@/services/demand/demand';
 import {
   addMilePlan,
@@ -73,7 +73,7 @@ const Demand = {
     userLoginIdMap: {},
     ITAssignVisible: false,
     assignorVisible: false,
-    comLangList:[],
+    comLangList: [],
     searchList: [],
   },
   effects: {
@@ -144,19 +144,9 @@ const Demand = {
       })
     },
 
-    // 受理需求
-    *receiverDemand({ payload }, { call }) {
-      const { code, msg } = yield call(receiverDemand, payload);
-      if (!code || code !== 200) {
-        message.error(msg);
-        return false;
-      }
-      return true;
-    },
-
-    // 拖拽需求看板变更状态
-    *dragDemand({ payload }, { call }) {
-      const { code, msg } = yield call(dragDemand, payload);
+    // 受理需求/指派
+    *receiverAppointDemand({ payload }, { call }) {
+      const { code, msg } = yield call(receiverAppointDemand, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
@@ -199,8 +189,17 @@ const Demand = {
 
     // 新增/编辑需求
     *addUpdateDemand({ payload }, { call }) {
-      console.log(payload)
       const { code, msg, data } = yield call(addUpdateDemand, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    },
+
+    // 删除需求
+    *deleteDemand({ payload }, { call }) {
+      const { code, msg, data } = yield call(deleteDemand, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
@@ -452,8 +451,9 @@ const Demand = {
         return false;
       }
       return true;
-      // 指派关注人
     },
+
+    // 指派关注人
     *assignUser({ payload }, { call }) {
       const { code, msg } = yield call(assignUser, payload);
       if (!code || code !== 200) {
@@ -571,7 +571,7 @@ const Demand = {
     // 添加常用语
     *addCommonLang({ payload }, { call }) {
       const res = yield call(addCommonLang, payload)
-      if(!res || !res.code === 200) {
+      if (!res || !res.code === 200) {
         message.error(res.msg)
         return false
       }
@@ -579,18 +579,18 @@ const Demand = {
       return true
     },
     // 修改常用语
-    *updateCommonLang({payload}, {call}) {
+    *updateCommonLang({ payload }, { call }) {
       const res = yield call(updateCommonLang, payload)
-      if(!res || !res.code === 200) {
+      if (!res || !res.code === 200) {
         message.error(res.msg)
         return false
       }
       return true
     },
     // 查询常用语
-    *queryCommonLang({payload}, {call, put}) {
-      const res = yield call(queryCommonLang,payload)
-      if(!res || !res.code === 200) {
+    *queryCommonLang({ payload }, { call, put }) {
+      const res = yield call(queryCommonLang, payload)
+      if (!res || !res.code === 200) {
         message.error(res.msg)
         return false
       }
@@ -602,9 +602,9 @@ const Demand = {
       })
     },
     // 查询下拉搜索列表
-    *querySearchList({payload}, {call, put}) {
-      const res = yield call(fetchSearchList,payload)
-      if(!res || !res.code === 200) {
+    *querySearchList({ payload }, { call, put }) {
+      const res = yield call(fetchSearchList, payload)
+      if (!res || !res.code === 200) {
         message.error(res.msg)
         return false
       }

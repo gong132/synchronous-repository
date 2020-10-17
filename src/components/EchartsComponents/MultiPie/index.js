@@ -20,45 +20,45 @@ class Sunburst extends React.Component {
 
   render() {
     const { DataView } = DataSet;
-    const { title } = this.props
-    const data = [
-      {
-        value: 251,
-        team: '团队一',
-        type: '1完成',
-        per: '50%'
-      },
-      {
-        value: 148,
-        team: '团队一',
-        type: '1未完成',
-        per: '50%'
-      },
-      {
-        value: 610,
-        team: '团队二',
-        type: '2完成',
-        per: '50%'
-      },
-      {
-        value: 434,
-        team: '团队二',
-        type: '2未完成',
-        per: '50%'
-      },
-      {
-        value: 375,
-        team: '团队三',
-        type: '3完成',
-        per: '50%'
-      },
-      {
-        value: 550,
-        team: '团队三',
-        type: '3未完成',
-        per: '50%'
-      },
-    ];
+    const { title, data } = this.props
+    // const data = [
+    //   {
+    //     value: 251,
+    //     team: '团队一',
+    //     type: '1完成',
+    //     per: '50%'
+    //   },
+    //   {
+    //     value: 148,
+    //     team: '团队一',
+    //     type: '1未完成',
+    //     per: '50%'
+    //   },
+    //   {
+    //     value: 610,
+    //     team: '团队二',
+    //     type: '2完成',
+    //     per: '50%'
+    //   },
+    //   {
+    //     value: 434,
+    //     team: '团队二',
+    //     type: '2未完成',
+    //     per: '50%'
+    //   },
+    //   {
+    //     value: 375,
+    //     team: '团队三',
+    //     type: '3完成',
+    //     per: '50%'
+    //   },
+    //   {
+    //     value: 550,
+    //     team: '团队三',
+    //     type: '3未完成',
+    //     per: '50%'
+    //   },
+    // ];
     const dv = new DataView();
     dv.source(data).transform({
       type: 'percent',
@@ -66,14 +66,7 @@ class Sunburst extends React.Component {
       dimension: 'team',
       as: 'percent',
     });
-    // const cols = {
-    //   percent: {
-    //     formatter: (val) => {
-    //       val = `${(val * 100).toFixed(2)}%`;
-    //       return val;
-    //     },
-    //   },
-    // };
+  
     const dv1 = new DataView();
     dv1.source(data).transform({
       type: 'percent',
@@ -81,7 +74,7 @@ class Sunburst extends React.Component {
       dimension: 'type',
       as: 'percent',
     });
-    console.log(dv, dv1)
+    console.log(dv1.rows)
 
     // 重新计算完成与未完成百分比
     // const { rows } = dv1
@@ -110,7 +103,7 @@ class Sunburst extends React.Component {
           <Coord type="theta" radius={0.5} />
           <Tooltip
             // showTitle={false}
-            itemTpl="<li><span style=&quot;background-color:{color};&quot; class=&quot;g2-tooltip-marker&quot;></span>{name}: {value}</li>"
+            itemTpl="<li><span style=&quot;background-color:{color};&quot; class=&quot;g2-tooltip-marker&quot;></span>{name}: {value} {percent}</li>"
           />
           <Legend
             name='team'
@@ -121,6 +114,13 @@ class Sunburst extends React.Component {
               top: '-1px',
               width: '13px',
               height: '13px'
+            }}
+            g2-legend-text={{
+              display: 'inline-block',
+              color: 'red !important',
+              width: '100px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
             }}
           />
           <Legend
@@ -151,14 +151,15 @@ class Sunburst extends React.Component {
               ]
             ]}
             tooltip={[
-              'team*percent',
-              (item, percent) => {
+              'team*percent*total',
+              (item, percent, total) => {
                 console.log(item)
                 percent = `${(percent * 100).toFixed(0)}%`;
                 return {
                   title: item,
                   name: item,
-                  value: percent,
+                  percent: percent,
+                  value: total
                 };
               },
             ]}
@@ -168,7 +169,17 @@ class Sunburst extends React.Component {
             }}
             select={false}
           >
-            <Label content="team" offset={-10} />
+            <Label 
+            content="team" 
+            offset={-10} 
+            htmlTemplate = {(text, item, index) => {
+              // text 为每条记录 x 属性的值
+              // item 为映射后的每条数据记录，是一个对象，可以从里面获取你想要的数据信息
+              // index 为每条记录的索引
+              const { point } = item
+              return  null  
+            }}
+            />
           </Geom>
           <View
             data={dv1}
@@ -186,12 +197,14 @@ class Sunburst extends React.Component {
                 ],
               ]}
               tooltip={[
-                'type*percent*team',
-                (type, percent, team) => {
+                'type*per*team*value',
+                (type, percent, team, value) => {
+                  console.log(type, percent, team)
                   percent = `${(percent * 100).toFixed(0)}%`;
                   return {
                     name: type.substr(-3) === '未完成' ? '未完成' : '完成',
-                    value: percent,
+                    percent: percent,
+                    value: value,
                     title: team,
                   };
                 },
@@ -216,13 +229,14 @@ class Sunburst extends React.Component {
                   // index 为每条记录的索引
                   const { point } = item
                   const { value, type, team } = point
-                  let { percent } = point
+                  let { per } = point
                   const u = '未完成'
                   const f = '完成'
-                  percent = `${(percent * 100).toFixed(0)}%`;
-                  return type.substr(-3) === '未完成'
-                    ? `<div style='width: 98px'><span style="font-size: 14px">${team}</span><br/><span style="font-size: 12px">${u}: ${value} (${percent})</span></div>`
-                    : `<div style='width: 85px'><span style="font-size: 14px">${team}</span><br/><span style="font-size: 12px">${f}: ${value} (${percent})</span></div>`
+                  per = `${(per * 100).toFixed(0)}%`;
+                  return value ? type.substr(-3) === '未完成'
+                    ? `<div style='width: 98px'><span style="font-size: 14px">${team}</span><br/><span style="font-size: 12px">${u}: ${value} (${per})</span></div>`
+                    : `<div style='width: 85px'><span style="font-size: 14px">${team}</span><br/><span style="font-size: 12px">${f}: ${value} (${per})</span></div>`
+                    : null
                 }}
               />
             </Geom>

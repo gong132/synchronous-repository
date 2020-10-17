@@ -112,7 +112,7 @@ class DemandBoard extends Component {
     this.setState({
       showEditModal: bool,
     }, () => {
-      if(bool) {
+      if (bool) {
         this.handleQueryDetail(val.id)
       }
     })
@@ -127,7 +127,7 @@ class DemandBoard extends Component {
   }
 
   renderBoardMenu = (record, boardId) => {
-    const { attention, creator, receiverName } = record
+    const { attentionId, creator, receiverName } = record
     const { userInfo = {} } = getUserInfo()
     const { userName, isTeamHead } = userInfo
 
@@ -137,7 +137,7 @@ class DemandBoard extends Component {
           (boardId === 2 || boardId === 3 || boardId === 4 || boardId === 5 || boardId === 6 || boardId === 7 || boardId === 10))
           && <Menu.Item key='appointFocus'>指派关注人</Menu.Item>
         }
-        {(boardId === 2 || (boardId === 3 && isTeamHead === 1))
+        {((boardId === 2 && isTeamHead === 1) || (boardId === 3 && isTeamHead === 1))
           && <Menu.Item key='appointAccept'>指派受理人</Menu.Item>
         }
         {(((boardId === 1 || boardId === 3 || boardId === 2)
@@ -155,7 +155,7 @@ class DemandBoard extends Component {
         {((boardId === 1 && creator === userName)
           || (boardId === 3 || boardId === 4 || boardId === 2 || boardId === 5 || boardId === 6 || boardId === 7 || boardId === 10))
           && (
-            attention === 1 ?
+            attentionId ?
               <Menu.Item key='cancelFocus'>取消关注</Menu.Item>
               : <Menu.Item key='focus'>关注</Menu.Item>
           )
@@ -168,10 +168,9 @@ class DemandBoard extends Component {
   deleteDemand = params => {
     this.props
       .dispatch({
-        type: 'demand/updateDemand',
+        type: 'demand/deleteDemand',
         payload: {
-          id: String(params.id),
-          isDelete: 1
+          demandId: params.id,
         },
       })
       .then(res => {
@@ -184,9 +183,9 @@ class DemandBoard extends Component {
   // 关注
   handleFocusDemand = (id) => {
     this.props.dispatch({
-      type: 'demand/focusDemand',
+      type: 'demand/assignUser',
       payload: {
-        type: 0,
+        attentionType: 2,
         demandId: Number(id)
       }
     }).then(res => {
@@ -211,11 +210,15 @@ class DemandBoard extends Component {
   }
 
   // 受理需求
+  //   1,团队受理
+  //  2,团队成员认领
+  //  3,团队经理指派需求受理人
+  // number acceptType
   handleReceiverDemand = (id) => {
     const { userInfo } = getUserInfo()
     const { userId, userName } = userInfo
     this.props.dispatch({
-      type: 'demand/receiverDemand',
+      type: 'demand/receiverAppointDemand',
       payload: {
         id: Number(id),
         receiverId: String(userId),
@@ -231,7 +234,7 @@ class DemandBoard extends Component {
   // 拖拽变更状态
   handleDragDemand = (params) => {
     this.props.dispatch({
-      type: 'demand/dragDemand',
+      type: 'demand/receiverAppointDemand',
       payload: {
         ...params
       }
@@ -273,7 +276,7 @@ class DemandBoard extends Component {
         this.handleViewAppointModal(true, editValue, '指派受理人')
         break;
       case 'accept':
-        this.handleDragDemand({ status: '4', demandId: editValue.id })
+        this.handleDragDemand({demandId: editValue.id, acceptType: 2 })
         break;
       default:
         break;
@@ -294,7 +297,7 @@ class DemandBoard extends Component {
     }
     if (source.droppableId === '2' && destination.droppableId === '3') {
       // 受理
-      params.status = '3'
+      params.acceptType = 1
       if (isTeamHead !== 1) {
         message.warning('只有团队经理可执行该操作！')
         return false
@@ -304,7 +307,7 @@ class DemandBoard extends Component {
     }
     if (source.droppableId === '3' && destination.droppableId === '4') {
       params.status = '4'
-      this.handleDragDemand(params)
+      // this.handleDragDemand(params)
       return true
     }
     // message.warning('这不是一次有效的操作！')
@@ -417,7 +420,7 @@ class DemandBoard extends Component {
                                           </div>
                                         </div>
                                         <div className={styles.dragBoard_secondLine}>
-                                          {item.attention === 1 && <Icon component={focusIcon} />}
+                                          {item.attentionId && <Icon component={focusIcon} />}
                                           <span title={item.title}>{item.title}</span>
                                         </div>
                                         <div className={styles.dragBoard_thirdLine}>
@@ -472,7 +475,7 @@ class DemandBoard extends Component {
                               </div>
                             </div>
                             <div className={styles.dragBoard_secondLine}>
-                              {item.attention === 1 && <Icon component={focusIcon} />}
+                              {item.attentionId && <Icon component={focusIcon} />}
                               <span title={item.title}>{item.title}</span>
                             </div>
                             <div className={styles.dragBoard_thirdLine}>

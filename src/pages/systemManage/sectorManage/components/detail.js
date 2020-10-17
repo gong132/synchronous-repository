@@ -187,8 +187,18 @@ class SectorDetail extends PureComponent {
     ];
     const columns = [
       TableColumnHelper.genPlanColumn('operateUserName', '操作人', { width: '100px' }),
-      TableColumnHelper.genPlanColumn('content', '操作内容'),
-      TableColumnHelper.genPlanColumn('createTime', '操作时间', { width: '100px' }),
+      {
+        title: '操作内容',
+        dataIndex: 'content',
+        key: 'content',
+        align: 'center',
+        render: (text) => {
+          return (
+            <div style={{ textAlign: 'left' }}>{text}</div>
+          )
+        }
+      },
+      TableColumnHelper.genPlanColumn('createTime', '操作时间', { width: '200px' }),
     ];
 
     const btnStyle = {

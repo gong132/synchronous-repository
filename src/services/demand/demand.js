@@ -8,6 +8,14 @@ export async function addUpdateDemand(params) {
   });
 }
 
+// 删除需求
+export async function deleteDemand(params) {
+  return request('/demand/delete', {
+    method: 'get',
+    params,
+  });
+}
+
 // 查看列表
 export async function queryDemand(params) {
   return request('/demand/list', {
@@ -168,34 +176,25 @@ export async function estimate(params) {
   });
 }
 
-// 关注需求
-// attention/add
-export async function focusDemand(params) {
-  return request('/attention/add', {
-    method: 'post',
-    params,
-  });
-}
-
 // q取消关注
 export async function unFocusDemand(params) {
-  return request('/attention/deleteAttention', {
-    method: 'post',
+  return request('/demand/cancel/attention', {
+    method: 'get',
     params,
   });
 }
 
-// 指派关注人
+// 指派关注人/关注
 export async function assignUser(params) {
-  return request('/attention/add', {
+  return request('/demand/attention', {
     method: 'post',
     params,
   });
 }
 
-// 需求受理
-export async function receiverDemand(params) {
-  return request('/demand/receiver', {
+// 需求受理/指派
+export async function receiverAppointDemand(params) {
+  return request('/demand/accept', {
     method: 'post',
     params,
   });

@@ -19,12 +19,12 @@ class Demand extends PureComponent {
   }
 
   componentDidMount() {
-    this.handleQueryDept()
-    this.handleQuerySystem()
-    this.handleQueryCluster()
-    this.handleQueryDemand()
-    this.handleQueryTeam()
-    
+    // this.handleQueryDept()
+    // this.handleQuerySystem()
+    // this.handleQueryCluster()
+    // this.handleQueryDemand()
+    // this.handleQueryTeam()
+
     const dateStart = new Date()
     const dateEnd = moment(dateStart)
       .add(3, 'months')
@@ -39,53 +39,14 @@ class Demand extends PureComponent {
   handleChangDate = value => {
     this.setState({
       rangeDate: value
-    })
-  }
-
-  // 查询部门
-  handleQueryDept = (params) => {
-    this.props.dispatch({
-      type: 'demandForm/queryDept',
-      payload: {
-        ...params
+    }, () => {
+      const { formType, currentNumber } = this.props
+      const params = { type: 1 }
+      if (formType === 'receiverSide') {
+        params.type = 2
+        params.currentNumber = currentNumber
       }
-    })
-  }
-
-  // 查询系统
-  handleQuerySystem = (params) => {
-    this.props.dispatch({
-      type: 'demandForm/querySystemList',
-      payload: {
-        ...params
-      }
-    })
-  }
-
-  // 查询集群板块
-  handleQueryCluster = (params) => {
-    this.props.dispatch({
-      type: 'demandForm/queryCluster',
-      payload: {
-        ...params
-      }
-    })
-  }
-
-  // 查需求和状态
-  handleQueryDemand = () => {
-    this.props.dispatch({
-      type:'demandForm/queryDemandBoard',
-      payload: {
-        ids: '1,2,3,4,5,6,7,8,9,10',
-      }
-    })
-  }
-
-  // 查团队
-  handleQueryTeam = () => {
-    this.props.dispatch({
-      type:'demandForm/queryTeam',
+      this.handleQueryReportForm(params)
     })
   }
 
@@ -98,8 +59,23 @@ class Demand extends PureComponent {
     })
   }
 
+  // 查报表
+  handleQueryReportForm = (params) => {
+    const { rangeDate } = this.state
+    if (!_.isEmpty(rangeDate)) {
+      params.startTime = moment(rangeDate[0]).format('YYYY-MM-DD')
+      params.endTime = moment(rangeDate[1]).format('YYYY-MM-DD')
+    }
+    this.props.dispatch({
+      type: 'demandForm/queryDemandReportForm',
+      payload: {
+        ...params,
+      }
+    })
+  }
+
   render() {
-    const {rangeDate} = this.state
+    const { rangeDate } = this.state
     const { demandForm } = this.props
     const { formType } = demandForm
     return (
@@ -124,8 +100,8 @@ class Demand extends PureComponent {
             <RangePicker value={rangeDate} onChange={this.handleChangDate} className={styles.rightTime_date} />
           </div>
         </div>
-        {formType === 'demandSide' && <DemandSide />}
-        {formType === 'receiverSide' && <ReceiverSide />}
+        {formType === 'demandSide' && <DemandSide handleQueryReportForm={this.handleQueryReportForm} />}
+        {formType === 'receiverSide' && <ReceiverSide handleQueryReportForm={this.handleQueryReportForm} />}
       </Fragment>
     )
   }

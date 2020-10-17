@@ -62,7 +62,7 @@ class Pie extends Component {
         legendData.push(v.name)
         arr.push({
           name: v.name,
-          value: v.demandList.length || null
+          value: v.count || null
         })
       }
       return true
