@@ -13,7 +13,7 @@
 
 .moreSearchButton {
   width: 100%;
-  padding: 16px;
+  padding: 16px 0;
   height: 50px;
   display: flex;
   justify-content: flex-end;
@@ -36,6 +36,25 @@
       width: 230px;
     }
   }
+}
+
+.moreSearch::-webkit-scrollbar{
+  width:6px;
+  height:6px;
+}
+.moreSearch::-webkit-scrollbar-track{
+  background: #F4F6FC;
+  border-radius:2px;
+}
+.moreSearch::-webkit-scrollbar-thumb{
+  background: #bfbfbf;
+  border-radius:10px;
+}
+.moreSearch::-webkit-scrollbar-thumb:hover{
+  background: rgba(0,0,0,0.35);
+}
+.moreSearch::-webkit-scrollbar-corner{
+  background: #bfbfbf;
 }
 
 .switch {

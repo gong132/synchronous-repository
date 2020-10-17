@@ -51,6 +51,7 @@ const Demand = {
     milePlanList: PagerHelper.genListState(),
     logList: PagerHelper.genListState(),
     storyList: PagerHelper.genListState(),
+    storyAssignList: PagerHelper.genListState(),
     assessStoryList: PagerHelper.genListState(),
     planStageList: [],
     planStageListMap: {},
@@ -172,6 +173,22 @@ const Demand = {
       const { data, ...others } = res.data;
       yield put({
         type: 'setStoryData',
+        payload: {
+          filter: payload,
+          data,
+          ...others,
+        },
+      });
+    },
+    *queryStoryAssignList({ payload }, { call, put }) {
+      const res = yield call(fetchStoryList, payload);
+      if (!res || res.code !== 200) {
+        message.error(res.msg);
+        return;
+      }
+      const { data, ...others } = res.data;
+      yield put({
+        type: 'setStoryAssignData',
         payload: {
           filter: payload,
           data,
@@ -634,6 +651,12 @@ const Demand = {
       return {
         ...state,
         storyList: PagerHelper.resolveListState(action.payload),
+      };
+    },
+    setStoryAssignData(state, action) {
+      return {
+        ...state,
+        storyAssignList: PagerHelper.resolveListState(action.payload),
       };
     },
   },

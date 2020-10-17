@@ -9,12 +9,12 @@ import {isEmpty} from "@/utils/lang";
 
 const Index = memo(props => {
   const { dispatch, values, modalVisible, handleModalVisible,
-    demand: { storyList }, loading } = props;
+    demand: { storyAssignList }, loading, handleQueryStoryList } = props;
 
   const [changeRows, setChangeRows] = useState([])
-  const handleQueryStoryList = params => {
+  const handleQueryStoryAssignList = params => {
     dispatch({
-      type: "demand/queryStoryList",
+      type: "demand/queryStoryAssignList",
       payload: {
         operateType: 1,
         demandNumber: values?.demandNumber,
@@ -25,7 +25,7 @@ const Index = memo(props => {
   }
 
   useEffect(() => {
-    handleQueryStoryList()
+    handleQueryStoryAssignList()
   }, []);
 
   const handleChangeRows = (tag, val, rows) => {
@@ -101,7 +101,7 @@ const Index = memo(props => {
       pageSize: pagination.pageSize,
     };
     setChangeRows([])
-    handleQueryStoryList(params);
+    handleQueryStoryAssignList(params);
   };
 
   const handleOk = () => {
@@ -144,6 +144,9 @@ const Index = memo(props => {
     }).then(res => {
       if (!res) return;
       message.success("转评估人成功")
+      handleQueryStoryAssignList()
+      handleQueryStoryList()
+      handleModalVisible(false, "itAssessModalVisible")
     })
   }
 
@@ -160,8 +163,8 @@ const Index = memo(props => {
         rowKey="id"
         columns={columns}
         data={{
-          ...storyList,
-          list: storyList.list.map(v => ({ ...v, expectedCompletionDate: values?.expectedCompletionDate}))
+          ...storyAssignList,
+          list: storyAssignList.list.map(v => ({ ...v, expectedCompletionDate: values?.expectedCompletionDate}))
         }}
         loading={loading}
         onChange={handleStandardTableChange}

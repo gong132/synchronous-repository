@@ -7,7 +7,8 @@ const FormItem = Form.Item;
 const { Option } = Select;
 const Index = props => {
   const { userList, handleVisible, onOk, rows } = props;
-  const [userId, setUserId] = useState(null)
+  console.log(rows, "rows")
+  const [userId, setUserId] = useState(undefined)
   const handleOk = () =>{
     if (isEmpty(userId)) {
       message.error("请选择指派人");
@@ -18,7 +19,7 @@ const Index = props => {
       demandId: rows.id,
       userName: userList?.list ? userList?.list.find(v => v.userId === userId)?.userName : null,
     }
-    onOk(params, () => handleVisible(false))
+    onOk(params)
   }
   return (
     <div style={{ width: 300 }}>
@@ -26,6 +27,7 @@ const Index = props => {
         <FormItem {...formLayoutItemAddEdit} label="关注人">
           <Select
             value={userId}
+            placeholder="请选择关注人"
             onClick={e => e.stopPropagation()}
             onChange={val => setUserId(val)}
           >
