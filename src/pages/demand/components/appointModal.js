@@ -21,9 +21,9 @@ const Appoint = (props) => {
   // 关注
   const handleFocusDemand = (params) => {
     props.dispatch({
-      type: 'demand/focusDemand',
+      type: 'demand/assignUser',
       payload: {
-        type: 1,
+        attentionType: 1,
         demandId: Number(demandId),
         ...params
       }
@@ -35,12 +35,13 @@ const Appoint = (props) => {
     });
   }
 
-  // 受理
+  // 指派受理人
   const handleReceiverDemand = (values) => {
     props.dispatch({
-      type: 'demand/receiverDemand',
+      type: 'demand/receiverAppointDemand',
       payload: {
-        ...values
+        ...values,
+        acceptType: 3
       }
     }).then(res => {
       if (res) {
@@ -70,8 +71,8 @@ const Appoint = (props) => {
         handleReceiverDemand(values)
         return true
       }
-      values.userName = userDataMap[values.user]
-      values.userLoginName = values.user
+      values.receiverName = userDataMap[values.user]
+      values.receiverId = values.user
       delete values.user
       handleFocusDemand(values)
     })

@@ -20,17 +20,13 @@ class Project extends PureComponent {
   }
 
   componentDidMount() {
-    this.handleQueryDept()
-    this.handleQueryCluster()
-    this.handleQueryTeam()
-    this.handleQueryStage()
-    this.handleQueryProject()
+
 
     const dateStart = new Date()
     const dateEnd = moment(dateStart)
       .add(3, 'months')
       .format('YYYY-MM-DD');
-
+    this.handleQueryProjectReport({ startTime: moment(dateStart).format('YYYY-MM-DD'), endTime: moment(dateEnd).format('YYYY-MM-DD') })
     this.setState({
       rangeDate: [moment(dateStart), moment(dateEnd)]
     })
@@ -43,44 +39,13 @@ class Project extends PureComponent {
     })
   }
 
-  // 查询部门
-  handleQueryDept = (params) => {
+  // 查询项目报表
+  handleQueryProjectReport = (params) => {
     this.props.dispatch({
-      type: 'projectForm/queryDept',
+      type: 'projectForm/queryProjectReportForm',
       payload: {
         ...params
       }
-    })
-  }
-
-  // 查询集群板块
-  handleQueryCluster = (params) => {
-    this.props.dispatch({
-      type: 'projectForm/queryCluster',
-      payload: {
-        ...params
-      }
-    })
-  }
-
-  // 查项目阶段
-  handleQueryStage = () => {
-    this.props.dispatch({
-      type: 'projectForm/queryAllStageStatus',
-    })
-  }
-
-  // 查项目
-  handleQueryProject = () => {
-    this.props.dispatch({
-      type: 'projectForm/fetchAllProject',
-    })
-  }
-
-  // 查团队
-  handleQueryTeam = () => {
-    this.props.dispatch({
-      type: 'projectForm/queryTeam',
     })
   }
 

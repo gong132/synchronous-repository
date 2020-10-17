@@ -1,4 +1,5 @@
 import React, { PureComponent, Fragment } from 'react'
+import moment from 'moment'
 import Bar from '@/components/EchartsComponents/Bar'
 import Pie from '@/components/EchartsComponents/Pie'
 import MultiPie from '@/components/EchartsComponents/MultiPie/index'
@@ -16,7 +17,20 @@ import {
 class Receiver extends PureComponent {
   constructor(props) {
     super(props)
+    this.state = {
+      currentNumber: 0
+    }
     this.handleSlideBar = _.throttle(this.handleSlideBar, 1000)
+  }
+
+  componentDidMount() {
+    const { currentNumber } = this.state
+    const dateStart = new Date()
+    const dateEnd = moment(dateStart)
+      .add(3, 'months')
+      .format('YYYY-MM-DD');
+    this.props.handleQueryReportForm({ currentNumber, type: 2, startTime: moment(dateStart).format('YYYY-MM-DD'), endTime: moment(dateEnd).format('YYYY-MM-DD') })
+    // this.props.handleQueryReportForm({currentNumber, type: 2,})
   }
 
   // 点击柱形事件
@@ -39,12 +53,69 @@ class Receiver extends PureComponent {
     console.log(params)
   }
 
+  // 处理系统数据
+  handleResolveSystem = (data) => {
+    const arr = []
+    data.map(v => {
+      const obj = {
+        name: v.systemName,
+        value: v.count,
+      }
+      arr.push(obj)
+    })
+    return arr
+  }
+
+  // 处理团队数据
+  handleResolveTeam = (data) => {
+    let arr = []
+    data.map((v, i) => {
+      const per = v.overCount / v.count
+      arr = arr.concat(
+        [
+          {
+            team: v.teamName,
+            value: v.overCount || null,
+            type: `${i}完成`,
+            per: v.count ? per : 0,
+            total: v.count,
+          },
+          {
+            team: v.teamName,
+            value: v.goingCount || null,
+            type: `${i}未完成`,
+            per: v.count ? (1 - per) : 0,
+            total: v.count,
+          },
+        ]
+      )
+    })
+    return arr
+  }
+
+  // 处理未完成和已完成数据
+  handleFinished = (data) => {
+    const arr = []
+    data.map(v => {
+      const obj = {
+        name: v.systemName,
+        value: v.count,
+      }
+      arr.push(obj)
+    })
+    return arr
+  }
+
   render() {
     const { demandForm } = this.props
-    const { systemList, teamData } = demandForm
-    console.log(systemList)
+    const { systemList,
+      teamData,
+      finishData,
+      currentNumber,
+      showOtherFlag, } = demandForm
+    console.log(systemList, teamData, finishData)
     const barProps = {
-      data: systemList,
+      data: this.handleResolveSystem(systemList),
       title: '所属系统',
       barColor: ['#6395F9'],
       cusConfigBool: false,
@@ -54,24 +125,15 @@ class Receiver extends PureComponent {
 
     const pieProps = {
       title: '整体完成度',
-      data: [
-        { name: '未完成' },
-        { name: '已完成' }
-      ],
+      data: finishData,
       barColor: ['#E96C5B', '#6395F9'],
       handleClickPie: this.handleClickPie,
       handleClickLegend: this.handleClickLegend,
     }
 
-    teamData.map((v, i) => {
-      v.unfinished = Math.ceil((Math.random() + i) * 10)
-      v.finished = Math.ceil((Math.random() + i) * 10)
-      return true
-    })
-
     const multiPieProps = {
       title: '团队分布',
-      data: teamData,
+      data: this.handleResolveTeam(teamData),
       handleClickPie: this.handleClickPie,
       handleClickLegend: this.handleClickLegend,
     }

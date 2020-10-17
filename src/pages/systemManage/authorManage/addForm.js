@@ -15,7 +15,7 @@ const Index = props => {
       //   message.error("请输入描述");
       //   return;
       // }
-      onOk({...val, resourceIds: ""}, handleModalVisible(false))
+      onOk({...val, description, resourceIds: null}, handleModalVisible(false))
     })
   };
 
