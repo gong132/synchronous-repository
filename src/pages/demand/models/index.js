@@ -645,6 +645,7 @@ const Demand = {
           searchList: res.data || []
         }
       })
+      return res.data
     },
   },
   reducers: {

@@ -36,7 +36,7 @@ const Index = memo(
     const [modalTitle, setModalTitle] = useState('创建需求');
 
     const [searchForm, setSearchForm] = useState({});
-    const [commonSearchValue, setCommonSearchValue] = useState({ active: 0, myGroup: 1 });
+    const [commonSearchValue, setCommonSearchValue] = useState({ active: 0, myGroup: "" });
 
     const handleViewModal = (bool, title) => {
       setVisibleModal(bool);
@@ -86,6 +86,9 @@ const Index = memo(
         type: 'demand/querySearchList',
         payload: {
         },
+      }).then(data => {
+        if (!data) return
+        setCommonSearchValue(obj => ({ ...obj, myGroup: data && data?.length ? Number(data[0]?.id) : 1 }))
       });
     };
     // 查询团队
@@ -244,7 +247,7 @@ const Index = memo(
             <div className={styles.dropStyle}>
               <Select
                 value={commonSearchValue.myGroup}
-                onChange={val => setCommonSearchValue(obj => ({ ...obj, myGroup: val }))}
+                onChange={val => setCommonSearchValue(obj => ({ ...obj, myGroup: Number(val) }))}
               >
                 {searchList && searchList.map(v => (
                   <Select.Option value={v.id} key={v.id}>
