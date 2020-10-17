@@ -187,7 +187,7 @@ export async function unFocusDemand(params) {
 
 // 指派关注人
 export async function assignUser(params) {
-  return request('/attention/add', {
+  return request('/demand/attention', {
     method: 'post',
     params,
   });
