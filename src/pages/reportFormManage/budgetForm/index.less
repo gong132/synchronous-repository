@@ -1,0 +1,139 @@
+.headBox {
+  width: 100%;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .head_year {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    .head_year_form{
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+
+      :global {
+        .ant-form-item {
+          margin-bottom: 0;
+          .ant-form-item-label {
+            width: unset;
+          }
+          .ant-form-item-control-wrapper {
+            width: 115px;
+          }
+        }
+      }
+
+      .yearName {
+        width: 40px;
+        height: 32px;
+        background: #F3F5F7;
+        border: 1px solid #d9d9d9;
+        border-left-width: 0;
+        opacity: 1;
+        border-radius: 0 2px 2px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+
+    .budgetAmount {
+      margin-left: 15px;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 28px;
+      color: #606266;
+      opacity: 1;
+
+      span {
+        font-size: 12px;
+        color: #2E5BFF;
+      }
+    }
+  }
+}
+
+.chartHead {
+  width: 100%;
+  display: flex;
+  .module {
+    display: flex;
+    align-items: center;
+    :global {
+      .ant-form-item {
+        margin-bottom: 0;
+        .ant-form-item-label {
+          width: unset;
+        }
+        .ant-form-item-control-wrapper {
+          width: 115px;
+        }
+      }
+    }
+  }
+
+  .module:after {
+    content: "年";
+    width: 40px;
+    height: 32px;
+    background: #F3F5F7;
+    border: 1px solid #d9d9d9;
+    border-left-width: 0;
+    opacity: 1;
+    border-radius: 0 2px 2px 0;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .period {
+    display: flex;
+    align-items: center;
+    margin-left: 15px;
+    :global {
+      .ant-form-item {
+        margin-bottom: 0;
+        .ant-form-item-label {
+          width: unset;
+        }
+        .ant-form-item-control-wrapper {
+          width: 500px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+
+          .ant-select{
+            display: flex;
+            flex-wrap: nowrap;
+
+            .ant-select-selection--single{
+              width: 100px !important;
+            }
+          }
+          .ant-select:after {
+            content: "月";
+            width: 40px;
+            height: 32px;
+            background: #F3F5F7;
+            border: 1px solid #d9d9d9;
+            border-left-width: 0;
+            opacity: 1;
+            border-radius: 0 2px 2px 0;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+          }
+          .ant-form-item-children {
+            display: flex;
+            align-items: center;
+          }
+        }
+      }
+
+    }
+  }
+}

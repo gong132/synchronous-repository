@@ -192,6 +192,18 @@ module.exports = {
               name: 'budgetForm',
               component: './reportFormManage/budgetForm',
             },
+            {
+              path: '/reportFormManage/budgetForm/belongBudget',
+              name: 'budgetForm_belongBudget',
+              hideInMenu: true,
+              component: './reportFormManage/budgetForm/component/belongBudget.js',
+            },
+            {
+              path: '/reportFormManage/budgetForm/budgetTree',
+              name: 'budgetForm_tree',
+              hideInMenu: true,
+              component: './reportFormManage/budgetForm/component/budgetTree.js',
+            },
           ],
         },
         {
