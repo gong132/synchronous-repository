@@ -30,9 +30,20 @@ const Index = memo(props => {
         {
           type: 'category',
           boundaryGap: false,
-          data: demandSystemList.map(v => v.systemName),
+          data: demandSystemList.map(v => v?.systemName ? v.systemName.split("_")[v.systemName.split("_").length - 1] : ""),
           axisTick: {
             show: false,
+          },
+          axisLabel: {
+            formatter: text => {
+              let name = [text]
+              if (text.length > 6) {
+                var reg=/.{6}/g;
+                name=text.match(reg);//注意如果name的长度小于6,那么rs=null
+                name.push(text.substring(name.join('').length));
+              }
+              return name.join("\n")
+            }
           },
           axisLine: {
             lineStyle: {

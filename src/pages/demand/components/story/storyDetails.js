@@ -11,7 +11,7 @@ import budgetLog from '@/assets/icon/modular_czrz.svg';
 import syncJIRAButton from "@/assets/icon/Button_tbjira.svg";
 
 import styles from "./index.less"
-import {Button, DatePicker, Descriptions, Form, Input, message, Popconfirm, Select} from "antd";
+import {Button, Col, DatePicker, Descriptions, Form, Input, message, Popconfirm, Row, Select} from "antd";
 import {isEmpty, statusToValue} from "@/utils/lang";
 import {STORY_PRIORITY, STORY_TYPE} from "@/pages/demand/util/constant";
 import moment from "moment";
@@ -20,13 +20,14 @@ import Editor from "@/components/TinyEditor";
 import StandardTable from "@/components/StandardTable";
 import storage from "@/utils/storage";
 import FileUpload from "@/components/FileUpload";
+import {formLayoutItemAddDouble} from "@/utils/constant";
 
 const FormItem = Form.Item;
 const { Option } = Select;
 
 const Index = withRouter(props => {
 
-  const { dispatch, form, demand: { storyDetails }, global: { userList, logList }, saveStoryLoading, syncStoryLoading, loading } = props;
+  const { dispatch, form, demand: { storyDetails, systemList }, global: { userList, logList }, saveStoryLoading, syncStoryLoading, loading } = props;
 
   const [editModalVisible, setEditModalVisible] = useState(false)
   const [description, setDescription] = useState("")
@@ -45,6 +46,12 @@ const Index = withRouter(props => {
       }
     })
   }
+  const handleQuerySystemList = () => {
+    dispatch({
+      type: 'demand/querySystemList',
+      payload: {},
+    });
+  };
   const handleQueryUserList = () => {
     dispatch({
       type: "global/queryUserList",
@@ -96,6 +103,9 @@ const Index = withRouter(props => {
         evaluateTime: isEmpty(val.evaluateTime)
           ? null
           : val.evaluateTime.format("YYYY-MM-DD"),
+        systemName: isEmpty(val.systemId)
+          ? null
+          : systemList.find(v => String(v.id) === val.systemId).sysName,
         description,
         attachments: isEmpty(fileList) ? null : JSON.parse(fileList).map(v => v.id),
       };
@@ -131,6 +141,7 @@ const Index = withRouter(props => {
     handleQueryStoryDetails()
     handleQueryUserList()
     handleQueryLogList()
+    handleQuerySystemList();
   }, [])
 
   const detailList = [
@@ -219,7 +230,25 @@ const Index = withRouter(props => {
             <FormItem>{storyDetails?.demandNumber}</FormItem>
           </Descriptions.Item>
           <Descriptions.Item span={1} label="所属系统">
-            <FormItem>{storyDetails?.systemName}</FormItem>
+            <FormItem>
+              {form.getFieldDecorator('systemId', {
+                rules: [{ required: true, message: '请选择所属系统' }],
+                initialValue: storyDetails?.systemId,
+              })(
+                <Select
+                  style={{ width: '100%' }}
+                  allowClear
+                  placeholder="请选择所属系统"
+                >
+                  {systemList &&
+                  systemList.map(v => (
+                    <Option value={v.id.toString()} key={v.id}>
+                      {v.sysName}
+                    </Option>
+                  ))}
+                </Select>,
+              )}
+            </FormItem>
           </Descriptions.Item>
           <Descriptions.Item span={1} label="创建时间">
             <FormItem>{storyDetails?.createTime}</FormItem>
