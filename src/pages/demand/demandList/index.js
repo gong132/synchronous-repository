@@ -180,7 +180,7 @@ const Index = memo(
           );
         },
       },
-      TableColumnHelper.genLangColumn('title', '标题', { width: 120 }, 8),
+      TableColumnHelper.genLangColumn('title', '标题', { width: 120 }, 5),
       TableColumnHelper.genSelectColumn('type', '需求类型', DEMAND_TYPE, {
         sorter: true,
         width: 120,
@@ -196,7 +196,7 @@ const Index = memo(
         { sorter: true, width: 100 },
       ),
       TableColumnHelper.genPlanColumn('acceptTeam', '受理团队', { sorter: true, width: 120 }),
-      TableColumnHelper.genPlanColumn('receiverId', '受理人', { sorter: true, width: 100 }),
+      TableColumnHelper.genPlanColumn('receiverName', '受理人', { sorter: true, width: 100 }),
       TableColumnHelper.genDateTimeColumn('expectedCompletionDate', '期望完成日期', 'YYYY-MM-DD', {
         sorter: true,
         width: 140,
@@ -303,6 +303,12 @@ const Index = memo(
     const expandedRowRender = row => {
       if (isEmpty(row.storyList)) return null;
       const subColumns = [
+        {
+          title: "",
+          width: 20,
+          key: "id",
+          render: () => ""
+        },
         {
           title: 'story编号',
           key: 'number',
@@ -463,18 +469,18 @@ const Index = memo(
       } = formValues;
       const params = {
         ...others,
-        minExpectedCompletionDate: expectedCompletionDate
+        minExpectedCompletionDate: expectedCompletionDate && expectedCompletionDate?.length > 0
           ? expectedCompletionDate[0].format('YYYY-MM-DD')
           : null,
-        maxExpectedCompletionDate: expectedCompletionDate
+        maxExpectedCompletionDate: expectedCompletionDate && expectedCompletionDate?.length > 0
           ? expectedCompletionDate[1].format('YYYY-MM-DD')
           : null,
-        minPlannedLaunchDate: plannedLaunchDate ? plannedLaunchDate[0].format('YYYY-MM-DD') : null,
-        maxPlannedLaunchDate: plannedLaunchDate ? plannedLaunchDate[1].format('YYYY-MM-DD') : null,
-        minActualLineDate: actualLineDate ? actualLineDate[1].format('YYYY-MM-DD') : null,
-        maxActualLineDate: actualLineDate ? actualLineDate[1].format('YYYY-MM-DD') : null,
-        minCreateDate: createTime ? createTime[1].format('YYYY-MM-DD') : null,
-        maxCreateDate: createTime ? createTime[1].format('YYYY-MM-DD') : null,
+        minPlannedLaunchDate: plannedLaunchDate && plannedLaunchDate?.length > 0 ? plannedLaunchDate[0].format('YYYY-MM-DD') : null,
+        maxPlannedLaunchDate: plannedLaunchDate && plannedLaunchDate?.length > 0 ? plannedLaunchDate[1].format('YYYY-MM-DD') : null,
+        minActualLineDate: actualLineDate && actualLineDate?.length > 0 ? actualLineDate[1].format('YYYY-MM-DD') : null,
+        maxActualLineDate: actualLineDate && actualLineDate?.length > 0 ? actualLineDate[1].format('YYYY-MM-DD') : null,
+        minCreateDate: createTime && createTime?.length > 0 ? createTime[1].format('YYYY-MM-DD') : null,
+        maxCreateDate: createTime && createTime?.length > 0 ? createTime[1].format('YYYY-MM-DD') : null,
       };
       setSearchForm(obj => ({ ...obj, ...params }));
     };
@@ -554,30 +560,6 @@ const Index = memo(
               </FormItem>
             </Col>
             <Col span={24}>
-              <FormItem {...formLayoutItem2} colon={false} label="状态">
-                {getFieldDecorator('status')(
-                  <Select
-                    placeholder="请选择状态"
-                    allowClear
-                    showSearch
-                    onChange={_.debounce(handleSearchForm, 500)}
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      JSON.stringify(option.props.children)
-                        .toLowerCase()
-                        .indexOf(input.toLowerCase()) >= 0
-                    }
-                  >
-                    {DEMAND_STATUS.map(v => (
-                      <Option value={v.key} key={v.key.toString()}>
-                        {v.value}
-                      </Option>
-                    ))}
-                  </Select>,
-                )}
-              </FormItem>
-            </Col>
-            <Col span={24}>
               <FormItem {...formLayoutItem2} colon={false} label="优先级">
                 {getFieldDecorator('priority')(
                   <Select
@@ -603,7 +585,7 @@ const Index = memo(
             </Col>
             <Col span={24}>
               <FormItem {...formLayoutItem2} colon={false} label="需求提出人">
-                {getFieldDecorator('introducer')(
+                {getFieldDecorator('introducerId')(
                   <Select
                     placeholder="请选择需求提出人"
                     allowClear
@@ -707,63 +689,69 @@ const Index = memo(
                 )}
               </FormItem>
             </Col>
-            <Col span={24}>
-              <FormItem {...formLayoutItem2} colon={false} label="需求紧迫性">
-                {getFieldDecorator('demandUrgency')(
-                  <Select
-                    placeholder="请选择需求紧迫性"
-                    allowClear
-                    onChange={_.debounce(handleSearchForm, 500)}
-                  >
-                    {DEMAND_LEVEL.map(v => (
-                      <Option value={v.key} key={v.key.toString()}>
-                        {v.value}
-                      </Option>
-                    ))}
-                  </Select>,
-                )}
-              </FormItem>
-            </Col>
-            <Col span={24}>
-              <FormItem {...formLayoutItem2} colon={false} label="是否涉及业务风控功能">
-                {getFieldDecorator('riskControlFunction')(
-                  <Select
-                    placeholder="请选择是否涉及业务风控"
-                    allowClear
-                    onChange={_.debounce(handleSearchForm, 500)}
-                  >
-                    {[
-                      { key: 'y', value: '是' },
-                      { key: 'n', value: '否' },
-                    ].map(v => (
-                      <Option value={v.key} key={v.key.toString()}>
-                        {v.value}
-                      </Option>
-                    ))}
-                  </Select>,
-                )}
-              </FormItem>
-            </Col>
-            <Col span={24}>
-              <FormItem {...formLayoutItem2} colon={false} label="是否涉及业务合规性">
-                {getFieldDecorator('businessCompliance')(
-                  <Select
-                    placeholder="请选择是否涉及业务合规性"
-                    allowClear
-                    onChange={_.debounce(handleSearchForm, 500)}
-                  >
-                    {[
-                      { key: 'y', value: '是' },
-                      { key: 'n', value: '否' },
-                    ].map(v => (
-                      <Option value={v.key} key={v.key.toString()}>
-                        {v.value}
-                      </Option>
-                    ))}
-                  </Select>,
-                )}
-              </FormItem>
-            </Col>
+            {demandRoutes[props.location.pathname] !== '项目需求' && (
+              <Col span={24}>
+                <FormItem {...formLayoutItem2} colon={false} label="需求紧迫性">
+                  {getFieldDecorator('demandUrgency')(
+                    <Select
+                      placeholder="请选择需求紧迫性"
+                      allowClear
+                      onChange={_.debounce(handleSearchForm, 500)}
+                    >
+                      {DEMAND_LEVEL.map(v => (
+                        <Option value={v.key} key={v.key.toString()}>
+                          {v.value}
+                        </Option>
+                      ))}
+                    </Select>,
+                  )}
+                </FormItem>
+              </Col>
+            )}
+            {demandRoutes[props.location.pathname] !== '项目需求' && (
+              <Col span={24}>
+                <FormItem {...formLayoutItem2} colon={false} label="是否涉及业务风控功能">
+                  {getFieldDecorator('riskControlFunction')(
+                    <Select
+                      placeholder="请选择是否涉及业务风控"
+                      allowClear
+                      onChange={_.debounce(handleSearchForm, 500)}
+                    >
+                      {[
+                        {key: 'y', value: '是'},
+                        {key: 'n', value: '否'},
+                      ].map(v => (
+                        <Option value={v.key} key={v.key.toString()}>
+                          {v.value}
+                        </Option>
+                      ))}
+                    </Select>,
+                  )}
+                </FormItem>
+              </Col>
+            )}
+            {demandRoutes[props.location.pathname] !== '项目需求' && (
+              <Col span={24}>
+                <FormItem {...formLayoutItem2} colon={false} label="是否涉及业务合规性">
+                  {getFieldDecorator('businessCompliance')(
+                    <Select
+                      placeholder="请选择是否涉及业务合规性"
+                      allowClear
+                      onChange={_.debounce(handleSearchForm, 500)}
+                    >
+                      {[
+                        {key: 'y', value: '是'},
+                        {key: 'n', value: '否'},
+                      ].map(v => (
+                        <Option value={v.key} key={v.key.toString()}>
+                          {v.value}
+                        </Option>
+                      ))}
+                    </Select>,
+                  )}
+                </FormItem>
+              </Col>
+            )}
           </Row>
         </div>
       );
@@ -884,7 +872,6 @@ const Index = memo(
       handleQueryHeaderGroupList();
     }, []);
 
-    console.log(demandList, 'DemandList');
     return (
       <div className={styles.childrenTable}>
         <div className={styles.tableList}>

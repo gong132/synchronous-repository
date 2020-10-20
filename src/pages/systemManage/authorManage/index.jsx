@@ -2,7 +2,7 @@ import React, { useEffect, useState} from "react"
 import classNames from "classnames";
 import CustomBtn from "@/components/commonUseModule/customBtn"
 import { connect } from "dva"
-import { DefaultPage, TableColumnHelper } from "@/utils/helper";
+import { PagerHelper, TableColumnHelper } from "@/utils/helper";
 import StandardTable from "@/components/StandardTable";
 import MenuTree from "./component/menuTree";
 
@@ -54,7 +54,7 @@ const AuthorManage = props => {
     dispatch({
       type:"authorManage/queryAllRolesList",
       payload: {
-        ...DefaultPage,
+        ...PagerHelper.MaxPage,
         ...params,
       }
     }).then(data => {
@@ -80,7 +80,7 @@ const AuthorManage = props => {
       }
     }).then(sure => {
       if (!sure) return;
-      message.success(selectedRows.id ? "修改成功" : "新增成功");
+      message.success(params.id ? "修改成功" : "新增成功");
       callback && callback();
       handleQueryCurrentUserInfo();
       handleQueryAllRolesList();
@@ -163,11 +163,14 @@ const AuthorManage = props => {
 
   return (
     <div className="main">
-      <CustomBtn
-        onClick={() => setAddModalVisible(true)}
-        type='create'
-        icon='plus'
-      />
+      <div>
+        <CustomBtn
+          onClick={() => setAddModalVisible(true)}
+          type='create'
+          icon='plus'
+          style={{ width: 76 }}
+        />
+      </div>
       <div className={styles.tableList}>
         {/* <div className={styles.tableListForm}> */}
         {/* </div> */}
@@ -176,23 +179,23 @@ const AuthorManage = props => {
             <Col span={10}>
               <div className={styles.leftTable}>
                 <div className={styles.title}>选择角色</div>
-                <StandardTable
-                  rowkey="id"
-                  rowClassName={record => record.id === selectedRows.id ? styles.clickRowSty : ''}
-                  columns={columns}
-                  data={roleList}
-                  scroll={{ y: 800 }}
-                  pagination={false}
-                  onRow={record => {
-                    return {
+                <div className={styles.tree}>
+                  <StandardTable
+                    rowkey="id"
+                    rowClassName={record => record.id === selectedRows.id ? styles.clickRowSty : ''}
+                    columns={columns}
+                    data={roleList}
+                    scroll={{ y: 710 }}
+                    pagination={false}
+                    onRow={record => ({
                       onClick: () => {
                         setSelectedRows(record);
                         setExpandedRow([]);
                         handleQueryAuthorByRoleId(record.id)
                       }
-                    }
-                  }}
-                />
+                    })}
+                  />
+                </div>
               </div>
             </Col>
             <Col span={14}>

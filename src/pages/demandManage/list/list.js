@@ -143,14 +143,14 @@ const Index = withRouter(props => {
     const params = {
       flag: demandStatus,
       ...others,
-      startTime: createTime ? createTime[0].format("YYYY-MM-DD") : null,
-      endTime: createTime ? createTime[1].format("YYYY-MM-DD") : null,
-      expectedStartTime: expectedTime ? expectedTime[0].format("YYYY-MM-DD") : null,
-      expectedEndTime: expectedTime ? expectedTime[1].format("YYYY-MM-DD") : null,
-      planStartTime: planTime ? planTime[0].format("YYYY-MM-DD") : null,
-      planEndTime: planTime ? planTime[1].format("YYYY-MM-DD") : null,
-      actualStartTime: actualTime ? actualTime[0].format("YYYY-MM-DD") : null,
-      actualEndTime: actualTime ? actualTime[1].format("YYYY-MM-DD") : null,
+      startTime: createTime && createTime?.length > 0 ? createTime[0].format("YYYY-MM-DD") : null,
+      endTime: createTime && createTime?.length > 0 ? createTime[1].format("YYYY-MM-DD") : null,
+      expectedStartTime: expectedTime && expectedTime?.length > 0 ? expectedTime[0].format("YYYY-MM-DD") : null,
+      expectedEndTime: expectedTime && expectedTime?.length > 0 ? expectedTime[1].format("YYYY-MM-DD") : null,
+      planStartTime: planTime && planTime?.length > 0 ? planTime[0].format("YYYY-MM-DD") : null,
+      planEndTime: planTime && planTime?.length > 0 ? planTime[1].format("YYYY-MM-DD") : null,
+      actualStartTime: actualTime && actualTime?.length > 0 ? actualTime[0].format("YYYY-MM-DD") : null,
+      actualEndTime: actualTime && actualTime?.length > 0 ? actualTime[1].format("YYYY-MM-DD") : null,
     }
 
     handleQueryDemandList(params)

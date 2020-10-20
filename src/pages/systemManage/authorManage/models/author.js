@@ -55,24 +55,25 @@ const Author = {
       })
       return data
     },
-    *updateRoleAuthor({ payload }, { call, put }) {
-      const { code, msg, data } = yield call(updateRoleAuthor, payload);
+    *updateRoleAuthor({ payload }, { call }) {
+      const { code, msg } = yield call(updateRoleAuthor, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false
       }
       return true
     },
-    *addRoleAuthor({ payload }, { call, put }) {
-      const { code, msg, data } = yield call(addRoleAuthor, payload);
-      if (!code || code !== 200) {
-        message.error(msg);
+    *addRoleAuthor({ payload }, { call }) {
+      console.log(payload, "payload")
+      const res = yield call(addRoleAuthor, payload);
+      if ( res?.code !== 200) {
+        message.error(res?.msg);
         return false
       }
       return true
     },
-    *deleteRoleAuthor({ payload }, { call, put }) {
-      const { code, msg, data } = yield call(deleteRoleAuthor, payload);
+    *deleteRoleAuthor({ payload }, { call }) {
+      const { code, msg } = yield call(deleteRoleAuthor, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false
