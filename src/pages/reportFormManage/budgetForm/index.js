@@ -1,56 +1,60 @@
-import React, {Fragment, useEffect, useState} from 'react'
-import { connect } from "dva";
-import moment from "moment";
-import YearPicker from "@/components/YearPicker";
-import {formLayoutItem} from "@/utils/constant";
-import {Button, Card, Col, Form, Row, Select,} from "antd";
+import React, { Fragment, useEffect, useState } from 'react';
+import { connect } from 'dva';
+import moment from 'moment';
+import YearPicker from '@/components/YearPicker';
+import { formLayoutItem } from '@/utils/constant';
+import { Button, Card, Col, Form, Row, Select } from 'antd';
 
-import ProjectPie from "./component/approvalProjectPie"
-import ConstractPie from "./component/contractPie"
+import ProjectPie from './component/approvalProjectPie';
+import ConstractPie from './component/contractPie';
 
-import styles from "./index.less"
-import numeral from "numeral";
-import GlobalSandBox from "@/components/commonUseModule/globalSandBox";
-import StandardTable from "@/components/StandardTable";
-import {PagerHelper, TableColumnHelper} from "@/utils/helper";
-import OptButton from "@/components/commonUseModule/optButton";
-import _ from "lodash";
-import {isEmpty} from "@/utils/lang";
+import styles from './index.less';
+import numeral from 'numeral';
+import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
+import StandardTable from '@/components/StandardTable';
+import { PagerHelper, TableColumnHelper } from '@/utils/helper';
+import OptButton from '@/components/commonUseModule/optButton';
+import _ from 'lodash';
+import { isEmpty } from '@/utils/lang';
 
-const FormItem = Form.Item
+const FormItem = Form.Item;
 const { Option } = Select;
 const Index = props => {
-  const { form, dispatch, loading,
-    budgetChart: { budgetList, budgetChartList } } = props
-  const [yearTime, setYearTime] = useState(moment())
+  const {
+    form,
+    dispatch,
+    loading,
+    budgetChart: { budgetList, budgetChartList },
+  } = props;
+  const [yearTime, setYearTime] = useState(moment());
 
   const handleQueryBudgetChartsData = params => {
     dispatch({
-      type: "budgetChart/queryBudgetChartsData",
+      type: 'budgetChart/queryBudgetChartsData',
       payload: {
-        year: yearTime.format("YYYY"),
+        year: yearTime.format('YYYY'),
         ...params,
-        clusterId: !isEmpty(params?.clusterId)? params?.clusterId : null,
-      }
-    })
-  }
+        clusterId: !isEmpty(params?.clusterId) ? params?.clusterId : null,
+      },
+    });
+  };
   const handleQueryTableListData = params => {
     dispatch({
-      type: "budgetChart/queryBudgetListData",
+      type: 'budgetChart/queryBudgetListData',
       payload: {
-        year: yearTime.format("YYYY"),
+        year: yearTime.format('YYYY'),
         ...PagerHelper.DefaultPage,
         ...params,
-        clusterId: !isEmpty(params?.clusterId)? params?.clusterId : null,
-      }
-    })
-  }
+        clusterId: !isEmpty(params?.clusterId) ? params?.clusterId : null,
+      },
+    });
+  };
 
   // 分页操作
   const handleStandardTableChange = (pagination, filters, sorter) => {
     const formValues = form.getFieldsValue();
     const params = {
-      year: yearTime.format("YYYY"),
+      year: yearTime.format('YYYY'),
       currentPage: pagination.current,
       pageSize: pagination.pageSize,
       ...formValues, // 添加已查询条件去获取分页
@@ -64,28 +68,29 @@ const Index = props => {
     handleQueryTableListData({ ...params, ...sortParams });
   };
 
-
   const handleSearchForm = (params = {}) => {
     const formValues = form.getFieldsValue();
-    handleQueryBudgetChartsData({ ...formValues, ...params})
-  }
+    handleQueryBudgetChartsData({ ...formValues, ...params });
+  };
 
   useEffect(() => {
-    handleQueryBudgetChartsData()
-    handleQueryTableListData()
-  }, [])
+    handleQueryBudgetChartsData();
+    handleQueryTableListData();
+  }, []);
 
   const columns = [
-    TableColumnHelper.genPlanColumn("pjCode", "项目编号", { sorter: true }),
-    TableColumnHelper.genPlanColumn("pjName", "项目名称", {  }),
-    TableColumnHelper.genPlanColumn("estAmount", "立项金额(元)", { sorter: true }),
-    TableColumnHelper.genPlanColumn("contractAmount", "合同成交金额(元)", { sorter: true }),
-    TableColumnHelper.genDateTimeColumn("createTime", "项目接收日期", "YYYY-MM-DD",{ sorter: true }),
-    TableColumnHelper.genPlanColumn("name", "所属预算", { sorter: true }),
-    TableColumnHelper.genPlanColumn("number", "预算编号", { sorter: true }),
+    TableColumnHelper.genPlanColumn('pjCode', '项目编号', { sorter: true }),
+    TableColumnHelper.genPlanColumn('pjName', '项目名称', {}),
+    TableColumnHelper.genPlanColumn('estAmount', '立项金额(元)', { sorter: true }),
+    TableColumnHelper.genPlanColumn('contractAmount', '合同成交金额(元)', { sorter: true }),
+    TableColumnHelper.genDateTimeColumn('createTime', '项目接收日期', 'YYYY-MM-DD', {
+      sorter: true,
+    }),
+    TableColumnHelper.genPlanColumn('name', '所属预算', { sorter: true }),
+    TableColumnHelper.genPlanColumn('number', '预算编号', { sorter: true }),
     {
-      title: "操作",
-      align: "center",
+      title: '操作',
+      align: 'center',
       render: rows => (
         <Fragment>
           <OptButton
@@ -95,18 +100,19 @@ const Index = props => {
             onClick={() => {
               if (!rows?.number) return;
               props.history.push({
-                pathname: "/reportFormManage/budgetForm/belongBudget",
+                pathname: '/reportFormManage/budgetForm/belongBudget',
                 query: {
                   id: rows?.number,
                 },
               });
             }}
           />
-        </Fragment>)
-    }
-  ]
+        </Fragment>
+      ),
+    },
+  ];
 
-  return(
+  return (
     <div className="main">
       <div className={styles.headBox}>
         <div className={styles.head_year}>
@@ -119,10 +125,10 @@ const Index = props => {
                   const formValues = form.getFieldsValue();
                   const obj = {
                     ...formValues,
-                    year: (moment.isMoment(val) && val.format('YYYY')) || moment().format("YYYY")
-                  }
-                  handleQueryBudgetChartsData(obj)
-                  handleQueryTableListData(obj)
+                    year: (moment.isMoment(val) && val.format('YYYY')) || moment().format('YYYY'),
+                  };
+                  handleQueryBudgetChartsData(obj);
+                  handleQueryTableListData(obj);
                 }}
               />
             </FormItem>
@@ -138,9 +144,9 @@ const Index = props => {
         <Button
           type="primary"
           onClick={() => {
-            const YEAR = yearTime.format("YYYY")
+            const YEAR = yearTime.format('YYYY');
             props.history.push({
-              pathname: "/reportFormManage/budgetForm/budgetTree",
+              pathname: '/reportFormManage/budgetForm/budgetTree',
               query: {
                 YEAR,
               },
@@ -154,40 +160,49 @@ const Index = props => {
         <div className={styles.chartHead}>
           <div className={styles.module}>
             <FormItem {...formLayoutItem} label="统计模块" colon={false}>
-              {form.getFieldDecorator("clusterId", {
-                initialValue: ""
+              {form.getFieldDecorator('clusterId', {
+                initialValue: '',
               })(
-                <Select
-                  style={{ width: "100%" }}
-                  onChange={_.debounce(handleSearchForm, 500)}
-                >
+                <Select style={{ width: '100%' }} onChange={_.debounce(handleSearchForm, 500)}>
                   <Option value="">全部模块</Option>
-                </Select>
+                </Select>,
               )}
             </FormItem>
           </div>
           <div className={styles.period}>
             <FormItem {...formLayoutItem} label="统计周期" colon={false}>
-              {form.getFieldDecorator("startMonth", {})(
+              {form.getFieldDecorator(
+                'startMonth',
+                {},
+              )(
                 <Select
-                  style={{ width: "100%" }}
+                  placeholder="请选择月份"
+                  style={{ width: '100%' }}
                   onChange={_.debounce(handleSearchForm, 500)}
                 >
                   {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(v => (
-                    <Option value={v} key={v}>{v}</Option>
+                    <Option value={v} key={v}>
+                      {v}
+                    </Option>
                   ))}
-                </Select>
+                </Select>,
               )}
-              <span style={{ margin: "0 4px" }}>-</span>
-              {form.getFieldDecorator("endMonth", {})(
+              <span style={{ margin: '0 4px' }}>-</span>
+              {form.getFieldDecorator(
+                'endMonth',
+                {},
+              )(
                 <Select
-                  style={{ width: "100%" }}
+                  placeholder="请选择月份"
+                  style={{ width: '100%' }}
                   onChange={_.debounce(handleSearchForm, 500)}
                 >
                   {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(v => (
-                    <Option value={v} key={v}>{v}</Option>
+                    <Option value={v} key={v}>
+                      {v}
+                    </Option>
                   ))}
-                </Select>
+                </Select>,
               )}
             </FormItem>
           </div>
@@ -205,10 +220,7 @@ const Index = props => {
           </Col>
         </Row>
       </Card>
-      <GlobalSandBox
-        title="明细"
-        sandboxStyle={{ marginTop: 16 }}
-      >
+      <GlobalSandBox title="明细" sandboxStyle={{ marginTop: 16 }}>
         <StandardTable
           rowKey="id"
           columns={columns}
@@ -218,14 +230,10 @@ const Index = props => {
         />
       </GlobalSandBox>
     </div>
-  )
-}
+  );
+};
 
-export default connect(
-  ({
-     budgetChart,
-     loading,
-  }) => ({
-    budgetChart,
-    loading: loading.models.budgetChart,
-  }))(Form.create()(Index))
+export default connect(({ budgetChart, loading }) => ({
+  budgetChart,
+  loading: loading.models.budgetChart,
+}))(Form.create()(Index));
