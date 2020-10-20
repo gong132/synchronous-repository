@@ -138,7 +138,7 @@ class CreateDemand extends PureComponent {
   }
 
   createDemand = values => {
-    const { demand: { formType }, handleViewModal, handleQueryList, handleQueryBoard } = this.props
+    const { demand: { formType }, handleViewModal, handleQueryDemandList, handleQueryBoard } = this.props
     this.props
       .dispatch({
         type: 'demand/addUpdateDemand',
@@ -150,7 +150,7 @@ class CreateDemand extends PureComponent {
         if (res) {
           handleViewModal(false);
           if (formType === 'list') {
-            handleQueryList();
+            handleQueryDemandList();
           } else if (formType === 'board') {
             handleQueryBoard();
           }

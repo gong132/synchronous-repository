@@ -72,8 +72,6 @@ const Index = memo(
       dispatch({
         type: 'demand/queryDemandProject',
         payload: {
-          type: demandRoutes[props.location.pathname] === '项目'  && 1 ||
-            demandRoutes[props.location.pathname] === '一般需求'  && 2,
           ...DefaultPage,
           ...params,
         },
@@ -114,9 +112,12 @@ const Index = memo(
     // 根据路由查询不同接口
     const handleQueryDemandList = params => {
       const { myGroup, active, ...others } = commonSearchValue;
+      const demandType = (demandRoutes[props.location.pathname] === '项目'  && 1) ||
+        (demandRoutes[props.location.pathname] === '一般需求'  && 2) || null
       const searchParams = {
         ...searchForm,
         ...others,
+        type: demandType,
         myGroup: Number(myGroup),
         active: Number(active),
         ...params,

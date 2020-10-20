@@ -83,8 +83,8 @@ const Index = props => {
     const { rangeDate, ...others } = form.getFieldsValue();
     const params = {
       ...others,
-      startTime: rangeDate && rangeDate[0].format("YYYY-MM-DD"),
-      endTime: rangeDate && rangeDate[1].format("YYYY-MM-DD"),
+      startTime: rangeDate  && rangeDate?.length > 0 ? rangeDate[0].format("YYYY-MM-DD") : null,
+      endTime: rangeDate && rangeDate?.length > 0 ? rangeDate[1].format("YYYY-MM-DD") : null,
     }
     handleQueryDemandInfo(params)
   }

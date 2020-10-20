@@ -184,8 +184,8 @@ export const DEMAND_LEVEL = [
 ];
 // 需求类型
 export const DEMAND_TYPE = [
-  { key: 'p', value: '项目需求' },
-  { key: 'u', value: '一般需求' },
+  { key: '1', value: '项目需求' },
+  { key: '2', value: '一般需求' },
 ];
 
 // 下拉
