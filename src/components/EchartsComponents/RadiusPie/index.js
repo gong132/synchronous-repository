@@ -57,7 +57,7 @@ class Pie extends Component {
     const { title } = this.props
     const arr = []
     const legendData = []
-    data.map((v) => {
+    data.map((v, i) => {
       if (v.name) {
         legendData.push(v.name)
         arr.push({

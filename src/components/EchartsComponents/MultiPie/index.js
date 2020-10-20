@@ -20,15 +20,15 @@ class Sunburst extends React.Component {
 
   render() {
     const { DataView } = DataSet;
-    const { title, data } = this.props
+    const { title, data, showOtherFlag, handleClickOther } = this.props
     // const data = [
     //   {
     //     value: 251,
-    //     team: '团队一',
+    //     team: '团队一',n
     //     type: '1完成',
     //     per: '50%'
     //   },
-    //   {
+    //   { 
     //     value: 148,
     //     team: '团队一',
     //     type: '1未完成',
@@ -74,7 +74,10 @@ class Sunburst extends React.Component {
       dimension: 'type',
       as: 'percent',
     });
-    console.log(dv1.rows)
+    console.log(dv)
+    if(showOtherFlag) {
+      dv.rows.push({team: '其他团队'})
+    }
 
     // 重新计算完成与未完成百分比
     // const { rows } = dv1
@@ -122,6 +125,7 @@ class Sunburst extends React.Component {
               overflow: 'hidden',
               textOverflow: 'ellipsis'
             }}
+            onClick={ev => { console.log(ev) }}
           />
           <Legend
             name='type'

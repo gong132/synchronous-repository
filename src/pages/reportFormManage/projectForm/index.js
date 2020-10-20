@@ -4,7 +4,7 @@ import moment from 'moment'
 import Pie from '@/components/EchartsComponents/Pie'
 import PieRose from '@/components/EchartsComponents/RosePie'
 import StackBar from '@/components/EchartsComponents/StackBar'
-import { DatePicker, Card, Row, Col } from 'antd'
+import { DatePicker, Card, Row, Col, Empty } from 'antd'
 import styles from './index.less'
 
 const { RangePicker } = DatePicker
@@ -69,35 +69,72 @@ class Project extends PureComponent {
     console.log(params)
   }
 
+  // 处理集群数据
+  handleResolveCluster = (data) => {
+    const arr = []
+    data.map(v => {
+      const obj = {
+        name: v.clusterName,
+        count: v.count,
+      }
+      arr.push(obj)
+    })
+    return arr
+  }
+
+  // 处理项目阶段数据
+  handleResolveStage = (data) => {
+    const arr = []
+    data.map(v => {
+      const obj = {
+        name: v.stageName,
+        count: v.count,
+      }
+      arr.push(obj)
+    })
+    return arr
+  }
+
+  // 判断是否全部为空
+  judgeEmpty = (arr) => {
+    let bool = true
+    arr.map(v => {
+      if (v.count !== 0) {
+        bool = true
+      }
+    })
+    return bool
+  }
+
   render() {
     const { rangeDate } = this.state
     const { projectForm } = this.props
-    const { clusterList, stageStatus, projectList } = projectForm
-    stageStatus.map(v => {
-      v.name = v.pjStageName
-      return true
-    })
+    const {
+      clusterList,
+      stageList,
+      teamList,
+      projectTotal,
+      contractAmountTotal,
+      estAmountTotal
+    } = projectForm
+
     const pieProps = {
       title: '集群/板块分布',
-      data: clusterList,
+      data: this.handleResolveCluster(clusterList),
       handleClickPie: this.handleClickPie,
       handleClickLegend: this.handleClickLegend,
     }
 
     const pieRoseProps = {
       title: '项目阶段分布',
-      data: stageStatus,
+      data: this.handleResolveStage(stageList),
       roseType: 'radius',
       handleClickPie: this.handleClickPie,
       handleClickLegend: this.handleClickLegend,
     }
 
-    projectList.map(v => {
-      v.name = v.pjName
-      return true
-    })
     const StackBarProps = {
-      data: projectList,
+      data: teamList,
       title: '团队分布',
       barColor: ['#826AF9', '#D0AEFF'],
       handleClickBar: this.handleClickBar,
@@ -114,12 +151,13 @@ class Project extends PureComponent {
         <Row gutter={{ xs: 8, sm: 16, md: 24 }}>
           <Col span={12}>
             <Card style={{ marginTop: '16px' }}>
-              <Pie {...pieProps} />
+              {console.log(this.judgeEmpty(clusterList))}
+              {!this.judgeEmpty(clusterList) ? <Pie {...pieProps} /> : <Empty description='集群/板块分布暂无数据' />}
             </Card>
           </Col>
           <Col span={12}>
             <Card style={{ marginTop: '16px' }}>
-              <PieRose {...pieRoseProps} />
+              {!this.judgeEmpty(clusterList) ? <PieRose {...pieRoseProps} /> : <Empty description='项目阶段分布暂无数据' />}
             </Card>
           </Col>
           <Col span={24}>
@@ -128,15 +166,15 @@ class Project extends PureComponent {
             >
               <div className={styles.rightContent}>
                 <span className={styles.rightContent_title}>项目总数: </span>
-                <span className={styles.rightContent_value}>18</span>
+                <span className={styles.rightContent_value}>{projectTotal}</span>
                 <span className={styles.rightContent_title}>立项总金额(元)：</span>
-                <span className={styles.rightContent_value}>18</span>
+                <span className={styles.rightContent_value}>{estAmountTotal}</span>
                 <span className={styles.rightContent_title}>
                   合同成交总金额(元)：
                 </span>
-                <span className={styles.rightContent_value}>18</span>
+                <span className={styles.rightContent_value}>{contractAmountTotal}</span>
               </div>
-              <StackBar {...StackBarProps} />
+              {_.isEmpty(teamList) ? <Empty description="团队分布无项目" /> : <StackBar {...StackBarProps} />}
             </Card>
           </Col>
         </Row>

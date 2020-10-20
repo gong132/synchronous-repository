@@ -554,7 +554,7 @@ class ProjectManage extends Component {
           </Button>
           <Button
             type='primary'
-            onClick={() => this.moreQuery(false)}
+            onClick={() => this.moreQuery()}
             loading={loadingQueryData}
           >确认
           </Button>

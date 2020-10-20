@@ -136,7 +136,8 @@ class CreateDemand extends PureComponent {
   // 通过人员id查团队
   handleQueryGroupBy = async (type, val) => {
     if (type === 'user') {
-      const res = await this.handleQueryGroup(String(val), 'userId')
+      const userId = val.split('-')[0]
+      const res = await this.handleQueryGroup(String(userId), 'userId')
       const { demand: { groupList }, form } = this.props
       if (res && !_.isEmpty(groupList)) {
         form.setFieldsValue({ 'acceptTeamId': groupList[0].id })
@@ -176,6 +177,8 @@ class CreateDemand extends PureComponent {
       })
     }
     form.validateFieldsAndScroll((err, values) => {
+      if (err) return
+      console.log('继续走******************************')
       if (saveType === 'clickBtn') {
         if (err) return;
         if (description.length < 1) {

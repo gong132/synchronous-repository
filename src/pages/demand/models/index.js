@@ -30,6 +30,9 @@ import {
   fetchSearchList,
   deleteDemand,
   toDivider,
+  cancelDemand,
+  backDemand,
+  sendOAReview
 } from '@/services/demand/demand';
 import {
   addMilePlan,
@@ -127,6 +130,26 @@ const Demand = {
     // 取消关注
     *unFocusDemand({ payload }, { call }) {
       const { code, msg } = yield call(unFocusDemand, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    },
+
+    // 取消需求
+    *cancelDemand({ payload }, { call }) {
+      const { code, msg } = yield call(cancelDemand, payload);
+      if (!code || code !== 200) {
+        message.error(msg);
+        return false;
+      }
+      return true;
+    },
+
+    // 需求打回 
+    *backDemand({ payload }, { call }) {
+      const { code, msg } = yield call(backDemand, payload);
       if (!code || code !== 200) {
         message.error(msg);
         return false;
@@ -602,7 +625,7 @@ const Demand = {
     // 添加常用语
     *addCommonLang({ payload }, { call }) {
       const res = yield call(addCommonLang, payload)
-      if (!res || !res.code === 200) {
+      if (!res || !(res.code === 200)) {
         message.error(res.msg)
         return false
       }
@@ -612,7 +635,7 @@ const Demand = {
     // 修改常用语
     *updateCommonLang({ payload }, { call }) {
       const res = yield call(updateCommonLang, payload)
-      if (!res || !res.code === 200) {
+      if (!res || !(res.code === 200)) {
         message.error(res.msg)
         return false
       }
@@ -621,7 +644,7 @@ const Demand = {
     // 查询常用语
     *queryCommonLang({ payload }, { call, put }) {
       const res = yield call(queryCommonLang, payload)
-      if (!res || !res.code === 200) {
+      if (!res || !(res.code === 200)) {
         message.error(res.msg)
         return false
       }
@@ -635,7 +658,7 @@ const Demand = {
     // 查询下拉搜索列表
     *querySearchList({ payload }, { call, put }) {
       const res = yield call(fetchSearchList, payload)
-      if (!res || !res.code === 200) {
+      if (!res || !(res.code === 200)) {
         message.error(res.msg)
         return false
       }
@@ -646,6 +669,15 @@ const Demand = {
         }
       })
       return res.data
+    },
+    // 发起oa技术评审  
+    *sendOAReview({ payload }, { call }) {
+      const res = yield call(sendOAReview, payload)
+      if (!res || !(res.code === 200)) {
+        message.error(res.msg)
+        return false
+      }
+      return true
     },
   },
   reducers: {

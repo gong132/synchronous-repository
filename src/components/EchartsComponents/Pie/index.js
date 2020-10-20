@@ -57,7 +57,6 @@ class Pie extends Component {
     const { title, barColor } = this.props
     const arr = []
     const legendData = []
-    console.log(data)
     data.map((v, i) => {
       if (v.name) {
         legendData.push(v.name)

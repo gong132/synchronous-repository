@@ -28,8 +28,11 @@ const { Option } = Select
 const { RangePicker } = DatePicker
 
 @Form.create()
-@connect(({ demand }) => ({
+@connect(({ demand, loading }) => ({
   demand,
+  loadingQuery: loading.effects['demand/queryMilePlan'],
+  loadingAdd: loading.effects['demand/addMilePlan'],
+  loadingUpdate: loading.effects['demand/updateMilePlan']
 }))
 class MilePlan extends PureComponent {
   constructor(props) {
@@ -44,10 +47,11 @@ class MilePlan extends PureComponent {
 
   componentDidMount() {
     this.handleQueryList()
+    this.handleQueryUser()
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.showCreateMilePlan) {
+    if (nextProps.showCreateMilePlan) {
       this.handleVisibleModal(true, '新建里程碑计划')
       nextProps.handleViewCreatePlan(false)
     }
@@ -65,6 +69,16 @@ class MilePlan extends PureComponent {
       },
     });
   }
+
+  // 查人员
+  handleQueryUser = userName => {
+    this.props.dispatch({
+      type: 'demand/fetchUserData',
+      payload: {
+        userName,
+      },
+    });
+  };
 
   // 新增
   handleAddPlan = (params) => {
@@ -94,6 +108,14 @@ class MilePlan extends PureComponent {
         this.handleVisibleModal(false)
         this.handleQueryList()
         this.props.handleQueryLogList()
+        const id = getParam('id');
+        this.props
+          .dispatch({
+            type: 'demand/queryDemandInfo',
+            payload: {
+              id,
+            },
+          })
       }
     })
   }
@@ -123,7 +145,9 @@ class MilePlan extends PureComponent {
         values.stageStart = moment(values.planTime[0]).format('YYYY-MM-DD')
         values.stageEnd = moment(values.planTime[1]).format('YYYY-MM-DD')
       }
-      values.headName = planStageListMap[values.headId]
+      const headerArr = values.headId ? values.headId.split('-') : ['', '']
+      values.headName = headerArr[1]
+      values.headId = headerArr[0]
       values.demandNo = demandNumber
       if (modalTitle === '编辑') {
         values.id = recordValue.id
@@ -134,7 +158,7 @@ class MilePlan extends PureComponent {
     });
   }
 
-  handleVisibleModal(bool, modalTitle, record = {}){
+  handleVisibleModal(bool, modalTitle, record = {}) {
     this.setState({
       visibleModal: bool,
       modalTitle: bool ? modalTitle : '',
@@ -152,8 +176,8 @@ class MilePlan extends PureComponent {
   };
 
   genModal = () => {
-    const { demand, form } = this.props
-    const { planStageList } = demand
+    const { demand, form, loadingAdd, loadingUpdate } = this.props
+    const { planStageList, userData } = demand
     const { visibleModal, modalTitle, recordValue } = this.state
     const {
       target,
@@ -178,6 +202,7 @@ class MilePlan extends PureComponent {
             <CustomBtn
               onClick={this.handleSubmit}
               type="save"
+              loading={modalTitle === '编辑' ? loadingUpdate : loadingAdd}
             />
           </div>
         }
@@ -230,6 +255,7 @@ class MilePlan extends PureComponent {
               })(
                 <Select
                   allowClear
+                  onSearch={_.debounce(this.handleQueryUser, 500)}
                   optionFilterProp="children"
                   filterOption={(input, option) =>
                     JSON.stringify(option.props.children)
@@ -241,12 +267,11 @@ class MilePlan extends PureComponent {
                     width: '100%'
                   }}
                 >
-                  {!_.isEmpty(planStageList) &&
-                    planStageList.map(d => (
-                      <Option key={d.id} value={d.id}>
-                        {d.stageName}
-                      </Option>
-                    ))}
+                  {!_.isEmpty(userData) && userData.map(d => (
+                    <Option key={d.userId} value={`${d.userId}-${d.userName}`}>
+                      {d.userName}
+                    </Option>
+                  ))}
                 </Select>,
               )}
             </FormItem>
@@ -267,11 +292,13 @@ class MilePlan extends PureComponent {
   }
 
   render() {
-    const { demand } = this.props
-    const { milePlanList, planStageListMap, demandInfo={} } = demand
+    const { demand, loadingQuery } = this.props
+    const { milePlanList, planStageListMap, demandInfo = {} } = demand
     const { receiverName, status } = demandInfo
     const { visibleModal } = this.state
-    const { userInfo:{userName} } = getUserInfo()
+    const { userInfo = {} } = getUserInfo()
+    const { userName } = userInfo
+
     const proColumns = [
       {
         title: '里程碑阶段',
@@ -355,7 +382,7 @@ class MilePlan extends PureComponent {
             rowKey={(record, index) => index}
             columns={proColumns}
             data={milePlanList}
-            // loading={loadingQueryLogData}
+            loading={loadingQuery}
             onChange={this.handleStandardTableChangePro}
           />
         </GlobalSandBox>

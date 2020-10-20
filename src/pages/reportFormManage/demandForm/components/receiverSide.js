@@ -17,20 +17,24 @@ import {
 class Receiver extends PureComponent {
   constructor(props) {
     super(props)
-    this.state = {
-      currentNumber: 0
-    }
     this.handleSlideBar = _.throttle(this.handleSlideBar, 1000)
+    this.handleClickOther = this.handleClickOther.bind(this)
   }
 
   componentDidMount() {
-    const { currentNumber } = this.state
+    const { demandForm: { currentNumber } } = this.props
     const dateStart = new Date()
     const dateEnd = moment(dateStart)
       .add(3, 'months')
       .format('YYYY-MM-DD');
     this.props.handleQueryReportForm({ currentNumber, type: 2, startTime: moment(dateStart).format('YYYY-MM-DD'), endTime: moment(dateEnd).format('YYYY-MM-DD') })
     // this.props.handleQueryReportForm({currentNumber, type: 2,})
+  }
+
+  // 点击其他
+  handleClickOther = () => {
+    const { demandForm: { currentNumber } } = this.props
+    this.props.handleQueryReportForm({ currentNumber, type: 2 })
   }
 
   // 点击柱形事件
@@ -111,9 +115,7 @@ class Receiver extends PureComponent {
     const { systemList,
       teamData,
       finishData,
-      currentNumber,
       showOtherFlag, } = demandForm
-    console.log(systemList, teamData, finishData)
     const barProps = {
       data: this.handleResolveSystem(systemList),
       title: '所属系统',
@@ -133,9 +135,11 @@ class Receiver extends PureComponent {
 
     const multiPieProps = {
       title: '团队分布',
+      showOtherFlag: showOtherFlag,
       data: this.handleResolveTeam(teamData),
       handleClickPie: this.handleClickPie,
       handleClickLegend: this.handleClickLegend,
+      handleClickOther: this.handleClickOther
     }
 
     return (

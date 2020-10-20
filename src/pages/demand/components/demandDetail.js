@@ -67,6 +67,7 @@ const { Option } = Select;
   loadingQueryLogData: loading.effects['demand/fetchLogList'],
   loadingQueryStoryData: loading.effects['demand/queryStoryList'],
   loadingEditDemand: loading.effects['demand/updateDemand'],
+  loadingSendOa: loading.effects['demand/sendOAReview']
 }))
 class Detail extends Component {
   constructor(props) {
@@ -147,9 +148,9 @@ class Detail extends Component {
 
   // 查日志
   handleQueryLogList = (obj = {}) => {
-    const id = getParam('id');
+    const no = getParam('no');
     const params = {
-      linkId: id,
+      linkId: no,
       type: '4',
     };
     this.props.dispatch({
@@ -175,8 +176,8 @@ class Detail extends Component {
 
   // 查询人员
   handleQueryUser = (params) => {
-    if(typeof params === 'string') {
-      params = {userName: params}
+    if (typeof params === 'string') {
+      params = { userName: params }
     }
     this.props.dispatch({
       type: 'demand/fetchUserData',
@@ -190,7 +191,7 @@ class Detail extends Component {
   handleChangeGroup = (val) => {
     const { form } = this.props
     console.log(val)
-    form.setFieldsValue({['receiverId']: ''})
+    form.setFieldsValue({ ['receiverId']: '' })
     this.handleQueryUser({ teamId: val })
   }
 
@@ -253,7 +254,8 @@ class Detail extends Component {
   // 通过人员id查团队
   handleQueryGroupBy = async (type, val) => {
     if (type === 'user') {
-      const res = await this.handleQueryGroup({ userId: String(val) })
+      const userId = val.split('-')[0]
+      const res = await this.handleQueryGroup({ userId: String(userId) })
       const { demand: { groupList }, form } = this.props
       if (res && !_.isEmpty(groupList)) {
         form.setFieldsValue({ 'acceptTeamId': groupList[0].id })
@@ -263,7 +265,7 @@ class Detail extends Component {
 
   handleSubmit = () => {
     const { demand } = this.props
-    const { groupMap, demandInfo={} } = demand
+    const { groupMap, demandInfo = {} } = demand
     const { status } = demandInfo
     const { descriptionState, urls } = this.state;
     // const id = getParam('id');
@@ -295,7 +297,7 @@ class Detail extends Component {
       // values.id = id;
       values.attachmentFiles = arr
       values.createType = 2
-      if(status === 1) {
+      if (status === 1) {
         values.createType = 1
       }
 
@@ -400,25 +402,35 @@ class Detail extends Component {
   handleResolveCancelOrBack = type => {
     const id = getParam('id');
     const params = {
-      id,
+      demandId: id,
     };
     if (type === 'cancel') {
-      params.status = 10;
+      this.props
+        .dispatch({
+          type: 'demand/cancelDemand',
+          payload: {
+            ...params,
+          },
+        })
+        .then(res => {
+          if (res) {
+            window.history.back();
+          }
+        });
     } else if (type === 'back') {
-      params.status = 1;
+      this.props
+        .dispatch({
+          type: 'demand/backDemand',
+          payload: {
+            ...params,
+          },
+        })
+        .then(res => {
+          if (res) {
+            window.history.back();
+          }
+        });
     }
-    this.props
-      .dispatch({
-        type: 'demand/updateDemand',
-        payload: {
-          ...params,
-        },
-      })
-      .then(res => {
-        if (res) {
-          window.history.back();
-        }
-      });
   };
 
   handSearchITAssignAuth = () => {
@@ -455,12 +467,12 @@ class Detail extends Component {
       demandId,
     };
     // 待指派 2 团队经理将需求受理到自己团队
-    if(status === 2) {
+    if (status === 2) {
       params.acceptType = 1
     }
 
     // 待受理 3 受理人将需求受理人指派为自己
-    if(status === 3) {
+    if (status === 3) {
       params.acceptType = 2
     }
 
@@ -503,9 +515,13 @@ class Detail extends Component {
     });
   };
 
-  // 提交oa
+  // 提交oa 
   handleOAaction = type => {
-    if (type === 'p') {
+    const id = getParam('id')
+    const { demand = {} } = this.props
+    const { milePlanList = {}, isHaveMilestone } = demand
+    const { list = [] } = milePlanList
+    if (type === 'p' && (list.length === 0 || isHaveMilestone === 0)) {
       // 项目需求
       Modal.confirm({
         title: '您的项目需求还没有里程碑计划，不能进入下一节点。现在是否去增加里程碑计划？',
@@ -517,6 +533,18 @@ class Detail extends Component {
     if (type === 'u') {
       // 一般需求
     }
+    this.props.dispatch({
+      type: 'demand/sendOAReview',
+      payload: {
+        demandId: id
+      }
+    }).then(res => {
+      if (res) {
+        this.handleQueryDetail();
+        this.handleQueryLogList();
+        this.handleQueryFlowList();
+      }
+    })
   };
 
   renderFile = (v) => {
@@ -533,7 +561,7 @@ class Detail extends Component {
   render() {
     const { editBool, descriptionState, showCreateMilePlan, urls } = this.state;
     const {
-      userInfo={}
+      userInfo = {}
     } = getUserInfo();
     const { isTeamHead, userName } = userInfo
     const {
@@ -541,13 +569,14 @@ class Detail extends Component {
       loadingQueryInfo,
       loadingQueryLogData,
       loadingEditDemand,
+      loadingSendOa,
       demand: { budgetList, userDataMap, demandInfo, groupList, logList, flowList, ITAssignVisible, assignorVisible, userData },
     } = this.props;
     const w = '100%';
     const {
       title, demandNumber, status, budgetNumbers, type = 'u', priority, introducer, acceptTeam,
       communicate, expectedCompletionDate, plannedLaunchDate, actualLineDate, projectNo, demandUrgency,
-      businessCompliance, riskControlFunction, creator, createTime, requirementDescription, id, receiverName, receiverId, acceptTeamId
+      businessCompliance, riskControlFunction, creator, createTime, requirementDescription, id, receiverName, receiverId, acceptTeamId, isOaApprove, isOaReview, isHaveMilestone
     } = demandInfo || {};
     const btnStyle = {
       border: '1px solid #D63649',
@@ -568,7 +597,7 @@ class Detail extends Component {
         name: '标题',
         value: title,
         style: { whiteSpace: 'pre' },
-        type: 'p',
+        type: 1,
       },
       { span: 1, required: false, name: '需求编号', value: demandNumber, type: 'p' },
       {
@@ -576,7 +605,7 @@ class Detail extends Component {
         required: false,
         name: '状态',
         value: status,
-        type: 'p',
+        type: 1,
         arrDict: BOARD_TITLE_OBJ,
       },
       { span: 1, required: false, name: '预算编号', value: budgetNumbers, type: 'p' },
@@ -585,7 +614,7 @@ class Detail extends Component {
         required: false,
         name: '需求类型',
         value: type,
-        type: 'p',
+        type: 1,
         arrDict: DEMAND_TYPE_OBJ,
       },
       {
@@ -593,31 +622,31 @@ class Detail extends Component {
         required: false,
         name: '优先级',
         value: priority,
-        type: 'p',
+        type: 1,
         arrDict: DEMAND_PRIORITY_OBJ,
       },
-      { span: 1, required: false, name: '提出人', value: introducer, type: 'p', },
-      { span: 1, required: false, name: '受理团队', value: acceptTeam, type: 'p' },
-      { span: 1, required: false, name: '受理人', value: receiverName, type: 'p' },
+      { span: 1, required: false, name: '提出人', value: introducer, type: 1, },
+      { span: 1, required: false, name: '受理团队', value: acceptTeam, type: 1 },
+      { span: 1, required: false, name: '受理人', value: receiverName, type: 1 },
       {
         span: 1,
         required: false,
         name: '是否沟通',
         value: communicate,
-        type: 'p',
+        type: 1,
         arrDict: IS_OR_NOT,
       },
-      { span: 1, required: false, name: '期望完成日期', value: expectedCompletionDate, type: 'p' },
-      { span: 1, required: false, name: '计划上线日期', value: plannedLaunchDate, type: 'p' },
-      { span: 1, required: false, name: '实际上线日期', value: actualLineDate, type: 'p' },
-      { span: 1, required: false, name: '项目编号', value: projectNo, type: 'p' },
-      { span: 1, required: false, name: '需求紧迫性', value: demandUrgency, type: 'u' },
+      { span: 1, required: false, name: '期望完成日期', value: expectedCompletionDate, type: 1 },
+      { span: 1, required: false, name: '计划上线日期', value: plannedLaunchDate, type: 1 },
+      { span: 1, required: false, name: '实际上线日期', value: actualLineDate, type: 1 },
+      { span: 1, required: false, name: '项目编号', value: projectNo, type: 1 },
+      { span: 1, required: false, name: '需求紧迫性', value: demandUrgency, type: 2 },
       {
         span: 1,
         required: false,
         name: '是否涉及业务合规性',
         value: businessCompliance,
-        type: 'u',
+        type: 2,
         arrDict: IS_OR_NOT,
       },
       {
@@ -625,20 +654,20 @@ class Detail extends Component {
         required: false,
         name: '是否涉及业务风控功能',
         value: riskControlFunction,
-        type: 'u',
+        type: 2,
         arrDict: IS_OR_NOT,
       },
-      { span: 3, required: false, name: '创建人', value: creator, type: 'p' },
-      { span: 3, required: false, name: '创建时间', value: createTime, type: 'p' },
+      { span: 3, required: false, name: '创建人', value: creator, type: 1 },
+      { span: 3, required: false, name: '创建时间', value: createTime, type: 1 },
       {
         span: 3,
         required: false,
         name: '需求描述',
         value: requirementDescription,
         dataIndex: 'description',
-        type: 'p',
+        type: 1,
       },
-      { span: 3, required: false, name: '附件', value: '', type: 'p', dataIndex: 'file' },
+      { span: 3, required: false, name: '附件', value: '', type: 1, dataIndex: 'file' },
     ];
 
     const columns = [
@@ -683,11 +712,11 @@ class Detail extends Component {
             />
           ) : null}
           <CustomBtn
-              style={{ float: 'left' }}
-              onClick={() => this.handleToDivider(id)}
-              type="create"
-              title="待拆分"
-            />
+            style={{ float: 'left' }}
+            onClick={() => this.handleToDivider(id)}
+            type="create"
+            title="待拆分"
+          />
           <div className="yCenter" style={{ float: 'right' }}>
             {(((status === 4 || status === 5 || status === 7 || status === 10)
               && receiverName === userName)
@@ -762,45 +791,54 @@ class Detail extends Component {
               <Fragment>
                 {type === 1 ? (
                   <Fragment>
-                    <OptButton
-                      style={{
-                        backgroundColor: 'white',
-                        color: '#B0BAC9',
-                        borderColor: '#B0BAC9',
-                      }}
-                      disabled
-                      img={psIcon}
-                      text="已提交OA技术评审"
-                    />
-                    {receiverName === userName && <OptButton
-                      style={{
-                        backgroundColor: 'white',
-                      }}
-                      img={apsIcon}
-                      text="提交OA技术评审"
-                      onClick={() => this.handleOAaction('p')}
-                    />}
+                    {receiverName === userName
+                      ? isOaReview === 1
+                        ? <OptButton
+                          style={{
+                            backgroundColor: 'white',
+                            color: '#B0BAC9',
+                            borderColor: '#B0BAC9',
+                          }}
+                          disabled
+                          img={psIcon}
+                          text="已提交OA技术评审"
+                        />
+                        : <OptButton
+                          style={{
+                            backgroundColor: 'white',
+                          }}
+                          img={apsIcon}
+                          text="提交OA技术评审"
+                          loading={loadingSendOa}
+                          onClick={() => this.handleOAaction('p')}
+                        />
+                      : null
+                    }
                   </Fragment>
                 ) : (
                     <Fragment>
-                      <OptButton
-                        style={{
-                          backgroundColor: 'white',
-                          color: '#B0BAC9',
-                          borderColor: '#B0BAC9',
-                        }}
-                        disabled
-                        img={psIcon}
-                        text="已提交OA审批"
-                      />
-                      { receiverName === userName && <OptButton
-                        style={{
-                          backgroundColor: 'white',
-                        }}
-                        img={apsIcon}
-                        text="提交OA审批"
-                        onClick={() => this.handleOAaction('u')}
-                      />}
+                      {receiverName === userName
+                        ? isOaApprove === 1
+                          ? <OptButton
+                            style={{
+                              backgroundColor: 'white',
+                              color: '#B0BAC9',
+                              borderColor: '#B0BAC9',
+                            }}
+                            disabled
+                            img={psIcon}
+                            text="已提交OA审批"
+                          />
+                          : <OptButton
+                            style={{
+                              backgroundColor: 'white',
+                            }}
+                            img={apsIcon}
+                            text="提交OA审批"
+                            onClick={() => this.handleOAaction('u')}
+                          />
+                        : null
+                      }
                     </Fragment>
                   )}
                 {editBool ? (
@@ -1077,7 +1115,7 @@ class Detail extends Component {
                     )}
                   </FormItem>
                 </DescriptionItem>
-                {type === 'u' && (
+                {type === 2 && (
                   <Fragment>
                     <DescriptionItem
                       span={1}
@@ -1196,7 +1234,7 @@ class Detail extends Component {
                 <Descriptions column={3} bordered className={styles.formatDetailDesc}>
                   {detailList.map(
                     (v, i) =>
-                      (v.type === type || v.type === 'p') && (
+                      (v.type === type || v.type === 1) && (
                         <DescriptionItem
                           key={i.toString()}
                           span={v.span}
@@ -1239,6 +1277,7 @@ class Detail extends Component {
           <MilePlan
             handleQueryLogList={this.handleQueryLogList}
             handleViewCreatePlan={this.handleViewCreatePlan}
+            handleQueryDetail={this.handleQueryDetail}
             demandNumber={demandNumber}
             showCreateMilePlan={showCreateMilePlan}
           />

@@ -176,9 +176,25 @@ export async function estimate(params) {
   });
 }
 
-// q取消关注
+// 取消关注
 export async function unFocusDemand(params) {
   return request('/demand/cancel/attention', {
+    method: 'get',
+    params,
+  });
+}
+
+// 取消需求
+export async function cancelDemand(params) {
+  return request('/demand/cancel', {
+    method: 'get',
+    params,
+  });
+}
+
+// 需求打回
+export async function backDemand(params) {
+  return request('/demand/return', {
     method: 'get',
     params,
   });
@@ -235,6 +251,14 @@ export async function queryCommonLang(params) {
 // 需求到待拆分
 export async function toDivider(params) {
   return request('/demand/update/status', {
+    method: 'get',
+    params,
+  });
+}
+
+// 发起oa技术评审
+export async function sendOAReview(params) {
+  return request('/demand/send/oa/review', {
     method: 'get',
     params,
   });
