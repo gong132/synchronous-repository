@@ -111,20 +111,26 @@ class Sunburst extends React.Component {
           <Legend
             name='team'
             position="right-bottom"
+            clickable={true}
             useHtml
+            itemTpl={'<li class="g2-legend-list-item item-{index} {checked}" data-color="{originColor}" data-value="{originValue}" style="cursor: pointer;font-size: 14px">'
+            + '<i class="g2-legend-marker" style="width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:10px;background-color: {color};"></i>'
+            + '<span title={value} class="g2-legend-text" style="display: inline-block; font-size: 12px; width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: pre; margin-right: 8px">{value}</span>'
+            + '</li>'}
             g2-legend-marker={{
               position: 'relative',
               top: '-1px',
               width: '13px',
               height: '13px'
             }}
-            g2-legend-text={{
-              display: 'inline-block',
-              color: 'red !important',
-              width: '100px',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis'
+            // g2-legend-text={{
+            //   color: 'red'
+            // }}
+            g2-legend-list-item={{
+              display: 'flex',
+              alignItems: 'center'
             }}
+            onHover={ev => '123'}
             onClick={ev => { console.log(ev) }}
           />
           <Legend

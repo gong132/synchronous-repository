@@ -599,7 +599,7 @@ class Detail extends Component {
         style: { whiteSpace: 'pre' },
         type: 1,
       },
-      { span: 1, required: false, name: '需求编号', value: demandNumber, type: 'p' },
+      { span: 1, required: false, name: '需求编号', value: demandNumber, type: 1 },
       {
         span: 1,
         required: false,
@@ -608,7 +608,7 @@ class Detail extends Component {
         type: 1,
         arrDict: BOARD_TITLE_OBJ,
       },
-      { span: 1, required: false, name: '预算编号', value: budgetNumbers, type: 'p' },
+      { span: 1, required: false, name: '预算编号', value: budgetNumbers, type: 1 },
       {
         span: 1,
         required: false,
@@ -657,7 +657,7 @@ class Detail extends Component {
         type: 2,
         arrDict: IS_OR_NOT,
       },
-      { span: 3, required: false, name: '创建人', value: creator, type: 1 },
+      { span: 1, required: false, name: '创建人', value: creator, type: 1 },
       { span: 3, required: false, name: '创建时间', value: createTime, type: 1 },
       {
         span: 3,

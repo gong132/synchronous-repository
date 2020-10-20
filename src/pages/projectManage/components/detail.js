@@ -73,9 +73,9 @@ class Detail extends PureComponent {
 
   // 查日志
   handleQueryLogList = (obj = {}) => {
-    const id = getParam('id');
+    const no = getParam('no');
     const params = {
-      linkId: id,
+      linkId: no,
       type: '7',
     };
     this.props.dispatch({
@@ -226,7 +226,7 @@ class Detail extends PureComponent {
         type: 'p',
         // arrDict: BOARD_TITLE_OBJ,
       },
-      { span: 1, required: false, name: '项目状态', value: pjStage, arrDict: PROJECT_STATUS_OBJ },
+      { span: 1, required: false, name: '项目状态', value: pjStage, arrDict: stageStatusMap },
       {
         span: 1,
         required: false,

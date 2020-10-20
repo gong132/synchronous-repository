@@ -210,7 +210,7 @@ class SectorDetail extends PureComponent {
       <Fragment>
         <GlobalSandBox
           img={budgetXq}
-          title="板块详情"
+          title="集群/板块详情"
           optNode={
             !editBool ? (
               authActions.includes(MENU_ACTIONS.EDIT) && <OptButton

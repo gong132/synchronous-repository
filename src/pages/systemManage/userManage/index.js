@@ -107,10 +107,12 @@ class UserManage extends Component {
 
   handleSubmit = () => {
     const { record } = this.state
-    const { id } = record
+    const { id, userName, userId } = record
     this.props.form.validateFields((err, values) => {
       if (err) return;
       values.id = id
+      values.userName=userName
+      values.userId=userId
       this.props.dispatch({
         type: 'userManage/updateUser',
         payload: {
@@ -255,7 +257,7 @@ class UserManage extends Component {
         }
       },
       {
-        title: '团队名称',
+        title: '所属团队',
         dataIndex: 'teamId',
         key: 'teamId',
         render: (text) => groupMap[text]
@@ -288,7 +290,6 @@ class UserManage extends Component {
     const { form, userManage } = this.props;
     const { userName, userId } = record;
     const { roleData, checkRole } = userManage
-    console.log(checkRole)
     return (
       <Modal
         title="编辑"
@@ -310,18 +311,12 @@ class UserManage extends Component {
         <Row>
           <Col span={24}>
             <FormItem label="姓名" labelCol={{ span: 2 }} wrapperCol={{ span: 8 }}>
-              {form.getFieldDecorator('userName', {
-                rules: [{ required: true, message: '请输入姓名!' }],
-                initialValue: userName,
-              })(<Input disabled placeholder="请输入姓名" />)}
+              {userName}
             </FormItem>
           </Col>
           <Col span={24}>
             <FormItem label="工号" labelCol={{ span: 2 }} wrapperCol={{ span: 8 }}>
-              {form.getFieldDecorator('userId', {
-                rules: [{ required: true, message: '请输入工号!' }],
-                initialValue: userId,
-              })(<Input disabled placeholder="请输入工号" />)}
+             {userId}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -334,7 +329,7 @@ class UserManage extends Component {
                 }}
               >
                 {form.getFieldDecorator('roleArr', {
-                  rules: [{ required: true, message: '请至少选择一个角色！' }],
+                  rules: [{ required: false, message: '请至少选择一个角色！' }],
                   initialValue: checkRole,
                 })(
                   <Checkbox.Group style={{ width: '100%' }}>

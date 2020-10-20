@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import GlobalSandBox from '@/components/commonUseModule/globalSandBox';
 import budgetIcon from '@/assets/icon/modular_xq.svg';
 import { Descriptions } from 'antd'
-import { getParam,
+import {
+  getParam,
   // getUserInfo
 } from '@/utils/utils';
 import { connect } from 'dva'
@@ -49,7 +50,7 @@ const TeamDetail = (props) => {
               {console.log(v.value)}
               {
                 (_.isArray(v.value) && !_.isEmpty(v.value))
-                  ? v.value.map(n => `${n} `)
+                  ? v.value.map(n => <span>{`${n} `}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>)
                   : v.value
               }
             </Descriptions.Item>

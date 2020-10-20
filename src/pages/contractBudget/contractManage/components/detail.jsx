@@ -373,16 +373,16 @@ class Detail extends PureComponent {
         key: 'payProportion',
       },
       {
-        title: '付款时间',
+        title: '付款提交时间',
         dataIndex: 'payTime',
         key: 'payTime',
       },
     ];
-    const columns = [
-      TableColumnHelper.genPlanColumn('operateUserName', '操作人', { width: '100px' }),
-      TableColumnHelper.genPlanColumn('content', '操作内容'),
-      TableColumnHelper.genPlanColumn('updateTime', '操作时间', { width: '100px' }),
-    ];
+    // const columns = [
+    //   TableColumnHelper.genPlanColumn('operateUserName', '操作人', { width: '100px' }),
+    //   TableColumnHelper.genPlanColumn('content', '操作内容'),
+    //   TableColumnHelper.genPlanColumn('updateTime', '操作时间', { width: '100px' }),
+    // ];
     const detailList = [
       { span: 2, required: false, name: '合同名称', value: name, style: { whiteSpace: 'pre' } },
       { span: 1, required: false, name: '合同编号', value: number },

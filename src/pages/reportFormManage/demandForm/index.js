@@ -63,8 +63,8 @@ class Demand extends PureComponent {
   handleQueryReportForm = (params) => {
     const { rangeDate } = this.state
     if (!_.isEmpty(rangeDate)) {
-      params.startTime = moment(rangeDate[0]).format('YYYY-MM-DD')
-      params.endTime = moment(rangeDate[1]).format('YYYY-MM-DD')
+      params.startTime = moment(rangeDate[0]).startOf('day').format('YYYY-MM-DD HH:mm:ss')
+      params.endTime = moment(rangeDate[1]).endOf('day').format('YYYY-MM-DD HH:mm:ss')
     }
     this.props.dispatch({
       type: 'demandForm/queryDemandReportForm',

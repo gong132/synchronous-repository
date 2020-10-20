@@ -6,9 +6,9 @@ import Editor from '@/components/TinyEditor';
 import moment from 'moment';
 import _ from 'lodash'
 import UploadFile from '@/components/FileUpload'
-// import styles from '../index.js.less'
 import { Modal, Form, Select, Input, DatePicker, Col, Row, message, Radio, Button } from 'antd';
 import { DEMAND_TYPE_ARR, DEMAND_PRIORITY_ARR, DEFAULT_DESC } from '../util/constant';
+import { getUserInfo } from '@/utils/utils'
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -66,14 +66,6 @@ class CreateDemand extends PureComponent {
     })
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   const {demand: {groupList}} = nextProps
-  //   const {form} = this.props
-  //   if(!_.isEmpty(groupList) && groupList.length === 1) {
-  //     form.se
-  //   }
-  // }
-
   handleChangeDes = content => {
     this.setState({
       description: content
@@ -129,7 +121,7 @@ class CreateDemand extends PureComponent {
   // 通过团队查人员
   handleChangeGroup = (val) => {
     const { form } = this.props
-    form.setFieldsValue({['receiverId']: ''})
+    form.setFieldsValue({['receiverId']: undefined})
     this.handleQueryUser({ teamId: val })
   }
 
@@ -178,7 +170,6 @@ class CreateDemand extends PureComponent {
     }
     form.validateFieldsAndScroll((err, values) => {
       if (err) return
-      console.log('继续走******************************')
       if (saveType === 'clickBtn') {
         if (err) return;
         if (description.length < 1) {
@@ -201,7 +192,6 @@ class CreateDemand extends PureComponent {
       values.acceptTeam = groupMap[values.acceptTeamId]
       values.attachments = arr
       console.log(values)
-      // return
       // 如果是编辑页面走编辑接口
       if (modalTitle === '编辑') {
         const copyValue = {}
@@ -219,6 +209,8 @@ class CreateDemand extends PureComponent {
   renderForm = () => {
     const { form, recordValue = {}, demand: { groupList, budgetList, userData }, handleQueryUser } = this.props
     const { description, urls } = this.state
+    const { userInfo={} } = getUserInfo()
+    const { userId, userName} = userInfo
     const {
       title,
       expectedCompletionDate,
@@ -285,7 +277,7 @@ class CreateDemand extends PureComponent {
             <FormItem {...formLayoutItemAddDouble} label="提出人">
               {form.getFieldDecorator('introducerId', {
                 rules: [{ required: true, message: '请输入提出人' }],
-                initialValue: introducerId ? `${introducerId}-${introducer}` : '',
+                initialValue: introducerId ? `${introducerId}-${introducer}` : `${userId}-${userName}`,
               })(
                 <Select
                   allowClear
@@ -316,7 +308,6 @@ class CreateDemand extends PureComponent {
               })(
                 <Select
                   allowClear
-                  // showSearch
                   placeholder="请输入需求类型"
                 >
                   {DEMAND_TYPE_ARR.map(d => (
@@ -336,7 +327,6 @@ class CreateDemand extends PureComponent {
               })(
                 <Select
                   allowClear
-                  // showSearch
                   placeholder="请输入优先级"
                 >
                   {DEMAND_PRIORITY_ARR.map(d => (
@@ -379,7 +369,7 @@ class CreateDemand extends PureComponent {
             <FormItem {...formLayoutItemAddDouble} label="受理人">
               {form.getFieldDecorator('receiverId', {
                 rules: [{ required: false, message: '请输入受理人' }],
-                initialValue: receiverId ? `${receiverId}-${receiverName}` : '',
+                initialValue: receiverId ? `${receiverId}-${receiverName}` : undefined,
               })(
                 <Select
                   allowClear
@@ -407,7 +397,7 @@ class CreateDemand extends PureComponent {
             <FormItem {...formLayoutItemAddDouble} label="是否沟通">
               {form.getFieldDecorator('communicate', {
                 rules: [{ required: false, message: '请选择是否沟通' }],
-                initialValue: communicate,
+                initialValue: communicate || 'n',
               })(
                 <RadioGroup>
                   <Radio value="y" key="y">

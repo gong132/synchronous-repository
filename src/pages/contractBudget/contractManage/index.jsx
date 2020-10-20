@@ -109,8 +109,8 @@ class ContractManage extends Component {
     const formValues = this.props.form.getFieldsValue();
     console.log(formValues)
     if (formValues.signTime && !_.isEmpty(formValues.signTime)) {
-      formValues.signingStartTime = moment(formValues.signTime[0]).format('YYYY-MM-DD')
-      formValues.signingEndTime = moment(formValues.signTime[1]).format('YYYY-MM-DD')
+      formValues.signingStartTime = moment(formValues.signTime[0]).startOf('day').format('YYYY-MM-DD HH:mm:ss')
+      formValues.signingEndTime = moment(formValues.signTime[1]).endOf('day').format('YYYY-MM-DD HH:mm:ss')
     } else if (formValues.defendPayTime) {
       formValues.defendPayTime = moment(formValues.defendPayTime).format('YYYY-MM-DD')
     }
@@ -290,6 +290,14 @@ class ContractManage extends Component {
     });
   };
 
+  // 监听popover显示或隐藏
+  subPopoverStatus = (v) => {
+    console.log(v)
+    this.setState({
+      searchMore: v
+    })
+  }
+
   renderSearchForm = () => {
     const { searchMore } = this.state
     const {
@@ -370,7 +378,7 @@ class ContractManage extends Component {
           <Col span={24}>
             <FormItem colon={false} label="供应商">
               {getFieldDecorator(
-                'providerCompanyName',
+                'providerCompanyId',
                 {},
               )(
                 <Select
@@ -392,7 +400,7 @@ class ContractManage extends Component {
                 >
                   {!_.isEmpty(supplierList) &&
                     supplierList.map(d => (
-                      <Option key={d.id} value={d.name}>
+                      <Option key={d.id} value={d.id}>
                         {d.name}
                       </Option>
                     ))}
@@ -474,7 +482,7 @@ class ContractManage extends Component {
           {/* <Button onClick={() => this.moreQuery()} loading={loadingQueryData} type="primary" ghost>
             查询
           </Button> */}
-          <Button
+          {/* <Button
             type='primary'
             ghost
             onClick={() => this.setSearchMore(false)}
@@ -483,7 +491,7 @@ class ContractManage extends Component {
             type='primary'
             onClick={() => this.moreQuery(false)}
             loading={loadingQueryData}
-          >确认</Button>
+          >确认</Button> */}
           {/* <CustomBtn
             onClick={() => this.setSearchMore(false)}
             type='cancel'
@@ -584,7 +592,11 @@ class ContractManage extends Component {
               // loading={loadingQueryData}
               type='reset'
             />
-            <Popover visible={searchMore} placement="bottomRight" content={content} trigger="click">
+            <Popover 
+            visible={searchMore}
+            onVisibleChange={v => this.subPopoverStatus(v)}
+            placement="bottomRight" 
+            content={content} trigger="click">
               {
                 <div
                   className="activeColor"

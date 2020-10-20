@@ -20,7 +20,7 @@ class DemandSide extends PureComponent {
     const dateEnd = moment(dateStart)
       .add(3, 'months')
       .format('YYYY-MM-DD');
-    this.props.handleQueryReportForm({type:1, startTime: moment(dateStart).format('YYYY-MM-DD'), endTime: moment(dateEnd).format('YYYY-MM-DD')})
+    this.props.handleQueryReportForm({type:1, startTime: moment(dateStart).startOf('day').format('YYYY-MM-DD HH:mm:ss'), endTime: moment(dateEnd).endOf('day').format('YYYY-MM-DD HH:mm:ss')})
   }
 
    // 滑动滑块事件

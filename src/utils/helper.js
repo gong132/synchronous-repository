@@ -143,6 +143,7 @@ function genLangColumn(key, title, extend, len = 20, contentAlign) {
     dataIndex: key,
     ...extend,
     render: text => {
+      if(!text?.length) return ""
       if (text.length <= len) {
         return <div style={contentAlign ? { width: '100%', textAlign: contentAlign } : {}}>{text}</div>;
       }
@@ -163,6 +164,7 @@ function genPopoverColumn(key, title, len = 12, extend) {
     dataIndex: key,
     ...extend,
     render: text => {
+      if(!text?.length) return ""
       if (text.length <= len) {
         return <span>{text}</span>;
       }

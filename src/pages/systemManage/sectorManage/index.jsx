@@ -203,7 +203,6 @@ class SectorManage extends Component {
     const params = {
       currentPage: pagination.current,
       pageSize: pagination.pageSize,
-      // ...formValues, // 添加已查询条件去获取分页
     };
     this.handleQueryData(params);
   };

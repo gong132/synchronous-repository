@@ -240,7 +240,8 @@ class ProjectManage extends Component {
     router.push({
       pathname: '/projectDetail',
       query: {
-        id: record.id
+        id: record.id,
+        no: record.pjCode
       }
     })
   }
@@ -250,12 +251,12 @@ class ProjectManage extends Component {
     console.log(pagination, filters, sorter)
     const formValues = this.props.form.getFieldsValue();
     if (formValues.techTime && !_.isEmpty(formValues.techTime)) {
-      formValues.techTimeStart = moment(formValues.techTime[0]).format('YYYY-MM-DD')
-      formValues.techTimeEnd = moment(formValues.techTime[1]).format('YYYY-MM-DD')
+      formValues.techTimeStart = moment(formValues.techTime[0]).startOf('day').format('YYYY-MM-DD HH:mm:ss')
+      formValues.techTimeEnd = moment(formValues.techTime[1]).endOf('day').format('YYYY-MM-DD HH:mm:ss')
     }
     if (formValues.estTime && !_.isEmpty(formValues.estTime)) {
-      formValues.estTimeStart = moment(formValues.estTime[0]).format('YYYY-MM-DD')
-      formValues.estTimeEnd = moment(formValues.estTime[1]).format('YYYY-MM-DD')
+      formValues.estTimeStart = moment(formValues.estTime[0]).startOf('day').format('YYYY-MM-DD HH:mm:ss')
+      formValues.estTimeEnd = moment(formValues.estTime[1]).endOf('day').format('YYYY-MM-DD HH:mm:ss')
     }
     if (formValues.clusterName) {
       formValues.clusterName = String(formValues.clusterName)
@@ -273,6 +274,14 @@ class ProjectManage extends Component {
 
     this.handleQueryData({ ...params, ...sortParams });
   };
+
+  // 监听popover显示或隐藏
+  subPopoverStatus = (v) => {
+    console.log(v)
+    this.setState({
+      searchMore: v
+    })
+  }
 
   renderSearchForm = () => {
     const { searchMore } = this.state
@@ -293,7 +302,11 @@ class ProjectManage extends Component {
           <Col span={24}>
             <FormItem colon={false} label="所属需求编号">
               {getFieldDecorator('demandKey', {
-              })(<Input allowClear placeholder="请输入需求编号/名称关键字" />)}
+              })(<Input
+                allowClear
+                placeholder="请输入需求编号/名称关键字"
+                onChange={_.debounce(this.saveParams, 500)}
+              />)}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -301,7 +314,11 @@ class ProjectManage extends Component {
               {getFieldDecorator(
                 'pjCodeKey',
                 {},
-              )(<Input allowClear placeholder="请输入项目编号" />)}
+              )(<Input
+                allowClear
+                placeholder="请输入项目编号"
+                onChange={_.debounce(this.saveParams, 500)}
+              />)}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -310,12 +327,12 @@ class ProjectManage extends Component {
                 {getFieldDecorator(
                   'pjProgressStart',
                   {},
-                )(<Input allowClear addonAfter="%" />)}
+                )(<Input allowClear addonAfter="%" onChange={_.debounce(this.saveParams, 500)} />)}
                 <span style={{ padding: '0 3px' }}>—</span>
                 {getFieldDecorator(
                   'pjProgressEnd',
                   {},
-                )(<Input allowClear addonAfter="%" />)}
+                )(<Input allowClear addonAfter="%" onChange={_.debounce(this.saveParams, 500)} />)}
               </div>
             </FormItem>
           </Col>
@@ -325,12 +342,12 @@ class ProjectManage extends Component {
                 {getFieldDecorator(
                   'pjProgressDeviationStart',
                   {},
-                )(<Input allowClear addonAfter="%" />)}
+                )(<Input allowClear addonAfter="%" onChange={_.debounce(this.saveParams, 500)} />)}
                 <span style={{ padding: '0 3px' }}>—</span>
                 {getFieldDecorator(
                   'pjProgressDeviationEnd',
                   {},
-                )(<Input allowClear addonAfter="%" />)}
+                )(<Input allowClear addonAfter="%" onChange={_.debounce(this.saveParams, 500)} />)}
               </div>
             </FormItem>
           </Col>
@@ -347,6 +364,7 @@ class ProjectManage extends Component {
                     width: '100%',
                   }}
                   placeholder="请选择项目健康状态"
+                  onChange={_.debounce(this.saveParams, 500)}
                 >
                   <Option key='p' value='p'>未定义</Option>
                 </Select>,
@@ -366,6 +384,7 @@ class ProjectManage extends Component {
                     width: '100%',
                   }}
                   placeholder="请选择项目优先级"
+                  onChange={_.debounce(this.saveParams, 500)}
                 >
                   {DEMAND_PRIORITY_ARR.map(d => (
                     <Option key={d.key} value={d.key}>
@@ -385,6 +404,7 @@ class ProjectManage extends Component {
                   showSearch
                   onSearch={_.debounce(this.handleQueryBudget, 500)}
                   onFocus={this.handleQueryBudget}
+                  onChange={_.debounce(this.saveParams, 500)}
                   optionFilterProp="children"
                   filterOption={(input, option) =>
                     JSON.stringify(option.props.children)
@@ -412,12 +432,12 @@ class ProjectManage extends Component {
                 {getFieldDecorator(
                   'contractAmountStart',
                   {},
-                )(<Input allowClear addonAfter="万" />)}
+                )(<Input allowClear addonAfter="万" onChange={_.debounce(this.saveParams, 500)} />)}
                 <span style={{ padding: '0 3px' }}>—</span>
                 {getFieldDecorator(
                   'contractAmountEnd',
                   {},
-                )(<Input allowClear addonAfter="万" />)}
+                )(<Input allowClear addonAfter="万" onChange={_.debounce(this.saveParams, 500)} />)}
               </div>
             </FormItem>
           </Col>
@@ -434,6 +454,7 @@ class ProjectManage extends Component {
                     width: '100%',
                   }}
                   placeholder="请输入供应商名称关键字"
+                  onChange={_.debounce(this.saveParams, 500)}
                 >
                   {!_.isEmpty(supplierList) &&
                     supplierList.map(d => (
@@ -459,6 +480,7 @@ class ProjectManage extends Component {
                     width: '100%',
                   }}
                   placeholder='请选择建设方式'
+                  onChange={_.debounce(this.saveParams, 500)}
                 >
                   {/* {!_.isEmpty(supplierList) &&
                     supplierList.map(d => (
@@ -481,6 +503,7 @@ class ProjectManage extends Component {
                   showSearch
                   optionFilterProp="children"
                   onSearch={_.debounce(this.handleQueryUser, 500)}
+                  onChange={_.debounce(this.saveParams, 500)}
                   filterOption={(input, option) =>
                     JSON.stringify(option.props.children)
                       .toLowerCase()
@@ -510,6 +533,7 @@ class ProjectManage extends Component {
                   showSearch
                   onSearch={_.debounce(this.handleQueryGroup, 500)}
                   onFocus={this.handleQueryGroup}
+                  onChange={_.debounce(this.saveParams, 500)}
                   optionFilterProp="children"
                   filterOption={(input, option) =>
                     JSON.stringify(option.props.children)
@@ -532,7 +556,7 @@ class ProjectManage extends Component {
             <FormItem colon={false} label="技术评审申请时间">
               {getFieldDecorator('estTime', {
               })(
-                <RangePicker />
+                <RangePicker onChange={_.debounce(this.saveParams, 500)} />
               )}
             </FormItem>
           </Col>
@@ -540,13 +564,13 @@ class ProjectManage extends Component {
             <FormItem colon={false} label="立项评审申请时间">
               {getFieldDecorator('techTime', {
               })(
-                <RangePicker />
+                <RangePicker onChange={_.debounce(this.saveParams, 500)} />
               )}
             </FormItem>
           </Col>
         </Row>
         <div className={styles.moreSearchButton}>
-          <Button
+          {/* <Button
             type='primary'
             ghost
             onClick={() => this.setSearchMore(false)}
@@ -557,7 +581,7 @@ class ProjectManage extends Component {
             onClick={() => this.moreQuery()}
             loading={loadingQueryData}
           >确认
-          </Button>
+          </Button> */}
           {/* <CustomBtn
             onClick={() => this.setSearchMore(false)}
             type='cancel'
@@ -678,7 +702,12 @@ class ProjectManage extends Component {
               loading={loadingQueryData}
               type='reset'
             />
-            <Popover visible={searchMore} placement="bottomRight" content={content} trigger="click">
+            <Popover
+              placement="bottomRight"
+              content={content}
+              trigger="click"
+              onVisibleChange={v => this.subPopoverStatus(v)}
+            >
               {
                 <div
                   className="activeColor"

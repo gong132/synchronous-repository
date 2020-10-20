@@ -36,11 +36,18 @@ class Project extends PureComponent {
   handleChangDate = value => {
     this.setState({
       rangeDate: value
+    }, () => {
+      this.handleQueryProjectReport()
     })
   }
 
   // 查询项目报表
   handleQueryProjectReport = (params) => {
+    const { rangeDate } = this.state
+    if (!_.isEmpty(rangeDate)) {
+      params.startTime = moment(rangeDate[0]).format('YYYY-MM-DD')
+      params.endTime = moment(rangeDate[1]).format('YYYY-MM-DD')
+    }
     this.props.dispatch({
       type: 'projectForm/queryProjectReportForm',
       payload: {
