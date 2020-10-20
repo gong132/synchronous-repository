@@ -1,8 +1,7 @@
 import React, { Fragment, memo, useEffect, useState } from 'react';
 import { connect } from 'dva';
 import { router, withRouter } from 'umi/index';
-import moment from "moment";
-import {isArray, isEmpty} from '@/utils/lang';
+import { isEmpty } from '@/utils/lang';
 import {
   Button,
   Col,
@@ -48,9 +47,9 @@ import {
 
 import AssignUser from '../components/story/assignUser';
 import storage from '@/utils/storage';
-import _ from "lodash";
-import ListOptBtn from "@/components/commonUseModule/listOptBtn";
-import eyeIcon from "@/assets/icon/cz_ck.svg";
+import _ from 'lodash';
+import ListOptBtn from '@/components/commonUseModule/listOptBtn';
+import eyeIcon from '@/assets/icon/cz_ck.svg';
 
 const demandRoutes = {
   '/demand/myDemand': '我的需求',
@@ -78,7 +77,7 @@ const Index = memo(
 
     const [assignVisible, setAssignVisible] = useState(false);
 
-    const [expandedRowId, setExpandedRowId] = useState([])
+    const [expandedRowId, setExpandedRowId] = useState([]);
 
     const handleQueryUserList = () => {
       dispatch({
@@ -105,7 +104,7 @@ const Index = memo(
         },
       });
     };
-    const handleAssign = ({demandId, userId, userName}, rows, callback) => {
+    const handleAssign = ({ demandId, userId, userName }) => {
       dispatch({
         type: 'demand/assignUser',
         payload: {
@@ -117,7 +116,7 @@ const Index = memo(
       }).then(result => {
         if (!result) return;
         message.success('指派成功');
-        setAssignVisible(false)
+        setAssignVisible(false);
         handleQueryUserList();
       });
     };
@@ -215,7 +214,10 @@ const Index = memo(
       TableColumnHelper.genPlanColumn('estimatedTestWorkload', '测试预计工作量', { width: 150 }),
       TableColumnHelper.genPlanColumn('introducer', '需求提出人', { sorter: true, width: 140 }),
       TableColumnHelper.genPlanColumn('creator', '创建人', { sorter: true, width: 120 }),
-      TableColumnHelper.genDateTimeColumn('createTime', '创建时间', 'YYYY-MM-DD HH:mm:ss',{ sorter: true, width: 180 }),
+      TableColumnHelper.genDateTimeColumn('createTime', '创建时间', 'YYYY-MM-DD HH:mm:ss', {
+        sorter: true,
+        width: 180,
+      }),
       {
         title: '操作',
         width: 120,
@@ -228,7 +230,7 @@ const Index = memo(
               style={{
                 fontSize: '24px',
                 position: 'relative',
-                top: '7px'
+                top: '7px',
               }}
               onClick={() => {
                 router.push({
@@ -261,11 +263,11 @@ const Index = memo(
                 style={{
                   fontSize: '24px',
                   position: 'relative',
-                  top: '3px'
+                  top: '3px',
                 }}
                 onClick={e => {
-                  e.stopPropagation()
-                  setAssignVisible(rows.id)
+                  e.stopPropagation();
+                  setAssignVisible(rows.id);
                 }}
               />
             </Popover>
@@ -333,12 +335,16 @@ const Index = memo(
         TableColumnHelper.genPlanColumn('status', '状态'),
         TableColumnHelper.genPlanColumn('priority', '优先级'),
         TableColumnHelper.genPlanColumn('type', 'story类型'),
-        TableColumnHelper.genDateTimeColumn('evaluateTime', 'IT评估上线时间', 'YYYY-MM-DD',{ width: 170 }),
+        TableColumnHelper.genDateTimeColumn('evaluateTime', 'IT评估上线时间', 'YYYY-MM-DD', {
+          width: 170,
+        }),
         TableColumnHelper.genPlanColumn('developWorkload', '开发预计工作量'),
         TableColumnHelper.genPlanColumn('testWorkload', '测试预计工作量'),
         TableColumnHelper.genPlanColumn('assigneeName', '经办人'),
         TableColumnHelper.genPlanColumn('userName', '创建人'),
-        TableColumnHelper.genDateTimeColumn('createTime', '创建时间', 'YYYY-MM-DD HH:mm:ss',{ width: 210 }),
+        TableColumnHelper.genDateTimeColumn('createTime', '创建时间', 'YYYY-MM-DD HH:mm:ss', {
+          width: 210,
+        }),
         {
           title: '操作',
           width: 230,
@@ -352,7 +358,7 @@ const Index = memo(
                   title="编辑"
                   icon={edit}
                   style={{
-                    color: "#2E5BFF"
+                    color: '#2E5BFF',
                   }}
                   onClick={() => {
                     setAddModalVisible(true);
@@ -388,11 +394,11 @@ const Index = memo(
                     title="同步"
                     icon={sync}
                     style={{
-                      color: "#2E5BFF",
+                      color: '#2E5BFF',
                       width: 16,
                       fontSize: 16,
                       position: 'relative',
-                      top: 3
+                      top: 3,
                     }}
                     disabled={userInfo.userId !== rows.assessor || rows?.issueId}
                     onClick={() => {
@@ -474,23 +480,25 @@ const Index = memo(
     };
 
     const handleExpandedRow = (rows, type) => {
-      const { record: { id, demandNumber } } = rows;
-      if (type === "add") {
+      const {
+        record: { id, demandNumber },
+      } = rows;
+      if (type === 'add') {
         dispatch({
-          type: "demand/queryStoryListByDemandNumber",
+          type: 'demand/queryStoryListByDemandNumber',
           payload: {
             demandNumber,
-          }
+          },
         }).then(sure => {
-          if (!sure) return
-          setExpandedRowId(arr => [...arr,id])
-        })
-        return
+          if (!sure) return;
+          setExpandedRowId(arr => [...arr, id]);
+        });
+        return;
       }
-      if (type === "remove") {
-        setExpandedRowId(arr => arr.filter(v => v !== id))
+      if (type === 'remove') {
+        setExpandedRowId(arr => arr.filter(v => v !== id));
       }
-    }
+    };
     const renderForm = () => {
       const { getFieldDecorator } = form;
       const content = (
@@ -671,23 +679,32 @@ const Index = memo(
             <Col span={24}>
               <FormItem {...formLayoutItem2} colon={false} label="需求描述">
                 {getFieldDecorator('requirementDescription')(
-                  <Input onChange={_.debounce(handleSearchForm, 500)} placeholder="请输入需求描述" />,
+                  <Input
+                    onChange={_.debounce(handleSearchForm, 500)}
+                    placeholder="请输入需求描述"
+                  />,
                 )}
               </FormItem>
             </Col>
             <Col span={24}>
               <FormItem {...formLayoutItem2} colon={false} label="期望完成日期">
-                {getFieldDecorator('expectedCompletionDate')(<RangePicker onChange={handleSearchForm} format="YYYY-MM-DD" />)}
+                {getFieldDecorator('expectedCompletionDate')(
+                  <RangePicker onChange={handleSearchForm} format="YYYY-MM-DD" />,
+                )}
               </FormItem>
             </Col>
             <Col span={24}>
               <FormItem {...formLayoutItem2} colon={false} label="计划上线日期">
-                {getFieldDecorator('plannedLaunchDate')(<RangePicker onChange={handleSearchForm} format="YYYY-MM-DD" />)}
+                {getFieldDecorator('plannedLaunchDate')(
+                  <RangePicker onChange={handleSearchForm} format="YYYY-MM-DD" />,
+                )}
               </FormItem>
             </Col>
             <Col span={24}>
               <FormItem {...formLayoutItem2} colon={false} label="实际上线日期">
-                {getFieldDecorator('actualLineDate')(<RangePicker onChange={handleSearchForm} format="YYYY-MM-DD" />)}
+                {getFieldDecorator('actualLineDate')(
+                  <RangePicker onChange={handleSearchForm} format="YYYY-MM-DD" />,
+                )}
               </FormItem>
             </Col>
             <Col span={24}>
@@ -748,14 +765,6 @@ const Index = memo(
               </FormItem>
             </Col>
           </Row>
-          <div className={styles.moreSearchButton}>
-            <Button ghost type="primary" onClick={() => setSearchMore(false)}>
-              取消
-            </Button>
-            <Button type="primary" className="margin-left-12" onClick={handleSearchForm}>
-              确认
-            </Button>
-          </div>
         </div>
       );
       return (
@@ -822,7 +831,10 @@ const Index = memo(
             </Col>
             <Col span={6}>
               <FormItem {...formLayoutItem} colon={false} label="创建日期">
-                {getFieldDecorator('createTime', {})(<RangePicker onChange={_.debounce(handleSearchForm, 500)} format="YYYY-MM-DD" />)}
+                {getFieldDecorator(
+                  'createTime',
+                  {},
+                )(<RangePicker onChange={_.debounce(handleSearchForm, 500)} format="YYYY-MM-DD" />)}
               </FormItem>
             </Col>
             <Col span={4}>
@@ -844,12 +856,7 @@ const Index = memo(
                 >
                   重置
                 </Button>
-                <Popover
-                  visible={searchMore}
-                  placement="bottomRight"
-                  content={content}
-                  trigger="click"
-                >
+                <Popover placement="bottomRight" content={content} trigger="click">
                   <div className="yCenter">
                     {!searchMore ? (
                       <span className="activeColor" onClick={() => setSearchMore(true)}>
@@ -877,7 +884,7 @@ const Index = memo(
       handleQueryHeaderGroupList();
     }, []);
 
-    console.log(demandList, "DemandList")
+    console.log(demandList, 'DemandList');
     return (
       <div className={styles.childrenTable}>
         <div className={styles.tableList}>
@@ -892,11 +899,11 @@ const Index = memo(
               if (Number(prop?.record?.isHaveStory) === 0) return '';
               return !prop?.expanded ? (
                 <span style={{ cursor: 'pointer' }}>
-                  <Icon onClick={() => handleExpandedRow(prop, "add")} component={arrowRight} />
+                  <Icon onClick={() => handleExpandedRow(prop, 'add')} component={arrowRight} />
                 </span>
               ) : (
                 <span style={{ cursor: 'pointer' }}>
-                  <Icon onClick={() => handleExpandedRow(prop, "remove")} component={arrowBottom} />
+                  <Icon onClick={() => handleExpandedRow(prop, 'remove')} component={arrowBottom} />
                 </span>
               );
             }}

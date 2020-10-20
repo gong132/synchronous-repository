@@ -88,6 +88,8 @@ export default {
   'menu.reportFormManage.demandForm': '需求报表',
   'menu.reportFormManage.projectForm': '项目报表',
   'menu.reportFormManage.budgetForm': '预算报表',
+  'menu.reportFormManage.budgetForm_belongBudget': '所属预算',
+  'menu.reportFormManage.budgetForm_tree': '树形图',
   'menu.demandManage': '需求管理',
   'menu.demandManageList': '需求管理列表',
 };

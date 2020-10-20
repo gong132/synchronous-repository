@@ -14,7 +14,8 @@ import {
   Tooltip,
   DatePicker,
   Icon,
-  Card, message,
+  Card,
+  message,
 } from 'antd';
 import { isEmpty } from '@/utils/lang';
 import { formLayoutItem, formLayoutItem2, MENU_ACTIONS } from '@/utils/constant';
@@ -28,9 +29,9 @@ import AddForm from './addForm';
 import styles from '../index.less';
 import { exportExcel } from '@/utils/utils';
 import moment from 'moment';
-import _ from "lodash";
-import ListOptBtn from "@/components/commonUseModule/listOptBtn";
-import eyeIcon from "@/assets/icon/cz_ck.svg";
+import _ from 'lodash';
+import ListOptBtn from '@/components/commonUseModule/listOptBtn';
+import eyeIcon from '@/assets/icon/cz_ck.svg';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -112,7 +113,10 @@ const Index = props => {
       6,
     ),
     TableColumnHelper.genLangColumn('deptName', '需求部门', { sorter: true, width: 120 }, 8),
-    TableColumnHelper.genSelectColumn('type', '项目类型', PROJECT_TYPE, { sorter: true, width: 120 }),
+    TableColumnHelper.genSelectColumn('type', '项目类型', PROJECT_TYPE, {
+      sorter: true,
+      width: 120,
+    }),
     TableColumnHelper.genMoneyColumn(
       'expectTotalAmount',
       '预算总金额(万)',
@@ -162,7 +166,7 @@ const Index = props => {
               style={{
                 fontSize: '24px',
                 position: 'relative',
-                top: '5px'
+                top: '5px',
               }}
               onClick={() => {
                 props.history.push({
@@ -197,47 +201,83 @@ const Index = props => {
 
   const handleResetForm = () => {
     form.resetFields();
-    setYearTime(null)
+    setYearTime(null);
     handleQueryBudgetData();
   };
 
   const handleSearchForm = (params = {}) => {
     const { expectSetTime, ...others } = form.getFieldsValue();
-    const { expectTotalAmountLow, expectTotalAmountMax, hardwareExpectAmountLow,
-      hardwareExpectAmountMax, softwareExpectAmountLow, softwareExpectAmountMax,
-      otherExpectAmountLow, otherExpectAmountMax } = others;
+    const {
+      expectTotalAmountLow,
+      expectTotalAmountMax,
+      hardwareExpectAmountLow,
+      hardwareExpectAmountMax,
+      softwareExpectAmountLow,
+      softwareExpectAmountMax,
+      otherExpectAmountLow,
+      otherExpectAmountMax,
+    } = others;
 
     // 除此之外还可以利用函数arguments类数组对象来生成数组,判断是否违规后再返回状态.
     const judgeIsNumber = a => b => c => d => e => g => f => h => {
       const isNaNCount = val => {
-        if (!val) return true
-        if (val && Number.isNaN(Number(val))) return false
-        if (val && Number(val) < 0) return false
-        return true
-      }
-      return isNaNCount(a) && isNaNCount(b) && isNaNCount(c) && isNaNCount(d) && isNaNCount(e) && isNaNCount(f) && isNaNCount(g) && isNaNCount(h)
+        if (!val) return true;
+        if (val && Number.isNaN(Number(val))) return false;
+        if (val && Number(val) < 0) return false;
+        return true;
+      };
+      return (
+        isNaNCount(a) &&
+        isNaNCount(b) &&
+        isNaNCount(c) &&
+        isNaNCount(d) &&
+        isNaNCount(e) &&
+        isNaNCount(f) &&
+        isNaNCount(g) &&
+        isNaNCount(h)
+      );
+    };
+    if (
+      !judgeIsNumber(expectTotalAmountLow)(expectTotalAmountMax)(hardwareExpectAmountLow)(
+        hardwareExpectAmountMax,
+      )(softwareExpectAmountLow)(softwareExpectAmountMax)(otherExpectAmountLow)(
+        otherExpectAmountMax,
+      )
+    ) {
+      message.error('金额必须为正数');
+      return;
     }
-    if (!judgeIsNumber(expectTotalAmountLow)(expectTotalAmountMax)(hardwareExpectAmountLow)(
-      hardwareExpectAmountMax)(softwareExpectAmountLow)(softwareExpectAmountMax)(
-      otherExpectAmountLow)(otherExpectAmountMax)) {
-      message.error("金额必须为正数")
-      return
+    if (
+      expectTotalAmountLow &&
+      expectTotalAmountMax &&
+      Number(expectTotalAmountLow) - Number(expectTotalAmountMax) > 0
+    ) {
+      message.error('最小预算总金额不能大于最大预算金额');
+      return;
     }
-    if (expectTotalAmountLow && expectTotalAmountMax && (Number(expectTotalAmountLow) - Number(expectTotalAmountMax) > 0)) {
-      message.error("最小预算总金额不能大于最大预算金额")
-      return
+    if (
+      hardwareExpectAmountLow &&
+      hardwareExpectAmountMax &&
+      Number(hardwareExpectAmountLow) - Number(hardwareExpectAmountMax) > 0
+    ) {
+      message.error('最小硬件金额不能大于最大硬件金额');
+      return;
     }
-    if (hardwareExpectAmountLow && hardwareExpectAmountMax && (Number(hardwareExpectAmountLow) - Number(hardwareExpectAmountMax) > 0)) {
-      message.error("最小硬件金额不能大于最大硬件金额")
-      return
+    if (
+      hardwareExpectAmountLow &&
+      softwareExpectAmountMax &&
+      Number(softwareExpectAmountLow) - Number(softwareExpectAmountMax) > 0
+    ) {
+      message.error('最小软件金额不能大于最大软件金额');
+      return;
     }
-    if (hardwareExpectAmountLow && softwareExpectAmountMax && (Number(softwareExpectAmountLow) - Number(softwareExpectAmountMax) > 0)) {
-      message.error("最小软件金额不能大于最大软件金额")
-      return
-    }
-    if (otherExpectAmountLow && otherExpectAmountMax && (Number(otherExpectAmountLow) - Number(otherExpectAmountMax) > 0)) {
-      message.error("最小其他金额不能大于最大其他金额")
-      return
+    if (
+      otherExpectAmountLow &&
+      otherExpectAmountMax &&
+      Number(otherExpectAmountLow) - Number(otherExpectAmountMax) > 0
+    ) {
+      message.error('最小其他金额不能大于最大其他金额');
+      return;
     }
 
     const { year = yearTime && moment.isMoment(yearTime) && yearTime.format('YYYY') } = params;
@@ -245,7 +285,7 @@ const Index = props => {
       ...others,
       expectSetStartTime: !isEmpty(expectSetTime) ? expectSetTime[0].format('YYYY-MM-DD') : null,
       expectSetEndTime: !isEmpty(expectSetTime) ? expectSetTime[1].format('YYYY-MM-DD') : null,
-      year: year  || null,
+      year: year || null,
     };
     handleQueryBudgetData(formValues);
   };
@@ -334,7 +374,13 @@ const Index = props => {
               {getFieldDecorator(
                 'expectSetTime',
                 {},
-              )(<DatePicker.RangePicker onChange={_.debounce(handleSearchForm, 500)} allowClear format="YYYY-MM-DD" />)}
+              )(
+                <DatePicker.RangePicker
+                  onChange={_.debounce(handleSearchForm, 500)}
+                  allowClear
+                  format="YYYY-MM-DD"
+                />,
+              )}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -343,12 +389,16 @@ const Index = props => {
                 {getFieldDecorator(
                   'expectTotalAmountLow',
                   {},
-                )(<Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />)}
+                )(
+                  <Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />,
+                )}
                 <span style={{ padding: '0 3px' }}>—</span>
                 {getFieldDecorator(
                   'expectTotalAmountMax',
                   {},
-                )(<Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />)}
+                )(
+                  <Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />,
+                )}
               </div>
             </FormItem>
           </Col>
@@ -358,12 +408,16 @@ const Index = props => {
                 {getFieldDecorator(
                   'hardwareExpectAmountLow',
                   {},
-                )(<Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />)}
+                )(
+                  <Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />,
+                )}
                 <span style={{ padding: '0 3px' }}>—</span>
                 {getFieldDecorator(
                   'hardwareExpectAmountMax',
                   {},
-                )(<Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />)}
+                )(
+                  <Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />,
+                )}
               </div>
             </FormItem>
           </Col>
@@ -373,12 +427,16 @@ const Index = props => {
                 {getFieldDecorator(
                   'softwareExpectAmountLow',
                   {},
-                )(<Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />)}
+                )(
+                  <Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />,
+                )}
                 <span style={{ padding: '0 3px' }}>—</span>
                 {getFieldDecorator(
                   'softwareExpectAmountMax',
                   {},
-                )(<Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />)}
+                )(
+                  <Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />,
+                )}
               </div>
             </FormItem>
           </Col>
@@ -388,18 +446,27 @@ const Index = props => {
                 {getFieldDecorator(
                   'otherExpectAmountLow',
                   {},
-                )(<Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />)}
+                )(
+                  <Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />,
+                )}
                 <span style={{ padding: '0 3px' }}>—</span>
                 {getFieldDecorator(
                   'otherExpectAmountMax',
                   {},
-                )(<Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />)}
+                )(
+                  <Input onChange={_.debounce(handleSearchForm, 500)} allowClear addonAfter="万" />,
+                )}
               </div>
             </FormItem>
           </Col>
           <Col span={24}>
             <FormItem {...formLayoutItem2} label="项目描述">
-              {getFieldDecorator('description', {})(<Input onChange={_.debounce(handleSearchForm, 500)} placeholder="请输入项目描述" />)}
+              {getFieldDecorator(
+                'description',
+                {},
+              )(
+                <Input onChange={_.debounce(handleSearchForm, 500)} placeholder="请输入项目描述" />,
+              )}
             </FormItem>
           </Col>
           <Col span={24}>
@@ -459,14 +526,6 @@ const Index = props => {
             </FormItem>
           </Col>
         </Row>
-        <div className={styles.moreSearchButton}>
-          <Button ghost type="primary" onClick={() => setSearchMore(false)}>
-            取消
-          </Button>
-          <Button type="primary" className="margin-left-12" onClick={handleSearchForm}>
-            确认
-          </Button>
-        </div>
       </div>
     );
     return (
@@ -477,7 +536,13 @@ const Index = props => {
               {getFieldDecorator(
                 'name',
                 {},
-              )(<Input allowClear onChange={_.debounce(handleSearchForm, 500)} placeholder="请输入预算名称" />)}
+              )(
+                <Input
+                  allowClear
+                  onChange={_.debounce(handleSearchForm, 500)}
+                  placeholder="请输入预算名称"
+                />,
+              )}
             </FormItem>
           </Col>
           <Col span={5}>
@@ -543,7 +608,7 @@ const Index = props => {
                 value={yearTime}
                 onChange={val => {
                   setYearTime(val);
-                  handleSearchForm({ year: (moment.isMoment(val) && val.format('YYYY')) || null })
+                  handleSearchForm({ year: (moment.isMoment(val) && val.format('YYYY')) || null });
                 }}
               />
             </FormItem>
@@ -564,12 +629,7 @@ const Index = props => {
               >
                 重置
               </Button>
-              <Popover
-                visible={searchMore}
-                placement="bottomRight"
-                content={content}
-                trigger="click"
-              >
+              <Popover placement="bottomRight" content={content} trigger="click">
                 <div className="yCenter">
                   {!searchMore ? (
                     <span className="activeColor" onClick={() => setSearchMore(true)}>
