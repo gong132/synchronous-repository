@@ -304,10 +304,10 @@ const Index = memo(
       if (isEmpty(row.storyList)) return null;
       const subColumns = [
         {
-          title: "",
+          title: '',
           width: 20,
-          key: "id",
-          render: () => ""
+          key: 'id',
+          render: () => '',
         },
         {
           title: 'story编号',
@@ -469,18 +469,34 @@ const Index = memo(
       } = formValues;
       const params = {
         ...others,
-        minExpectedCompletionDate: expectedCompletionDate && expectedCompletionDate?.length > 0
-          ? expectedCompletionDate[0].format('YYYY-MM-DD')
-          : null,
-        maxExpectedCompletionDate: expectedCompletionDate && expectedCompletionDate?.length > 0
-          ? expectedCompletionDate[1].format('YYYY-MM-DD')
-          : null,
-        minPlannedLaunchDate: plannedLaunchDate && plannedLaunchDate?.length > 0 ? plannedLaunchDate[0].format('YYYY-MM-DD') : null,
-        maxPlannedLaunchDate: plannedLaunchDate && plannedLaunchDate?.length > 0 ? plannedLaunchDate[1].format('YYYY-MM-DD') : null,
-        minActualLineDate: actualLineDate && actualLineDate?.length > 0 ? actualLineDate[1].format('YYYY-MM-DD') : null,
-        maxActualLineDate: actualLineDate && actualLineDate?.length > 0 ? actualLineDate[1].format('YYYY-MM-DD') : null,
-        minCreateDate: createTime && createTime?.length > 0 ? createTime[1].format('YYYY-MM-DD') : null,
-        maxCreateDate: createTime && createTime?.length > 0 ? createTime[1].format('YYYY-MM-DD') : null,
+        minExpectedCompletionDate:
+          expectedCompletionDate && expectedCompletionDate?.length > 0
+            ? expectedCompletionDate[0].format('YYYY-MM-DD 00:00:00')
+            : null,
+        maxExpectedCompletionDate:
+          expectedCompletionDate && expectedCompletionDate?.length > 0
+            ? expectedCompletionDate[1].format('YYYY-MM-DD 23:59:59')
+            : null,
+        minPlannedLaunchDate:
+          plannedLaunchDate && plannedLaunchDate?.length > 0
+            ? plannedLaunchDate[0].format('YYYY-MM-DD 00:00:00')
+            : null,
+        maxPlannedLaunchDate:
+          plannedLaunchDate && plannedLaunchDate?.length > 0
+            ? plannedLaunchDate[1].format('YYYY-MM-DD 23:59:59')
+            : null,
+        minActualLineDate:
+          actualLineDate && actualLineDate?.length > 0
+            ? actualLineDate[0].format('YYYY-MM-DD 00:00:00')
+            : null,
+        maxActualLineDate:
+          actualLineDate && actualLineDate?.length > 0
+            ? actualLineDate[1].format('YYYY-MM-DD 23:59:59')
+            : null,
+        minCreateDate:
+          createTime && createTime?.length > 0 ? createTime[0].format('YYYY-MM-DD 00:00:00') : null,
+        maxCreateDate:
+          createTime && createTime?.length > 0 ? createTime[1].format('YYYY-MM-DD 23:59:59') : null,
       };
       setSearchForm(obj => ({ ...obj, ...params }));
     };
@@ -718,8 +734,8 @@ const Index = memo(
                       onChange={_.debounce(handleSearchForm, 500)}
                     >
                       {[
-                        {key: 'y', value: '是'},
-                        {key: 'n', value: '否'},
+                        { key: 'y', value: '是' },
+                        { key: 'n', value: '否' },
                       ].map(v => (
                         <Option value={v.key} key={v.key.toString()}>
                           {v.value}
@@ -740,8 +756,8 @@ const Index = memo(
                       onChange={_.debounce(handleSearchForm, 500)}
                     >
                       {[
-                        {key: 'y', value: '是'},
-                        {key: 'n', value: '否'},
+                        { key: 'y', value: '是' },
+                        { key: 'n', value: '否' },
                       ].map(v => (
                         <Option value={v.key} key={v.key.toString()}>
                           {v.value}
